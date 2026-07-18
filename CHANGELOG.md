@@ -1,30 +1,43 @@
 # Changelog
 
-## 1.3.1
+## 1.4.1
 
-### Removido
+### Ajustado
 
-- Seleção de extensão do arquivo.
-- Seleção de tipo de documento.
+- Pré-visualização posicionada logo abaixo das opções `Análise de projeto` e `Incluir data/hora`.
+- Botões `Copiar nome`, `Salvar modelo` e `Limpar campos` movidos para junto da pré-visualização.
+- Painéis de blocos mantidos abaixo dos controles principais.
+
+## 1.4.0
+
+### Refatorado
+
+- Gerador de Nome de Arquivo integralmente refeito como montador visual.
 
 ### Adicionado
 
-- Opção “Análise de projeto”.
-- Inclusão da sigla `AP` no nome gerado.
-- Máscara do número do processo no padrão `número-ano`.
-- Validação visual do número do processo.
-- Data e hora no padrão `ddmmaaaahhmmss`.
+- Blocos configuráveis.
+- Reordenação dos blocos.
+- Separador configurável.
+- Prévia em tempo real.
+- Salvamento de modelos personalizados.
+- Aplicação e remoção de modelos.
+- Histórico de nomes copiados.
+- Conversão automática de processo de `/` para `-`.
+- Nome sempre em maiúsculas e sem separadores internos.
 
-### Corrigido
+### Removido
 
-- O nome gerado não recebe mais extensão.
-- Data e hora passaram a ser um único bloco numérico de 14 dígitos.
+- Modelos fixos de nomenclatura.
+- Opção de conversão para maiúsculas.
+- Validação obrigatória do processo.
+- Seleção de extensão.
+- Seleção de tipo de documento.
 
 ### Mantido
 
-- Prefixo personalizado.
-- Modelos de nomenclatura.
-- Favoritos.
-- Histórico.
-- Conversão opcional para maiúsculas.
-- Todos os demais módulos da aplicação.
+- Inscrição imobiliária.
+- Gerador de lotes.
+- Calculadora UVRM.
+- Calculadora percentual.
+- Configurações e backup.

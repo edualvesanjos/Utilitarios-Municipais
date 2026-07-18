@@ -16,7 +16,7 @@
                 <p>Ferramentas rápidas para rotinas administrativas.</p>
             </div>
 
-            <span class="version-badge">Versão 1.3.1</span>
+            <span class="version-badge">Versão 1.4.1</span>
         </div>
     </header>
 
@@ -34,56 +34,45 @@
             <div class="card">
                 <div class="section-heading main-heading">
                     <div>
-                        <h2>Gerador de nome de arquivo</h2>
+                        <h2>Montador de nome de arquivo</h2>
                         <p class="section-description">
-                            Monte nomes padronizados com processo, nome, análise de projeto e data/hora.
+                            Ative, desative e reorganize os blocos que formarão o nome final.
                         </p>
                     </div>
 
-                    <span class="feature-badge">Revisado na v1.3.1</span>
+                    <span class="feature-badge">Ajustado na v1.4.1</span>
                 </div>
 
-                <div class="generator-layout">
-                    <div class="generator-form">
-                        <div class="grid two-columns">
-                            <div class="field-with-action">
-                                <label for="arquivoNome">Nome</label>
-                                <div class="inline-field">
-                                    <input id="arquivoNome" type="text" placeholder="Ex.: Empresa Exemplo Ltda">
-                                    <button class="icon-button" data-copy-input="arquivoNome" title="Copiar nome">Copiar</button>
-                                </div>
-                            </div>
+                <div class="generator-grid">
+                    <section class="builder-panel">
+                        <h3>Dados do arquivo</h3>
 
-                            <div class="field-with-action">
-                                <label for="arquivoProcesso">Número do processo</label>
-                                <div class="inline-field">
-                                    <input
-                                        id="arquivoProcesso"
-                                        type="text"
-                                        inputmode="numeric"
-                                        autocomplete="off"
-                                        placeholder="Ex.: 12345-2026"
-                                    >
-                                    <button class="icon-button" data-copy-input="arquivoProcesso" title="Copiar processo">Copiar</button>
-                                </div>
-                                <p id="arquivoProcessoAjuda" class="field-help">
-                                    Padrão obrigatório: número-ano.
-                                </p>
-                            </div>
+                        <div class="grid two-columns">
+                            <label>
+                                Nome
+                                <input id="arquivoNome" type="text" placeholder="Ex.: Eduardo Alves dos Anjos">
+                            </label>
+
+                            <label>
+                                Número do processo
+                                <input id="arquivoProcesso" type="text" placeholder="Ex.: 22667/2026">
+                            </label>
                         </div>
 
                         <div class="grid two-columns">
                             <label>
-                                Prefixo personalizado
+                                Prefixo
                                 <input id="arquivoPrefixo" type="text" placeholder="Ex.: DAE">
                             </label>
 
                             <label>
-                                Modelo de nomenclatura
-                                <select id="arquivoModelo">
-                                    <option value="processoNome">Processo_Nome</option>
-                                    <option value="nomeProcesso">Nome_Processo</option>
-                                    <option value="prefixoProcessoNome">Prefixo_Processo_Nome</option>
+                                Separador
+                                <select id="arquivoSeparador">
+                                    <option value="_">Sublinhado (_)</option>
+                                    <option value="-">Hífen (-)</option>
+                                    <option value=".">Ponto (.)</option>
+                                    <option value=" ">Espaço</option>
+                                    <option value="">Sem separador</option>
                                 </select>
                             </label>
                         </div>
@@ -91,46 +80,70 @@
                         <div class="options-panel">
                             <label class="checkbox-row">
                                 <input id="arquivoAnaliseProjeto" type="checkbox">
-                                Análise de projeto — incluir AP
+                                Análise de projeto
                             </label>
 
                             <label class="checkbox-row">
-                                <input id="arquivoIncluirDataHora" type="checkbox">
-                                Incluir data e hora — ddmmaaaahhmmss
-                            </label>
-
-                            <label class="checkbox-row">
-                                <input id="arquivoMaiusculas" type="checkbox">
-                                Converter tudo para maiúsculas
+                                <input id="arquivoDataHora" type="checkbox">
+                                Incluir data/hora
                             </label>
                         </div>
 
+                        <div class="preview-card">
+                            <span>Pré-visualização</span>
+                            <strong id="arquivoPreview">—</strong>
+                        </div>
+
                         <div class="actions">
-                            <button id="gerarArquivo" class="primary">Gerar nome</button>
-                            <button id="favoritarArquivo" class="secondary">Adicionar aos favoritos</button>
-                            <button id="limparArquivo" class="secondary">Limpar</button>
+                            <button id="copiarArquivoPreview" class="primary">Copiar nome</button>
+                            <button id="salvarModeloArquivo" class="secondary">Salvar modelo</button>
+                            <button id="limparArquivo" class="secondary">Limpar campos</button>
                         </div>
 
                         <p id="arquivoMensagem" class="feedback" aria-live="polite"></p>
 
-                        <div class="result-box result-highlight">
-                            <span>Resultado</span>
-                            <div class="result-row">
-                                <strong id="arquivoResultado">—</strong>
-                                <button class="icon-button" data-copy-target="arquivoResultado" title="Copiar resultado">Copiar</button>
+                        <div class="builder-section">
+                            <div class="section-heading">
+                                <div>
+                                    <h3>Blocos disponíveis</h3>
+                                    <p class="mini-description">
+                                        Marque os blocos que devem compor o nome.
+                                    </p>
+                                </div>
                             </div>
+
+                            <div id="arquivoBlocosDisponiveis" class="available-blocks"></div>
                         </div>
-                    </div>
+
+                        <div class="builder-section">
+                            <div class="section-heading">
+                                <div>
+                                    <h3>Ordem dos blocos</h3>
+                                    <p class="mini-description">
+                                        Use os botões para reorganizar.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <ol id="arquivoOrdemBlocos" class="block-order-list"></ol>
+                        </div>
+
+                    </section>
 
                     <aside class="generator-sidebar">
                         <section class="sidebar-card">
                             <div class="section-heading">
-                                <h3>Favoritos</h3>
-                                <button id="limparFavoritosArquivo" class="text-button">Limpar</button>
+                                <h3>Modelos salvos</h3>
+                                <button id="limparModelosArquivo" class="text-button">Limpar</button>
                             </div>
 
-                            <ul id="arquivoFavoritos" class="history-list compact-list">
-                                <li class="empty-state">Nenhum favorito salvo.</li>
+                            <label class="compact-field">
+                                Nome do modelo
+                                <input id="arquivoNomeModelo" type="text" placeholder="Ex.: Análise de projeto">
+                            </label>
+
+                            <ul id="arquivoModelos" class="history-list compact-list">
+                                <li class="empty-state">Nenhum modelo salvo.</li>
                             </ul>
                         </section>
 
@@ -141,7 +154,7 @@
                             </div>
 
                             <ul id="arquivoHistorico" class="history-list compact-list">
-                                <li class="empty-state">Nenhum nome gerado recentemente.</li>
+                                <li class="empty-state">Nenhum nome copiado recentemente.</li>
                             </ul>
                         </section>
                     </aside>
@@ -337,7 +350,7 @@
                         <h3>Limpeza completa</h3>
 
                         <p class="help-text">
-                            Remove preferências, histórico, favoritos e sequência de lotes deste navegador.
+                            Remove preferências, histórico, modelos e sequência de lotes deste navegador.
                         </p>
 
                         <button id="limparTodosDados" class="danger">
@@ -350,7 +363,7 @@
     </main>
 
     <footer class="app-footer">
-        <p>Utilitários Municipais • Versão 1.3.1</p>
+        <p>Utilitários Municipais • Versão 1.4.1</p>
     </footer>
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>

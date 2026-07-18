@@ -1,44 +1,69 @@
-# Utilitários Municipais — versão 1.3.1
+# Utilitários Municipais — versão 1.4.1
 
-Revisão corretiva da Etapa 4, aplicada sobre a versão 1.3.
+Refatoração completa do módulo Gerador de Nome de Arquivo.
 
-## Alterações no Gerador de Nome de Arquivo
+## Principais mudanças
 
-- Removida a seleção de extensão.
-- Removida a seleção de tipo de documento.
-- Adicionada a opção “Análise de projeto”, que inclui `AP`.
-- Número do processo padronizado como `número-ano`.
-- Máscara automática do processo.
-- Data e hora unificadas no padrão `ddmmaaaahhmmss`.
-- O resultado é gerado sem extensão.
+- Remoção dos modelos fixos de nomenclatura.
+- Montador visual baseado em blocos.
+- Blocos disponíveis:
+  - Nome
+  - Prefixo
+  - Processo
+  - AP
+  - Data/Hora
+- Ativação e desativação individual de cada bloco.
+- Reordenação por botões Subir e Descer.
+- Pré-visualização automática em tempo real.
+- Separador configurável.
+- Nome sempre em letras maiúsculas e sem espaços.
+- Processo digitado como `número/ano` e convertido para `número-ano`.
+- Data e hora no padrão `ddmmaaaahhmmss`.
+- Modelos personalizados salvos no navegador.
+- Histórico dos nomes copiados.
 
-## Exemplos
+## Exemplo
 
-Sem análise de projeto:
+Entrada:
 
 ```text
-12345-2026_EMPRESA_EXEMPLO
+Nome: Eduardo Alves dos Anjos
+Prefixo: DAE
+Processo: 22667/2026
+AP: ativado
+Data/Hora: ativado
 ```
 
-Com análise de projeto:
+Ordem:
 
 ```text
-12345-2026_EMPRESA_EXEMPLO_AP
+Nome
+Prefixo
+Processo
+AP
+Data/Hora
 ```
 
-Com data e hora:
+Resultado:
 
 ```text
-12345-2026_EMPRESA_EXEMPLO_AP_18072026153045
+EDUARDOALVESDOSANJOS_DAE_22667-2026_AP_18072026153045
 ```
 
 ## Estrutura
 
 ```text
-UtilitariosMunicipais_v1.3.1/
+UtilitariosMunicipais_v1.4/
 ├── index.html
 ├── app.css
 ├── app.js
 ├── README.md
 └── CHANGELOG.md
 ```
+
+
+## Ajuste da versão 1.4.1
+
+- A pré-visualização foi movida para logo abaixo do painel de opções.
+- Os botões `Copiar nome`, `Salvar modelo` e `Limpar campos` agora aparecem imediatamente após a pré-visualização.
+- Os painéis `Blocos disponíveis` e `Ordem dos blocos` permanecem abaixo desses controles.
