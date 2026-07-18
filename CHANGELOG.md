@@ -1,5 +1,30 @@
 # Changelog
 
+## 1.5.0
+
+### Adicionado
+
+- Detecção automática do tipo de inscrição.
+- Seleção manual entre Urbano e ITR.
+- Colagem inteligente.
+- Normalização automática.
+- Painel de situação e contagem de números.
+- Pré-visualização da inscrição.
+- Cópia somente dos números.
+- Cópia automática opcional.
+- Histórico persistente de inscrições.
+
+### Melhorado
+
+- Validação em tempo real.
+- Experiência de digitação e colagem.
+- Organização visual do módulo de inscrição imobiliária.
+- Backup atualizado para incluir preferências e histórico do módulo.
+
+### Mantido
+
+- Todas as funcionalidades da versão 1.4.1.
+
 ## 1.4.1
 
 ### Ajustado

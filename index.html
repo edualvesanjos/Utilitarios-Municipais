@@ -16,7 +16,7 @@
                 <p>Ferramentas rápidas para rotinas administrativas.</p>
             </div>
 
-            <span class="version-badge">Versão 1.4.1</span>
+            <span class="version-badge">Versão 1.5</span>
         </div>
     </header>
 
@@ -164,25 +164,113 @@
 
         <section id="inscricao" class="tab-panel">
             <div class="card">
-                <h2>Padrão de inscrição imobiliária</h2>
+                <div class="section-heading main-heading">
+                    <div>
+                        <h2>Padrão de inscrição imobiliária</h2>
+                        <p class="section-description">
+                            Cole ou digite a inscrição em qualquer formato; o sistema identifica e normaliza automaticamente.
+                        </p>
+                    </div>
 
-                <label class="checkbox-row">
-                    <input id="inscricaoItr" type="checkbox">
-                    Usar padrão ITR
-                </label>
+                    <span class="feature-badge">Aprimorado na v1.5</span>
+                </div>
 
-                <label>
-                    Inscrição
-                    <input id="inscricaoValor" type="text" inputmode="numeric" autocomplete="off" placeholder="00.000.000.00.0000000">
-                </label>
+                <div class="registration-layout">
+                    <section class="registration-panel">
+                        <div class="registration-type-selector" role="radiogroup" aria-label="Tipo de inscrição">
+                            <label class="registration-type-option">
+                                <input type="radio" name="inscricaoTipo" value="auto" checked>
+                                <span>Detectar automaticamente</span>
+                            </label>
 
-                <p id="inscricaoAjuda" class="help-text">
-                    Digite 17 números para o padrão urbano.
-                </p>
+                            <label class="registration-type-option">
+                                <input type="radio" name="inscricaoTipo" value="urbano">
+                                <span>Urbano</span>
+                            </label>
 
-                <div class="actions">
-                    <button id="copiarInscricao" class="primary">Copiar inscrição</button>
-                    <button id="limparInscricao" class="secondary">Limpar</button>
+                            <label class="registration-type-option">
+                                <input type="radio" name="inscricaoTipo" value="itr">
+                                <span>ITR</span>
+                            </label>
+                        </div>
+
+                        <label>
+                            Inscrição
+                            <input
+                                id="inscricaoValor"
+                                type="text"
+                                inputmode="numeric"
+                                autocomplete="off"
+                                placeholder="Cole ou digite a inscrição"
+                            >
+                        </label>
+
+                        <div class="registration-status">
+                            <div>
+                                <span class="status-label">Tipo identificado</span>
+                                <strong id="inscricaoTipoDetectado">Aguardando</strong>
+                            </div>
+
+                            <div>
+                                <span class="status-label">Quantidade de números</span>
+                                <strong id="inscricaoContagem">0</strong>
+                            </div>
+
+                            <div>
+                                <span class="status-label">Situação</span>
+                                <strong id="inscricaoStatus">Aguardando</strong>
+                            </div>
+                        </div>
+
+                        <p id="inscricaoAjuda" class="help-text">
+                            O padrão urbano possui 17 números e o ITR possui 13 números.
+                        </p>
+
+                        <div class="preview-card registration-preview">
+                            <span>Inscrição normalizada</span>
+                            <strong id="inscricaoPreview">—</strong>
+                        </div>
+
+                        <div class="actions">
+                            <button id="copiarInscricao" class="primary">Copiar inscrição</button>
+                            <button id="copiarInscricaoSemMascara" class="secondary">Copiar somente números</button>
+                            <button id="limparInscricao" class="secondary">Limpar</button>
+                        </div>
+
+                        <label class="checkbox-row registration-auto-copy">
+                            <input id="inscricaoCopiaAutomatica" type="checkbox">
+                            Copiar automaticamente quando a inscrição estiver completa
+                        </label>
+                    </section>
+
+                    <aside class="generator-sidebar">
+                        <section class="sidebar-card">
+                            <div class="section-heading">
+                                <h3>Histórico recente</h3>
+                                <button id="limparHistoricoInscricao" class="text-button">Limpar</button>
+                            </div>
+
+                            <ul id="inscricaoHistorico" class="history-list compact-list">
+                                <li class="empty-state">Nenhuma inscrição copiada recentemente.</li>
+                            </ul>
+                        </section>
+
+                        <section class="sidebar-card">
+                            <h3>Formatos aceitos</h3>
+
+                            <div class="format-examples">
+                                <div>
+                                    <span>Urbano</span>
+                                    <code>00.000.000.00.0000000</code>
+                                </div>
+
+                                <div>
+                                    <span>ITR</span>
+                                    <code>000.000.000.000-0</code>
+                                </div>
+                            </div>
+                        </section>
+                    </aside>
                 </div>
             </div>
         </section>
@@ -363,7 +451,7 @@
     </main>
 
     <footer class="app-footer">
-        <p>Utilitários Municipais • Versão 1.4.1</p>
+        <p>Utilitários Municipais • Versão 1.5</p>
     </footer>
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>

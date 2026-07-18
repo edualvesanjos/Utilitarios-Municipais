@@ -1,59 +1,44 @@
-# Utilitários Municipais — versão 1.4.1
+# Utilitários Municipais — versão 1.5
 
-Refatoração completa do módulo Gerador de Nome de Arquivo.
+Etapa 5 do projeto, com foco no módulo de Inscrição Imobiliária.
 
-## Principais mudanças
+## Melhorias do módulo
 
-- Remoção dos modelos fixos de nomenclatura.
-- Montador visual baseado em blocos.
-- Blocos disponíveis:
-  - Nome
-  - Prefixo
-  - Processo
-  - AP
-  - Data/Hora
-- Ativação e desativação individual de cada bloco.
-- Reordenação por botões Subir e Descer.
-- Pré-visualização automática em tempo real.
-- Separador configurável.
-- Nome sempre em letras maiúsculas e sem espaços.
-- Processo digitado como `número/ano` e convertido para `número-ano`.
-- Data e hora no padrão `ddmmaaaahhmmss`.
-- Modelos personalizados salvos no navegador.
-- Histórico dos nomes copiados.
+- Detecção automática entre inscrição urbana e ITR.
+- Seleção manual opcional do tipo.
+- Colagem inteligente de valores com ou sem máscara.
+- Normalização automática durante a digitação.
+- Validação em tempo real.
+- Painel com tipo identificado, quantidade de números e situação.
+- Pré-visualização da inscrição normalizada.
+- Cópia com máscara.
+- Cópia somente dos números.
+- Cópia automática opcional quando a inscrição estiver completa.
+- Histórico persistente das inscrições copiadas.
+- Botões de cópia no histórico.
 
-## Exemplo
+## Padrões
 
-Entrada:
+### Urbano
 
 ```text
-Nome: Eduardo Alves dos Anjos
-Prefixo: DAE
-Processo: 22667/2026
-AP: ativado
-Data/Hora: ativado
+00.000.000.00.0000000
 ```
 
-Ordem:
+Total: 17 números.
+
+### ITR
 
 ```text
-Nome
-Prefixo
-Processo
-AP
-Data/Hora
+000.000.000.000-0
 ```
 
-Resultado:
-
-```text
-EDUARDOALVESDOSANJOS_DAE_22667-2026_AP_18072026153045
-```
+Total: 13 números.
 
 ## Estrutura
 
 ```text
-UtilitariosMunicipais_v1.4/
+UtilitariosMunicipais_v1.5/
 ├── index.html
 ├── app.css
 ├── app.js
@@ -61,9 +46,10 @@ UtilitariosMunicipais_v1.4/
 └── CHANGELOG.md
 ```
 
+## Recursos mantidos
 
-## Ajuste da versão 1.4.1
-
-- A pré-visualização foi movida para logo abaixo do painel de opções.
-- Os botões `Copiar nome`, `Salvar modelo` e `Limpar campos` agora aparecem imediatamente após a pré-visualização.
-- Os painéis `Blocos disponíveis` e `Ordem dos blocos` permanecem abaixo desses controles.
+- Montador visual de nome de arquivo.
+- Gerador sequencial de lotes.
+- Calculadora UVRM.
+- Calculadora percentual.
+- Configurações, persistência e backup.

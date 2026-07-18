@@ -8,6 +8,8 @@ const FORM_DATA_KEY = `${STORAGE_PREFIX}formData`;
 const FILE_HISTORY_KEY = `${STORAGE_PREFIX}fileHistory`;
 const FILE_MODELS_KEY = `${STORAGE_PREFIX}fileModels`;
 const FILE_BUILDER_KEY = `${STORAGE_PREFIX}fileBuilder`;
+const REGISTRATION_HISTORY_KEY = `${STORAGE_PREFIX}registrationHistory`;
+const REGISTRATION_AUTO_COPY_KEY = `${STORAGE_PREFIX}registrationAutoCopy`;
 
 const formatCurrency = (value) =>
     new Intl.NumberFormat("pt-BR", {
@@ -615,6 +617,32 @@ persistentFieldIds.forEach((id) => {
 
 /* Inscrição imobiliária */
 
+let lastAutoCopiedRegistration = "";
+
+function getSelectedRegistrationType() {
+    return document.querySelector(
+        'input[name="inscricaoTipo"]:checked'
+    )?.value || "auto";
+}
+
+function detectRegistrationType(digits) {
+    const selectedType = getSelectedRegistrationType();
+
+    if (selectedType !== "auto") {
+        return selectedType;
+    }
+
+    if (digits.length > 13) {
+        return "urbano";
+    }
+
+    if (digits.length === 13) {
+        return "itr";
+    }
+
+    return "indefinido";
+}
+
 function applyUrbanMask(value) {
     const digits = onlyDigits(value).slice(0, 17);
     const groups = [2, 3, 3, 2, 7];
@@ -624,7 +652,9 @@ function applyUrbanMask(value) {
     for (const size of groups) {
         const part = digits.slice(index, index + size);
 
-        if (!part) break;
+        if (!part) {
+            break;
+        }
 
         parts.push(part);
         index += size;
@@ -651,65 +681,230 @@ function applyItrMask(value) {
     return result;
 }
 
+function getRegistrationHistory() {
+    return getJson(REGISTRATION_HISTORY_KEY, []);
+}
+
+function addRegistrationHistory(masked, type) {
+    const item = {
+        masked,
+        digits: onlyDigits(masked),
+        type,
+        copiedAt: new Date().toISOString()
+    };
+
+    const history = getRegistrationHistory()
+        .filter((entry) => entry.masked !== masked)
+        .slice(0, 14);
+
+    history.unshift(item);
+    setJson(REGISTRATION_HISTORY_KEY, history);
+    renderRegistrationHistory();
+}
+
+function renderRegistrationHistory() {
+    const list = $("#inscricaoHistorico");
+    const history = getRegistrationHistory();
+
+    if (history.length === 0) {
+        list.innerHTML =
+            '<li class="empty-state">Nenhuma inscrição copiada recentemente.</li>';
+        return;
+    }
+
+    list.innerHTML = "";
+
+    history.forEach((item) => {
+        const li = document.createElement("li");
+        const text = document.createElement("span");
+        const actions = document.createElement("div");
+        const maskedButton = document.createElement("button");
+        const digitsButton = document.createElement("button");
+
+        text.textContent = `${item.masked} (${item.type.toUpperCase()})`;
+        actions.className = "list-actions";
+
+        maskedButton.textContent = "Copiar";
+        maskedButton.className = "secondary mini-button";
+        maskedButton.addEventListener("click", () => copyText(item.masked));
+
+        digitsButton.textContent = "Números";
+        digitsButton.className = "secondary mini-button";
+        digitsButton.addEventListener("click", () => copyText(item.digits));
+
+        actions.append(maskedButton, digitsButton);
+        li.append(text, actions);
+        list.appendChild(li);
+    });
+}
+
+async function maybeAutoCopyRegistration(masked, type, valid) {
+    if (
+        !valid ||
+        !$("#inscricaoCopiaAutomatica").checked ||
+        masked === lastAutoCopiedRegistration
+    ) {
+        return;
+    }
+
+    const copied = await copyText(masked);
+
+    if (copied) {
+        lastAutoCopiedRegistration = masked;
+        addRegistrationHistory(masked, type);
+    }
+}
+
 function updateRegistrationField() {
     const field = $("#inscricaoValor");
+    const preview = $("#inscricaoPreview");
     const help = $("#inscricaoAjuda");
-    const isItr = $("#inscricaoItr").checked;
-    const expected = isItr ? 13 : 17;
+    const typeElement = $("#inscricaoTipoDetectado");
+    const countElement = $("#inscricaoContagem");
+    const statusElement = $("#inscricaoStatus");
 
-    field.placeholder = isItr
-        ? "000.000.000.000-0"
-        : "00.000.000.00.0000000";
+    const rawDigits = onlyDigits(field.value);
+    const type = detectRegistrationType(rawDigits);
+    const maxLength = type === "itr" ? 13 : 17;
+    const digits = rawDigits.slice(0, maxLength);
 
-    field.value = isItr
-        ? applyItrMask(field.value)
-        : applyUrbanMask(field.value);
+    let masked = "";
+    let expected = 0;
+    let typeLabel = "Aguardando";
 
-    const digits = onlyDigits(field.value);
+    if (type === "urbano") {
+        expected = 17;
+        typeLabel = "Urbano";
+        masked = applyUrbanMask(digits);
+    } else if (type === "itr") {
+        expected = 13;
+        typeLabel = "ITR";
+        masked = applyItrMask(digits);
+    } else {
+        masked = digits;
+    }
+
+    field.value = masked;
+    preview.textContent = masked || "—";
+    typeElement.textContent = typeLabel;
+    countElement.textContent = String(digits.length);
 
     help.classList.remove("error", "success");
+    statusElement.classList.remove("status-valid", "status-invalid");
 
     if (digits.length === 0) {
-        help.textContent = isItr
-            ? "Digite 13 números para o padrão ITR."
-            : "Digite 17 números para o padrão urbano.";
-        return;
-    }
-
-    if (digits.length !== expected) {
+        statusElement.textContent = "Aguardando";
         help.textContent =
-            `Quantidade incorreta: ${digits.length} de ${expected} números.`;
-        help.classList.add("error");
+            "O padrão urbano possui 17 números e o ITR possui 13 números.";
+        lastAutoCopiedRegistration = "";
         return;
     }
 
-    help.textContent = "Inscrição válida.";
-    help.classList.add("success");
+    if (type === "indefinido") {
+        statusElement.textContent = "Incompleta";
+        statusElement.classList.add("status-invalid");
+        help.textContent =
+            "Continue digitando ou selecione manualmente o tipo.";
+        help.classList.add("error");
+        lastAutoCopiedRegistration = "";
+        return;
+    }
+
+    const valid = digits.length === expected;
+
+    if (valid) {
+        statusElement.textContent = "Completa";
+        statusElement.classList.add("status-valid");
+        help.textContent = `Inscrição ${typeLabel} completa e normalizada.`;
+        help.classList.add("success");
+        maybeAutoCopyRegistration(masked, type, true);
+    } else {
+        statusElement.textContent = "Incompleta";
+        statusElement.classList.add("status-invalid");
+        help.textContent =
+            `Quantidade atual: ${digits.length} de ${expected} números.`;
+        help.classList.add("error");
+        lastAutoCopiedRegistration = "";
+    }
 }
 
 $("#inscricaoValor").addEventListener("input", updateRegistrationField);
 
-$("#inscricaoItr").addEventListener("change", () => {
-    $("#inscricaoValor").value = "";
-    updateRegistrationField();
+$("#inscricaoValor").addEventListener("paste", () => {
+    window.setTimeout(updateRegistrationField, 0);
 });
 
-$("#copiarInscricao").addEventListener("click", () => {
-    const isItr = $("#inscricaoItr").checked;
-    const expected = isItr ? 13 : 17;
-    const value = $("#inscricaoValor").value;
+document
+    .querySelectorAll('input[name="inscricaoTipo"]')
+    .forEach((radio) => {
+        radio.addEventListener("change", () => {
+            lastAutoCopiedRegistration = "";
+            updateRegistrationField();
+        });
+    });
 
-    if (onlyDigits(value).length !== expected) {
+$("#inscricaoCopiaAutomatica").addEventListener("change", (event) => {
+    localStorage.setItem(
+        REGISTRATION_AUTO_COPY_KEY,
+        String(event.target.checked)
+    );
+
+    lastAutoCopiedRegistration = "";
+
+    if (event.target.checked) {
+        showToast("Cópia automática ativada.");
+        updateRegistrationField();
+    } else {
+        showToast("Cópia automática desativada.");
+    }
+});
+
+$("#copiarInscricao").addEventListener("click", async () => {
+    const masked = $("#inscricaoPreview").textContent.trim();
+    const digits = onlyDigits(masked);
+    const type = detectRegistrationType(digits);
+    const expected = type === "urbano" ? 17 : type === "itr" ? 13 : 0;
+
+    if (!expected || digits.length !== expected) {
         showToast("Complete a inscrição antes de copiar.");
         return;
     }
 
-    copyText(value);
+    const copied = await copyText(masked);
+
+    if (copied) {
+        addRegistrationHistory(masked, type);
+    }
+});
+
+$("#copiarInscricaoSemMascara").addEventListener("click", async () => {
+    const masked = $("#inscricaoPreview").textContent.trim();
+    const digits = onlyDigits(masked);
+    const type = detectRegistrationType(digits);
+    const expected = type === "urbano" ? 17 : type === "itr" ? 13 : 0;
+
+    if (!expected || digits.length !== expected) {
+        showToast("Complete a inscrição antes de copiar.");
+        return;
+    }
+
+    const copied = await copyText(digits);
+
+    if (copied) {
+        addRegistrationHistory(masked, type);
+    }
 });
 
 $("#limparInscricao").addEventListener("click", () => {
     $("#inscricaoValor").value = "";
+    lastAutoCopiedRegistration = "";
     updateRegistrationField();
+});
+
+$("#limparHistoricoInscricao").addEventListener("click", () => {
+    localStorage.removeItem(REGISTRATION_HISTORY_KEY);
+    renderRegistrationHistory();
+    showToast("Histórico de inscrições removido.");
 });
 
 /* Lotes */
@@ -886,7 +1081,7 @@ function collectBackupData() {
 
     return {
         application: "Utilitários Municipais",
-        version: "1.4",
+        version: "1.5",
         exportedAt: new Date().toISOString(),
         data
     };
@@ -982,6 +1177,10 @@ function initializeApplication() {
     renderFileHistory();
     updateFilePreview();
 
+    $("#inscricaoCopiaAutomatica").checked =
+        localStorage.getItem(REGISTRATION_AUTO_COPY_KEY) === "true";
+
+    renderRegistrationHistory();
     updateRegistrationField();
     updateLastLotDisplay();
 
