@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0f4c81">
+    <title>Utilitários Municipais</title>
+    <link rel="stylesheet" href="app.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div>
+                <span class="eyebrow">Prefeitura • Ferramentas internas</span>
+                <h1>Utilitários Municipais</h1>
+                <p>Ferramentas rápidas para rotinas administrativas.</p>
+            </div>
+
+            <span class="version-badge">Versão 1.3</span>
+        </div>
+    </header>
+
+    <main class="app-container">
+        <nav class="tabs" aria-label="Navegação entre utilitários">
+            <button class="tab-button active" data-tab="arquivo">Nome de arquivo</button>
+            <button class="tab-button" data-tab="inscricao">Inscrição imobiliária</button>
+            <button class="tab-button" data-tab="lote">Número de lote</button>
+            <button class="tab-button" data-tab="uvrm">Calculadora UVRM</button>
+            <button class="tab-button" data-tab="percentual">Percentual</button>
+            <button class="tab-button" data-tab="configuracoes">Configurações</button>
+        </nav>
+
+        <section id="arquivo" class="tab-panel active">
+            <div class="card">
+                <div class="section-heading main-heading">
+                    <div>
+                        <h2>Gerador de nome de arquivo</h2>
+                        <p class="section-description">
+                            Monte nomes padronizados com modelos, prefixos, datas e favoritos.
+                        </p>
+                    </div>
+
+                    <span class="feature-badge">Aprimorado na v1.3</span>
+                </div>
+
+                <div class="generator-layout">
+                    <div class="generator-form">
+                        <div class="grid two-columns">
+                            <div class="field-with-action">
+                                <label for="arquivoNome">Nome</label>
+                                <div class="inline-field">
+                                    <input id="arquivoNome" type="text" placeholder="Ex.: Empresa Exemplo Ltda">
+                                    <button class="icon-button" data-copy-input="arquivoNome" title="Copiar nome">Copiar</button>
+                                </div>
+                            </div>
+
+                            <div class="field-with-action">
+                                <label for="arquivoProcesso">Número do processo</label>
+                                <div class="inline-field">
+                                    <input id="arquivoProcesso" type="text" placeholder="Ex.: 12345/2026">
+                                    <button class="icon-button" data-copy-input="arquivoProcesso" title="Copiar processo">Copiar</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid two-columns">
+                            <label>
+                                Tipo de documento
+                                <select id="arquivoTipo">
+                                    <option value="Certidao">Certidão</option>
+                                    <option value="Despacho">Despacho</option>
+                                    <option value="Oficio">Ofício</option>
+                                    <option value="Parecer">Parecer</option>
+                                    <option value="Requerimento">Requerimento</option>
+                                </select>
+                            </label>
+
+                            <label>
+                                Extensão
+                                <select id="arquivoExtensao">
+                                    <option value="pdf">PDF</option>
+                                    <option value="docx">DOCX</option>
+                                    <option value="odt">ODT</option>
+                                    <option value="xlsx">XLSX</option>
+                                </select>
+                            </label>
+                        </div>
+
+                        <div class="grid two-columns">
+                            <label>
+                                Prefixo personalizado
+                                <input id="arquivoPrefixo" type="text" placeholder="Ex.: DAE">
+                            </label>
+
+                            <label>
+                                Modelo de nomenclatura
+                                <select id="arquivoModelo">
+                                    <option value="padrao">Tipo_Processo_Nome</option>
+                                    <option value="nomePrimeiro">Nome_Tipo_Processo</option>
+                                    <option value="processoPrimeiro">Processo_Tipo_Nome</option>
+                                    <option value="simplificado">Tipo_Nome</option>
+                                </select>
+                            </label>
+                        </div>
+
+                        <div class="options-panel">
+                            <label class="checkbox-row">
+                                <input id="arquivoIncluirData" type="checkbox">
+                                Incluir data no nome
+                            </label>
+
+                            <label class="checkbox-row">
+                                <input id="arquivoIncluirHora" type="checkbox">
+                                Incluir hora
+                            </label>
+
+                            <label class="checkbox-row">
+                                <input id="arquivoMaiusculas" type="checkbox">
+                                Converter tudo para maiúsculas
+                            </label>
+                        </div>
+
+                        <div class="actions">
+                            <button id="gerarArquivo" class="primary">Gerar nome</button>
+                            <button id="favoritarArquivo" class="secondary">Adicionar aos favoritos</button>
+                            <button id="limparArquivo" class="secondary">Limpar</button>
+                        </div>
+
+                        <p id="arquivoMensagem" class="feedback" aria-live="polite"></p>
+
+                        <div class="result-box result-highlight">
+                            <span>Resultado</span>
+                            <div class="result-row">
+                                <strong id="arquivoResultado">—</strong>
+                                <button class="icon-button" data-copy-target="arquivoResultado" title="Copiar resultado">Copiar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <aside class="generator-sidebar">
+                        <section class="sidebar-card">
+                            <div class="section-heading">
+                                <h3>Favoritos</h3>
+                                <button id="limparFavoritosArquivo" class="text-button">Limpar</button>
+                            </div>
+
+                            <ul id="arquivoFavoritos" class="history-list compact-list">
+                                <li class="empty-state">Nenhum favorito salvo.</li>
+                            </ul>
+                        </section>
+
+                        <section class="sidebar-card">
+                            <div class="section-heading">
+                                <h3>Histórico recente</h3>
+                                <button id="limparHistoricoArquivo" class="text-button">Limpar</button>
+                            </div>
+
+                            <ul id="arquivoHistorico" class="history-list compact-list">
+                                <li class="empty-state">Nenhum nome gerado recentemente.</li>
+                            </ul>
+                        </section>
+                    </aside>
+                </div>
+            </div>
+        </section>
+
+        <section id="inscricao" class="tab-panel">
+            <div class="card">
+                <h2>Padrão de inscrição imobiliária</h2>
+
+                <label class="checkbox-row">
+                    <input id="inscricaoItr" type="checkbox">
+                    Usar padrão ITR
+                </label>
+
+                <label>
+                    Inscrição
+                    <input id="inscricaoValor" type="text" inputmode="numeric" autocomplete="off" placeholder="00.000.000.00.0000000">
+                </label>
+
+                <p id="inscricaoAjuda" class="help-text">
+                    Digite 17 números para o padrão urbano.
+                </p>
+
+                <div class="actions">
+                    <button id="copiarInscricao" class="primary">Copiar inscrição</button>
+                    <button id="limparInscricao" class="secondary">Limpar</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="lote" class="tab-panel">
+            <div class="card">
+                <h2>Gerador de número de lote</h2>
+
+                <div class="grid three-columns">
+                    <label>
+                        Setor
+                        <select id="loteSetor">
+                            <option>97</option>
+                            <option>98</option>
+                            <option>99</option>
+                        </select>
+                    </label>
+
+                    <label>
+                        Quadra
+                        <select id="loteQuadra">
+                            <option>997</option>
+                            <option>998</option>
+                            <option>999</option>
+                        </select>
+                    </label>
+
+                    <label>
+                        Quantidade
+                        <input id="loteQuantidade" type="number" min="1" max="100" value="1">
+                    </label>
+                </div>
+
+                <p class="help-text">
+                    Última sequência registrada:
+                    <strong id="loteUltimaSequencia">00003</strong>
+                </p>
+
+                <div class="actions">
+                    <button id="gerarLotes" class="primary">Gerar lote(s)</button>
+                    <button id="copiarLotes" class="secondary">Copiar resultado</button>
+                    <button id="limparLotes" class="secondary">Limpar resultado</button>
+                    <button id="reiniciarSequenciaLotes" class="danger-outline">Reiniciar sequência</button>
+                </div>
+
+                <div class="result-box">
+                    <span>Resultado</span>
+                    <pre id="loteResultado">—</pre>
+                </div>
+            </div>
+        </section>
+
+        <section id="uvrm" class="tab-panel">
+            <div class="card">
+                <h2>Calculadora UVRM</h2>
+
+                <div class="grid two-columns">
+                    <label>
+                        Quantidade de UVRM
+                        <input id="uvrmQuantidade" type="text" inputmode="decimal" placeholder="0">
+                    </label>
+
+                    <label>
+                        Valor unitário da UVRM
+                        <input id="uvrmValor" type="text" inputmode="decimal" placeholder="0,00">
+                    </label>
+                </div>
+
+                <div class="actions">
+                    <button id="calcularUvrm" class="primary">Calcular</button>
+                    <button id="limparUvrm" class="secondary">Limpar</button>
+                </div>
+
+                <p id="uvrmMensagem" class="feedback" aria-live="polite"></p>
+
+                <div class="result-box">
+                    <span>Resultado</span>
+                    <strong id="uvrmResultado">R$ 0,00</strong>
+                </div>
+            </div>
+        </section>
+
+        <section id="percentual" class="tab-panel">
+            <div class="card">
+                <h2>Calculadora percentual</h2>
+
+                <div class="grid two-columns">
+                    <label>
+                        Valor base
+                        <input id="percentualBase" type="text" inputmode="decimal" placeholder="0,00">
+                    </label>
+
+                    <label>
+                        Percentual
+                        <input id="percentualTaxa" type="text" inputmode="decimal" placeholder="0">
+                    </label>
+                </div>
+
+                <label>
+                    Operação
+                    <select id="percentualOperacao">
+                        <option value="somente">Calcular apenas o percentual</option>
+                        <option value="acrescentar">Acrescentar ao valor base</option>
+                        <option value="descontar">Descontar do valor base</option>
+                    </select>
+                </label>
+
+                <div class="actions">
+                    <button id="calcularPercentual" class="primary">Calcular</button>
+                    <button id="limparPercentual" class="secondary">Limpar</button>
+                </div>
+
+                <p id="percentualMensagem" class="feedback" aria-live="polite"></p>
+
+                <div class="results-grid">
+                    <div class="result-box">
+                        <span>Valor do percentual</span>
+                        <strong id="percentualResultado">R$ 0,00</strong>
+                    </div>
+
+                    <div class="result-box">
+                        <span>Valor final</span>
+                        <strong id="percentualFinal">R$ 0,00</strong>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="configuracoes" class="tab-panel">
+            <div class="card">
+                <h2>Configurações e dados locais</h2>
+
+                <div class="settings-grid">
+                    <article class="settings-card">
+                        <h3>Preferências</h3>
+
+                        <label class="checkbox-row">
+                            <input id="salvarCampos" type="checkbox">
+                            Salvar automaticamente os campos preenchidos
+                        </label>
+
+                        <p class="help-text">
+                            Quando ativado, os dados permanecem neste navegador.
+                        </p>
+                    </article>
+
+                    <article class="settings-card">
+                        <h3>Backup</h3>
+
+                        <p class="help-text">
+                            Exporte ou importe as configurações e sequências locais.
+                        </p>
+
+                        <div class="actions">
+                            <button id="exportarDados" class="primary">Exportar backup</button>
+
+                            <label class="file-button">
+                                Importar backup
+                                <input id="importarDados" type="file" accept=".json,application/json">
+                            </label>
+                        </div>
+                    </article>
+
+                    <article class="settings-card danger-zone">
+                        <h3>Limpeza completa</h3>
+
+                        <p class="help-text">
+                            Remove preferências, histórico, favoritos e sequência de lotes deste navegador.
+                        </p>
+
+                        <button id="limparTodosDados" class="danger">
+                            Apagar todos os dados locais
+                        </button>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <p>Utilitários Municipais • Versão 1.3</p>
+    </footer>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
