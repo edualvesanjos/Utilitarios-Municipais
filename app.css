@@ -127,6 +127,11 @@ select {
     padding: clamp(22px, 4vw, 36px);
 }
 
+.card h2,
+.card h3 {
+    margin: 0;
+}
+
 .card h2 {
     color: #0f4c81;
 }
@@ -135,10 +140,19 @@ select {
     color: #26384c;
 }
 
-.section-description {
-    margin: 8px 0 0;
+.section-description,
+.mini-description {
     color: #617184;
     line-height: 1.5;
+}
+
+.section-description {
+    margin: 8px 0 0;
+}
+
+.mini-description {
+    margin: 5px 0 0;
+    font-size: 0.84rem;
 }
 
 .main-heading {
@@ -153,7 +167,8 @@ select {
 }
 
 .two-columns,
-.results-grid {
+.results-grid,
+.settings-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
@@ -161,13 +176,9 @@ select {
     grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.settings-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.generator-layout {
+.generator-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1.6fr) minmax(280px, 0.8fr);
+    grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.7fr);
     gap: 24px;
 }
 
@@ -177,15 +188,25 @@ select {
     gap: 16px;
 }
 
-.sidebar-card {
+.builder-panel,
+.sidebar-card,
+.settings-card {
     border: 1px solid #dce4ec;
     border-radius: 12px;
     background: #f8fafc;
+}
+
+.builder-panel {
+    padding: 22px;
+}
+
+.sidebar-card,
+.settings-card {
     padding: 18px;
 }
 
 label,
-.field-with-action {
+.compact-field {
     display: grid;
     gap: 7px;
     margin-bottom: 16px;
@@ -227,7 +248,7 @@ select:focus {
     gap: 12px 20px;
     border: 1px solid #dce4ec;
     border-radius: 10px;
-    background: #f8fafc;
+    background: white;
     margin-bottom: 18px;
     padding: 14px;
 }
@@ -236,11 +257,99 @@ select:focus {
     margin: 0;
 }
 
+.builder-section {
+    margin-top: 22px;
+}
+
+.available-blocks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.block-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid #cfd9e3;
+    border-radius: 999px;
+    background: white;
+    padding: 9px 12px;
+    font-size: 0.86rem;
+    font-weight: 700;
+}
+
+.block-toggle input {
+    width: auto;
+}
+
+.block-order-list {
+    display: grid;
+    gap: 9px;
+    margin: 14px 0 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: block-order;
+}
+
+.block-order-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #d6e0ea;
+    border-radius: 10px;
+    background: white;
+    padding: 10px 12px;
+}
+
+.block-order-item::before {
+    counter-increment: block-order;
+    content: counter(block-order);
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #e8f4fb;
+    color: #0f4c81;
+    font-weight: 700;
+}
+
+.block-order-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.preview-card {
+    margin-top: 22px;
+    border: 1px solid #b8d7ec;
+    border-radius: 12px;
+    background: #f4faff;
+    padding: 18px;
+}
+
+.preview-card span {
+    display: block;
+    margin-bottom: 8px;
+    color: #617184;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.preview-card strong {
+    display: block;
+    color: #0f4c81;
+    word-break: break-word;
+}
+
 .actions {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    margin-top: 8px;
+    margin-top: 16px;
 }
 
 button,
@@ -266,6 +375,12 @@ button,
 
 .icon-button {
     padding: 8px 11px;
+}
+
+.mini-button {
+    border-radius: 7px;
+    padding: 6px 8px;
+    font-size: 0.74rem;
 }
 
 .danger {
@@ -338,21 +453,50 @@ button,
     gap: 6px;
 }
 
-.mini-button {
-    border-radius: 7px;
-    padding: 6px 8px;
-    font-size: 0.75rem;
-}
-
-.settings-card {
-    border: 1px solid #dce4ec;
+.result-box {
+    margin-top: 24px;
+    border: 1px solid #d7e1eb;
     border-radius: 12px;
     background: #f8fafc;
-    padding: 20px;
+    padding: 16px;
 }
 
-.settings-card .help-text {
-    margin: 10px 0 16px;
+.result-box > span {
+    display: block;
+    margin-bottom: 9px;
+    color: #6b7786;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.results-grid .result-box {
+    margin-top: 24px;
+}
+
+pre {
+    margin: 0;
+    white-space: pre-wrap;
+    font-family: Consolas, monospace;
+}
+
+.help-text,
+.feedback {
+    margin: 10px 0 0;
+    color: #617184;
+    font-size: 0.9rem;
+}
+
+.help-text.success,
+.feedback.success {
+    color: #14733c;
+    font-weight: 700;
+}
+
+.help-text.error,
+.feedback.error {
+    color: #b42318;
+    font-weight: 700;
 }
 
 .danger-zone {
