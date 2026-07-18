@@ -73,15 +73,6 @@ async function copyText(text) {
     }
 }
 
-function setFeedback(element, message = "", type = "") {
-    element.textContent = message;
-    element.classList.remove("error", "success");
-
-    if (type) {
-        element.classList.add(type);
-    }
-}
-
 function getJson(key, fallback) {
     try {
         const value = localStorage.getItem(key);
@@ -103,7 +94,7 @@ function activateTab(tabId) {
     );
     const targetPanel = document.getElementById(tabId);
 
-    if (!targetButton || !targetPanel) {
+    if (!button || !panel) {
         return;
     }
 
@@ -336,8 +327,6 @@ function renderFileList({
 
         actions.appendChild(copyButton);
 
-        if (removable && onRemove) {
-            const removeButton = document.createElement("button");
             removeButton.textContent = "Remover";
             removeButton.className = "danger-outline mini-button";
             removeButton.addEventListener("click", () => onRemove(item));
@@ -405,8 +394,6 @@ $("#gerarArquivo").addEventListener("click", () => {
     const result = buildFileName();
     const mensagem = $("#arquivoMensagem");
 
-    if (processo && !isValidProcessNumber(processo)) {
-        $("#arquivoResultado").textContent = "—";
         setFeedback(
             mensagem,
             "Corrija o número do processo para o padrão número-ano.",
@@ -416,7 +403,6 @@ $("#gerarArquivo").addEventListener("click", () => {
     }
 
     if (!result) {
-        $("#arquivoResultado").textContent = "—";
         setFeedback(
             mensagem,
             "Informe pelo menos o nome, o processo ou o prefixo.",
@@ -455,15 +441,12 @@ $("#favoritarArquivo").addEventListener("click", () => {
         addFileFavorite(generated);
         return;
     }
-
-    addFileFavorite(current);
 });
 
 $("#limparArquivo").addEventListener("click", () => {
     $("#arquivoNome").value = "";
     $("#arquivoProcesso").value = "";
     $("#arquivoPrefixo").value = "";
-    $("#arquivoModelo").selectedIndex = 0;
     $("#arquivoAnaliseProjeto").checked = false;
     $("#arquivoIncluirDataHora").checked = false;
     $("#arquivoMaiusculas").checked = false;
@@ -471,7 +454,6 @@ $("#limparArquivo").addEventListener("click", () => {
 
     updateProcessField();
     setFeedback($("#arquivoMensagem"));
-    saveFormData();
 });
 
 $("#limparHistoricoArquivo").addEventListener("click", () => {
@@ -645,7 +627,6 @@ $("#copiarLotes").addEventListener("click", () => {
 $("#limparLotes").addEventListener("click", () => {
     $("#loteResultado").textContent = "—";
     $("#loteQuantidade").value = 1;
-    updateLastLotDisplay();
     saveFormData();
 });
 
@@ -667,7 +648,6 @@ $("#reiniciarSequenciaLotes").addEventListener("click", () => {
 $("#calcularUvrm").addEventListener("click", () => {
     const quantity = parseDecimal($("#uvrmQuantidade").value);
     const unitValue = parseDecimal($("#uvrmValor").value);
-    const mensagem = $("#uvrmMensagem");
 
     if (
         !Number.isFinite(quantity) ||
@@ -703,7 +683,6 @@ $("#calcularPercentual").addEventListener("click", () => {
     const base = parseDecimal($("#percentualBase").value);
     const rate = parseDecimal($("#percentualTaxa").value);
     const operation = $("#percentualOperacao").value;
-    const mensagem = $("#percentualMensagem");
 
     if (
         !Number.isFinite(base) ||
@@ -785,7 +764,6 @@ function collectBackupData() {
 }
 
 $("#exportarDados").addEventListener("click", () => {
-    const backup = collectBackupData();
     const blob = new Blob(
         [JSON.stringify(backup, null, 2)],
         { type: "application/json" }
