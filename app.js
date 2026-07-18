@@ -129,8 +129,6 @@ document.querySelectorAll(".tab-button").forEach((button) => {
 const persistentFieldIds = [
     "arquivoNome",
     "arquivoProcesso",
-    "arquivoTipo",
-    "arquivoExtensao",
     "arquivoPrefixo",
     "arquivoModelo",
     "arquivoIncluirData",
@@ -226,12 +224,10 @@ function buildFileName() {
     const processo = normalizeText($("#arquivoProcesso").value);
     const tipo = normalizeText($("#arquivoTipo").value);
     const prefixo = normalizeText($("#arquivoPrefixo").value);
-    const extensao = $("#arquivoExtensao").value;
     const modelo = $("#arquivoModelo").value;
     const incluirData = $("#arquivoIncluirData").checked;
     const incluirHora = $("#arquivoIncluirHora").checked;
     const maiusculas = $("#arquivoMaiusculas").checked;
-    const { date, time } = getDateParts();
 
     let parts;
 
@@ -415,8 +411,6 @@ $("#favoritarArquivo").addEventListener("click", () => {
 $("#limparArquivo").addEventListener("click", () => {
     $("#arquivoNome").value = "";
     $("#arquivoProcesso").value = "";
-    $("#arquivoTipo").selectedIndex = 0;
-    $("#arquivoExtensao").selectedIndex = 0;
     $("#arquivoPrefixo").value = "";
     $("#arquivoModelo").selectedIndex = 0;
     $("#arquivoIncluirData").checked = false;
