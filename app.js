@@ -129,12 +129,10 @@ document.querySelectorAll(".tab-button").forEach((button) => {
 const persistentFieldIds = [
     "arquivoNome",
     "arquivoProcesso",
-    "arquivoTipo",
-    "arquivoExtensao",
     "arquivoPrefixo",
     "arquivoModelo",
-    "arquivoIncluirData",
-    "arquivoIncluirHora",
+    "arquivoAnaliseProjeto",
+    "arquivoIncluirDataHora",
     "arquivoMaiusculas",
     "loteSetor",
     "loteQuadra",
@@ -205,60 +203,89 @@ for (const id of persistentFieldIds) {
 
 /* Gerador de nome de arquivo */
 
-function getDateParts() {
+function formatProcessNumber(value) {
+    const digits = onlyDigits(value).slice(0, 12);
+
+    if (digits.length <= 4) {
+        return digits;
+    }
+
+    return `${digits.slice(0, -4)}-${digits.slice(-4)}`;
+}
+
+function isValidProcessNumber(value) {
+    return /^\d+-\d{4}$/.test(String(value).trim());
+}
+
+function updateProcessField() {
+    const field = $("#arquivoProcesso");
+    const help = $("#arquivoProcessoAjuda");
+
+    field.value = formatProcessNumber(field.value);
+    field.classList.remove("input-error");
+    help.classList.remove("error", "success");
+
+    if (!field.value) {
+        help.textContent = "Padrão obrigatório: número-ano.";
+        return;
+    }
+
+    if (!isValidProcessNumber(field.value)) {
+        field.classList.add("input-error");
+        help.textContent = "Processo incompleto. Use o padrão número-ano.";
+        help.classList.add("error");
+        return;
+    }
+
+    help.textContent = "Número do processo válido.";
+    help.classList.add("success");
+}
+
+function getDateTimeStamp() {
     const now = new Date();
 
-    return {
-        date: [
-            String(now.getDate()).padStart(2, "0"),
-            String(now.getMonth() + 1).padStart(2, "0"),
-            now.getFullYear()
-        ].join("-"),
-        time: [
-            String(now.getHours()).padStart(2, "0"),
-            String(now.getMinutes()).padStart(2, "0")
-        ].join("-")
-    };
+    return [
+        String(now.getDate()).padStart(2, "0"),
+        String(now.getMonth() + 1).padStart(2, "0"),
+        String(now.getFullYear()),
+        String(now.getHours()).padStart(2, "0"),
+        String(now.getMinutes()).padStart(2, "0"),
+        String(now.getSeconds()).padStart(2, "0")
+    ].join("");
 }
 
 function buildFileName() {
     const nome = normalizeText($("#arquivoNome").value);
-    const processo = normalizeText($("#arquivoProcesso").value);
-    const tipo = normalizeText($("#arquivoTipo").value);
+    const processo = $("#arquivoProcesso").value.trim();
     const prefixo = normalizeText($("#arquivoPrefixo").value);
-    const extensao = $("#arquivoExtensao").value;
     const modelo = $("#arquivoModelo").value;
-    const incluirData = $("#arquivoIncluirData").checked;
-    const incluirHora = $("#arquivoIncluirHora").checked;
+    const analiseProjeto = $("#arquivoAnaliseProjeto").checked;
+    const incluirDataHora = $("#arquivoIncluirDataHora").checked;
     const maiusculas = $("#arquivoMaiusculas").checked;
-    const { date, time } = getDateParts();
 
     let parts;
 
     switch (modelo) {
-        case "nomePrimeiro":
-            parts = [nome, tipo, processo];
+        case "nomeProcesso":
+            parts = [nome, processo];
             break;
-        case "processoPrimeiro":
-            parts = [processo, tipo, nome];
-            break;
-        case "simplificado":
-            parts = [tipo, nome];
+        case "prefixoProcessoNome":
+            parts = [prefixo, processo, nome];
             break;
         default:
-            parts = [tipo, processo, nome];
+            parts = [processo, nome];
     }
 
-    if (prefixo) {
+    if (modelo !== "prefixoProcessoNome" && prefixo) {
         parts.unshift(prefixo);
     }
 
-    if (incluirData) {
-        parts.push(date);
+    if (analiseProjeto) {
+        parts.push("AP");
     }
 
-    if (incluirHora) {
-        parts.push(time);
+    if (incluirDataHora) {
+        parts.push(getDateTimeStamp());
     }
 
     let result = parts.filter(Boolean).join("_");
@@ -267,7 +294,7 @@ function buildFileName() {
         result = result.toUpperCase();
     }
 
-    return result ? `${result}.${extensao}` : "";
+    return result;
 }
 
 function getFileHistory() {
@@ -371,15 +398,28 @@ function removeFileFavorite(item) {
     showToast("Favorito removido.");
 }
 
+$("#arquivoProcesso").addEventListener("input", updateProcessField);
+
 $("#gerarArquivo").addEventListener("click", () => {
+    const processo = $("#arquivoProcesso").value.trim();
     const result = buildFileName();
     const mensagem = $("#arquivoMensagem");
+
+    if (processo && !isValidProcessNumber(processo)) {
+        $("#arquivoResultado").textContent = "—";
+        setFeedback(
+            mensagem,
+            "Corrija o número do processo para o padrão número-ano.",
+            "error"
+        );
+        return;
+    }
 
     if (!result) {
         $("#arquivoResultado").textContent = "—";
         setFeedback(
             mensagem,
-            "Informe o nome, o processo ou um prefixo.",
+            "Informe pelo menos o nome, o processo ou o prefixo.",
             "error"
         );
         return;
@@ -396,6 +436,13 @@ $("#favoritarArquivo").addEventListener("click", () => {
     const current = $("#arquivoResultado").textContent.trim();
 
     if (!current || current === "—") {
+        const processo = $("#arquivoProcesso").value.trim();
+
+        if (processo && !isValidProcessNumber(processo)) {
+            showToast("Corrija o número do processo.");
+            return;
+        }
+
         const generated = buildFileName();
 
         if (!generated) {
@@ -415,15 +462,14 @@ $("#favoritarArquivo").addEventListener("click", () => {
 $("#limparArquivo").addEventListener("click", () => {
     $("#arquivoNome").value = "";
     $("#arquivoProcesso").value = "";
-    $("#arquivoTipo").selectedIndex = 0;
-    $("#arquivoExtensao").selectedIndex = 0;
     $("#arquivoPrefixo").value = "";
     $("#arquivoModelo").selectedIndex = 0;
-    $("#arquivoIncluirData").checked = false;
-    $("#arquivoIncluirHora").checked = false;
+    $("#arquivoAnaliseProjeto").checked = false;
+    $("#arquivoIncluirDataHora").checked = false;
     $("#arquivoMaiusculas").checked = false;
     $("#arquivoResultado").textContent = "—";
 
+    updateProcessField();
     setFeedback($("#arquivoMensagem"));
     saveFormData();
 });
@@ -732,7 +778,7 @@ function collectBackupData() {
 
     return {
         application: "Utilitários Municipais",
-        version: "1.3",
+        version: "1.3.1",
         exportedAt: new Date().toISOString(),
         data
     };
@@ -820,6 +866,7 @@ function initializeApplication() {
     $("#salvarCampos").checked = shouldSaveFields();
 
     restoreFormData();
+    updateProcessField();
     updateRegistrationField();
     updateLastLotDisplay();
     renderFileHistory();

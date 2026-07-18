@@ -227,6 +227,28 @@ select:focus {
     box-shadow: 0 0 0 3px rgba(15, 76, 129, 0.12);
 }
 
+.input-error {
+    border-color: #b42318;
+    box-shadow: 0 0 0 3px rgba(180, 35, 24, 0.1);
+}
+
+.field-help {
+    margin: 0;
+    color: #617184;
+    font-size: 0.8rem;
+    font-weight: 400;
+}
+
+.field-help.error {
+    color: #b42318;
+    font-weight: 700;
+}
+
+.field-help.success {
+    color: #14733c;
+    font-weight: 700;
+}
+
 .checkbox-row {
     display: flex;
     align-items: center;

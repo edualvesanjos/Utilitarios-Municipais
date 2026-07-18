@@ -1,25 +1,30 @@
 # Changelog
 
-## 1.3.0
+## 1.3.1
+
+### Removido
+
+- Seleção de extensão do arquivo.
+- Seleção de tipo de documento.
 
 ### Adicionado
 
-- Prefixo personalizado no gerador de arquivos.
-- Modelos de nomenclatura.
-- Inclusão opcional de data e hora.
-- Conversão opcional para maiúsculas.
-- Favoritos persistentes.
-- Remoção individual de favoritos.
-- Histórico e favoritos em painel lateral.
-- Persistência das novas opções do gerador.
+- Opção “Análise de projeto”.
+- Inclusão da sigla `AP` no nome gerado.
+- Máscara do número do processo no padrão `número-ano`.
+- Validação visual do número do processo.
+- Data e hora no padrão `ddmmaaaahhmmss`.
 
-### Melhorado
+### Corrigido
 
-- Layout do Gerador de Nome de Arquivo.
-- Organização visual do histórico.
-- Experiência de cópia e reutilização de nomes.
-- Backup atualizado para incluir favoritos e novas preferências.
+- O nome gerado não recebe mais extensão.
+- Data e hora passaram a ser um único bloco numérico de 14 dígitos.
 
 ### Mantido
 
-- Todas as funcionalidades das versões 1.0, 1.1 e 1.2.
+- Prefixo personalizado.
+- Modelos de nomenclatura.
+- Favoritos.
+- Histórico.
+- Conversão opcional para maiúsculas.
+- Todos os demais módulos da aplicação.

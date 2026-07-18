@@ -1,43 +1,44 @@
-# Utilitários Municipais — versão 1.3
+# Utilitários Municipais — versão 1.3.1
 
-Quarta etapa do projeto, com foco no aprimoramento completo do Gerador de Nome de Arquivo.
+Revisão corretiva da Etapa 4, aplicada sobre a versão 1.3.
+
+## Alterações no Gerador de Nome de Arquivo
+
+- Removida a seleção de extensão.
+- Removida a seleção de tipo de documento.
+- Adicionada a opção “Análise de projeto”, que inclui `AP`.
+- Número do processo padronizado como `número-ano`.
+- Máscara automática do processo.
+- Data e hora unificadas no padrão `ddmmaaaahhmmss`.
+- O resultado é gerado sem extensão.
+
+## Exemplos
+
+Sem análise de projeto:
+
+```text
+12345-2026_EMPRESA_EXEMPLO
+```
+
+Com análise de projeto:
+
+```text
+12345-2026_EMPRESA_EXEMPLO_AP
+```
+
+Com data e hora:
+
+```text
+12345-2026_EMPRESA_EXEMPLO_AP_18072026153045
+```
 
 ## Estrutura
 
 ```text
-UtilitariosMunicipais_v1.3/
+UtilitariosMunicipais_v1.3.1/
 ├── index.html
 ├── app.css
 ├── app.js
 ├── README.md
 └── CHANGELOG.md
 ```
-
-## Melhorias do Gerador de Nome de Arquivo
-
-- Prefixo personalizado.
-- Quatro modelos de ordenação.
-- Inclusão opcional da data.
-- Inclusão opcional da hora.
-- Conversão opcional para letras maiúsculas.
-- Histórico persistente dos últimos nomes.
-- Lista de favoritos.
-- Remoção individual dos favoritos.
-- Cópia rápida pelo histórico ou favoritos.
-- Layout lateral para histórico e favoritos.
-- Persistência das novas preferências quando o salvamento automático está ativo.
-
-## Recursos mantidos
-
-- Inscrição imobiliária urbana e ITR.
-- Gerador sequencial de lote.
-- Calculadora UVRM.
-- Calculadora percentual.
-- Configurações e backup em JSON.
-- Persistência da última aba aberta.
-
-## Como executar
-
-Abra o arquivo `index.html` em um navegador moderno.
-
-O projeto também pode ser publicado no GitHub Pages ou importado no StackBlitz.
