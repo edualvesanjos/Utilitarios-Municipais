@@ -1,3 +1,5 @@
+const LAST_TOOL_TAB_KEY = `${APP_CONFIG.storagePrefix}lastToolTab`;
+
 /* Núcleo: navegação entre módulos. */
 
 /* Navegação */
@@ -22,13 +24,24 @@ function activateTab(tabId) {
 
     localStorage.setItem(ACTIVE_TAB_KEY, tabId);
 
+    if (tabId !== "inicio" && tabId !== "configuracoes") {
+        localStorage.setItem(LAST_TOOL_TAB_KEY, tabId);
+    }
+
+    if (tabId === "inicio" && typeof updateDashboardLastToolHighlight === "function") {
+        updateDashboardLastToolHighlight();
+    }
+
     if (tabId === "inicio" && typeof updateDashboardSummary === "function") {
         updateDashboardSummary();
+        window.scrollTo({ top: 0, behavior: "smooth" });
     }
 }
 
-document.querySelectorAll(".tab-button").forEach((button) => {
-    button.addEventListener("click", () => {
-        activateTab(button.dataset.tab);
-    });
+document.addEventListener("click", (event) => {
+    const tabButton = event.target.closest(".tab-button[data-tab]");
+
+    if (tabButton) {
+        activateTab(tabButton.dataset.tab);
+    }
 });

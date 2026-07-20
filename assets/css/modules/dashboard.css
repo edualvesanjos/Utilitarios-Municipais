@@ -263,3 +263,19 @@
         text-align: left;
     }
 }
+
+
+.dashboard-tool-card.is-last-used {
+    border-color: #0f4c81;
+    box-shadow: 0 0 0 2px rgba(15, 76, 129, 0.12), 0 12px 26px rgba(23, 32, 51, 0.1);
+}
+
+.dashboard-tool-card.is-last-used::after {
+    content: "Último acesso";
+    grid-column: 2 / -1;
+    color: #0f4c81;
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}

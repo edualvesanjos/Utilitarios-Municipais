@@ -1,5 +1,40 @@
 # Changelog
 
+## 2.1.2
+
+### Corrigido
+
+- Restaurada a seleção de abas pelos menus superiores.
+- Corrigido `APP.storagePrefix` para `APP_CONFIG.storagePrefix` no núcleo de navegação.
+- Eliminado o erro de referência que interrompia o registro dos eventos de clique.
+
+### Melhorado
+
+- A navegação superior agora usa delegação de eventos, reduzindo o risco de regressões.
+- Mantidos os cartões do dashboard e os botões de retorno à página inicial.
+
+### Validação
+
+- Confirmada a existência de todos os menus e painéis correspondentes.
+- Todos os arquivos JavaScript foram validados sem erros de sintaxe.
+
+## 2.1.1
+
+### Adicionado
+
+- Botão **Voltar para a Página Inicial** no rodapé de todas as abas de ferramentas.
+- Rolagem automática para o topo ao retornar ao dashboard.
+- Destaque visual do último módulo utilizado no dashboard.
+
+### Alterado
+
+- Versão central da aplicação atualizada para `2.1.1`.
+- README atualizado com a nova navegação.
+
+### Compatibilidade
+
+- Mantidas todas as funcionalidades e os dados existentes da versão 2.1.0.
+
 ## 2.1.0
 
 ### Adicionado

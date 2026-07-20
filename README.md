@@ -1,4 +1,4 @@
-# Utilitários Municipais — versão 2.1
+# Utilitários Municipais — versão 2.1.2
 
 Aplicação local para apoio a rotinas administrativas municipais.
 
@@ -51,3 +51,19 @@ assets/
 Extraia o arquivo ZIP e abra `index.html` em um navegador moderno.
 
 O sistema não exige instalação, servidor ou bibliotecas externas. Os dados continuam armazenados localmente no navegador.
+
+
+## Atualização da versão 2.1.1
+
+- Adicionado botão **Voltar para a Página Inicial** no rodapé de todas as ferramentas.
+- Ao retornar ao dashboard, a página rola automaticamente para o topo.
+- O último módulo utilizado fica destacado no dashboard.
+- A versão central da aplicação foi atualizada para `2.1.1`.
+
+
+## Correção da versão 2.1.2
+
+- Restaurada a navegação pelos menus superiores.
+- Corrigida a referência à configuração central da aplicação.
+- Os menus superiores, cartões do dashboard e botões de retorno utilizam a mesma função de navegação.
+- Mantidos o destaque do último módulo e o retorno automático ao topo.

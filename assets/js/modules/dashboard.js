@@ -1,5 +1,17 @@
 /* Módulo: dashboard e tela inicial. */
 
+
+function updateDashboardLastToolHighlight() {
+    const lastTool = localStorage.getItem(LAST_TOOL_TAB_KEY);
+
+    document.querySelectorAll(".dashboard-tool-card").forEach((card) => {
+        card.classList.toggle(
+            "is-last-used",
+            Boolean(lastTool) && card.dataset.openTab === lastTool
+        );
+    });
+}
+
 function getDashboardArray(key) {
     const value = getJson(key, []);
     return Array.isArray(value) ? value : [];
@@ -149,6 +161,7 @@ function renderDashboardRecentItems() {
 }
 
 function updateDashboardSummary() {
+    updateDashboardLastToolHighlight();
     const metrics = {
         dashboardFileModels: getDashboardArray(FILE_MODELS_KEY).length,
         dashboardFileHistory: getDashboardArray(FILE_HISTORY_KEY).length,
