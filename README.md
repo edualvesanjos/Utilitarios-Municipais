@@ -24,8 +24,6 @@ Refatoração completa do módulo Gerador de Nome de Arquivo.
 
 ## Exemplo
 
-Entrada:
-
 ```text
 Nome: Eduardo Alves dos Anjos
 Prefixo: DAE
@@ -50,7 +48,6 @@ Resultado:
 EDUARDOALVESDOSANJOS_DAE_22667-2026_AP_18072026153045
 ```
 
-## Estrutura
 
 ```text
 UtilitariosMunicipais_v1.4/
@@ -62,7 +59,6 @@ UtilitariosMunicipais_v1.4/
 ```
 
 
-## Ajuste da versão 1.4.1
 
 - A pré-visualização foi movida para logo abaixo do painel de opções.
 - Os botões `Copiar nome`, `Salvar modelo` e `Limpar campos` agora aparecem imediatamente após a pré-visualização.
