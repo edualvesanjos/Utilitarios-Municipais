@@ -1,0 +1,8 @@
+/* Configurações e backup — versão 1.9 */
+.settings-summary { margin-top: 0; }
+.settings-card { border: 1px solid #dce4ec; border-radius: 12px; background: #fff; padding: 20px; margin-top: 18px; }
+.settings-card h3 { margin-top: 0; }
+.settings-checklist { display: grid; gap: 10px; margin: 18px 0; }
+.file-button { position: relative; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.file-button input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.danger-zone { border-color: #efc6c2; background: #fffafa; }

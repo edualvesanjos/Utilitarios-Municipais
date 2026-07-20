@@ -1,0 +1,21 @@
+/* =========================================================
+   Calculadora percentual — versão 1.8
+========================================================= */
+
+.percentual-results-grid {
+    margin-top: 18px;
+}
+
+.percentual-results-grid .result-box strong {
+    overflow-wrap: anywhere;
+}
+
+#percentualResultadoCompleto {
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+#percentualStatus.status-valid,
+#percentualResultadoResumo {
+    overflow-wrap: anywhere;
+}

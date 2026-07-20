@@ -1,5 +1,108 @@
 # Changelog
 
+## 2.1.2
+
+### Corrigido
+
+- Restaurada a seleção de abas pelos menus superiores.
+- Corrigido `APP.storagePrefix` para `APP_CONFIG.storagePrefix` no núcleo de navegação.
+- Eliminado o erro de referência que interrompia o registro dos eventos de clique.
+
+### Melhorado
+
+- A navegação superior agora usa delegação de eventos, reduzindo o risco de regressões.
+- Mantidos os cartões do dashboard e os botões de retorno à página inicial.
+
+### Validação
+
+- Confirmada a existência de todos os menus e painéis correspondentes.
+- Todos os arquivos JavaScript foram validados sem erros de sintaxe.
+
+## 2.1.1
+
+### Adicionado
+
+- Botão **Voltar para a Página Inicial** no rodapé de todas as abas de ferramentas.
+- Rolagem automática para o topo ao retornar ao dashboard.
+- Destaque visual do último módulo utilizado no dashboard.
+
+### Alterado
+
+- Versão central da aplicação atualizada para `2.1.1`.
+- README atualizado com a nova navegação.
+
+### Compatibilidade
+
+- Mantidas todas as funcionalidades e os dados existentes da versão 2.1.0.
+
+## 2.1.0
+
+### Adicionado
+
+- Dashboard como nova tela inicial.
+- Cartões de acesso rápido aos seis módulos existentes.
+- Contadores de modelos, históricos e cálculos armazenados.
+- Indicadores de próxima sequência de lote, valor da UVRM e último backup.
+- Lista consolidada de atividades recentes.
+- Botão para atualização manual do resumo.
+- Arquivos modulares `dashboard.js` e `dashboard.css`.
+
+### Alterado
+
+- A aba inicial padrão passou a ser `Início`.
+- A versão central da aplicação foi atualizada para `2.1.0`.
+- A navegação atualiza o dashboard sempre que ele é aberto.
+
+### Compatibilidade
+
+- Mantidos os dados e as chaves existentes no `localStorage`.
+- Mantidas integralmente as funcionalidades da versão 2.0.2.
+- Mantido o funcionamento local sem servidor ou dependências externas.
+
+## 2.0.2
+
+### Corrigido
+
+- Removida a inserção indevida de `arquivoRemoverPontos` no bloco de data/hora.
+- A regra de remoção de pontos agora afeta igualmente prévia, cópia e histórico.
+- Corrigida a atualização inconsistente do número da versão.
+
+### Estrutura
+
+- Criado `assets/js/core/config.js`.
+- Centralizados nome da aplicação, versão e prefixo do armazenamento.
+- Interface e backup agora consultam a configuração central.
+
+## 2.0.1
+
+### Corrigido
+
+- Adicionado ao montador de nome de arquivo o checkbox **Remover pontos (.) dos números**.
+- A opção é iniciada marcada por padrão.
+- Pontos entre algarismos são removidos do nome final quando a opção está ativa.
+- A preferência do checkbox é mantida no armazenamento local.
+
+## 2.0.0
+
+### Estrutura
+
+- Criada a pasta `assets`.
+- Separados os estilos em arquivos gerais e arquivos por módulo.
+- Separadas as rotinas JavaScript em núcleo, módulos e inicialização.
+- Ajustado o `index.html` para carregar os arquivos na ordem correta.
+
+### Compatibilidade
+
+- Mantido o funcionamento local, sem servidor.
+- Mantidos os dados existentes no `localStorage`.
+- Mantidos os identificadores dos campos e as chaves de armazenamento.
+- Mantidas todas as funcionalidades da versão 1.9.
+
+### Documentação
+
+- Atualizados README e CHANGELOG.
+- Atualizada a identificação visual para a versão 2.0.
+
 ## 1.9.0
 
 - Painel de resumo dos dados locais.

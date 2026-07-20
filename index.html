@@ -5,24 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0f4c81">
     <title>Utilitários Municipais</title>
-    <link rel="stylesheet" href="app.css">
+    <link rel="stylesheet" href="assets/css/base.css">
+    <link rel="stylesheet" href="assets/css/layout.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/modules/dashboard.css">
+    <link rel="stylesheet" href="assets/css/modules/arquivo.css">
+    <link rel="stylesheet" href="assets/css/modules/inscricao.css">
+    <link rel="stylesheet" href="assets/css/modules/lotes.css">
+    <link rel="stylesheet" href="assets/css/modules/uvrm.css">
+    <link rel="stylesheet" href="assets/css/modules/percentual.css">
+    <link rel="stylesheet" href="assets/css/modules/configuracoes.css">
 </head>
 <body>
     <header class="app-header">
         <div class="header-content">
             <div>
                 <span class="eyebrow">Prefeitura • Ferramentas internas</span>
-                <h1>Utilitários Municipais</h1>
+                <h1 data-app-name>Utilitários Municipais</h1>
                 <p>Ferramentas rápidas para rotinas administrativas.</p>
             </div>
 
-            <span class="version-badge">Versão 1.5</span>
+            <span class="version-badge">Versão <span data-app-version></span></span>
         </div>
     </header>
 
     <main class="app-container">
         <nav class="tabs" aria-label="Navegação entre utilitários">
-            <button class="tab-button active" data-tab="arquivo">Nome de arquivo</button>
+            <button class="tab-button active" data-tab="inicio">Início</button>
+            <button class="tab-button" data-tab="arquivo">Nome de arquivo</button>
             <button class="tab-button" data-tab="inscricao">Inscrição imobiliária</button>
             <button class="tab-button" data-tab="lote">Número de lote</button>
             <button class="tab-button" data-tab="uvrm">Calculadora UVRM</button>
@@ -30,7 +40,165 @@
             <button class="tab-button" data-tab="configuracoes">Configurações</button>
         </nav>
 
-        <section id="arquivo" class="tab-panel active">
+
+        <section id="inicio" class="tab-panel active">
+            <div class="dashboard-hero">
+                <div>
+                    <span class="eyebrow">Painel de acesso rápido</span>
+                    <h2>Bem-vindo aos Utilitários Municipais</h2>
+                    <p>
+                        Acesse as ferramentas administrativas, acompanhe os dados armazenados
+                        e retome rapidamente as rotinas utilizadas recentemente.
+                    </p>
+                </div>
+
+                <div class="dashboard-version">
+                    <span>Versão instalada</span>
+                    <strong data-app-version></strong>
+                </div>
+            </div>
+
+            <div class="dashboard-tools" aria-label="Ferramentas disponíveis">
+                <button class="dashboard-tool-card" type="button" data-open-tab="arquivo">
+                    <span class="dashboard-tool-icon" aria-hidden="true">ARQ</span>
+                    <span class="dashboard-tool-content">
+                        <strong>Nome de arquivo</strong>
+                        <small>Monte nomes padronizados com blocos configuráveis.</small>
+                    </span>
+                    <span class="dashboard-tool-action">Abrir</span>
+                </button>
+
+                <button class="dashboard-tool-card" type="button" data-open-tab="inscricao">
+                    <span class="dashboard-tool-icon" aria-hidden="true">IM</span>
+                    <span class="dashboard-tool-content">
+                        <strong>Inscrição imobiliária</strong>
+                        <small>Normalize inscrições urbanas e rurais automaticamente.</small>
+                    </span>
+                    <span class="dashboard-tool-action">Abrir</span>
+                </button>
+
+                <button class="dashboard-tool-card" type="button" data-open-tab="lote">
+                    <span class="dashboard-tool-icon" aria-hidden="true">LOT</span>
+                    <span class="dashboard-tool-content">
+                        <strong>Número de lote</strong>
+                        <small>Gere sequências de lotes com setor e quadra.</small>
+                    </span>
+                    <span class="dashboard-tool-action">Abrir</span>
+                </button>
+
+                <button class="dashboard-tool-card" type="button" data-open-tab="uvrm">
+                    <span class="dashboard-tool-icon" aria-hidden="true">UVR</span>
+                    <span class="dashboard-tool-content">
+                        <strong>Calculadora UVRM</strong>
+                        <small>Converta valores entre reais e unidades UVRM.</small>
+                    </span>
+                    <span class="dashboard-tool-action">Abrir</span>
+                </button>
+
+                <button class="dashboard-tool-card" type="button" data-open-tab="percentual">
+                    <span class="dashboard-tool-icon" aria-hidden="true">%</span>
+                    <span class="dashboard-tool-content">
+                        <strong>Percentual</strong>
+                        <small>Calcule percentuais, reajustes, descontos e variações.</small>
+                    </span>
+                    <span class="dashboard-tool-action">Abrir</span>
+                </button>
+
+                <button class="dashboard-tool-card" type="button" data-open-tab="configuracoes">
+                    <span class="dashboard-tool-icon" aria-hidden="true">CFG</span>
+                    <span class="dashboard-tool-content">
+                        <strong>Configurações</strong>
+                        <small>Gerencie backup, restauração e dados armazenados.</small>
+                    </span>
+                    <span class="dashboard-tool-action">Abrir</span>
+                </button>
+            </div>
+
+            <div class="dashboard-summary-grid">
+                <section class="card dashboard-summary-card">
+                    <div class="section-heading">
+                        <div>
+                            <h3>Resumo dos dados</h3>
+                            <p class="mini-description">Informações salvas neste navegador.</p>
+                        </div>
+                        <button class="text-button" type="button" data-open-tab="configuracoes">
+                            Gerenciar
+                        </button>
+                    </div>
+
+                    <div class="dashboard-metrics">
+                        <div class="dashboard-metric">
+                            <span>Modelos de arquivo</span>
+                            <strong id="dashboardFileModels">0</strong>
+                        </div>
+                        <div class="dashboard-metric">
+                            <span>Nomes no histórico</span>
+                            <strong id="dashboardFileHistory">0</strong>
+                        </div>
+                        <div class="dashboard-metric">
+                            <span>Inscrições recentes</span>
+                            <strong id="dashboardRegistrationHistory">0</strong>
+                        </div>
+                        <div class="dashboard-metric">
+                            <span>Lotes gerados</span>
+                            <strong id="dashboardLotHistory">0</strong>
+                        </div>
+                        <div class="dashboard-metric">
+                            <span>Cálculos UVRM</span>
+                            <strong id="dashboardUvrmHistory">0</strong>
+                        </div>
+                        <div class="dashboard-metric">
+                            <span>Cálculos percentuais</span>
+                            <strong id="dashboardPercentageHistory">0</strong>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card dashboard-summary-card">
+                    <div class="section-heading">
+                        <div>
+                            <h3>Continuidade das rotinas</h3>
+                            <p class="mini-description">Pontos de retomada rápida.</p>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-continuity">
+                        <div>
+                            <span>Próxima sequência de lote</span>
+                            <strong id="dashboardNextLotSequence">1</strong>
+                        </div>
+                        <div>
+                            <span>Valor atual da UVRM</span>
+                            <strong id="dashboardUvrmValue">R$ 39,99</strong>
+                        </div>
+                        <div>
+                            <span>Último backup</span>
+                            <strong id="dashboardLastBackup">Não realizado</strong>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <section class="card dashboard-recent-card">
+                <div class="section-heading">
+                    <div>
+                        <h3>Atividades recentes</h3>
+                        <p class="mini-description">
+                            Últimos registros encontrados nos históricos das ferramentas.
+                        </p>
+                    </div>
+                    <button id="dashboardRefresh" class="secondary" type="button">
+                        Atualizar resumo
+                    </button>
+                </div>
+
+                <ul id="dashboardRecentList" class="dashboard-recent-list">
+                    <li class="empty-state">Nenhuma atividade registrada.</li>
+                </ul>
+            </section>
+        </section>
+
+        <section id="arquivo" class="tab-panel">
             <div class="card">
                 <div class="section-heading main-heading">
                     <div>
@@ -78,6 +246,11 @@
                         </div>
 
                         <div class="options-panel">
+                                <label class="checkbox-row">
+                                    <input id="arquivoRemoverPontos" type="checkbox" checked>
+                                    Remover pontos (.) dos números
+                                </label>
+
                             <label class="checkbox-row">
                                 <input id="arquivoAnaliseProjeto" type="checkbox">
                                 Análise de projeto
@@ -128,7 +301,13 @@
                             <ol id="arquivoOrdemBlocos" class="block-order-list"></ol>
                         </div>
 
-                    </section>
+            <div class="tab-footer-navigation">
+                <button class="back-home-button" type="button" data-open-tab="inicio">
+                    <span aria-hidden="true">←</span>
+                    Voltar para a Página Inicial
+                </button>
+            </div>
+        </section>
 
                     <aside class="generator-sidebar">
                         <section class="sidebar-card">
@@ -241,7 +420,14 @@
                             <input id="inscricaoCopiaAutomatica" type="checkbox">
                             Copiar automaticamente quando a inscrição estiver completa
                         </label>
-                    </section>
+
+            <div class="tab-footer-navigation">
+                <button class="back-home-button" type="button" data-open-tab="inicio">
+                    <span aria-hidden="true">←</span>
+                    Voltar para a Página Inicial
+                </button>
+            </div>
+        </section>
 
                     <aside class="generator-sidebar">
                         <section class="sidebar-card">
@@ -361,7 +547,14 @@
                         <div class="actions">
                             <button id="reiniciarSequenciaLotes" class="danger-outline">Reiniciar sequência</button>
                         </div>
-                    </section>
+
+            <div class="tab-footer-navigation">
+                <button class="back-home-button" type="button" data-open-tab="inicio">
+                    <span aria-hidden="true">←</span>
+                    Voltar para a Página Inicial
+                </button>
+            </div>
+        </section>
 
                     <aside class="generator-sidebar">
                         <section class="sidebar-card">
@@ -454,7 +647,14 @@
                             <button id="copiarUvrmCompleto" class="secondary">Copiar resultado completo</button>
                             <button id="limparUvrm" class="secondary">Limpar campos</button>
                         </div>
-                    </section>
+
+            <div class="tab-footer-navigation">
+                <button class="back-home-button" type="button" data-open-tab="inicio">
+                    <span aria-hidden="true">←</span>
+                    Voltar para a Página Inicial
+                </button>
+            </div>
+        </section>
 
                     <aside class="generator-sidebar">
                         <section class="sidebar-card">
@@ -562,7 +762,14 @@
                             <button id="copiarPercentualCompleto" class="secondary">Copiar cálculo completo</button>
                             <button id="limparPercentual" class="secondary">Limpar campos</button>
                         </div>
-                    </section>
+
+            <div class="tab-footer-navigation">
+                <button class="back-home-button" type="button" data-open-tab="inicio">
+                    <span aria-hidden="true">←</span>
+                    Voltar para a Página Inicial
+                </button>
+            </div>
+        </section>
 
                     <aside class="generator-sidebar">
                         <section class="sidebar-card">
@@ -620,7 +827,14 @@
                             <h3>Backup completo</h3><p class="help-text">Exporte todas as preferências, modelos, sequências e históricos para um arquivo JSON.</p>
                             <div class="actions"><button id="exportarBackup" class="primary">Exportar backup</button><label class="file-button secondary">Importar backup<input id="importarBackup" type="file" accept=".json,application/json"></label></div>
                             <p id="backupStatus" class="feedback" aria-live="polite"></p>
-                        </section>
+
+            <div class="tab-footer-navigation">
+                <button class="back-home-button" type="button" data-open-tab="inicio">
+                    <span aria-hidden="true">←</span>
+                    Voltar para a Página Inicial
+                </button>
+            </div>
+        </section>
                         <section class="settings-card">
                             <h3>Limpeza seletiva</h3><p class="help-text">Remova somente os dados desejados, sem afetar os demais módulos.</p>
                             <div class="settings-checklist">
@@ -634,7 +848,7 @@
                         <section class="settings-card danger-zone"><h3>Restaurar aplicativo</h3><p class="help-text">Remove todos os dados locais e retorna o aplicativo ao estado inicial.</p><div class="actions"><button id="limparTudo" class="danger-outline">Apagar todos os dados</button></div></section>
                     </section>
                     <aside class="generator-sidebar">
-                        <section class="sidebar-card"><h3>Informações do aplicativo</h3><div class="format-examples"><div><span>Versão</span><code>1.9</code></div><div><span>Armazenamento</span><code>Local do navegador</code></div><div><span>Formato do backup</span><code>JSON</code></div></div></section>
+                        <section class="sidebar-card"><h3>Informações do aplicativo</h3><div class="format-examples"><div><span>Versão</span><code data-app-version></code></div><div><span>Armazenamento</span><code>Local do navegador</code></div><div><span>Formato do backup</span><code>JSON</code></div></div></section>
                         <section class="sidebar-card"><h3>Último backup</h3><p id="ultimoBackupInfo" class="help-text">Nenhum backup registrado.</p></section>
                     </aside>
                 </div>
@@ -643,11 +857,22 @@
     </main>
 
     <footer class="app-footer">
-        <p>Utilitários Municipais • Versão 1.5</p>
+        <p><span data-app-name>Utilitários Municipais</span> • Versão <span data-app-version></span></p>
     </footer>
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-    <script src="app.js"></script>
+    <script src="assets/js/core/config.js"></script>
+    <script src="assets/js/core/storage.js"></script>
+    <script src="assets/js/core/navigation.js"></script>
+    <script src="assets/js/modules/dashboard.js"></script>
+    <script src="assets/js/modules/arquivo.js"></script>
+    <script src="assets/js/core/form-persistence.js"></script>
+    <script src="assets/js/modules/inscricao.js"></script>
+    <script src="assets/js/modules/lotes.js"></script>
+    <script src="assets/js/modules/uvrm.js"></script>
+    <script src="assets/js/modules/percentual.js"></script>
+    <script src="assets/js/modules/configuracoes.js"></script>
+    <script src="assets/js/app.js"></script>
 </body>
 </html>
