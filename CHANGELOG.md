@@ -1,5 +1,73 @@
 # Changelog
 
+## 2.1.0
+
+### Adicionado
+
+- Dashboard como nova tela inicial.
+- Cartões de acesso rápido aos seis módulos existentes.
+- Contadores de modelos, históricos e cálculos armazenados.
+- Indicadores de próxima sequência de lote, valor da UVRM e último backup.
+- Lista consolidada de atividades recentes.
+- Botão para atualização manual do resumo.
+- Arquivos modulares `dashboard.js` e `dashboard.css`.
+
+### Alterado
+
+- A aba inicial padrão passou a ser `Início`.
+- A versão central da aplicação foi atualizada para `2.1.0`.
+- A navegação atualiza o dashboard sempre que ele é aberto.
+
+### Compatibilidade
+
+- Mantidos os dados e as chaves existentes no `localStorage`.
+- Mantidas integralmente as funcionalidades da versão 2.0.2.
+- Mantido o funcionamento local sem servidor ou dependências externas.
+
+## 2.0.2
+
+### Corrigido
+
+- Removida a inserção indevida de `arquivoRemoverPontos` no bloco de data/hora.
+- A regra de remoção de pontos agora afeta igualmente prévia, cópia e histórico.
+- Corrigida a atualização inconsistente do número da versão.
+
+### Estrutura
+
+- Criado `assets/js/core/config.js`.
+- Centralizados nome da aplicação, versão e prefixo do armazenamento.
+- Interface e backup agora consultam a configuração central.
+
+## 2.0.1
+
+### Corrigido
+
+- Adicionado ao montador de nome de arquivo o checkbox **Remover pontos (.) dos números**.
+- A opção é iniciada marcada por padrão.
+- Pontos entre algarismos são removidos do nome final quando a opção está ativa.
+- A preferência do checkbox é mantida no armazenamento local.
+
+## 2.0.0
+
+### Estrutura
+
+- Criada a pasta `assets`.
+- Separados os estilos em arquivos gerais e arquivos por módulo.
+- Separadas as rotinas JavaScript em núcleo, módulos e inicialização.
+- Ajustado o `index.html` para carregar os arquivos na ordem correta.
+
+### Compatibilidade
+
+- Mantido o funcionamento local, sem servidor.
+- Mantidos os dados existentes no `localStorage`.
+- Mantidos os identificadores dos campos e as chaves de armazenamento.
+- Mantidas todas as funcionalidades da versão 1.9.
+
+### Documentação
+
+- Atualizados README e CHANGELOG.
+- Atualizada a identificação visual para a versão 2.0.
+
 ## 1.9.0
 
 - Painel de resumo dos dados locais.
