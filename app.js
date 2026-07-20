@@ -845,7 +845,6 @@ $("#calcularPercentual").addEventListener("click", () => {
     $("#percentualFinal").textContent =
         formatCurrency(finalValue);
 
-    setFeedback($("#percentualMensagem"), "Cálculo realizado.", "success");
     saveFormData();
 });
 
