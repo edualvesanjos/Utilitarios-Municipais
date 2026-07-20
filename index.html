@@ -16,7 +16,7 @@
                 <p>Ferramentas rápidas para rotinas administrativas.</p>
             </div>
 
-            <span class="version-badge">Versão 1.4.1</span>
+            <span class="version-badge">Versão 1.5</span>
         </div>
     </header>
 
@@ -164,206 +164,486 @@
 
         <section id="inscricao" class="tab-panel">
             <div class="card">
-                <h2>Padrão de inscrição imobiliária</h2>
+                <div class="section-heading main-heading">
+                    <div>
+                        <h2>Padrão de inscrição imobiliária</h2>
+                        <p class="section-description">
+                            Cole ou digite a inscrição em qualquer formato; o sistema identifica e normaliza automaticamente.
+                        </p>
+                    </div>
 
-                <label class="checkbox-row">
-                    <input id="inscricaoItr" type="checkbox">
-                    Usar padrão ITR
-                </label>
+                    <span class="feature-badge">Aprimorado na v1.5</span>
+                </div>
 
-                <label>
-                    Inscrição
-                    <input id="inscricaoValor" type="text" inputmode="numeric" autocomplete="off" placeholder="00.000.000.00.0000000">
-                </label>
+                <div class="registration-layout">
+                    <section class="registration-panel">
+                        <div class="registration-type-selector" role="radiogroup" aria-label="Tipo de inscrição">
+                            <label class="registration-type-option">
+                                <input type="radio" name="inscricaoTipo" value="auto" checked>
+                                <span>Detectar automaticamente</span>
+                            </label>
 
-                <p id="inscricaoAjuda" class="help-text">
-                    Digite 17 números para o padrão urbano.
-                </p>
+                            <label class="registration-type-option">
+                                <input type="radio" name="inscricaoTipo" value="urbano">
+                                <span>Urbano</span>
+                            </label>
 
-                <div class="actions">
-                    <button id="copiarInscricao" class="primary">Copiar inscrição</button>
-                    <button id="limparInscricao" class="secondary">Limpar</button>
+                            <label class="registration-type-option">
+                                <input type="radio" name="inscricaoTipo" value="itr">
+                                <span>ITR</span>
+                            </label>
+                        </div>
+
+                        <label>
+                            Inscrição
+                            <input
+                                id="inscricaoValor"
+                                type="text"
+                                inputmode="numeric"
+                                autocomplete="off"
+                                placeholder="Cole ou digite a inscrição"
+                            >
+                        </label>
+
+                        <div class="registration-status">
+                            <div>
+                                <span class="status-label">Tipo identificado</span>
+                                <strong id="inscricaoTipoDetectado">Aguardando</strong>
+                            </div>
+
+                            <div>
+                                <span class="status-label">Quantidade de números</span>
+                                <strong id="inscricaoContagem">0</strong>
+                            </div>
+
+                            <div>
+                                <span class="status-label">Situação</span>
+                                <strong id="inscricaoStatus">Aguardando</strong>
+                            </div>
+                        </div>
+
+                        <p id="inscricaoAjuda" class="help-text">
+                            O padrão urbano possui 17 números e o ITR possui 13 números.
+                        </p>
+
+                        <div class="preview-card registration-preview">
+                            <span>Inscrição normalizada</span>
+                            <strong id="inscricaoPreview">—</strong>
+                        </div>
+
+                        <div class="actions">
+                            <button id="copiarInscricao" class="primary">Copiar inscrição</button>
+                            <button id="copiarInscricaoSemMascara" class="secondary">Copiar somente números</button>
+                            <button id="limparInscricao" class="secondary">Limpar</button>
+                        </div>
+
+                        <label class="checkbox-row registration-auto-copy">
+                            <input id="inscricaoCopiaAutomatica" type="checkbox">
+                            Copiar automaticamente quando a inscrição estiver completa
+                        </label>
+                    </section>
+
+                    <aside class="generator-sidebar">
+                        <section class="sidebar-card">
+                            <div class="section-heading">
+                                <h3>Histórico recente</h3>
+                                <button id="limparHistoricoInscricao" class="text-button">Limpar</button>
+                            </div>
+
+                            <ul id="inscricaoHistorico" class="history-list compact-list">
+                                <li class="empty-state">Nenhuma inscrição copiada recentemente.</li>
+                            </ul>
+                        </section>
+
+                        <section class="sidebar-card">
+                            <h3>Formatos aceitos</h3>
+
+                            <div class="format-examples">
+                                <div>
+                                    <span>Urbano</span>
+                                    <code>00.000.000.00.0000000</code>
+                                </div>
+
+                                <div>
+                                    <span>ITR</span>
+                                    <code>000.000.000.000-0</code>
+                                </div>
+                            </div>
+                        </section>
+                    </aside>
                 </div>
             </div>
         </section>
 
         <section id="lote" class="tab-panel">
             <div class="card">
-                <h2>Gerador de número de lote</h2>
+                <div class="section-heading main-heading">
+                    <div>
+                        <h2>Gerador de número de lote</h2>
+                        <p class="section-description">
+                            Gere um ou vários números de lote com controle da sequência inicial e histórico local.
+                        </p>
+                    </div>
 
-                <div class="grid three-columns">
-                    <label>
-                        Setor
-                        <select id="loteSetor">
-                            <option>97</option>
-                            <option>98</option>
-                            <option>99</option>
-                        </select>
-                    </label>
-
-                    <label>
-                        Quadra
-                        <select id="loteQuadra">
-                            <option>997</option>
-                            <option>998</option>
-                            <option>999</option>
-                        </select>
-                    </label>
-
-                    <label>
-                        Quantidade
-                        <input id="loteQuantidade" type="number" min="1" max="100" value="1">
-                    </label>
+                    <span class="feature-badge">Aprimorado na v1.6</span>
                 </div>
 
-                <p class="help-text">
-                    Última sequência registrada:
-                    <strong id="loteUltimaSequencia">00003</strong>
-                </p>
+                <div class="generator-grid">
+                    <section class="builder-panel">
+                        <div class="grid three-columns">
+                            <label>
+                                Setor
+                                <input id="loteSetor" type="text" inputmode="numeric" maxlength="3" value="97">
+                            </label>
 
-                <div class="actions">
-                    <button id="gerarLotes" class="primary">Gerar lote(s)</button>
-                    <button id="copiarLotes" class="secondary">Copiar resultado</button>
-                    <button id="limparLotes" class="secondary">Limpar resultado</button>
-                    <button id="reiniciarSequenciaLotes" class="danger-outline">Reiniciar sequência</button>
-                </div>
+                            <label>
+                                Quadra
+                                <input id="loteQuadra" type="text" inputmode="numeric" maxlength="3" value="997">
+                            </label>
 
-                <div class="result-box">
-                    <span>Resultado</span>
-                    <pre id="loteResultado">—</pre>
+                            <label>
+                                Quantidade
+                                <input id="loteQuantidade" type="number" min="1" max="100" value="1">
+                            </label>
+                        </div>
+
+                        <div class="grid two-columns">
+                            <label>
+                                Sequência inicial
+                                <input id="loteSequenciaInicial" type="number" min="1" max="99999" value="4">
+                            </label>
+
+                            <label>
+                                Separador
+                                <select id="loteSeparador">
+                                    <option value=".">Ponto (.)</option>
+                                    <option value="-">Hífen (-)</option>
+                                    <option value="/">Barra (/)</option>
+                                    <option value="">Sem separador</option>
+                                </select>
+                            </label>
+                        </div>
+
+                        <div class="registration-status">
+                            <div>
+                                <span class="status-label">Última sequência salva</span>
+                                <strong id="loteUltimaSequencia">00003</strong>
+                            </div>
+
+                            <div>
+                                <span class="status-label">Próxima sequência</span>
+                                <strong id="loteProximaSequencia">00004</strong>
+                            </div>
+
+                            <div>
+                                <span class="status-label">Quantidade</span>
+                                <strong id="loteQuantidadeResumo">1</strong>
+                            </div>
+                        </div>
+
+                        <div class="preview-card">
+                            <span>Pré-visualização</span>
+                            <strong id="lotePreview">97.997.00004</strong>
+                        </div>
+
+                        <div class="actions">
+                            <button id="gerarLotes" class="primary">Gerar lote(s)</button>
+                            <button id="copiarLotes" class="secondary">Copiar resultado</button>
+                            <button id="baixarLotesTxt" class="secondary">Baixar TXT</button>
+                            <button id="limparLotes" class="secondary">Limpar resultado</button>
+                        </div>
+
+                        <div class="result-box">
+                            <span>Resultado</span>
+                            <pre id="loteResultado">—</pre>
+                        </div>
+
+                        <div class="actions">
+                            <button id="reiniciarSequenciaLotes" class="danger-outline">Reiniciar sequência</button>
+                        </div>
+                    </section>
+
+                    <aside class="generator-sidebar">
+                        <section class="sidebar-card">
+                            <div class="section-heading">
+                                <h3>Histórico de gerações</h3>
+                                <button id="limparHistoricoLotes" class="text-button">Limpar</button>
+                            </div>
+
+                            <ul id="loteHistorico" class="history-list compact-list">
+                                <li class="empty-state">Nenhum lote gerado recentemente.</li>
+                            </ul>
+                        </section>
+
+                        <section class="sidebar-card">
+                            <h3>Padrão atual</h3>
+                            <p class="help-text">
+                                Setor e quadra são completados com zeros à esquerda. A sequência utiliza cinco dígitos.
+                            </p>
+                            <div class="format-examples">
+                                <div>
+                                    <span>Exemplo</span>
+                                    <code id="lotePadraoExemplo">097.997.00004</code>
+                                </div>
+                            </div>
+                        </section>
+                    </aside>
                 </div>
             </div>
         </section>
 
         <section id="uvrm" class="tab-panel">
             <div class="card">
-                <h2>Calculadora UVRM</h2>
+                <div class="section-heading main-heading">
+                    <div>
+                        <h2>Calculadora UVRM</h2>
+                        <p class="section-description">
+                            Converta valores entre reais e UVRM com cálculo instantâneo e histórico local.
+                        </p>
+                    </div>
 
-                <div class="grid two-columns">
-                    <label>
-                        Quantidade de UVRM
-                        <input id="uvrmQuantidade" type="text" inputmode="decimal" placeholder="0">
-                    </label>
-
-                    <label>
-                        Valor unitário da UVRM
-                        <input id="uvrmValor" type="text" inputmode="decimal" placeholder="0,00">
-                    </label>
+                    <span class="feature-badge">Aprimorado na v1.7</span>
                 </div>
 
-                <div class="actions">
-                    <button id="calcularUvrm" class="primary">Calcular</button>
-                    <button id="limparUvrm" class="secondary">Limpar</button>
-                </div>
+                <div class="generator-grid">
+                    <section class="builder-panel">
+                        <div class="grid two-columns">
+                            <label>
+                                Valor atual da UVRM (R$)
+                                <input id="uvrmValorUnitario" type="text" inputmode="decimal" autocomplete="off" value="39,99">
+                            </label>
 
-                <p id="uvrmMensagem" class="feedback" aria-live="polite"></p>
+                            <label>
+                                Casas decimais
+                                <select id="uvrmCasas">
+                                    <option value="2">2 casas</option>
+                                    <option value="3">3 casas</option>
+                                    <option value="4">4 casas</option>
+                                    <option value="6">Sem arredondamento</option>
+                                </select>
+                            </label>
+                        </div>
 
-                <div class="result-box">
-                    <span>Resultado</span>
-                    <strong id="uvrmResultado">R$ 0,00</strong>
+                        <div class="actions compact-actions">
+                            <button id="uvrmRestaurarPadrao" class="secondary">Restaurar valor padrão</button>
+                        </div>
+
+                        <div class="grid two-columns">
+                            <label>
+                                Valor em reais
+                                <input id="uvrmValorReais" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00">
+                            </label>
+
+                            <label>
+                                Valor em UVRM
+                                <input id="uvrmQuantidade" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00">
+                            </label>
+                        </div>
+
+                        <p id="uvrmAjuda" class="help-text">
+                            Digite em apenas um dos campos para calcular automaticamente.
+                        </p>
+
+                        <div class="preview-card">
+                            <span>Resultado</span>
+                            <strong id="uvrmResultado">—</strong>
+                        </div>
+
+                        <div class="actions">
+                            <button id="copiarUvrmValor" class="primary">Copiar valor</button>
+                            <button id="copiarUvrmCompleto" class="secondary">Copiar resultado completo</button>
+                            <button id="limparUvrm" class="secondary">Limpar campos</button>
+                        </div>
+                    </section>
+
+                    <aside class="generator-sidebar">
+                        <section class="sidebar-card">
+                            <div class="section-heading">
+                                <h3>Histórico de cálculos</h3>
+                                <button id="limparHistoricoUvrm" class="text-button">Limpar</button>
+                            </div>
+
+                            <input id="pesquisaHistoricoUvrm" type="search" placeholder="Pesquisar no histórico">
+
+                            <ul id="uvrmHistorico" class="history-list compact-list">
+                                <li class="empty-state">Nenhum cálculo realizado.</li>
+                            </ul>
+                        </section>
+
+                        <section class="sidebar-card">
+                            <h3>Referência</h3>
+                            <p class="help-text">
+                                O valor da UVRM é salvo automaticamente neste navegador.
+                            </p>
+                        </section>
+                    </aside>
                 </div>
             </div>
         </section>
 
         <section id="percentual" class="tab-panel">
             <div class="card">
-                <h2>Calculadora percentual</h2>
-
-                <div class="grid two-columns">
-                    <label>
-                        Valor base
-                        <input id="percentualBase" type="text" inputmode="decimal" placeholder="0,00">
-                    </label>
-
-                    <label>
-                        Percentual
-                        <input id="percentualTaxa" type="text" inputmode="decimal" placeholder="0">
-                    </label>
-                </div>
-
-                <label>
-                    Operação
-                    <select id="percentualOperacao">
-                        <option value="somente">Calcular apenas o percentual</option>
-                        <option value="acrescentar">Acrescentar ao valor base</option>
-                        <option value="descontar">Descontar do valor base</option>
-                    </select>
-                </label>
-
-                <div class="actions">
-                    <button id="calcularPercentual" class="primary">Calcular</button>
-                    <button id="limparPercentual" class="secondary">Limpar</button>
-                </div>
-
-                <p id="percentualMensagem" class="feedback" aria-live="polite"></p>
-
-                <div class="results-grid">
-                    <div class="result-box">
-                        <span>Valor do percentual</span>
-                        <strong id="percentualResultado">R$ 0,00</strong>
+                <div class="section-heading main-heading">
+                    <div>
+                        <h2>Calculadora percentual</h2>
+                        <p class="section-description">
+                            Escolha o tipo de cálculo e obtenha o resultado automaticamente durante a digitação.
+                        </p>
                     </div>
 
-                    <div class="result-box">
-                        <span>Valor final</span>
-                        <strong id="percentualFinal">R$ 0,00</strong>
-                    </div>
+                    <span class="feature-badge">Aprimorado na v1.8</span>
+                </div>
+
+                <div class="generator-grid">
+                    <section class="builder-panel">
+                        <label>
+                            Tipo de cálculo
+                            <select id="percentualModo">
+                                <option value="percentual">Quanto é um percentual de um valor?</option>
+                                <option value="acrescimo">Acrescentar percentual ao valor</option>
+                                <option value="desconto">Descontar percentual do valor</option>
+                                <option value="proporcao">Um valor representa quantos por cento de outro?</option>
+                                <option value="variacao">Qual foi a variação percentual entre dois valores?</option>
+                            </select>
+                        </label>
+
+                        <div class="grid two-columns">
+                            <label>
+                                <span id="percentualRotuloValor1">Valor base</span>
+                                <input id="percentualValor1" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00">
+                            </label>
+
+                            <label>
+                                <span id="percentualRotuloValor2">Percentual</span>
+                                <input id="percentualValor2" type="text" inputmode="decimal" autocomplete="off" placeholder="0">
+                            </label>
+                        </div>
+
+                        <p id="percentualAjuda" class="help-text">
+                            Informe o valor base e o percentual desejado.
+                        </p>
+
+                        <div class="registration-status">
+                            <div>
+                                <span class="status-label">Operação</span>
+                                <strong id="percentualOperacaoResumo">Percentual do valor</strong>
+                            </div>
+
+                            <div>
+                                <span class="status-label">Resultado principal</span>
+                                <strong id="percentualResultadoResumo">—</strong>
+                            </div>
+
+                            <div>
+                                <span class="status-label">Situação</span>
+                                <strong id="percentualStatus">Aguardando</strong>
+                            </div>
+                        </div>
+
+                        <div class="preview-card">
+                            <span>Resultado completo</span>
+                            <strong id="percentualResultadoCompleto">—</strong>
+                        </div>
+
+                        <div class="results-grid percentual-results-grid">
+                            <div class="result-box">
+                                <span id="percentualResultadoSecundarioRotulo">Valor do percentual</span>
+                                <strong id="percentualResultadoSecundario">—</strong>
+                            </div>
+
+                            <div class="result-box">
+                                <span id="percentualResultadoFinalRotulo">Valor final</span>
+                                <strong id="percentualResultadoFinal">—</strong>
+                            </div>
+                        </div>
+
+                        <div class="actions">
+                            <button id="copiarPercentualValor" class="primary">Copiar resultado</button>
+                            <button id="copiarPercentualCompleto" class="secondary">Copiar cálculo completo</button>
+                            <button id="limparPercentual" class="secondary">Limpar campos</button>
+                        </div>
+                    </section>
+
+                    <aside class="generator-sidebar">
+                        <section class="sidebar-card">
+                            <div class="section-heading">
+                                <h3>Histórico de cálculos</h3>
+                                <button id="limparHistoricoPercentual" class="text-button">Limpar</button>
+                            </div>
+
+                            <input id="pesquisaHistoricoPercentual" type="search" placeholder="Pesquisar no histórico">
+
+                            <ul id="percentualHistorico" class="history-list compact-list">
+                                <li class="empty-state">Nenhum cálculo realizado.</li>
+                            </ul>
+                        </section>
+
+                        <section class="sidebar-card">
+                            <h3>Tipos disponíveis</h3>
+
+                            <div class="format-examples">
+                                <div>
+                                    <span>Percentual</span>
+                                    <code>10% de R$ 200,00 = R$ 20,00</code>
+                                </div>
+
+                                <div>
+                                    <span>Proporção</span>
+                                    <code>R$ 20,00 de R$ 200,00 = 10%</code>
+                                </div>
+
+                                <div>
+                                    <span>Variação</span>
+                                    <code>R$ 100,00 para R$ 120,00 = 20%</code>
+                                </div>
+                            </div>
+                        </section>
+                    </aside>
                 </div>
             </div>
         </section>
 
         <section id="configuracoes" class="tab-panel">
             <div class="card">
-                <h2>Configurações e dados locais</h2>
-
-                <div class="settings-grid">
-                    <article class="settings-card">
-                        <h3>Preferências</h3>
-
-                        <label class="checkbox-row">
-                            <input id="salvarCampos" type="checkbox">
-                            Salvar automaticamente os campos preenchidos
-                        </label>
-
-                        <p class="help-text">
-                            Quando ativado, os dados permanecem neste navegador.
-                        </p>
-                    </article>
-
-                    <article class="settings-card">
-                        <h3>Backup</h3>
-
-                        <p class="help-text">
-                            Exporte ou importe as configurações e sequências locais.
-                        </p>
-
-                        <div class="actions">
-                            <button id="exportarDados" class="primary">Exportar backup</button>
-
-                            <label class="file-button">
-                                Importar backup
-                                <input id="importarDados" type="file" accept=".json,application/json">
-                            </label>
+                <div class="section-heading main-heading">
+                    <div><h2>Configurações e dados</h2><p class="section-description">Gerencie preferências, históricos e backups do aplicativo.</p></div>
+                    <span class="feature-badge">Aprimorado na v1.9</span>
+                </div>
+                <div class="generator-grid">
+                    <section class="builder-panel">
+                        <div class="registration-status settings-summary">
+                            <div><span class="status-label">Modelos salvos</span><strong id="configModelosSalvos">0</strong></div>
+                            <div><span class="status-label">Itens em históricos</span><strong id="configHistoricosSalvos">0</strong></div>
+                            <div><span class="status-label">Sequência de lote</span><strong id="configSequenciaLote">00003</strong></div>
                         </div>
-                    </article>
-
-                    <article class="settings-card danger-zone">
-                        <h3>Limpeza completa</h3>
-
-                        <p class="help-text">
-                            Remove preferências, histórico, modelos e sequência de lotes deste navegador.
-                        </p>
-
-                        <button id="limparTodosDados" class="danger">
-                            Apagar todos os dados locais
-                        </button>
-                    </article>
+                        <section class="settings-card">
+                            <h3>Backup completo</h3><p class="help-text">Exporte todas as preferências, modelos, sequências e históricos para um arquivo JSON.</p>
+                            <div class="actions"><button id="exportarBackup" class="primary">Exportar backup</button><label class="file-button secondary">Importar backup<input id="importarBackup" type="file" accept=".json,application/json"></label></div>
+                            <p id="backupStatus" class="feedback" aria-live="polite"></p>
+                        </section>
+                        <section class="settings-card">
+                            <h3>Limpeza seletiva</h3><p class="help-text">Remova somente os dados desejados, sem afetar os demais módulos.</p>
+                            <div class="settings-checklist">
+                                <label class="checkbox-row"><input id="limparModelosArquivos" type="checkbox">Modelos do gerador de nomes</label>
+                                <label class="checkbox-row"><input id="limparHistoricosGerais" type="checkbox">Todos os históricos</label>
+                                <label class="checkbox-row"><input id="limparPreferenciasCampos" type="checkbox">Valores e preferências dos campos</label>
+                                <label class="checkbox-row"><input id="reiniciarSequenciaNoReset" type="checkbox">Reiniciar sequência de lotes</label>
+                            </div>
+                            <div class="actions"><button id="executarLimpezaSeletiva" class="danger-outline">Executar limpeza selecionada</button></div>
+                        </section>
+                        <section class="settings-card danger-zone"><h3>Restaurar aplicativo</h3><p class="help-text">Remove todos os dados locais e retorna o aplicativo ao estado inicial.</p><div class="actions"><button id="limparTudo" class="danger-outline">Apagar todos os dados</button></div></section>
+                    </section>
+                    <aside class="generator-sidebar">
+                        <section class="sidebar-card"><h3>Informações do aplicativo</h3><div class="format-examples"><div><span>Versão</span><code>1.9</code></div><div><span>Armazenamento</span><code>Local do navegador</code></div><div><span>Formato do backup</span><code>JSON</code></div></div></section>
+                        <section class="sidebar-card"><h3>Último backup</h3><p id="ultimoBackupInfo" class="help-text">Nenhum backup registrado.</p></section>
+                    </aside>
                 </div>
             </div>
         </section>
     </main>
 
     <footer class="app-footer">
-        <p>Utilitários Municipais • Versão 1.4.1</p>
+        <p>Utilitários Municipais • Versão 1.5</p>
     </footer>
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
