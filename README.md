@@ -1,4 +1,4 @@
-# Utilitários Municipais — versão 2.1.2
+# Utilitários Municipais — versão 2.1.3
 
 Aplicação local para apoio a rotinas administrativas municipais.
 
@@ -67,3 +67,22 @@ O sistema não exige instalação, servidor ou bibliotecas externas. Os dados co
 - Corrigida a referência à configuração central da aplicação.
 - Os menus superiores, cartões do dashboard e botões de retorno utilizam a mesma função de navegação.
 - Mantidos o destaque do último módulo e o retorno automático ao topo.
+
+
+## Correções da versão 2.1.3
+
+### Montador de nome de arquivo
+
+- O campo **Nome** preserva os espaços entre as palavras.
+- O texto é convertido para maiúsculas.
+- Acentos e caracteres especiais são removidos.
+- O caractere `&` é substituído pela letra `E`.
+
+Exemplo:
+
+`João da Silva & Maria` → `JOAO DA SILVA E MARIA`
+
+### Calculadora UVRM
+
+- O botão **Copiar** do histórico agora copia exatamente o valor exibido como resultado.
+- O texto completo da operação permanece visível no histórico.

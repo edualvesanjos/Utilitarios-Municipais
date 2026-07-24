@@ -1,5 +1,19 @@
 # Changelog
 
+## 2.1.3
+
+### Corrigido
+
+- O campo **Nome** do Montador de nome de arquivo não elimina mais os espaços entre as palavras.
+- A normalização do nome agora converte para maiúsculas, remove acentos e caracteres especiais e substitui `&` por `E`.
+- O botão **Copiar** no histórico da Calculadora UVRM agora copia o valor gerado no resultado, em vez do texto completo da conversão.
+
+### Compatibilidade
+
+- Mantidas as chaves atuais do `localStorage`.
+- Mantida a compatibilidade com históricos e backups das versões anteriores.
+- Registros antigos de UVRM sem `plainValue` continuam copiáveis por meio do texto completo como alternativa.
+
 ## 2.1.2
 
 ### Corrigido

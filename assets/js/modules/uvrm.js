@@ -96,7 +96,9 @@ function renderUvrmHistory() {
         actions.className = "list-actions";
         copyButton.textContent = "Copiar";
         copyButton.className = "secondary mini-button";
-        copyButton.addEventListener("click", () => copyText(item.fullText));
+        copyButton.addEventListener("click", () => {
+            copyText(item.plainValue || item.fullText);
+        });
 
         actions.append(copyButton);
         li.append(text, actions);

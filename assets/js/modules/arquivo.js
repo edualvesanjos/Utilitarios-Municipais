@@ -5,7 +5,7 @@
 const fileBlocks = {
     nome: {
         label: "Nome",
-        getValue: () => normalizeCompact($("#arquivoNome").value)
+        getValue: () => normalizeFileNamePerson($("#arquivoNome").value)
     },
     prefixo: {
         label: "Prefixo",

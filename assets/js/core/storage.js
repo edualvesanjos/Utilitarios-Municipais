@@ -28,6 +28,18 @@ const formatCurrency = (value) =>
 
 const onlyDigits = (value) => String(value || "").replace(/\D/g, "");
 
+
+function normalizeFileNamePerson(value) {
+    return String(value || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/&/g, " E ")
+        .replace(/[^a-zA-Z0-9\s]/g, "")
+        .replace(/\s+/g, " ")
+        .trim()
+        .toUpperCase();
+}
+
 function normalizeCompact(value) {
     return String(value || "")
         .normalize("NFD")
