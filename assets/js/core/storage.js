@@ -20,6 +20,52 @@ const PERCENTAGE_HISTORY_KEY = `${STORAGE_PREFIX}percentageHistory`;
 const LAST_BACKUP_KEY = `${STORAGE_PREFIX}lastBackup`;
 const FILE_REMOVE_POINTS_KEY = `${STORAGE_PREFIX}fileRemovePoints`;
 
+
+/* Compatibilidade e hidratação dos dados locais. */
+const STORAGE_SUFFIXES = Object.freeze({
+    fileHistory: FILE_HISTORY_KEY,
+    registrationHistory: REGISTRATION_HISTORY_KEY,
+    lotHistory: LOT_HISTORY_KEY,
+    uvrmHistory: UVRM_HISTORY_KEY,
+    percentageHistory: PERCENTAGE_HISTORY_KEY,
+    uvrmValue: UVRM_VALUE_KEY,
+    uvrmDecimals: UVRM_DECIMALS_KEY,
+    formData: FORM_DATA_KEY,
+    saveFields: SAVE_FIELDS_KEY,
+    fileModels: FILE_MODELS_KEY,
+    fileBuilder: FILE_BUILDER_KEY,
+    lastLotSequence: LOT_SEQUENCE_KEY
+});
+
+function migrateCompatibleStorageKeys() {
+    const keys = [];
+    for (let index = 0; index < localStorage.length; index += 1) {
+        const key = localStorage.key(index);
+        if (key) keys.push(key);
+    }
+
+    Object.entries(STORAGE_SUFFIXES).forEach(([suffix, canonicalKey]) => {
+        if (localStorage.getItem(canonicalKey) !== null) return;
+
+        const compatibleKey = keys.find((key) =>
+            key !== canonicalKey &&
+            (key === suffix || key.endsWith(`:${suffix}`) || key.endsWith(`.${suffix}`))
+        );
+
+        if (compatibleKey) {
+            localStorage.setItem(canonicalKey, localStorage.getItem(compatibleKey));
+        }
+    });
+}
+
+function safeInvoke(callback) {
+    try {
+        callback();
+    } catch (error) {
+        console.error("Falha ao restaurar dados locais:", error);
+    }
+}
+
 const formatCurrency = (value) =>
     new Intl.NumberFormat("pt-BR", {
         style: "currency",
@@ -84,44 +130,6 @@ function getDateTimeStamp() {
     ].join("");
 }
 
-function showToast(message) {
-    const toast = $("#toast");
-    toast.textContent = message;
-    toast.classList.add("show");
-
-    window.clearTimeout(showToast.timeout);
-    showToast.timeout = window.setTimeout(() => {
-        toast.classList.remove("show");
-    }, 1800);
-}
-
-async function copyText(text) {
-    const value = String(text || "").trim();
-
-    if (!value || value === "—") {
-        showToast("Não há conteúdo para copiar.");
-        return false;
-    }
-
-    try {
-        await navigator.clipboard.writeText(value);
-        showToast("Conteúdo copiado.");
-        return true;
-    } catch {
-        const textarea = document.createElement("textarea");
-        textarea.value = value;
-        textarea.style.position = "fixed";
-        textarea.style.opacity = "0";
-        document.body.appendChild(textarea);
-        textarea.select();
-
-        const copied = document.execCommand("copy");
-        textarea.remove();
-
-        showToast(copied ? "Conteúdo copiado." : "Não foi possível copiar.");
-        return copied;
-    }
-}
 
 function getJson(key, fallback) {
     try {

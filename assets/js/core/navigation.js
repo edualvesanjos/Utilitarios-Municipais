@@ -4,7 +4,7 @@ const LAST_TOOL_TAB_KEY = `${APP_CONFIG.storagePrefix}lastToolTab`;
 
 /* Navegação */
 
-function activateTab(tabId) {
+function activateTab(tabId, options = {}) {
     const button = document.querySelector(
         `.tab-button[data-tab="${tabId}"]`
     );
@@ -23,6 +23,10 @@ function activateTab(tabId) {
     });
 
     localStorage.setItem(ACTIVE_TAB_KEY, tabId);
+
+    if (options.track !== false && typeof trackToolAccess === "function") {
+        trackToolAccess(tabId);
+    }
 
     if (tabId !== "inicio" && tabId !== "configuracoes") {
         localStorage.setItem(LAST_TOOL_TAB_KEY, tabId);

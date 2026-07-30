@@ -1,41 +1,23 @@
-/* Módulo: calculadora UVRM. */
-
-/* UVRM */
+/* Módulo: calculadora UVRM com lista de lançamentos. */
 
 const DEFAULT_UVRM_VALUE = 39.99;
-let uvrmInputOrigin = "";
-let uvrmCurrentPlainValue = "";
-let uvrmCurrentFullText = "";
+const UVRM_CURRENT_LIST_KEY = `${STORAGE_PREFIX}uvrmCurrentList`;
+let uvrmEditingId = null;
+let uvrmPreview = null;
 
 function parseLocaleNumber(value) {
-    if (typeof value === "number") {
-        return value;
-    }
-
-    const normalized = String(value)
-        .trim()
-        .replace(/\s/g, "")
-        .replace(/\./g, "")
-        .replace(",", ".");
-
+    if (typeof value === "number") return value;
+    const normalized = String(value).trim().replace(/\s/g, "").replace(/\./g, "").replace(",", ".");
     const parsed = Number(normalized);
     return Number.isFinite(parsed) ? parsed : NaN;
 }
 
 function formatDecimal(value, decimals) {
-    return Number(value).toLocaleString("pt-BR", {
-        minimumFractionDigits: decimals,
-        maximumFractionDigits: decimals
-    });
+    return Number(value).toLocaleString("pt-BR", { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
 }
 
 function formatUvrmCurrency(value) {
-    return Number(value).toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    });
+    return Number(value).toLocaleString("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 function getUvrmValue() {
@@ -47,210 +29,241 @@ function getUvrmDecimals() {
     return Math.max(2, Math.min(6, Number($("#uvrmCasas").value) || 2));
 }
 
-function getUvrmHistory() {
-    return getJson(UVRM_HISTORY_KEY, []);
+function getUvrmCurrentList() { return getJson(UVRM_CURRENT_LIST_KEY, []); }
+function saveUvrmCurrentList(items) { setJson(UVRM_CURRENT_LIST_KEY, items); renderUvrmCurrentList(); }
+function getUvrmHistory() { return getJson(UVRM_HISTORY_KEY, []); }
+
+function clearUvrmResult(message = "Informe o valor do lançamento.") {
+    $("#uvrmResultado").textContent = "—";
+    $("#uvrmResultadoDetalhe").textContent = "";
+    $("#uvrmAjuda").textContent = message;
+    $("#uvrmAjuda").classList.remove("error", "success");
+    uvrmPreview = null;
 }
 
-function addUvrmHistory(fullText, plainValue) {
-    const item = {
-        id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
-        fullText,
-        plainValue,
-        createdAt: new Date().toISOString()
-    };
-
-    const history = getUvrmHistory()
-        .filter((entry) => entry.fullText !== fullText)
-        .slice(0, 29);
-
-    history.unshift(item);
-    setJson(UVRM_HISTORY_KEY, history);
-    renderUvrmHistory();
+function updateUvrmTypeInterface() {
+    const isUvrm = $("#uvrmTipoLancamento").value === "uvrm";
+    $("#uvrmValorLancamentoLabel").textContent = isUvrm ? "Valor em UVRM" : "Valor em reais";
+    $("#uvrmValorLancamento").placeholder = "0,00";
+    $("#uvrmMultiplicadorCampo").hidden = !isUvrm;
+    if (isUvrm && (!Number.isFinite(Number($("#uvrmMultiplicador").value)) || Number($("#uvrmMultiplicador").value) < 1)) {
+        $("#uvrmMultiplicador").value = "1";
+    }
+    calculateUvrmPreview();
 }
 
-function renderUvrmHistory() {
-    const list = $("#uvrmHistorico");
-    const query = ($("#pesquisaHistoricoUvrm").value || "")
-        .trim()
-        .toLocaleLowerCase("pt-BR");
+function calculateUvrmPreview() {
+    const unit = getUvrmValue();
+    const input = parseLocaleNumber($("#uvrmValorLancamento").value);
+    const type = $("#uvrmTipoLancamento").value;
+    const description = $("#uvrmDescricao").value.trim();
+    const decimals = getUvrmDecimals();
+    const multiplier = type === "uvrm" ? Number($("#uvrmMultiplicador").value) : 1;
 
-    const history = getUvrmHistory().filter((item) =>
-        item.fullText.toLocaleLowerCase("pt-BR").includes(query)
-    );
-
-    if (history.length === 0) {
-        list.innerHTML =
-            '<li class="empty-state">Nenhum cálculo encontrado.</li>';
+    if (!Number.isFinite(unit)) {
+        clearUvrmResult("Informe um valor válido para a UVRM.");
+        $("#uvrmAjuda").classList.add("error");
+        return;
+    }
+    if (!Number.isFinite(input) || input < 0) { clearUvrmResult(); return; }
+    if (type === "uvrm" && (!Number.isInteger(multiplier) || multiplier < 1)) {
+        clearUvrmResult("Informe uma quantidade inteira igual ou maior que 1.");
+        $("#uvrmAjuda").classList.add("error");
         return;
     }
 
-    list.innerHTML = "";
+    const reais = type === "uvrm" ? input * multiplier * unit : input;
+    const quantity = type === "uvrm" ? input * multiplier : input / unit;
+    const formattedReais = formatUvrmCurrency(reais);
+    const formattedQuantity = formatDecimal(quantity, decimals);
 
-    history.forEach((item) => {
-        const li = document.createElement("li");
-        const text = document.createElement("span");
-        const actions = document.createElement("div");
-        const copyButton = document.createElement("button");
+    uvrmPreview = { type, inputValue: input, multiplier, reais, quantity, unitValue: unit, description };
+    $("#uvrmResultado").textContent = formattedReais;
+    $("#uvrmResultadoDetalhe").textContent = type === "uvrm"
+        ? `${formatDecimal(input, decimals)} UVRM × ${multiplier} × ${formatUvrmCurrency(unit)} = ${formattedQuantity} UVRM`
+        : `${formattedReais} corresponde a ${formattedQuantity} UVRM`;
+    $("#uvrmAjuda").textContent = "Lançamento pronto para ser adicionado.";
+    $("#uvrmAjuda").classList.remove("error");
+    $("#uvrmAjuda").classList.add("success");
+}
 
-        text.textContent = item.fullText;
-        actions.className = "list-actions";
-        copyButton.textContent = "Copiar";
-        copyButton.className = "secondary mini-button";
-        copyButton.addEventListener("click", () => {
-            copyText(item.plainValue || item.fullText);
+function resetUvrmEntryForm() {
+    $("#uvrmDescricao").value = "";
+    $("#uvrmValorLancamento").value = "";
+    $("#uvrmMultiplicador").value = "1";
+    uvrmEditingId = null;
+    $("#adicionarUvrmLancamento").textContent = "Adicionar à lista";
+    $("#cancelarEdicaoUvrm").hidden = true;
+    clearUvrmResult();
+}
+
+function addOrUpdateUvrmEntry() {
+    calculateUvrmPreview();
+    if (!uvrmPreview) {
+        showToast("Informe um valor válido para o lançamento.", "warning");
+        return;
+    }
+    const items = getUvrmCurrentList();
+    const entry = { ...uvrmPreview, id: uvrmEditingId || createUniqueId(), createdAt: new Date().toISOString() };
+    const index = items.findIndex(item => item.id === uvrmEditingId);
+    if (index >= 0) items[index] = entry; else items.push(entry);
+    saveUvrmCurrentList(items);
+    resetUvrmEntryForm();
+    showToast(index >= 0 ? "Lançamento atualizado." : "Lançamento adicionado.");
+}
+
+function getUvrmEntryDetail(item) {
+    const decimals = getUvrmDecimals();
+    const multiplier = Math.max(1, Number(item.multiplier) || 1);
+    return item.type === "uvrm"
+        ? `${formatDecimal(item.inputValue ?? item.quantity, decimals)} UVRM × ${multiplier} × ${formatUvrmCurrency(item.unitValue)}`
+        : `Valor informado diretamente em reais`;
+}
+
+function renderUvrmCurrentList() {
+    const items = getUvrmCurrentList();
+    const container = $("#uvrmListaAtual");
+    const total = items.reduce((sum, item) => sum + Number(item.reais || 0), 0);
+    $("#uvrmContador").textContent = `${items.length} ${items.length === 1 ? "item" : "itens"}`;
+    $("#uvrmTotalAtual").textContent = formatUvrmCurrency(total);
+
+    if (!items.length) {
+        container.innerHTML = '<p class="empty-state">Nenhum lançamento adicionado.</p>';
+        return;
+    }
+    container.innerHTML = items.map((item, index) => `
+        <article class="uvrm-entry-row" data-id="${item.id}">
+            <div class="uvrm-entry-number">${index + 1}</div>
+            <div class="uvrm-entry-content">
+                <strong>${escapeHtml(item.description || `Lançamento ${index + 1}`)}</strong>
+                <span>${escapeHtml(getUvrmEntryDetail(item))}</span>
+            </div>
+            <strong class="uvrm-entry-value">${formatUvrmCurrency(item.reais)}</strong>
+            <div class="uvrm-entry-actions">
+                <button type="button" class="small-button" data-uvrm-action="copy">Copiar</button>
+                <button type="button" class="small-button secondary" data-uvrm-action="edit">Editar</button>
+                <button type="button" class="small-button danger" data-uvrm-action="delete">Excluir</button>
+            </div>
+        </article>`).join("");
+
+    container.querySelectorAll("[data-uvrm-action]").forEach(button => {
+        button.addEventListener("click", async () => {
+            const id = button.closest("[data-id]").dataset.id;
+            const item = getUvrmCurrentList().find(entry => entry.id === id);
+            if (!item) return;
+            const action = button.dataset.uvrmAction;
+            if (action === "copy") await copyText(formatUvrmCurrency(item.reais));
+            if (action === "edit") editUvrmEntry(item);
+            if (action === "delete") saveUvrmCurrentList(getUvrmCurrentList().filter(entry => entry.id !== id));
         });
-
-        actions.append(copyButton);
-        li.append(text, actions);
-        list.appendChild(li);
     });
 }
 
-function clearUvrmResult(message = "Digite em apenas um dos campos para calcular automaticamente.") {
-    $("#uvrmResultado").textContent = "—";
-    $("#uvrmAjuda").textContent = message;
-    $("#uvrmAjuda").classList.remove("error", "success");
-    uvrmCurrentPlainValue = "";
-    uvrmCurrentFullText = "";
+function escapeHtml(value) {
+    const div = document.createElement("div");
+    div.textContent = String(value || "");
+    return div.innerHTML;
 }
 
-function calculateUvrmFromReais() {
-    const unitValue = getUvrmValue();
-    const reais = parseLocaleNumber($("#uvrmValorReais").value);
-    const decimals = getUvrmDecimals();
-
-    if (!Number.isFinite(unitValue)) {
-        clearUvrmResult("Informe um valor válido para a UVRM.");
-        $("#uvrmAjuda").classList.add("error");
-        return;
-    }
-
-    if (!Number.isFinite(reais) || reais < 0) {
-        clearUvrmResult();
-        return;
-    }
-
-    const quantity = reais / unitValue;
-    const formattedQuantity = formatDecimal(quantity, decimals);
-    const formattedReais = formatUvrmCurrency(reais);
-
-    $("#uvrmQuantidade").value = formattedQuantity;
-    $("#uvrmResultado").textContent = `${formattedQuantity} UVRM`;
-    $("#uvrmAjuda").textContent = "Conversão de reais para UVRM atualizada.";
-    $("#uvrmAjuda").classList.remove("error");
-    $("#uvrmAjuda").classList.add("success");
-
-    uvrmCurrentPlainValue = `${formattedQuantity} UVRM`;
-    uvrmCurrentFullText = `${formattedReais} = ${formattedQuantity} UVRM`;
+function editUvrmEntry(item) {
+    uvrmEditingId = item.id;
+    $("#uvrmDescricao").value = item.description || "";
+    $("#uvrmTipoLancamento").value = item.type;
+    $("#uvrmValorLancamento").value = formatDecimal(item.inputValue, item.type === "reais" ? 2 : getUvrmDecimals());
+    $("#uvrmMultiplicador").value = String(Math.max(1, Number(item.multiplier) || 1));
+    $("#adicionarUvrmLancamento").textContent = "Salvar alteração";
+    $("#cancelarEdicaoUvrm").hidden = false;
+    updateUvrmTypeInterface();
+    $("#uvrmDescricao").focus();
 }
 
-function calculateReaisFromUvrm() {
-    const unitValue = getUvrmValue();
-    const quantity = parseLocaleNumber($("#uvrmQuantidade").value);
-    const decimals = getUvrmDecimals();
-
-    if (!Number.isFinite(unitValue)) {
-        clearUvrmResult("Informe um valor válido para a UVRM.");
-        $("#uvrmAjuda").classList.add("error");
-        return;
-    }
-
-    if (!Number.isFinite(quantity) || quantity < 0) {
-        clearUvrmResult();
-        return;
-    }
-
-    const reais = quantity * unitValue;
-    const formattedReais = formatUvrmCurrency(reais);
-    const formattedQuantity = formatDecimal(quantity, decimals);
-
-    $("#uvrmValorReais").value = formatDecimal(reais, 2);
-    $("#uvrmResultado").textContent = formattedReais;
-    $("#uvrmAjuda").textContent = "Conversão de UVRM para reais atualizada.";
-    $("#uvrmAjuda").classList.remove("error");
-    $("#uvrmAjuda").classList.add("success");
-
-    uvrmCurrentPlainValue = formattedReais;
-    uvrmCurrentFullText = `${formattedQuantity} UVRM = ${formattedReais}`;
+function buildUvrmPlainValues(items) { return items.map(item => formatUvrmCurrency(item.reais)).join("\n"); }
+function buildUvrmDetailedText(items) {
+    const total = items.reduce((sum, item) => sum + Number(item.reais || 0), 0);
+    const lines = items.map((item, index) => `${index + 1}. ${item.description || "Lançamento"}: ${formatUvrmCurrency(item.reais)}`);
+    return [...lines, `Total: ${formatUvrmCurrency(total)}`].join("\n");
 }
 
-function recalculateUvrm() {
-    if (uvrmInputOrigin === "uvrm") {
-        calculateReaisFromUvrm();
-    } else if (uvrmInputOrigin === "reais") {
-        calculateUvrmFromReais();
-    } else {
-        clearUvrmResult();
-    }
+function saveUvrmOperation() {
+    const items = getUvrmCurrentList();
+    if (!items.length) return showToast("Adicione pelo menos um lançamento.", "warning");
+    const total = items.reduce((sum, item) => sum + Number(item.reais || 0), 0);
+    const operation = { id: createUniqueId(), items, total, itemCount: items.length, createdAt: new Date().toISOString(), fullText: buildUvrmDetailedText(items), plainValue: formatUvrmCurrency(total) };
+    const history = getUvrmHistory();
+    history.unshift(operation);
+    setJson(UVRM_HISTORY_KEY, history.slice(0, 50));
+    localStorage.removeItem(UVRM_CURRENT_LIST_KEY);
+    renderUvrmCurrentList();
+    renderUvrmHistory();
+    showToast("Operação salva no histórico.");
 }
 
-$("#uvrmValorReais").addEventListener("input", () => {
-    uvrmInputOrigin = "reais";
-    $("#uvrmQuantidade").value = "";
-    calculateUvrmFromReais();
-});
+function normalizeLegacyHistoryItem(item) {
+    if (Array.isArray(item.items)) return item;
+    return { ...item, legacy: true, total: null, itemCount: 1, items: [], fullText: item.fullText || item.plainValue || "Cálculo UVRM" };
+}
 
-$("#uvrmQuantidade").addEventListener("input", () => {
-    uvrmInputOrigin = "uvrm";
-    $("#uvrmValorReais").value = "";
-    calculateReaisFromUvrm();
-});
+function renderUvrmHistory() {
+    const query = ($("#pesquisaHistoricoUvrm")?.value || "").trim().toLocaleLowerCase("pt-BR");
+    const history = getUvrmHistory().map(normalizeLegacyHistoryItem).filter(item => item.fullText.toLocaleLowerCase("pt-BR").includes(query));
+    const container = $("#uvrmHistorico");
+    if (!container) return;
+    if (!history.length) { container.innerHTML = '<p class="empty-state">Nenhuma operação encontrada.</p>'; return; }
+    container.innerHTML = history.map(item => {
+        const date = item.createdAt ? new Date(item.createdAt).toLocaleString("pt-BR") : "";
+        return `<article class="uvrm-history-card" data-history-id="${item.id}">
+            <div><strong>${item.legacy ? "Cálculo anterior" : `${item.itemCount} ${item.itemCount === 1 ? "lançamento" : "lançamentos"}`}</strong><span>${date}</span></div>
+            <strong>${item.total === null ? escapeHtml(item.plainValue || "") : formatUvrmCurrency(item.total)}</strong>
+            <div class="uvrm-history-actions">
+                <button type="button" class="small-button" data-history-action="copy">Copiar</button>
+                ${item.legacy ? "" : '<button type="button" class="small-button secondary" data-history-action="restore">Reabrir</button>'}
+                <button type="button" class="small-button danger" data-history-action="delete">Excluir</button>
+            </div>
+        </article>`;
+    }).join("");
+    container.querySelectorAll("[data-history-action]").forEach(button => button.addEventListener("click", async () => {
+        const id = button.closest("[data-history-id]").dataset.historyId;
+        const raw = getUvrmHistory();
+        const item = raw.find(entry => entry.id === id);
+        if (!item) return;
+        const action = button.dataset.historyAction;
+        if (action === "copy") await copyText(item.fullText || item.plainValue);
+        if (action === "restore" && Array.isArray(item.items)) { saveUvrmCurrentList(item.items); showToast("Operação reaberta."); }
+        if (action === "delete") { setJson(UVRM_HISTORY_KEY, raw.filter(entry => entry.id !== id)); renderUvrmHistory(); }
+    }));
+}
 
-$("#uvrmValorUnitario").addEventListener("input", () => {
+$("#uvrmTipoLancamento").addEventListener("change", updateUvrmTypeInterface);
+$("#uvrmValorLancamento").addEventListener("input", calculateUvrmPreview);
+$("#uvrmMultiplicador").addEventListener("input", calculateUvrmPreview);
+$("#uvrmDescricao").addEventListener("input", calculateUvrmPreview);
+function persistUvrmPreferences() {
     localStorage.setItem(UVRM_VALUE_KEY, $("#uvrmValorUnitario").value);
-    recalculateUvrm();
-});
+    localStorage.setItem(UVRM_DECIMALS_KEY, $("#uvrmCasas").value);
+    saveFormData();
+}
 
+["input", "change", "blur"].forEach((eventName) => {
+    $("#uvrmValorUnitario").addEventListener(eventName, () => {
+        persistUvrmPreferences();
+        calculateUvrmPreview();
+        updateDashboardSummary();
+    });
+});
 
 $("#uvrmCasas").addEventListener("change", () => {
-    localStorage.setItem(UVRM_DECIMALS_KEY, $("#uvrmCasas").value);
-    recalculateUvrm();
+    persistUvrmPreferences();
+    calculateUvrmPreview();
+    renderUvrmCurrentList();
 });
-
-$("#uvrmRestaurarPadrao").addEventListener("click", () => {
-    $("#uvrmValorUnitario").value = formatDecimal(DEFAULT_UVRM_VALUE, 2);
-    localStorage.setItem(UVRM_VALUE_KEY, String(DEFAULT_UVRM_VALUE));
-    recalculateUvrm();
-    showToast("Valor padrão da UVRM restaurado.");
-});
-
-$("#copiarUvrmValor").addEventListener("click", async () => {
-    if (!uvrmCurrentPlainValue) {
-        showToast("Informe um valor para realizar o cálculo.");
-        return;
-    }
-
-    const copied = await copyText(uvrmCurrentPlainValue);
-
-    if (copied) {
-        addUvrmHistory(uvrmCurrentFullText, uvrmCurrentPlainValue);
-    }
-});
-
-$("#copiarUvrmCompleto").addEventListener("click", async () => {
-    if (!uvrmCurrentFullText) {
-        showToast("Informe um valor para realizar o cálculo.");
-        return;
-    }
-
-    const copied = await copyText(uvrmCurrentFullText);
-
-    if (copied) {
-        addUvrmHistory(uvrmCurrentFullText, uvrmCurrentPlainValue);
-    }
-});
-
-$("#limparUvrm").addEventListener("click", () => {
-    $("#uvrmValorReais").value = "";
-    $("#uvrmQuantidade").value = "";
-    uvrmInputOrigin = "";
-    clearUvrmResult();
-});
-
-$("#limparHistoricoUvrm").addEventListener("click", () => {
-    localStorage.removeItem(UVRM_HISTORY_KEY);
-    renderUvrmHistory();
-    showToast("Histórico UVRM removido.");
-});
-
+$("#uvrmRestaurarPadrao").addEventListener("click", () => { $("#uvrmValorUnitario").value = formatDecimal(DEFAULT_UVRM_VALUE, 2); localStorage.setItem(UVRM_VALUE_KEY, String(DEFAULT_UVRM_VALUE)); calculateUvrmPreview(); showToast("Valor padrão da UVRM restaurado."); });
+$("#adicionarUvrmLancamento").addEventListener("click", addOrUpdateUvrmEntry);
+$("#cancelarEdicaoUvrm").addEventListener("click", resetUvrmEntryForm);
+$("#limparUvrm").addEventListener("click", resetUvrmEntryForm);
+$("#copiarTodosUvrm").addEventListener("click", () => { const items=getUvrmCurrentList(); if(!items.length)return showToast("A lista está vazia.","warning"); copyText(buildUvrmPlainValues(items)); });
+$("#copiarUvrmCompleto").addEventListener("click", () => { const items=getUvrmCurrentList(); if(!items.length)return showToast("A lista está vazia.","warning"); copyText(buildUvrmDetailedText(items)); });
+$("#copiarUvrmValor").addEventListener("click", () => { const items=getUvrmCurrentList(); if(!items.length)return showToast("A lista está vazia.","warning"); copyText(formatUvrmCurrency(items.reduce((s,i)=>s+Number(i.reais||0),0))); });
+$("#salvarOperacaoUvrm").addEventListener("click", saveUvrmOperation);
+$("#limparListaUvrm").addEventListener("click", () => { if(!getUvrmCurrentList().length)return; if(confirm("Limpar todos os lançamentos da operação atual?")){ localStorage.removeItem(UVRM_CURRENT_LIST_KEY); renderUvrmCurrentList(); resetUvrmEntryForm(); } });
+$("#limparHistoricoUvrm").addEventListener("click", () => { if(confirm("Limpar todo o histórico UVRM?")){ localStorage.removeItem(UVRM_HISTORY_KEY); renderUvrmHistory(); showToast("Histórico UVRM removido."); } });
 $("#pesquisaHistoricoUvrm").addEventListener("input", renderUvrmHistory);

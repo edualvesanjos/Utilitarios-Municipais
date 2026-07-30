@@ -58,7 +58,41 @@
                 </div>
             </div>
 
-            <div class="dashboard-tools" aria-label="Ferramentas disponíveis">
+
+            <section class="dashboard-search-card" aria-labelledby="dashboardSearchTitle">
+                <div class="dashboard-search-heading">
+                    <div>
+                        <span class="eyebrow">Pesquisa global</span>
+                        <h3 id="dashboardSearchTitle">Localizar ferramenta</h3>
+                    </div>
+                    <span class="keyboard-hint">Enter abre o primeiro resultado</span>
+                </div>
+                <label class="dashboard-search-box">
+                    <span class="sr-only">Pesquisar ferramentas</span>
+                    <input id="dashboardToolSearch" type="search" autocomplete="off" placeholder="Digite nome, recurso ou palavra-chave">
+                </label>
+                <div id="dashboardSearchResults" class="dashboard-search-results" aria-live="polite"></div>
+            </section>
+
+            <section id="dashboardFavoritesSection" class="dashboard-favorites-section" hidden>
+                <div class="section-heading">
+                    <div><h3>Favoritos</h3><p class="mini-description">Ferramentas marcadas para acesso rápido.</p></div>
+                </div>
+                <div id="dashboardFavoriteTools" class="dashboard-tools dashboard-favorite-tools"></div>
+            </section>
+
+            <section class="dashboard-smart-grid" aria-label="Acessos inteligentes">
+                <div class="card dashboard-smart-card">
+                    <div class="section-heading"><div><h3>Utilizadas recentemente</h3><p class="mini-description">Últimos módulos abertos.</p></div></div>
+                    <div id="dashboardRecentTools" class="dashboard-smart-tools"></div>
+                </div>
+                <div class="card dashboard-smart-card">
+                    <div class="section-heading"><div><h3>Mais utilizadas</h3><p class="mini-description">Ordenadas por acessos e ações.</p></div></div>
+                    <div id="dashboardMostUsedTools" class="dashboard-smart-tools"></div>
+                </div>
+            </section>
+
+            <div id="dashboardAllTools" class="dashboard-tools" aria-label="Ferramentas disponíveis">
                 <button class="dashboard-tool-card" type="button" data-open-tab="arquivo">
                     <span class="dashboard-tool-icon" aria-hidden="true">ARQ</span>
                     <span class="dashboard-tool-content">
@@ -113,6 +147,14 @@
                     <span class="dashboard-tool-action">Abrir</span>
                 </button>
             </div>
+
+
+            <section class="dashboard-usage-indicators" aria-label="Indicadores de utilização">
+                <div><span>Acessos aos módulos</span><strong id="dashboardTotalAccesses">0</strong></div>
+                <div><span>Ações realizadas</span><strong id="dashboardTotalActions">0</strong></div>
+                <div><span>Favoritos</span><strong id="dashboardFavoriteCount">0</strong></div>
+                <div><span>Ferramenta mais utilizada</span><strong id="dashboardMostUsedTool">Nenhuma</strong></div>
+            </section>
 
             <div class="dashboard-summary-grid">
                 <section class="card dashboard-summary-card">
@@ -218,7 +260,7 @@
                         <div class="grid two-columns">
                             <label>
                                 Nome
-                                <input id="arquivoNome" type="text" placeholder="Ex.: Eduardo Alves dos Anjos">
+                                <input id="arquivoNome" type="text" placeholder="Ex.: Nome da Pessoa ou Razão Social">
                             </label>
 
                             <label>
@@ -479,12 +521,12 @@
                         <div class="grid three-columns">
                             <label>
                                 Setor
-                                <input id="loteSetor" type="text" inputmode="numeric" maxlength="3" value="97">
+                                <input id="loteSetor" type="text" inputmode="numeric" maxlength="3" value="99">
                             </label>
 
                             <label>
                                 Quadra
-                                <input id="loteQuadra" type="text" inputmode="numeric" maxlength="3" value="997">
+                                <input id="loteQuadra" type="text" inputmode="numeric" maxlength="3" value="999">
                             </label>
 
                             <label>
@@ -502,10 +544,10 @@
                             <label>
                                 Separador
                                 <select id="loteSeparador">
+                                    <option value="">Sem separador</option>
                                     <option value=".">Ponto (.)</option>
                                     <option value="-">Hífen (-)</option>
                                     <option value="/">Barra (/)</option>
-                                    <option value="">Sem separador</option>
                                 </select>
                             </label>
                         </div>
@@ -529,7 +571,7 @@
 
                         <div class="preview-card">
                             <span>Pré-visualização</span>
-                            <strong id="lotePreview">97.997.00004</strong>
+                            <strong id="lotePreview">9999900004</strong>
                         </div>
 
                         <div class="actions">
@@ -576,7 +618,7 @@
                             <div class="format-examples">
                                 <div>
                                     <span>Exemplo</span>
-                                    <code id="lotePadraoExemplo">097.997.00004</code>
+                                    <code id="lotePadraoExemplo">9999900004</code>
                                 </div>
                             </div>
                         </section>
@@ -591,11 +633,10 @@
                     <div>
                         <h2>Calculadora UVRM</h2>
                         <p class="section-description">
-                            Converta valores entre reais e UVRM com cálculo instantâneo e histórico local.
+                            Monte uma lista com vários lançamentos em reais ou UVRM, copie cada valor separadamente e acompanhe o total da operação.
                         </p>
                     </div>
-
-                    <span class="feature-badge">Aprimorado na v1.7</span>
+                    <span class="feature-badge">Lista de lançamentos</span>
                 </div>
 
                 <div class="generator-grid">
@@ -605,9 +646,8 @@
                                 Valor atual da UVRM (R$)
                                 <input id="uvrmValorUnitario" type="text" inputmode="decimal" autocomplete="off" value="39,99">
                             </label>
-
                             <label>
-                                Casas decimais
+                                Casas decimais da UVRM
                                 <select id="uvrmCasas">
                                     <option value="2">2 casas</option>
                                     <option value="3">3 casas</option>
@@ -621,65 +661,107 @@
                             <button id="uvrmRestaurarPadrao" class="secondary">Restaurar valor padrão</button>
                         </div>
 
-                        <div class="grid two-columns">
-                            <label>
-                                Valor em reais
-                                <input id="uvrmValorReais" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00">
-                            </label>
+                        <div class="uvrm-entry-card">
+                            <div class="section-heading">
+                                <div>
+                                    <h3>Novo lançamento</h3>
+                                    <p class="mini-description">Informe um valor em reais ou uma quantidade de UVRM.</p>
+                                </div>
+                            </div>
 
                             <label>
-                                Valor em UVRM
-                                <input id="uvrmQuantidade" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00">
+                                Descrição <span class="optional-label">(opcional)</span>
+                                <input id="uvrmDescricao" type="text" autocomplete="off" maxlength="100" placeholder="Ex.: Taxa de licença">
                             </label>
+
+                            <div class="grid two-columns">
+                                <label>
+                                    Tipo do valor
+                                    <select id="uvrmTipoLancamento">
+                                        <option value="uvrm">Valor em UVRM</option>
+                                        <option value="reais">Valor em reais</option>
+                                    </select>
+                                </label>
+                                <label>
+                                    <span id="uvrmValorLancamentoLabel">Valor em UVRM</span>
+                                    <input id="uvrmValorLancamento" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00">
+                                </label>
+                                <label id="uvrmMultiplicadorCampo">
+                                    Quantidade
+                                    <input id="uvrmMultiplicador" type="number" inputmode="numeric" min="1" step="1" value="1" autocomplete="off">
+                                    <small class="field-hint">Ex.: quantidade de dias, meses ou ocorrências.</small>
+                                </label>
+                            </div>
+
+                            <p id="uvrmAjuda" class="help-text">O resultado será calculado antes de adicionar à lista.</p>
+
+                            <div class="preview-card">
+                                <span>Pré-visualização do lançamento</span>
+                                <strong id="uvrmResultado">—</strong>
+                                <small id="uvrmResultadoDetalhe"></small>
+                            </div>
+
+                            <div class="actions">
+                                <button id="adicionarUvrmLancamento" class="primary">Adicionar à lista</button>
+                                <button id="cancelarEdicaoUvrm" class="secondary" hidden>Cancelar edição</button>
+                                <button id="limparUvrm" class="secondary">Limpar campos</button>
+                            </div>
                         </div>
 
-                        <p id="uvrmAjuda" class="help-text">
-                            Digite em apenas um dos campos para calcular automaticamente.
-                        </p>
+                        <div class="uvrm-list-section">
+                            <div class="section-heading">
+                                <div>
+                                    <h3>Lançamentos da operação atual</h3>
+                                    <p class="mini-description">Copie individualmente o valor de cada item para lançar no sistema.</p>
+                                </div>
+                                <span id="uvrmContador" class="counter-badge">0 itens</span>
+                            </div>
 
-                        <div class="preview-card">
-                            <span>Resultado</span>
-                            <strong id="uvrmResultado">—</strong>
+                            <div id="uvrmListaAtual" class="uvrm-current-list">
+                                <p class="empty-state">Nenhum lançamento adicionado.</p>
+                            </div>
+
+                            <div class="uvrm-totals">
+                                <span>Total da operação</span>
+                                <strong id="uvrmTotalAtual">R$ 0,00</strong>
+                            </div>
+
+                            <div class="actions">
+                                <button id="copiarTodosUvrm" class="primary">Copiar todos os valores</button>
+                                <button id="copiarUvrmCompleto" class="secondary">Copiar lista detalhada</button>
+                                <button id="copiarUvrmValor" class="secondary">Copiar total</button>
+                                <button id="salvarOperacaoUvrm" class="secondary">Finalizar e salvar</button>
+                                <button id="limparListaUvrm" class="danger">Limpar lista</button>
+                            </div>
                         </div>
-
-                        <div class="actions">
-                            <button id="copiarUvrmValor" class="primary">Copiar valor</button>
-                            <button id="copiarUvrmCompleto" class="secondary">Copiar resultado completo</button>
-                            <button id="limparUvrm" class="secondary">Limpar campos</button>
-                        </div>
-
-            <div class="tab-footer-navigation">
-                <button class="back-home-button" type="button" data-open-tab="inicio">
-                    <span aria-hidden="true">←</span>
-                    Voltar para a Página Inicial
-                </button>
-            </div>
-        </section>
+                    </section>
 
                     <aside class="generator-sidebar">
                         <section class="sidebar-card">
                             <div class="section-heading">
-                                <h3>Histórico de cálculos</h3>
+                                <h3>Histórico de operações</h3>
                                 <button id="limparHistoricoUvrm" class="text-button">Limpar</button>
                             </div>
-
                             <input id="pesquisaHistoricoUvrm" type="search" placeholder="Pesquisar no histórico">
-
-                            <ul id="uvrmHistorico" class="history-list compact-list">
-                                <li class="empty-state">Nenhum cálculo realizado.</li>
-                            </ul>
+                            <div id="uvrmHistorico" class="uvrm-operation-history">
+                                <p class="empty-state">Nenhuma operação salva.</p>
+                            </div>
                         </section>
 
                         <section class="sidebar-card">
-                            <h3>Referência</h3>
-                            <p class="help-text">
-                                O valor da UVRM é salvo automaticamente neste navegador.
-                            </p>
+                            <h3>Como funciona</h3>
+                            <p class="help-text">O valor unitário da UVRM e a lista atual são salvos automaticamente neste navegador.</p>
+                            <p class="help-text">Ao finalizar uma operação, todos os itens e o total ficam disponíveis no histórico.</p>
                         </section>
                     </aside>
                 </div>
+
+                <div class="tab-footer-navigation">
+                    <button class="back-home-button" type="button" data-open-tab="inicio"><span aria-hidden="true">←</span> Voltar para a Página Inicial</button>
+                </div>
             </div>
         </section>
+
 
         <section id="percentual" class="tab-panel">
             <div class="card">
@@ -845,6 +927,42 @@
                             </div>
                             <div class="actions"><button id="executarLimpezaSeletiva" class="danger-outline">Executar limpeza selecionada</button></div>
                         </section>
+
+                        <section class="settings-card">
+                            <h3>Interface e produtividade</h3>
+                            <div class="settings-checklist">
+                                <label class="checkbox-row"><input id="modoCompacto" type="checkbox">Interface compacta</label>
+                            </div>
+                            <p class="help-text">Atalhos: <strong>Ctrl+K</strong> pesquisa, <strong>Ctrl+1 a Ctrl+6</strong> abre módulos, <strong>Esc</strong> limpa a pesquisa e <strong>Ctrl+Shift+C</strong> copia o principal resultado visível.</p>
+                        </section>
+                        <section class="settings-card">
+                            <h3>Exportações e redefinições</h3>
+                            <div class="actions">
+                                <button id="exportarEstatisticasCsv" class="secondary" type="button">Estatísticas CSV</button>
+                                <button id="exportarEstatisticasJson" class="secondary" type="button">Estatísticas JSON</button>
+                                <button id="exportarEstatisticasTxt" class="secondary" type="button">Estatísticas TXT</button>
+                                <button id="resetarFavoritos" class="danger-outline" type="button">Resetar favoritos</button>
+                                <button id="resetarHistoricos" class="danger-outline" type="button">Resetar históricos</button>
+                            </div>
+                        </section>
+
+                        <section class="settings-card">
+                            <div class="section-heading">
+                                <div><h3>Estatísticas detalhadas</h3><p class="help-text">Acessos e ações registrados localmente por módulo.</p></div>
+                                <button id="resetarEstatisticas" class="text-button" type="button">Zerar estatísticas</button>
+                            </div>
+                            <div class="settings-statistics-summary">
+                                <div><span>Total de acessos</span><strong id="configTotalAccesses">0</strong></div>
+                                <div><span>Total de ações</span><strong id="configTotalActions">0</strong></div>
+                                <div><span>Favoritos</span><strong id="configFavoriteCount">0</strong></div>
+                            </div>
+                            <div class="statistics-table-wrap">
+                                <table class="statistics-table">
+                                    <thead><tr><th>Ferramenta</th><th>Acessos</th><th>Ações</th><th>Total</th></tr></thead>
+                                    <tbody id="configStatisticsBody"></tbody>
+                                </table>
+                            </div>
+                        </section>
                         <section class="settings-card danger-zone"><h3>Restaurar aplicativo</h3><p class="help-text">Remove todos os dados locais e retorna o aplicativo ao estado inicial.</p><div class="actions"><button id="limparTudo" class="danger-outline">Apagar todos os dados</button></div></section>
                     </section>
                     <aside class="generator-sidebar">
@@ -864,7 +982,15 @@
 
     <script src="assets/js/core/config.js"></script>
     <script src="assets/js/core/storage.js"></script>
+    <script src="assets/js/core/utils.js"></script>
+    <script src="assets/js/components/notifications.js"></script>
+    <script src="assets/js/components/clipboard.js"></script>
+    <script src="assets/js/components/modal.js"></script>
+    <script src="assets/js/components/history.js"></script>
+    <script src="assets/js/core/validation.js"></script>
+    <script src="assets/js/core/analytics.js"></script>
     <script src="assets/js/core/navigation.js"></script>
+    <script src="assets/js/core/productivity.js"></script>
     <script src="assets/js/modules/dashboard.js"></script>
     <script src="assets/js/modules/arquivo.js"></script>
     <script src="assets/js/core/form-persistence.js"></script>

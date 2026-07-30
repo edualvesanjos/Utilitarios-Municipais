@@ -48,3 +48,71 @@
         min-width: 0;
     }
 }
+
+
+/* Componentes reutilizáveis — versão 2.2 */
+
+.toast[data-type="success"] {
+    border-left: 4px solid #2e7d32;
+}
+
+.toast[data-type="error"] {
+    border-left: 4px solid #b3261e;
+}
+
+.toast[data-type="warning"] {
+    border-left: 4px solid #a15c00;
+}
+
+.confirm-dialog-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background: rgba(15, 23, 42, 0.55);
+}
+
+.confirm-dialog-overlay[hidden] {
+    display: none;
+}
+
+.confirm-dialog {
+    width: min(100%, 460px);
+    border-radius: 16px;
+    background: #ffffff;
+    padding: 24px;
+    box-shadow: 0 24px 70px rgba(15, 23, 42, 0.25);
+}
+
+.confirm-dialog h2 {
+    margin: 0 0 10px;
+    font-size: 1.25rem;
+}
+
+.confirm-dialog p {
+    margin: 0;
+    line-height: 1.55;
+}
+
+.confirm-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+.modal-open {
+    overflow: hidden;
+}
+
+@media (max-width: 520px) {
+    .confirm-dialog-actions {
+        flex-direction: column-reverse;
+    }
+
+    .confirm-dialog-actions button {
+        width: 100%;
+    }
+}

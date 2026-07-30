@@ -14,11 +14,46 @@ function applyApplicationMetadata() {
     });
 }
 
+
+function applyVersion241Defaults() {
+    const migrationKey = `${STORAGE_PREFIX}migration:2.4.1`;
+
+    if (localStorage.getItem(migrationKey) === "done") {
+        return;
+    }
+
+    // Converte apenas os valores-padrão antigos, preservando escolhas personalizadas.
+    if ($("#loteSetor").value === "97") {
+        $("#loteSetor").value = "99";
+    }
+
+    if ($("#loteQuadra").value === "997") {
+        $("#loteQuadra").value = "999";
+    }
+
+    if ($("#loteSeparador").value === ".") {
+        $("#loteSeparador").value = "";
+    }
+
+    localStorage.setItem(migrationKey, "done");
+    saveFormData();
+}
+
+function renderAllExistingHistories() {
+    safeInvoke(renderFileHistory);
+    safeInvoke(renderRegistrationHistory);
+    safeInvoke(renderLotHistory);
+    safeInvoke(renderUvrmHistory);
+    safeInvoke(renderPercentageHistory);
+}
+
 function initializeApplication() {
     applyApplicationMetadata();
+    migrateCompatibleStorageKeys();
     $("#salvarCampos").checked = shouldSaveFields();
 
     restoreFormData();
+    applyVersion241Defaults();
 
     $("#arquivoSeparador").value = fileBuilderState.separator;
     $("#arquivoAnaliseProjeto").checked =
@@ -47,25 +82,64 @@ function initializeApplication() {
     updateLotPreview();
 
     const storedUvrmValue = localStorage.getItem(UVRM_VALUE_KEY);
-    $("#uvrmValorUnitario").value =
-        storedUvrmValue && storedUvrmValue.trim()
-            ? storedUvrmValue
-            : "39,99";
+    const restoredUvrmValue = storedUvrmValue && storedUvrmValue.trim()
+        ? storedUvrmValue
+        : $("#uvrmValorUnitario").value || "39,99";
+    $("#uvrmValorUnitario").value = restoredUvrmValue;
+    localStorage.setItem(UVRM_VALUE_KEY, restoredUvrmValue);
 
-    $("#uvrmCasas").value =
-        localStorage.getItem(UVRM_DECIMALS_KEY) || "2";
+    const restoredUvrmDecimals = localStorage.getItem(UVRM_DECIMALS_KEY)
+        || $("#uvrmCasas").value
+        || "2";
+    $("#uvrmCasas").value = restoredUvrmDecimals;
+    localStorage.setItem(UVRM_DECIMALS_KEY, restoredUvrmDecimals);
 
     renderUvrmHistory();
+    renderUvrmCurrentList();
+    updateUvrmTypeInterface();
     clearUvrmResult();
 
     renderPercentageHistory();
     updatePercentageMode();
 
+    // Garante a recuperação de todos os históricos já existentes ao abrir ou restaurar a página.
+    renderAllExistingHistories();
+
     updateSettingsSummary();
     updateDashboardSummary();
 
     const storedTab = localStorage.getItem(ACTIVE_TAB_KEY);
-    activateTab(storedTab && document.getElementById(storedTab) ? storedTab : "inicio");
+    activateTab(storedTab && document.getElementById(storedTab) ? storedTab : "inicio", { track: false });
 }
 
-initializeApplication();
+function refreshPersistedApplicationData() {
+    migrateCompatibleStorageKeys();
+
+    const storedUvrmValue = localStorage.getItem(UVRM_VALUE_KEY);
+    if (storedUvrmValue !== null && document.activeElement !== $("#uvrmValorUnitario")) {
+        $("#uvrmValorUnitario").value = storedUvrmValue;
+    }
+
+    const storedDecimals = localStorage.getItem(UVRM_DECIMALS_KEY);
+    if (storedDecimals !== null) {
+        $("#uvrmCasas").value = storedDecimals;
+    }
+
+    renderAllExistingHistories();
+    safeInvoke(renderUvrmCurrentList);
+    safeInvoke(updateSettingsSummary);
+    safeInvoke(updateDashboardSummary);
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initializeApplication, { once: true });
+} else {
+    initializeApplication();
+}
+
+window.addEventListener("pageshow", refreshPersistedApplicationData);
+window.addEventListener("focus", refreshPersistedApplicationData);
+document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) refreshPersistedApplicationData();
+});
+window.addEventListener("storage", refreshPersistedApplicationData);

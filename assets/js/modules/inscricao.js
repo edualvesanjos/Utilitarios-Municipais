@@ -88,38 +88,23 @@ function addRegistrationHistory(masked, type) {
 }
 
 function renderRegistrationHistory() {
-    const list = $("#inscricaoHistorico");
     const history = getRegistrationHistory();
 
-    if (history.length === 0) {
-        list.innerHTML =
-            '<li class="empty-state">Nenhuma inscrição copiada recentemente.</li>';
-        return;
-    }
-
-    list.innerHTML = "";
-
-    history.forEach((item) => {
-        const li = document.createElement("li");
-        const text = document.createElement("span");
-        const actions = document.createElement("div");
-        const maskedButton = document.createElement("button");
-        const digitsButton = document.createElement("button");
-
-        text.textContent = `${item.masked} (${item.type.toUpperCase()})`;
-        actions.className = "list-actions";
-
-        maskedButton.textContent = "Copiar";
-        maskedButton.className = "secondary mini-button";
-        maskedButton.addEventListener("click", () => copyText(item.masked));
-
-        digitsButton.textContent = "Números";
-        digitsButton.className = "secondary mini-button";
-        digitsButton.addEventListener("click", () => copyText(item.digits));
-
-        actions.append(maskedButton, digitsButton);
-        li.append(text, actions);
-        list.appendChild(li);
+    renderHistoryList({
+        list: $("#inscricaoHistorico"),
+        items: history,
+        emptyMessage: "Nenhuma inscrição copiada recentemente.",
+        getText: (item) => `${item.masked} (${item.type.toUpperCase()})`,
+        getActions: () => [
+            {
+                label: "Copiar",
+                onClick: (item) => copyText(item.masked)
+            },
+            {
+                label: "Números",
+                onClick: (item) => copyText(item.digits)
+            }
+        ]
     });
 }
 
