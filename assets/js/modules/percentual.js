@@ -64,7 +64,7 @@ function getPercentageHistory() {
 
 function addPercentageHistory(fullText, resultValue) {
     const item = {
-        id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
+        id: createUniqueId(),
         fullText,
         resultValue,
         createdAt: new Date().toISOString()
@@ -80,7 +80,6 @@ function addPercentageHistory(fullText, resultValue) {
 }
 
 function renderPercentageHistory() {
-    const list = $("#percentualHistorico");
     const query = ($("#pesquisaHistoricoPercentual").value || "")
         .trim()
         .toLocaleLowerCase("pt-BR");
@@ -89,30 +88,17 @@ function renderPercentageHistory() {
         item.fullText.toLocaleLowerCase("pt-BR").includes(query)
     );
 
-    if (history.length === 0) {
-        list.innerHTML =
-            '<li class="empty-state">Nenhum cálculo encontrado.</li>';
-        return;
-    }
-
-    list.innerHTML = "";
-
-    history.forEach((item) => {
-        const li = document.createElement("li");
-        const text = document.createElement("span");
-        const actions = document.createElement("div");
-        const copyButton = document.createElement("button");
-
-        text.textContent = item.fullText;
-        actions.className = "list-actions";
-
-        copyButton.textContent = "Copiar";
-        copyButton.className = "secondary mini-button";
-        copyButton.addEventListener("click", () => copyText(item.fullText));
-
-        actions.append(copyButton);
-        li.append(text, actions);
-        list.appendChild(li);
+    renderHistoryList({
+        list: $("#percentualHistorico"),
+        items: history,
+        emptyMessage: "Nenhum cálculo encontrado.",
+        getText: (item) => item.fullText,
+        getActions: () => [
+            {
+                label: "Copiar",
+                onClick: (item) => copyText(item.fullText)
+            }
+        ]
     });
 }
 

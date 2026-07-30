@@ -81,7 +81,7 @@ function getLotHistory() {
 
 function addLotHistory(lots) {
     const item = {
-        id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
+        id: createUniqueId(),
         first: lots[0],
         last: lots[lots.length - 1],
         quantity: lots.length,
@@ -96,35 +96,21 @@ function addLotHistory(lots) {
 }
 
 function renderLotHistory() {
-    const list = $("#loteHistorico");
     const history = getLotHistory();
 
-    if (history.length === 0) {
-        list.innerHTML =
-            '<li class="empty-state">Nenhum lote gerado recentemente.</li>';
-        return;
-    }
-
-    list.innerHTML = "";
-
-    history.forEach((item) => {
-        const li = document.createElement("li");
-        const text = document.createElement("span");
-        const actions = document.createElement("div");
-        const copyButton = document.createElement("button");
-
-        text.textContent = item.quantity === 1
+    renderHistoryList({
+        list: $("#loteHistorico"),
+        items: history,
+        emptyMessage: "Nenhum lote gerado recentemente.",
+        getText: (item) => item.quantity === 1
             ? item.first
-            : `${item.first} até ${item.last} (${item.quantity})`;
-
-        actions.className = "list-actions";
-        copyButton.textContent = "Copiar";
-        copyButton.className = "secondary mini-button";
-        copyButton.addEventListener("click", () => copyText(item.content));
-
-        actions.append(copyButton);
-        li.append(text, actions);
-        list.appendChild(li);
+            : `${item.first} até ${item.last} (${item.quantity})`,
+        getActions: () => [
+            {
+                label: "Copiar",
+                onClick: (item) => copyText(item.content)
+            }
+        ]
     });
 }
 
@@ -171,18 +157,7 @@ $("#baixarLotesTxt").addEventListener("click", () => {
         return;
     }
 
-    const blob = new Blob([content], {
-        type: "text/plain;charset=utf-8"
-    });
-
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-
-    link.href = url;
-    link.download = `lotes-${new Date().toISOString().slice(0, 10)}.txt`;
-    link.click();
-
-    URL.revokeObjectURL(url);
+    downloadTextFile(`lotes-${todayIsoDate()}.txt`, content);
     showToast("Arquivo TXT gerado.");
 });
 
@@ -192,8 +167,13 @@ $("#limparLotes").addEventListener("click", () => {
     updateLotPreview();
 });
 
-$("#reiniciarSequenciaLotes").addEventListener("click", () => {
-    if (!window.confirm("Deseja reiniciar a sequência para 00003?")) {
+$("#reiniciarSequenciaLotes").addEventListener("click", async () => {
+    const confirmed = await confirmAction(
+        "Deseja reiniciar a sequência para 00003?",
+        { title: "Reiniciar sequência", confirmText: "Reiniciar" }
+    );
+
+    if (!confirmed) {
         return;
     }
 

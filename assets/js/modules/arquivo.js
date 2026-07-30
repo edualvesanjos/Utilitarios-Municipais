@@ -305,9 +305,7 @@ $("#salvarModeloArquivo").addEventListener("click", () => {
 
     const models = getFileModels();
     models.unshift({
-        id: crypto.randomUUID
-            ? crypto.randomUUID()
-            : String(Date.now()),
+        id: createUniqueId(),
         name,
         builder: {
             enabled: [...fileBuilderState.enabled],
@@ -328,7 +326,8 @@ $("#salvarModeloArquivo").addEventListener("click", () => {
 });
 
 $("#copiarArquivoPreview").addEventListener("click", async () => {
-    const result = buildFileName();
+    const previewText = $("#arquivoPreview").textContent.trim();
+    const result = previewText === "—" ? "" : previewText;
 
     if (!result) {
         setFeedback(

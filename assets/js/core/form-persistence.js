@@ -8,8 +8,11 @@ const persistentFieldIds = [
     "loteQuantidade",
     "loteSequenciaInicial",
     "loteSeparador",
-    "uvrmQuantidade",
-    "uvrmValor",
+    "uvrmValorUnitario",
+    "uvrmCasas",
+    "uvrmDescricao",
+    "uvrmTipoLancamento",
+    "uvrmValorLancamento",
     "percentualModo",
     "percentualValor1",
     "percentualValor2"
