@@ -49,6 +49,7 @@ function renderAllExistingHistories() {
 
 function initializeApplication() {
     applyApplicationMetadata();
+    if (typeof initializeV3Architecture === "function") initializeV3Architecture();
     migrateCompatibleStorageKeys();
     $("#salvarCampos").checked = shouldSaveFields();
 

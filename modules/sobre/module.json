@@ -1,0 +1,8 @@
+{
+  "id": "sobre",
+  "name": "Sobre",
+  "category": "Sistema",
+  "version": "3.0.1",
+  "entry": "#sobre",
+  "description": "Versão, novidades e histórico do aplicativo."
+}

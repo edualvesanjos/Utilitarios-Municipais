@@ -4,14 +4,8 @@ const FAVORITES_KEY = `${APP_CONFIG.storagePrefix}favorites`;
 const ACTIVITY_LOG_KEY = `${APP_CONFIG.storagePrefix}activityLog`;
 const RECENT_TOOLS_KEY = `${APP_CONFIG.storagePrefix}recentTools`;
 
-const TOOL_CATALOG = Object.freeze([
-    {id:"arquivo", name:"Nome de arquivo", icon:"ARQ", description:"Monte nomes padronizados com blocos configuráveis.", keywords:["arquivo","nome","padronização","blocos","modelos","documento","processo"]},
-    {id:"inscricao", name:"Inscrição imobiliária", icon:"IM", description:"Normalize inscrições urbanas e rurais automaticamente.", keywords:["inscrição","imobiliária","urbana","iptu","itr","rural","cadastro"]},
-    {id:"lote", name:"Número de lote", icon:"LOT", description:"Gere sequências de lotes com setor e quadra.", keywords:["lote","setor","quadra","sequência","parcelamento"]},
-    {id:"uvrm", name:"Calculadora UVRM", icon:"UVR", description:"Converta valores entre reais e unidades UVRM.", keywords:["uvrm","reais","conversão","cálculo","multa","taxa","valor"]},
-    {id:"percentual", name:"Percentual", icon:"%", description:"Calcule percentuais, reajustes, descontos e variações.", keywords:["percentual","porcentagem","desconto","reajuste","variação","multa","acréscimo"]},
-    {id:"configuracoes", name:"Configurações", icon:"CFG", description:"Gerencie backup, restauração, dados e estatísticas.", keywords:["configurações","backup","dados","estatísticas","exportar","importar","compacto"]}
-]);
+const TOOL_CATALOG = TOOL_REGISTRY;
+
 function emptyAnalytics(){return {accesses:{},actions:{},actionDetails:{},lastUsed:{},updatedAt:""};}
 function getAnalytics(){const value=getJson(ANALYTICS_KEY,emptyAnalytics());return value&&typeof value==="object"?{...emptyAnalytics(),...value,accesses:value.accesses||{},actions:value.actions||{},actionDetails:value.actionDetails||{},lastUsed:value.lastUsed||{}}:emptyAnalytics();}
 function saveAnalytics(value){value.updatedAt=new Date().toISOString();setJson(ANALYTICS_KEY,value);}
