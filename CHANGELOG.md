@@ -14,7 +14,6 @@
 - Mantida a compatibilidade com históricos e backups das versões anteriores.
 - Registros antigos de UVRM sem `plainValue` continuam copiáveis por meio do texto completo como alternativa.
 
-## 2.1.2
 
 ### Corrigido
 
