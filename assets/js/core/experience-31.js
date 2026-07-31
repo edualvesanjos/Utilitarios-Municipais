@@ -1,0 +1,89 @@
+/* Versão 3.1 — experiência do usuário */
+(function(){
+"use strict";
+const UX_PREFIX=(window.APP_CONFIG?.storagePrefix||"utilitariosMunicipais:")+"ux31:";
+const HELP={
+ inicio:{title:"Dashboard",text:"Use a pesquisa, os favoritos, os recentes e os filtros para abrir ferramentas. Personalize o layout e as seções exibidas em Configurações > Aparência e Dashboard.",tips:["Ctrl + Espaço abre a paleta de comandos.","Enter abre o primeiro resultado da pesquisa."]},
+ arquivo:{title:"Nome de arquivo",text:"Ative os blocos desejados, defina a ordem e copie exatamente o conteúdo mostrado na pré-visualização.",tips:["Salve modelos para reutilizar combinações.","O histórico fica armazenado neste navegador."]},
+ inscricao:{title:"Inscrição imobiliária",text:"Digite ou cole a inscrição para normalização automática. O módulo identifica formatos urbanos e rurais.",tips:["Use o botão de copiar para levar o resultado ao sistema."]},
+ lote:{title:"Número de lote",text:"Defina setor, quadra, sequência e separador para gerar um ou vários números de lote.",tips:["A última sequência é salva automaticamente."]},
+ uvrm:{title:"Calculadora UVRM",text:"Adicione vários lançamentos em UVRM ou reais. Em UVRM, a quantidade funciona como multiplicador de dias, parcelas ou ocorrências.",tips:["Copie cada lançamento individualmente.","Finalize a operação para arquivá-la no histórico."]},
+ percentual:{title:"Percentual",text:"Calcule percentual simples, acréscimo, desconto e variação entre valores.",tips:["Os cálculos anteriores aparecem no histórico lateral."]},
+ configuracoes:{title:"Configurações",text:"Gerencie backup, persistência, estatísticas e preferências visuais da aplicação.",tips:["O backup completo preserva históricos, favoritos e configurações."]},
+ sobre:{title:"Sobre",text:"Consulte versão, arquitetura, módulos e histórico de evolução do aplicativo.",tips:[]}
+};
+const get=(k,f)=>{try{const v=localStorage.getItem(UX_PREFIX+k);return v===null?f:JSON.parse(v)}catch{return f}};
+const set=(k,v)=>localStorage.setItem(UX_PREFIX+k,JSON.stringify(v));
+function applyPrefs(){const p=get("prefs",{theme:"light",compact:false,font:"normal",layout:"grid",widgets:{favorites:true,smart:true,indicators:true,summary:true,recent:true}});document.body.dataset.theme=p.theme;document.body.classList.toggle("ux-compact",!!p.compact);document.body.classList.toggle("ux-font-large",p.font==="large");document.documentElement.style.setProperty("--ux-accent",p.accent||"#0f4c81");const all=document.getElementById("dashboardAllTools");if(all)all.dataset.layout=p.layout||"grid";const map={favorites:"dashboardFavoritesSection",smart:null,indicators:null,summary:null,recent:null};document.getElementById("dashboardFavoritesSection")?.classList.toggle("ux-hidden-widget",p.widgets?.favorites===false);document.querySelector(".dashboard-smart-grid")?.classList.toggle("ux-hidden-widget",p.widgets?.smart===false);document.querySelector(".dashboard-usage-indicators")?.classList.toggle("ux-hidden-widget",p.widgets?.indicators===false);document.querySelector(".dashboard-summary-grid")?.classList.toggle("ux-hidden-widget",p.widgets?.summary===false);document.querySelector(".dashboard-recent-card")?.classList.toggle("ux-hidden-widget",p.widgets?.recent===false)}
+function createToolbar(){const target=document.querySelector("#inicio .dashboard-hero");if(!target||document.getElementById("uxDashboardToolbar"))return;const wrap=document.createElement("section");wrap.id="uxDashboardToolbar";wrap.className="card";wrap.innerHTML=`<div class="section-heading"><div><span class="eyebrow">Personalização</span><h3>Experiência do Dashboard</h3></div></div><div class="ux-toolbar"><label>Layout <select id="uxLayout"><option value="grid">Grade</option><option value="list">Lista</option><option value="compact">Compacto</option></select></label><button id="uxOpenCommands" type="button" class="secondary">Paleta de comandos</button></div><div class="ux-personalize"><label><input data-ux-widget="favorites" type="checkbox"> Favoritos</label><label><input data-ux-widget="smart" type="checkbox"> Recentes e mais usadas</label><label><input data-ux-widget="indicators" type="checkbox"> Indicadores</label><label><input data-ux-widget="summary" type="checkbox"> Resumo</label><label><input data-ux-widget="recent" type="checkbox"> Atividades recentes</label></div>`;target.after(wrap);const p=get("prefs",{layout:"grid",widgets:{favorites:true,smart:true,indicators:true,summary:true,recent:true}});document.getElementById("uxLayout").value=p.layout||"grid";document.querySelectorAll("[data-ux-widget]").forEach(i=>i.checked=p.widgets?.[i.dataset.uxWidget]!==false);document.getElementById("uxLayout").onchange=e=>{const x=get("prefs",{});x.layout=e.target.value;set("prefs",x);applyPrefs()};document.querySelectorAll("[data-ux-widget]").forEach(i=>i.onchange=()=>{const x=get("prefs",{});x.widgets={...(x.widgets||{}),[i.dataset.uxWidget]:i.checked};set("prefs",x);applyPrefs()});document.getElementById("uxOpenCommands").onclick=openPalette}
+function addSettings(){
+    const root=document.querySelector("#configuracoes .settings-list")||document.querySelector("#configuracoes .generator-main");
+    if(!root||document.getElementById("uxAppearanceSettings"))return;
+    const sec=document.createElement("section");
+    sec.id="uxAppearanceSettings";
+    sec.className="settings-card ux-settings-panel";
+    sec.innerHTML=`
+        <div class="section-heading">
+            <div>
+                <span class="eyebrow">Personalização</span>
+                <h3>Aparência e Dashboard</h3>
+                <p class="help-text">Defina a apresentação da interface e as informações exibidas na página inicial.</p>
+            </div>
+        </div>
+        <div class="ux-settings-groups">
+            <fieldset class="ux-settings-group">
+                <legend>Dashboard</legend>
+                <label class="ux-setting-field">
+                    <span>Layout das ferramentas</span>
+                    <select id="uxLayout">
+                        <option value="grid">Grade</option>
+                        <option value="list">Lista</option>
+                        <option value="compact">Compacto</option>
+                    </select>
+                </label>
+                <div class="ux-setting-block">
+                    <span class="ux-setting-title">Seções exibidas</span>
+                    <div class="ux-widget-options">
+                        <label class="checkbox-row"><input data-ux-widget="favorites" type="checkbox"><span>Favoritos</span></label>
+                        <label class="checkbox-row"><input data-ux-widget="smart" type="checkbox"><span>Recentes e mais utilizadas</span></label>
+                        <label class="checkbox-row"><input data-ux-widget="indicators" type="checkbox"><span>Indicadores</span></label>
+                        <label class="checkbox-row"><input data-ux-widget="summary" type="checkbox"><span>Resumo</span></label>
+                        <label class="checkbox-row"><input data-ux-widget="recent" type="checkbox"><span>Atividades recentes</span></label>
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset class="ux-settings-group">
+                <legend>Interface</legend>
+                <div class="ux-interface-grid">
+                    <label class="ux-setting-field"><span>Tema</span><select id="uxTheme"><option value="light">Claro</option><option value="dark">Escuro</option><option value="contrast">Alto contraste</option></select></label>
+                    <label class="ux-setting-field"><span>Tamanho da fonte</span><select id="uxFont"><option value="normal">Normal</option><option value="large">Ampliada</option></select></label>
+                    <label class="ux-setting-field ux-color-field"><span>Cor principal</span><input id="uxAccent" type="color" value="#0f4c81"></label>
+                </div>
+                <label class="checkbox-row ux-compact-option"><input id="uxCompact" type="checkbox"><span>Interface compacta</span></label>
+            </fieldset>
+        </div>`;
+    root.prepend(sec);
+    const p=get("prefs",{layout:"grid",widgets:{favorites:true,smart:true,indicators:true,summary:true,recent:true}});
+    document.getElementById("uxLayout").value=p.layout||"grid";
+    document.querySelectorAll("[data-ux-widget]").forEach(i=>i.checked=p.widgets?.[i.dataset.uxWidget]!==false);
+    document.getElementById("uxTheme").value=p.theme||"light";
+    document.getElementById("uxFont").value=p.font||"normal";
+    document.getElementById("uxAccent").value=p.accent||"#0f4c81";
+    document.getElementById("uxCompact").checked=!!p.compact;
+    document.getElementById("uxLayout").addEventListener("change",e=>{const x=get("prefs",{});x.layout=e.target.value;set("prefs",x);applyPrefs()});
+    document.querySelectorAll("[data-ux-widget]").forEach(i=>i.addEventListener("change",()=>{const x=get("prefs",{});x.widgets={...(x.widgets||{}),[i.dataset.uxWidget]:i.checked};set("prefs",x);applyPrefs()}));
+    ["uxTheme","uxFont","uxAccent","uxCompact"].forEach(id=>document.getElementById(id).addEventListener("input",()=>{const x=get("prefs",{});x.theme=document.getElementById("uxTheme").value;x.font=document.getElementById("uxFont").value;x.accent=document.getElementById("uxAccent").value;x.compact=document.getElementById("uxCompact").checked;set("prefs",x);applyPrefs()}));
+}
+let opened=get("openedTabs",["inicio"]);function renderOpened(active){let bar=document.getElementById("uxTabsBar");if(!bar){bar=document.createElement("div");bar.id="uxTabsBar";bar.className="ux-tabs-bar";document.querySelector(".tabs")?.after(bar)}if(!bar)return;bar.innerHTML=opened.map(id=>{const t=window.getRegisteredTool?.(id);const name=id==="inicio"?"Dashboard":(t?.shortName||t?.name||id);return `<button class="ux-open-tab ${id===active?'active':''}" type="button" data-ux-tab="${id}"><span>${name}</span>${id!=="inicio"?`<span class="ux-open-tab-close" data-ux-close="${id}" aria-label="Fechar">×</span>`:""}</button>`}).join("")}
+function installNavigation(){if(typeof window.activateTab!=="function")return;const original=window.activateTab;window.activateTab=function(id,opt={}){if(!opened.includes(id))opened.push(id);set("openedTabs",opened);original(id,opt);renderOpened(id)};document.addEventListener("click",e=>{const close=e.target.closest("[data-ux-close]");if(close){e.stopPropagation();const id=close.dataset.uxClose;opened=opened.filter(x=>x!==id);set("openedTabs",opened);const active=document.querySelector(".tab-panel.active")?.id;if(active===id)window.activateTab(opened.at(-1)||"inicio",{track:false});else renderOpened(active);return}const tab=e.target.closest("[data-ux-tab]");if(tab)window.activateTab(tab.dataset.uxTab)});renderOpened(document.querySelector(".tab-panel.active")?.id||"inicio")}
+const commands=[{name:"Ir para o Dashboard",detail:"Navegação",run:()=>activateTab("inicio")},{name:"Abrir Configurações",detail:"Navegação",run:()=>activateTab("configuracoes")},{name:"Abrir Sobre",detail:"Navegação",run:()=>activateTab("sobre")},{name:"Alternar modo compacto",detail:"Aparência",run:()=>{const p=get("prefs",{});p.compact=!p.compact;set("prefs",p);applyPrefs()}},{name:"Alternar tema claro/escuro",detail:"Aparência",run:()=>{const p=get("prefs",{});p.theme=p.theme==="dark"?"light":"dark";set("prefs",p);applyPrefs()}}];
+function paletteItems(q){const tools=(window.getRegisteredTools?.()||[]).map(t=>({name:`Abrir ${t.name}`,detail:t.category,search:[t.name,t.description,...t.keywords].join(" "),run:()=>activateTab(t.id)}));return [...tools,...commands].filter(x=>(x.search||x.name).toLowerCase().includes(q.toLowerCase())).slice(0,12)}
+function createPalette(){if(document.getElementById("uxCommandOverlay"))return;const el=document.createElement("div");el.id="uxCommandOverlay";el.className="ux-command-overlay";el.hidden=true;el.innerHTML=`<div class="ux-command" role="dialog" aria-modal="true" aria-label="Paleta de comandos"><input id="uxCommandInput" autocomplete="off" placeholder="Digite uma ferramenta ou comando…"><div id="uxCommandResults" class="ux-command-results"></div></div>`;document.body.append(el);el.addEventListener("click",e=>{if(e.target===el)closePalette()});document.getElementById("uxCommandInput").addEventListener("input",renderPalette);document.getElementById("uxCommandInput").addEventListener("keydown",e=>{if(e.key==="Enter"){document.querySelector(".ux-command-item")?.click()}if(e.key==="Escape")closePalette()})}
+function renderPalette(){const q=document.getElementById("uxCommandInput").value||"";document.getElementById("uxCommandResults").innerHTML=paletteItems(q).map((x,i)=>`<button type="button" class="ux-command-item ${i===0?'selected':''}" data-ux-command="${i}"><span>${x.name}</span><small>${x.detail||""}</small></button>`).join("")||`<div class="empty-state">Nenhum comando encontrado.</div>`;document.querySelectorAll("[data-ux-command]").forEach(b=>b.onclick=()=>{paletteItems(q)[+b.dataset.uxCommand]?.run();closePalette()})}
+function openPalette(){createPalette();const el=document.getElementById("uxCommandOverlay");el.hidden=false;const input=document.getElementById("uxCommandInput");input.value="";renderPalette();setTimeout(()=>input.focus(),0)}function closePalette(){const el=document.getElementById("uxCommandOverlay");if(el)el.hidden=true}
+function createHelp(){if(document.getElementById("uxHelpDialog"))return;const d=document.createElement("div");d.id="uxHelpDialog";d.className="ux-help-dialog";d.hidden=true;d.innerHTML=`<article class="ux-help-card"><header><div><span class="eyebrow">Ajuda integrada</span><h2 id="uxHelpTitle"></h2></div><button id="uxHelpClose" type="button" class="secondary">Fechar</button></header><p id="uxHelpText"></p><ul id="uxHelpTips"></ul></article>`;document.body.append(d);document.getElementById("uxHelpClose").onclick=()=>d.hidden=true;d.onclick=e=>{if(e.target===d)d.hidden=true};document.querySelectorAll(".tab-panel").forEach(panel=>{const heading=panel.querySelector(".main-heading")||panel.querySelector(".dashboard-hero");if(!heading||heading.querySelector(".ux-help-button"))return;const b=document.createElement("button");b.type="button";b.className="secondary ux-help-button";b.textContent="?";b.title="Ajuda deste módulo";b.onclick=()=>openHelp(panel.id);heading.append(b)})}
+function openHelp(id){const h=HELP[id]||{title:"Ajuda",text:"Consulte os campos e ações disponíveis neste módulo.",tips:[]};document.getElementById("uxHelpTitle").textContent=h.title;document.getElementById("uxHelpText").textContent=h.text;document.getElementById("uxHelpTips").innerHTML=h.tips.map(x=>`<li>${x}</li>`).join("");document.getElementById("uxHelpDialog").hidden=false}
+function shortcuts(e){if((e.ctrlKey&&e.code==="Space")||(e.ctrlKey&&e.shiftKey&&e.key.toLowerCase()==="p")){e.preventDefault();openPalette()}if(e.key==="F1"){e.preventDefault();openHelp(document.querySelector(".tab-panel.active")?.id)}if(e.key==="Escape"){closePalette();const h=document.getElementById("uxHelpDialog");if(h)h.hidden=true}}
+function init(){applyPrefs();document.getElementById("uxDashboardToolbar")?.remove();addSettings();installNavigation();createPalette();createHelp();document.addEventListener("keydown",shortcuts);const about=document.querySelector("#sobre .about-grid .settings-card:nth-child(2)");if(about){about.querySelector("h3").textContent="Novidades da 3.1.1";about.querySelector(".about-list").innerHTML="<li>Personalização do Dashboard transferida para Configurações.</li><li>Painel de aparência reorganizado em grupos compactos e responsivos.</li><li>Checkboxes alinhados aos respectivos rótulos.</li><li>Paleta de comandos mantida como recurso de navegação por atalhos.</li>"}const timeline=document.querySelector("#sobre .about-timeline");if(timeline&&!timeline.textContent.includes("3.1.1"))timeline.insertAdjacentHTML("afterbegin","<article><strong>3.1.1</strong><p>Personalização transferida para Configurações e painel visual reorganizado.</p></article><article><strong>3.1.0</strong><p>Experiência do usuário: personalização, comandos, temas, abas internas e ajuda integrada.</p></article>")}
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});else init();
+})();

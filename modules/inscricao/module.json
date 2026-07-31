@@ -1,0 +1,9 @@
+{
+  "id": "inscricao",
+  "name": "Inscrição imobiliária",
+  "category": "Cadastros",
+  "entry": "assets/js/modules/inscricao.js",
+  "style": "assets/css/modules/inscricao.css",
+  "schemaVersion": 1,
+  "appVersion": "3.1.1"
+}

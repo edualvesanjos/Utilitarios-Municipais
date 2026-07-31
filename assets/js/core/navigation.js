@@ -36,6 +36,8 @@ function activateTab(tabId, options = {}) {
         updateDashboardLastToolHighlight();
     }
 
+    if (typeof ModuleManager !== "undefined") ModuleManager.activate(tabId);
+
     if (tabId === "inicio" && typeof updateDashboardSummary === "function") {
         updateDashboardSummary();
         window.scrollTo({ top: 0, behavior: "smooth" });

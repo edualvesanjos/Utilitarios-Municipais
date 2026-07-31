@@ -1,0 +1,9 @@
+{
+  "id": "uvrm",
+  "name": "Calculadora UVRM",
+  "category": "Cálculos",
+  "entry": "assets/js/modules/uvrm.js",
+  "style": "assets/css/modules/uvrm.css",
+  "schemaVersion": 1,
+  "appVersion": "3.1.1"
+}

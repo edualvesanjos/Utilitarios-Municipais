@@ -1,0 +1,9 @@
+{
+  "id": "percentual",
+  "name": "Percentual",
+  "category": "Cálculos",
+  "entry": "assets/js/modules/percentual.js",
+  "style": "assets/css/modules/percentual.css",
+  "schemaVersion": 1,
+  "appVersion": "3.1.1"
+}
