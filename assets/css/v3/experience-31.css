@@ -29,3 +29,21 @@ body[data-theme="dark"] .ux-settings-group{background:rgba(24,35,46,.7)}
 body[data-theme="contrast"] .ux-settings-group{background:#000!important}
 @media(max-width:900px){.ux-settings-groups{grid-template-columns:1fr}}
 @media(max-width:600px){.ux-widget-options,.ux-interface-grid{grid-template-columns:1fr}.ux-color-field{grid-column:auto}.ux-setting-field select{max-width:none}}
+
+/* Revisão 3.1.2 — navegação principal com menu suspenso */
+.ux-main-navigation{overflow:visible;display:flex;align-items:center;gap:8px;position:relative}
+.ux-nav-primary,.ux-tools-menu-button{white-space:nowrap}
+.ux-tools-menu{position:relative;flex:0 0 auto}
+.ux-tools-menu-button{display:inline-flex;align-items:center;gap:8px}
+.ux-tools-menu-button.active{background:var(--ux-accent,#0f4c81);color:#fff}
+.ux-tools-dropdown{position:absolute;top:calc(100% + 8px);left:0;z-index:1200;width:min(340px,calc(100vw - 28px));max-height:min(70vh,560px);overflow:auto;padding:8px;background:var(--ux-surface,#fff);color:var(--ux-text,#172033);border:1px solid var(--ux-border,#d7e1eb);border-radius:14px;box-shadow:var(--ux-shadow);}
+.ux-tools-dropdown[hidden]{display:none}
+.ux-tools-group{display:grid;gap:3px;padding:8px}
+.ux-tools-group+.ux-tools-group{border-top:1px solid var(--ux-border,#d7e1eb)}
+.ux-tools-group>strong{padding:5px 9px;color:var(--ux-muted,#607086);font-size:.76rem;letter-spacing:.055em;text-transform:uppercase}
+.ux-tools-group .tab-button{width:100%;display:block;text-align:left;border:0;border-radius:8px;padding:10px 11px;background:transparent;color:inherit}
+.ux-tools-group .tab-button:hover,.ux-tools-group .tab-button:focus-visible,.ux-tools-group .tab-button.active{background:rgba(15,76,129,.12);color:inherit;outline:none}
+body[data-theme="dark"] .ux-tools-dropdown{background:var(--ux-surface);border-color:var(--ux-border)}
+body[data-theme="contrast"] .ux-tools-dropdown{background:#000!important;color:#fff!important;border:2px solid #fff!important}
+body[data-theme="contrast"] .ux-tools-menu-button.active{background:#ffdf00!important;color:#000!important}
+@media(max-width:650px){.ux-main-navigation{flex-wrap:wrap}.ux-tools-menu{position:static}.ux-tools-dropdown{left:0;right:0;width:auto;top:100%}}

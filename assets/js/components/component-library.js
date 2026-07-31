@@ -5,7 +5,7 @@ const UIComponents = Object.freeze({
         wrapper.className=`dashboard-tool-wrapper${compact?" is-compact":""}`;
         wrapper.dataset.toolId=tool.id;
         wrapper.dataset.category=tool.category;
-        wrapper.innerHTML=`<button class="dashboard-tool-card" type="button" data-open-tab="${tool.id}"><span class="dashboard-tool-icon" aria-hidden="true">${tool.icon}</span><span class="dashboard-tool-content"><strong>${tool.name}</strong><small>${tool.description}</small><em class="tool-category-label">${tool.category}</em></span><span class="dashboard-tool-action">Abrir</span></button><button class="favorite-toggle${favorite?" active":""}" type="button" data-favorite-tool="${tool.id}" aria-label="Favoritar ${tool.name}" title="Favorito">★</button>`;
+        wrapper.innerHTML=`<button class="dashboard-tool-card" type="button" data-open-tab="${tool.id}">${toolIconMarkup(tool.icon,"dashboard-tool-icon")}<span class="dashboard-tool-content"><strong>${tool.name}</strong><small>${tool.description}</small><em class="tool-category-label">${tool.category}</em></span><span class="dashboard-tool-action">Abrir</span></button><button class="favorite-toggle${favorite?" active":""}" type="button" data-favorite-tool="${tool.id}" aria-label="Favoritar ${tool.name}" title="Favorito">★</button>`;
         return wrapper;
     },
     empty(message){ const p=document.createElement("p"); p.className="empty-state"; p.textContent=message; return p; },

@@ -1,24 +1,22 @@
-# Utilitários Municipais — Versão 3.1.1
+# Utilitários Municipais — versão 3.2.2
 
-Aplicativo HTML local para rotinas administrativas municipais.
+Aplicativo HTML local com arquitetura modular para rotinas administrativas municipais.
 
-## Destaques da 3.1
-- Dashboard personalizável com layouts em grade, lista e compacto.
-- Controle de exibição dos widgets do Dashboard.
-- Paleta de comandos (`Ctrl + Espaço` ou `Ctrl + Shift + P`).
-- Navegação por abas internas com fechamento individual.
-- Temas claro, escuro e alto contraste.
-- Interface compacta, fonte ampliada e cor principal configurável.
-- Ajuda contextual por módulo (`F1`).
-- Persistência das preferências de experiência.
-- Compatibilidade com dados e módulos da Série 2 e da versão 3.0.
+## Destaques da versão 3.2
+- Dashboard profissional baseado em dados reais do sistema.
+- Barra superior com pesquisa global.
+- Menu de ferramentas agrupado por categorias.
+- Acesso rápido, recentes, atividades e indicadores.
+- Temas, interface compacta e personalização em Configurações.
+- Persistência local e backup JSON.
 
-## Uso
-Extraia o ZIP e abra `index.html` em um navegador moderno. Para preservar os dados locais, substitua os arquivos dentro da mesma pasta/origem utilizada pela versão anterior.
+Abra `index.html` em um navegador moderno. Para preservar os dados entre versões, mantenha o arquivo no mesmo local/origem utilizado anteriormente.
 
 
-## Revisão 3.1.1
-- Personalização do Dashboard movida para Configurações.
-- Controles reorganizados em painel compacto e responsivo.
-- Checkboxes alinhados aos respectivos rótulos.
-- Paleta de comandos removida do bloco de personalização e mantida pelos atalhos Ctrl + Espaço e Ctrl + Shift + P.
+## Ajuste 3.2.2
+
+A seção **Continuar de onde parou** utiliza cartões individuais, com bordas mais nítidas, espaçamento uniforme e grade responsiva.
+
+
+## Ícones da 3.2.2
+Os módulos agora usam ícones SVG incorporados ao aplicativo no Dashboard, menu e listas de ferramentas.

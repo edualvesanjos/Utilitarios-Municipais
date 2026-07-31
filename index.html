@@ -18,236 +18,86 @@
     <link rel="stylesheet" href="assets/css/modules/sobre.css">
     <link rel="stylesheet" href="assets/css/v3/architecture.css">
     <link rel="stylesheet" href="assets/css/v3/experience-31.css">
+    <link rel="stylesheet" href="assets/css/v3/dashboard-32.css">
 </head>
 <body>
-    <header class="app-header">
-        <div class="header-content">
-            <div>
-                <span class="eyebrow">Prefeitura • Ferramentas internas</span>
-                <h1 data-app-name>Utilitários Municipais</h1>
-                <p>Ferramentas rápidas para rotinas administrativas.</p>
+    <header class="app-header app-header-v32">
+        <div class="header-content header-content-v32">
+            <div class="v32-brand">
+                <span class="v32-brand-icon" aria-hidden="true">🏛</span>
+                <div><h1 data-app-name>Utilitários Municipais</h1><small>Ferramentas internas</small></div>
+                <span class="v32-version">v<span data-app-version></span></span>
             </div>
-
-            <span class="version-badge v3">Versão <span data-app-version></span></span>
         </div>
     </header>
 
     <main class="app-container">
-        <nav class="tabs" aria-label="Navegação entre utilitários">
-            <button class="tab-button active" data-tab="inicio">Início</button>
-            <button class="tab-button" data-tab="arquivo">Nome de arquivo</button>
-            <button class="tab-button" data-tab="inscricao">Inscrição imobiliária</button>
-            <button class="tab-button" data-tab="lote">Número de lote</button>
-            <button class="tab-button" data-tab="uvrm">Calculadora UVRM</button>
-            <button class="tab-button" data-tab="percentual">Percentual</button>
-            <button class="tab-button" data-tab="configuracoes">Configurações</button>
-            <button class="tab-button" data-tab="sobre">Sobre</button>
+        <nav class="tabs ux-main-navigation v32-main-navigation" aria-label="Navegação principal">
+            <button class="tab-button ux-nav-primary active" type="button" data-tab="inicio"><span class="nav-svg-icon" data-static-icon="home" aria-hidden="true"></span> Início</button>
+            <div class="ux-tools-menu">
+                <button id="uxToolsMenuButton" class="ux-nav-primary ux-tools-menu-button" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="uxToolsMenuDropdown"><span class="nav-svg-icon" data-static-icon="tools" aria-hidden="true"></span> Ferramentas <span aria-hidden="true">⌄</span></button>
+                <div id="uxToolsMenuDropdown" class="ux-tools-dropdown v32-tools-dropdown" role="menu" hidden>
+                    <section class="ux-tools-group"><strong>Documentos</strong><button class="tab-button" type="button" data-tab="arquivo" role="menuitem"><span class="menu-tool-icon" data-tool-icon="file"></span> Nome de arquivo</button></section>
+                    <section class="ux-tools-group"><strong>Cadastros</strong><button class="tab-button" type="button" data-tab="inscricao" role="menuitem"><span class="menu-tool-icon" data-tool-icon="building"></span> Inscrição imobiliária</button><button class="tab-button" type="button" data-tab="lote" role="menuitem"><span class="menu-tool-icon" data-tool-icon="grid"></span> Número de lote</button></section>
+                    <section class="ux-tools-group"><strong>Cálculos</strong><button class="tab-button" type="button" data-tab="uvrm" role="menuitem"><span class="menu-tool-icon" data-tool-icon="coins"></span> Calculadora UVRM</button><button class="tab-button" type="button" data-tab="percentual" role="menuitem"><span class="menu-tool-icon" data-tool-icon="percent"></span> Percentual</button></section>
+                    <section class="ux-tools-group"><strong>Sistema</strong><button class="tab-button" type="button" data-tab="configuracoes" role="menuitem"><span class="menu-tool-icon" data-tool-icon="settings"></span> Configurações</button><button class="tab-button" type="button" data-tab="sobre" role="menuitem"><span class="menu-tool-icon" data-tool-icon="info"></span> Sobre</button></section>
+                </div>
+            </div>
+            <button class="tab-button ux-nav-primary" type="button" data-tab="configuracoes"><span class="nav-svg-icon" data-static-icon="settings" aria-hidden="true"></span> Configurações</button>
+            <button class="tab-button ux-nav-primary" type="button" data-tab="sobre"><span class="nav-svg-icon" data-static-icon="info" aria-hidden="true"></span> Sobre</button>
+            <label class="v32-top-search"><span class="nav-svg-icon" data-static-icon="search" aria-hidden="true"></span><input id="dashboardToolSearch" type="search" autocomplete="off" placeholder="Pesquisar ferramentas, comandos, cálculos..."><kbd>Ctrl + K</kbd><div id="dashboardSearchResults" class="dashboard-search-results" aria-live="polite"></div></label>
+            <div class="v32-header-actions"><button id="v32ThemeToggle" type="button" title="Alternar tema">◐</button><button id="v32FontToggle" type="button" title="Alternar tamanho da fonte">Aᴬ</button></div>
         </nav>
 
 
-        <section id="inicio" class="tab-panel active">
-            <div class="dashboard-hero">
-                <div>
-                    <span class="eyebrow">Painel de acesso rápido</span>
-                    <h2>Bem-vindo aos Utilitários Municipais</h2>
-                    <p>
-                        Acesse as ferramentas administrativas, acompanhe os dados armazenados
-                        e retome rapidamente as rotinas utilizadas recentemente.
-                    </p>
-                </div>
+        <section id="inicio" class="tab-panel active v32-dashboard">
+            <div class="v32-dashboard-grid">
+                <main class="v32-dashboard-main">
+                    <section class="v32-welcome card">
+                        <div><span class="eyebrow">Painel principal</span><h2>Olá, Eduardo!</h2><p>Bem-vindo aos Utilitários Municipais.</p><p>Use a pesquisa, a paleta de comandos (<strong>Ctrl + Espaço</strong>) ou acesse uma ferramenta abaixo.</p></div>
+                        <div class="v32-welcome-art" aria-hidden="true"><span>▥</span><span>▦</span><span>⌨</span></div>
+                    </section>
 
-                <div class="dashboard-version">
-                    <span>Versão instalada</span>
-                    <strong data-app-version></strong>
-                </div>
+                    <section class="v32-section card" id="dashboardFavoritesSection">
+                        <div class="section-heading"><div><h3>Acesso rápido</h3><p class="mini-description">Favoritos e ferramentas disponíveis.</p></div><button class="text-button" type="button" id="v32ShowAllTools">Ver todas</button></div>
+                        <div id="dashboardFavoriteTools" class="dashboard-tools dashboard-favorite-tools"></div>
+                        <div id="dashboardAllTools" class="dashboard-tools v32-all-tools" aria-label="Ferramentas disponíveis"></div>
+                    </section>
+
+                    <section class="v32-section card">
+                        <div class="section-heading"><div><h3>Continuar de onde parou</h3><p class="mini-description">Ferramentas utilizadas recentemente.</p></div></div>
+                        <div id="dashboardRecentTools" class="dashboard-smart-tools v32-recent-tools"></div>
+                        <div id="dashboardMostUsedTools" class="dashboard-smart-tools" hidden></div>
+                    </section>
+
+                    <section class="v32-section card dashboard-recent-card">
+                        <div class="section-heading"><div><h3>Atividades recentes</h3><p class="mini-description">Últimos cálculos e ações armazenados neste navegador.</p></div><button id="dashboardRefresh" class="text-button" type="button">Atualizar</button></div>
+                        <ul id="dashboardRecentList" class="dashboard-recent-list"></ul>
+                    </section>
+
+                    <div class="dashboard-summary-grid v32-hidden-data" hidden>
+                        <span id="dashboardFileModels">0</span><span id="dashboardFileHistory">0</span><span id="dashboardRegistrationHistory">0</span><span id="dashboardLotHistory">0</span><span id="dashboardUvrmHistory">0</span><span id="dashboardPercentageHistory">0</span><span id="dashboardNextLotSequence">1</span><span id="dashboardUvrmValue">R$ 0,00</span><span id="dashboardLastBackup">Nenhum</span>
+                    </div>
+                    <div id="dashboardToolCategories" hidden></div>
+                </main>
+
+                <aside class="v32-dashboard-side">
+                    <section class="card v32-side-card">
+                        <div class="section-heading"><h3>Indicadores</h3><small>Dados locais</small></div>
+                        <div class="v32-indicators">
+                            <div><span class="v32-indicator-icon">▣</span><p>Ferramentas disponíveis<strong id="v32ToolCount">0</strong></p></div>
+                            <div><span class="v32-indicator-icon">★</span><p>Favoritos<strong id="dashboardFavoriteCount">0</strong></p></div>
+                            <div><span class="v32-indicator-icon">▦</span><p>Ações realizadas<strong id="dashboardTotalActions">0</strong></p></div>
+                            <div><span class="v32-indicator-icon">↗</span><p>Acessos aos módulos<strong id="dashboardTotalAccesses">0</strong></p></div>
+                        </div>
+                        <p class="v32-most-used">Mais utilizada: <strong id="dashboardMostUsedTool">Nenhuma</strong></p>
+                    </section>
+                    <section class="card v32-side-card"><div class="section-heading"><h3>Atalhos de teclado</h3></div><dl class="v32-shortcuts"><div><dt>Ctrl + Espaço</dt><dd>Paleta de comandos</dd></div><div><dt>Ctrl + K</dt><dd>Pesquisar</dd></div><div><dt>F1</dt><dd>Ajuda</dd></div><div><dt>Esc</dt><dd>Fechar pesquisa</dd></div></dl></section>
+                    <section class="card v32-side-card"><div class="section-heading"><h3>Dica rápida</h3></div><p id="v32Tip">Marque as ferramentas mais utilizadas como favoritas para encontrá-las no acesso rápido.</p></section>
+                    <section class="card v32-side-card v32-storage-card"><div class="section-heading"><h3>Dados do sistema</h3></div><p>Armazenamento local ativo</p><p>Último backup: <strong id="v32LastBackup">Nenhum backup</strong></p></section>
+                </aside>
             </div>
-
-
-            <section class="dashboard-search-card" aria-labelledby="dashboardSearchTitle">
-                <div class="dashboard-search-heading">
-                    <div>
-                        <span class="eyebrow">Pesquisa global</span>
-                        <h3 id="dashboardSearchTitle">Localizar ferramenta</h3>
-                    </div>
-                    <span class="keyboard-hint">Enter abre o primeiro resultado</span>
-                </div>
-                <label class="dashboard-search-box">
-                    <span class="sr-only">Pesquisar ferramentas</span>
-                    <input id="dashboardToolSearch" type="search" autocomplete="off" placeholder="Digite nome, recurso ou palavra-chave">
-                </label>
-                <div id="dashboardSearchResults" class="dashboard-search-results" aria-live="polite"></div>
-            </section>
-
-            <section id="dashboardFavoritesSection" class="dashboard-favorites-section" hidden>
-                <div class="section-heading">
-                    <div><h3>Favoritos</h3><p class="mini-description">Ferramentas marcadas para acesso rápido.</p></div>
-                </div>
-                <div id="dashboardFavoriteTools" class="dashboard-tools dashboard-favorite-tools"></div>
-            </section>
-
-            <section class="dashboard-smart-grid" aria-label="Acessos inteligentes">
-                <div class="card dashboard-smart-card">
-                    <div class="section-heading"><div><h3>Utilizadas recentemente</h3><p class="mini-description">Últimos módulos abertos.</p></div></div>
-                    <div id="dashboardRecentTools" class="dashboard-smart-tools"></div>
-                </div>
-                <div class="card dashboard-smart-card">
-                    <div class="section-heading"><div><h3>Mais utilizadas</h3><p class="mini-description">Ordenadas por acessos e ações.</p></div></div>
-                    <div id="dashboardMostUsedTools" class="dashboard-smart-tools"></div>
-                </div>
-            </section>
-
-            <div id="dashboardToolCategories" class="dashboard-category-bar" aria-label="Categorias de ferramentas"></div>
-
-            <div class="architecture-status"><span>Arquitetura modular ativa</span><strong>Registro central • Persistência unificada • Componentes reutilizáveis</strong></div>
-
-            <div id="dashboardAllTools" class="dashboard-tools" aria-label="Ferramentas disponíveis">
-                <button class="dashboard-tool-card" type="button" data-open-tab="arquivo">
-                    <span class="dashboard-tool-icon" aria-hidden="true">ARQ</span>
-                    <span class="dashboard-tool-content">
-                        <strong>Nome de arquivo</strong>
-                        <small>Monte nomes padronizados com blocos configuráveis.</small>
-                    </span>
-                    <span class="dashboard-tool-action">Abrir</span>
-                </button>
-
-                <button class="dashboard-tool-card" type="button" data-open-tab="inscricao">
-                    <span class="dashboard-tool-icon" aria-hidden="true">IM</span>
-                    <span class="dashboard-tool-content">
-                        <strong>Inscrição imobiliária</strong>
-                        <small>Normalize inscrições urbanas e rurais automaticamente.</small>
-                    </span>
-                    <span class="dashboard-tool-action">Abrir</span>
-                </button>
-
-                <button class="dashboard-tool-card" type="button" data-open-tab="lote">
-                    <span class="dashboard-tool-icon" aria-hidden="true">LOT</span>
-                    <span class="dashboard-tool-content">
-                        <strong>Número de lote</strong>
-                        <small>Gere sequências de lotes com setor e quadra.</small>
-                    </span>
-                    <span class="dashboard-tool-action">Abrir</span>
-                </button>
-
-                <button class="dashboard-tool-card" type="button" data-open-tab="uvrm">
-                    <span class="dashboard-tool-icon" aria-hidden="true">UVR</span>
-                    <span class="dashboard-tool-content">
-                        <strong>Calculadora UVRM</strong>
-                        <small>Converta valores entre reais e unidades UVRM.</small>
-                    </span>
-                    <span class="dashboard-tool-action">Abrir</span>
-                </button>
-
-                <button class="dashboard-tool-card" type="button" data-open-tab="percentual">
-                    <span class="dashboard-tool-icon" aria-hidden="true">%</span>
-                    <span class="dashboard-tool-content">
-                        <strong>Percentual</strong>
-                        <small>Calcule percentuais, reajustes, descontos e variações.</small>
-                    </span>
-                    <span class="dashboard-tool-action">Abrir</span>
-                </button>
-
-                <button class="dashboard-tool-card" type="button" data-open-tab="configuracoes">
-                    <span class="dashboard-tool-icon" aria-hidden="true">CFG</span>
-                    <span class="dashboard-tool-content">
-                        <strong>Configurações</strong>
-                        <small>Gerencie backup, restauração e dados armazenados.</small>
-                    </span>
-                    <span class="dashboard-tool-action">Abrir</span>
-                </button>
-            </div>
-
-
-            <section class="dashboard-usage-indicators" aria-label="Indicadores de utilização">
-                <div><span>Acessos aos módulos</span><strong id="dashboardTotalAccesses">0</strong></div>
-                <div><span>Ações realizadas</span><strong id="dashboardTotalActions">0</strong></div>
-                <div><span>Favoritos</span><strong id="dashboardFavoriteCount">0</strong></div>
-                <div><span>Ferramenta mais utilizada</span><strong id="dashboardMostUsedTool">Nenhuma</strong></div>
-            </section>
-
-            <div class="dashboard-summary-grid">
-                <section class="card dashboard-summary-card">
-                    <div class="section-heading">
-                        <div>
-                            <h3>Resumo dos dados</h3>
-                            <p class="mini-description">Informações salvas neste navegador.</p>
-                        </div>
-                        <button class="text-button" type="button" data-open-tab="configuracoes">
-                            Gerenciar
-                        </button>
-                    </div>
-
-                    <div class="dashboard-metrics">
-                        <div class="dashboard-metric">
-                            <span>Modelos de arquivo</span>
-                            <strong id="dashboardFileModels">0</strong>
-                        </div>
-                        <div class="dashboard-metric">
-                            <span>Nomes no histórico</span>
-                            <strong id="dashboardFileHistory">0</strong>
-                        </div>
-                        <div class="dashboard-metric">
-                            <span>Inscrições recentes</span>
-                            <strong id="dashboardRegistrationHistory">0</strong>
-                        </div>
-                        <div class="dashboard-metric">
-                            <span>Lotes gerados</span>
-                            <strong id="dashboardLotHistory">0</strong>
-                        </div>
-                        <div class="dashboard-metric">
-                            <span>Cálculos UVRM</span>
-                            <strong id="dashboardUvrmHistory">0</strong>
-                        </div>
-                        <div class="dashboard-metric">
-                            <span>Cálculos percentuais</span>
-                            <strong id="dashboardPercentageHistory">0</strong>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="card dashboard-summary-card">
-                    <div class="section-heading">
-                        <div>
-                            <h3>Continuidade das rotinas</h3>
-                            <p class="mini-description">Pontos de retomada rápida.</p>
-                        </div>
-                    </div>
-
-                    <div class="dashboard-continuity">
-                        <div>
-                            <span>Próxima sequência de lote</span>
-                            <strong id="dashboardNextLotSequence">1</strong>
-                        </div>
-                        <div>
-                            <span>Valor atual da UVRM</span>
-                            <strong id="dashboardUvrmValue">R$ 39,99</strong>
-                        </div>
-                        <div>
-                            <span>Último backup</span>
-                            <strong id="dashboardLastBackup">Não realizado</strong>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
-            <section class="card dashboard-recent-card">
-                <div class="section-heading">
-                    <div>
-                        <h3>Atividades recentes</h3>
-                        <p class="mini-description">
-                            Últimos registros encontrados nos históricos das ferramentas.
-                        </p>
-                    </div>
-                    <button id="dashboardRefresh" class="secondary" type="button">
-                        Atualizar resumo
-                    </button>
-                </div>
-
-                <ul id="dashboardRecentList" class="dashboard-recent-list">
-                    <li class="empty-state">Nenhuma atividade registrada.</li>
-                </ul>
-            </section>
         </section>
-
         <section id="arquivo" class="tab-panel">
             <div class="card">
                 <div class="section-heading main-heading">
@@ -1065,5 +915,6 @@
     <script src="assets/js/modules/configuracoes.js"></script>
     <script src="assets/js/app.js"></script>
     <script src="assets/js/core/experience-31.js"></script>
+    <script src="assets/js/core/dashboard-32.js"></script>
 </body>
 </html>
