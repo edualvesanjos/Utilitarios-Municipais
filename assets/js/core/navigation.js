@@ -38,6 +38,8 @@ function activateTab(tabId, options = {}) {
 
     if (typeof ModuleManager !== "undefined") ModuleManager.activate(tabId);
 
+    if ((tabId === "biblioteca" || tabId === "historico-global") && typeof renderProductivity33 === "function") renderProductivity33();
+
     if (tabId === "inicio" && typeof updateDashboardSummary === "function") {
         updateDashboardSummary();
         window.scrollTo({ top: 0, behavior: "smooth" });

@@ -5,6 +5,8 @@ const TOOL_REGISTRY = Object.freeze([
     {id:"lote", name:"Número de lote", shortName:"Lotes", icon:"grid", category:"Cadastros", order:30, description:"Gere sequências de lotes com setor e quadra.", keywords:["lote","setor","quadra","sequência","parcelamento"], module:"lote"},
     {id:"uvrm", name:"Calculadora UVRM", shortName:"UVRM", icon:"coins", category:"Cálculos", order:40, description:"Organize lançamentos em reais e UVRM em uma única operação.", keywords:["uvrm","reais","conversão","cálculo","multa","taxa","valor","dias","quantidade"], module:"uvrm"},
     {id:"percentual", name:"Percentual", shortName:"Percentual", icon:"percent", category:"Cálculos", order:50, description:"Calcule percentuais, reajustes, descontos e variações.", keywords:["percentual","porcentagem","desconto","reajuste","variação","multa","acréscimo"], module:"percentual"},
+    {id:"biblioteca", name:"Biblioteca de ferramentas", shortName:"Biblioteca", icon:"library", category:"Produtividade", order:70, description:"Explore ferramentas, modelos e acessos rápidos em um catálogo central.", keywords:["biblioteca","catálogo","ferramentas","modelos","favoritos","produtividade"], module:"biblioteca"},
+    {id:"historico-global", name:"Histórico global", shortName:"Histórico", icon:"history", category:"Produtividade", order:80, description:"Pesquise, filtre, copie e exporte registros de todos os módulos.", keywords:["histórico","ações","registros","pesquisa","exportar","filtros"], module:"historico-global"},
     {id:"configuracoes", name:"Configurações", shortName:"Configurações", icon:"settings", category:"Sistema", order:90, description:"Gerencie interface, backup, dados e estatísticas.", keywords:["configurações","backup","dados","estatísticas","exportar","importar","compacto","tema"], module:"configuracoes"},
     {id:"sobre", name:"Sobre", shortName:"Sobre", icon:"info", category:"Sistema", order:100, description:"Consulte a versão, as novidades e o histórico do aplicativo.", keywords:["sobre","versão","novidades","changelog","histórico","aplicativo"], module:"sobre"}
 ]);
@@ -14,6 +16,7 @@ const TOOL_CATEGORIES = Object.freeze([
     {id:"Documentos", name:"Documentos"},
     {id:"Cadastros", name:"Cadastros"},
     {id:"Cálculos", name:"Cálculos"},
+    {id:"Produtividade", name:"Produtividade"},
     {id:"Sistema", name:"Sistema"}
 ]);
 
@@ -32,6 +35,8 @@ const TOOL_ICON_PATHS = Object.freeze({
     coins:'<ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v5c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 11v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"/>',
     percent:'<circle cx="7" cy="7" r="2"/><circle cx="17" cy="17" r="2"/><path d="M18.5 5.5l-13 13"/>',
     settings:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21h-4v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H3v-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V3h4v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1v4H21a1.7 1.7 0 0 0-1.6 1z"/>',
+    library:'<path d="M4 5h6v14H4zM14 5h6v14h-6z"/><path d="M7 8h1M7 12h1M17 8h1M17 12h1"/>',
+    history:'<path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v6h6M12 7v5l3 2"/>',
     info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/>',
     home:'<path d="M3 11l9-8 9 8"/><path d="M5 10v11h14V10M9 21v-7h6v7"/>',
     tools:'<path d="M14.7 6.3a4 4 0 0 0-5-5L7 4l3 3 2.7-2.7a4 4 0 0 0 2 5L8 16l-3-3-3 3 6 6 3-3-3-3 6.7-6.7a4 4 0 0 0 5-5L17 7l-3-3z"/>',

@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="assets/css/v3/architecture.css">
     <link rel="stylesheet" href="assets/css/v3/experience-31.css">
     <link rel="stylesheet" href="assets/css/v3/dashboard-32.css">
+    <link rel="stylesheet" href="assets/css/v3/productivity-33.css">
 </head>
 <body>
     <header class="app-header app-header-v32">
@@ -40,6 +41,7 @@
                     <section class="ux-tools-group"><strong>Documentos</strong><button class="tab-button" type="button" data-tab="arquivo" role="menuitem"><span class="menu-tool-icon" data-tool-icon="file"></span> Nome de arquivo</button></section>
                     <section class="ux-tools-group"><strong>Cadastros</strong><button class="tab-button" type="button" data-tab="inscricao" role="menuitem"><span class="menu-tool-icon" data-tool-icon="building"></span> Inscrição imobiliária</button><button class="tab-button" type="button" data-tab="lote" role="menuitem"><span class="menu-tool-icon" data-tool-icon="grid"></span> Número de lote</button></section>
                     <section class="ux-tools-group"><strong>Cálculos</strong><button class="tab-button" type="button" data-tab="uvrm" role="menuitem"><span class="menu-tool-icon" data-tool-icon="coins"></span> Calculadora UVRM</button><button class="tab-button" type="button" data-tab="percentual" role="menuitem"><span class="menu-tool-icon" data-tool-icon="percent"></span> Percentual</button></section>
+                    <section class="ux-tools-group"><strong>Produtividade</strong><button class="tab-button" type="button" data-tab="biblioteca" role="menuitem"><span class="menu-tool-icon" data-tool-icon="library"></span> Biblioteca de ferramentas</button><button class="tab-button" type="button" data-tab="historico-global" role="menuitem"><span class="menu-tool-icon" data-tool-icon="history"></span> Histórico global</button></section>
                     <section class="ux-tools-group"><strong>Sistema</strong><button class="tab-button" type="button" data-tab="configuracoes" role="menuitem"><span class="menu-tool-icon" data-tool-icon="settings"></span> Configurações</button><button class="tab-button" type="button" data-tab="sobre" role="menuitem"><span class="menu-tool-icon" data-tool-icon="info"></span> Sobre</button></section>
                 </div>
             </div>
@@ -826,6 +828,26 @@
             </div>
         </section>
 
+        <section id="biblioteca" class="tab-panel productivity-panel">
+            <div class="card">
+                <div class="section-heading main-heading"><div><span class="eyebrow">Produtividade</span><h2>Biblioteca de ferramentas</h2><p class="section-description">Catálogo central para localizar ferramentas, favoritos e modelos reutilizáveis.</p></div><span class="version-badge v3">v3.3</span></div>
+                <div class="productivity-toolbar"><label class="productivity-search"><span>Pesquisar</span><input id="librarySearch" type="search" placeholder="Ferramenta, categoria ou palavra-chave"></label><label><span>Categoria</span><select id="libraryCategory"><option value="todos">Todas</option></select></label><label><span>Exibição</span><select id="libraryView"><option value="grid">Grade</option><option value="list">Lista</option></select></label></div>
+                <div class="library-summary"><div><span>Ferramentas</span><strong id="libraryToolCount">0</strong></div><div><span>Favoritos</span><strong id="libraryFavoriteCount">0</strong></div><div><span>Modelos de arquivo</span><strong id="libraryModelCount">0</strong></div></div>
+                <section class="productivity-section"><div class="section-heading"><div><h3>Catálogo</h3><p class="mini-description">Abra uma ferramenta ou altere seus favoritos.</p></div></div><div id="libraryTools" class="library-tools"></div></section>
+                <section class="productivity-section"><div class="section-heading"><div><h3>Modelos rápidos</h3><p class="mini-description">Modelos existentes do Montador de nome de arquivo.</p></div><button class="text-button" type="button" data-open-tab="arquivo">Gerenciar modelos</button></div><div id="libraryModels" class="library-models"></div></section>
+                <div class="tab-footer-navigation"><button class="back-home-button" type="button" data-open-tab="inicio"><span aria-hidden="true">←</span>Voltar para a Página Inicial</button></div>
+            </div>
+        </section>
+
+        <section id="historico-global" class="tab-panel productivity-panel">
+            <div class="card">
+                <div class="section-heading main-heading"><div><span class="eyebrow">Produtividade</span><h2>Histórico global</h2><p class="section-description">Consulte em um único lugar os registros produzidos pelos módulos.</p></div><div class="actions"><button id="globalHistoryExportCsv" class="secondary-button" type="button">Exportar CSV</button><button id="globalHistoryExportJson" class="secondary-button" type="button">Exportar JSON</button></div></div>
+                <div class="productivity-toolbar"><label class="productivity-search"><span>Pesquisar</span><input id="globalHistorySearch" type="search" placeholder="Conteúdo do registro"></label><label><span>Módulo</span><select id="globalHistoryModule"><option value="todos">Todos os módulos</option></select></label><label><span>Período</span><select id="globalHistoryPeriod"><option value="todos">Todo o período</option><option value="hoje">Hoje</option><option value="7">Últimos 7 dias</option><option value="30">Últimos 30 dias</option></select></label></div>
+                <div class="library-summary"><div><span>Registros encontrados</span><strong id="globalHistoryCount">0</strong></div><div><span>Módulos com dados</span><strong id="globalHistoryModuleCount">0</strong></div><div><span>Último registro</span><strong id="globalHistoryLast">Nenhum</strong></div></div>
+                <div id="globalHistoryList" class="global-history-list"></div>
+                <div class="tab-footer-navigation"><button class="back-home-button" type="button" data-open-tab="inicio"><span aria-hidden="true">←</span>Voltar para a Página Inicial</button></div>
+            </div>
+        </section>
 
         <section id="sobre" class="tab-panel">
             <div class="card about-card">
@@ -850,11 +872,11 @@
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 3.0.1</h3>
+                        <h3>Novidades da 3.3.0</h3>
                         <ul class="about-list">
-                            <li>Interface dos módulos mais limpa, sem avisos de versões antigas.</li>
-                            <li>Nova área central para versão, novidades e histórico.</li>
-                            <li>Informações de evolução concentradas fora das ferramentas operacionais.</li>
+                            <li>Nova Biblioteca de Ferramentas com catálogo, categorias e favoritos.</li>
+                            <li>Histórico Global com pesquisa, filtros, cópia e exportação.</li>
+                            <li>Centralização dos modelos rápidos já existentes.</li>
                         </ul>
                     </section>
                 </div>
@@ -863,13 +885,15 @@
                     <h3>Módulos disponíveis</h3>
                     <div class="about-modules">
                         <span>Nome de arquivo</span><span>Inscrição imobiliária</span><span>Número de lote</span>
-                        <span>Calculadora UVRM</span><span>Percentual</span><span>Configurações</span>
+                        <span>Calculadora UVRM</span><span>Percentual</span><span>Biblioteca</span><span>Histórico global</span><span>Configurações</span>
                     </div>
                 </section>
 
                 <section class="settings-card">
                     <h3>Histórico da Série 3</h3>
                     <div class="about-timeline">
+                        <article><strong>3.3.0</strong><p>Biblioteca de ferramentas, modelos rápidos e histórico global aprimorado.</p></article>
+                        <article><strong>3.2.2</strong><p>Dashboard profissional com cartões e ícones vetoriais.</p></article>
                         <article><strong>3.0.1</strong><p>Limpeza visual dos módulos e criação da área Sobre.</p></article>
                         <article><strong>3.0.0</strong><p>Nova arquitetura modular, registro central de ferramentas, persistência unificada e componentes reutilizáveis.</p></article>
                     </div>
@@ -916,5 +940,6 @@
     <script src="assets/js/app.js"></script>
     <script src="assets/js/core/experience-31.js"></script>
     <script src="assets/js/core/dashboard-32.js"></script>
+    <script src="assets/js/core/productivity-33.js"></script>
 </body>
 </html>

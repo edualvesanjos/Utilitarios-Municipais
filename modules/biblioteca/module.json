@@ -1,0 +1,9 @@
+{
+  "id": "biblioteca",
+  "name": "Biblioteca de ferramentas",
+  "version": "3.3.0",
+  "category": "Produtividade",
+  "icon": "library",
+  "description": "Catálogo central de ferramentas, favoritos e modelos.",
+  "appVersion": "3.3.0"
+}

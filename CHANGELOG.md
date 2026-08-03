@@ -1,15 +1,10 @@
 # Changelog
 
-## 3.2.2 — Dashboard Profissional
-- Novo cabeçalho compacto e navegação profissional.
-- Dashboard reorganizado em área principal e coluna de indicadores.
-- Acesso rápido, continuidade das rotinas e atividades recentes.
-- Pesquisa global incorporada à barra superior.
-- Indicadores alimentados pelos dados reais armazenados no navegador.
-- Atalhos, dicas rápidas e informação do último backup.
-- Menu suspenso de ferramentas preservado e ampliado.
-- Responsividade para desktop, notebook, tablet e celular.
-- Personalização continua disponível em Configurações.
-
-## 3.1.2
-- Menu suspenso de ferramentas e correções na personalização do Dashboard.
+## 3.3.0 — Produtividade
+- Criada a Biblioteca de Ferramentas.
+- Incluídos filtros por categoria e visualização em grade ou lista.
+- Favoritos podem ser gerenciados diretamente no catálogo.
+- Modelos do Montador de nome de arquivo reunidos em uma área central.
+- Criado o Histórico Global com filtros, pesquisa, cópia e exportação.
+- Adicionados módulos declarativos de produtividade ao registro central.
+- Preservada a compatibilidade com a série 2 e versões anteriores da série 3.
