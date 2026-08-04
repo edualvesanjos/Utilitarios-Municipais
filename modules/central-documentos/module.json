@@ -1,8 +1,0 @@
-{
-  "id": "central-documentos",
-  "name": "Central de documentos",
-  "category": "Documentos",
-  "version": "3.4.2",
-  "entry": "assets/js/modules/documentos.js",
-  "style": "assets/css/v3/documents-34.css"
-}

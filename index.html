@@ -17,7 +17,6 @@
     <link rel="stylesheet" href="assets/css/v3/experience-31.css">
     <link rel="stylesheet" href="assets/css/v3/dashboard-32.css">
     <link rel="stylesheet" href="assets/css/v3/productivity-33.css">
-    <link rel="stylesheet" href="assets/css/v3/documents-34.css">
 </head>
 <body>
     <header class="app-header app-header-v32">
@@ -36,7 +35,7 @@
             <div class="ux-tools-menu">
                 <button id="uxToolsMenuButton" class="ux-nav-primary ux-tools-menu-button" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="uxToolsMenuDropdown"><span class="nav-svg-icon" data-static-icon="tools" aria-hidden="true"></span> Ferramentas <span aria-hidden="true">⌄</span></button>
                 <div id="uxToolsMenuDropdown" class="ux-tools-dropdown v32-tools-dropdown" role="menu" hidden>
-                    <section class="ux-tools-group"><strong>Documentos</strong><button class="tab-button" type="button" data-tab="central-documentos" role="menuitem"><span class="menu-tool-icon" data-tool-icon="documents"></span> Central de documentos</button><button class="tab-button" type="button" data-tab="arquivo" role="menuitem"><span class="menu-tool-icon" data-tool-icon="file"></span> Nome de arquivo</button></section>
+                    <section class="ux-tools-group"><strong>Documentos</strong><button class="tab-button" type="button" data-tab="arquivo" role="menuitem"><span class="menu-tool-icon" data-tool-icon="file"></span> Nome de arquivo</button></section>
                     <section class="ux-tools-group"><strong>Cadastros</strong><button class="tab-button" type="button" data-tab="inscricao" role="menuitem"><span class="menu-tool-icon" data-tool-icon="building"></span> Inscrição imobiliária</button><button class="tab-button" type="button" data-tab="lote" role="menuitem"><span class="menu-tool-icon" data-tool-icon="grid"></span> Número de lote</button></section>
                     <section class="ux-tools-group"><strong>Cálculos</strong><button class="tab-button" type="button" data-tab="uvrm" role="menuitem"><span class="menu-tool-icon" data-tool-icon="coins"></span> Calculadora UVRM</button><button class="tab-button" type="button" data-tab="percentual" role="menuitem"><span class="menu-tool-icon" data-tool-icon="percent"></span> Percentual</button></section>
                     <section class="ux-tools-group"><strong>Produtividade</strong><button class="tab-button" type="button" data-tab="biblioteca" role="menuitem"><span class="menu-tool-icon" data-tool-icon="library"></span> Biblioteca de ferramentas</button><button class="tab-button" type="button" data-tab="historico-global" role="menuitem"><span class="menu-tool-icon" data-tool-icon="history"></span> Histórico global</button></section>
@@ -54,7 +53,7 @@
             <div class="v32-dashboard-grid">
                 <main class="v32-dashboard-main">
                     <section class="v32-welcome card">
-                        <div><span class="eyebrow">Painel principal</span><h2 id="dashboardGreeting">Olá, Usuário!</h2><p>Bem-vindo aos Utilitários Municipais.</p><p>Use a pesquisa, a paleta de comandos (<strong>Ctrl + Espaço</strong>) ou acesse uma ferramenta abaixo.</p></div>
+                        <div><span class="eyebrow">Painel principal</span><h2>Olá, Eduardo!</h2><p>Bem-vindo aos Utilitários Municipais.</p><p>Use a pesquisa, a paleta de comandos (<strong>Ctrl + Espaço</strong>) ou acesse uma ferramenta abaixo.</p></div>
                         <div class="v32-welcome-art" aria-hidden="true"><span>▥</span><span>▦</span><span>⌨</span></div>
                     </section>
 
@@ -826,43 +825,6 @@
             </div>
         </section>
 
-        <section id="central-documentos" class="tab-panel documents-panel">
-            <div class="card documents-shell">
-                <div class="section-heading main-heading">
-                    <div><span class="eyebrow">Versão 3.4</span><h2>Central de documentos</h2><p class="section-description">Crie textos administrativos a partir de modelos, preencha variáveis e salve modelos próprios.</p></div>
-                    <button id="documentNewModel" class="secondary-button" type="button">Novo modelo</button>
-                </div>
-                <div class="documents-layout">
-                    <aside class="documents-sidebar">
-                        <label>Pesquisar modelos<input id="documentSearch" type="search" placeholder="Ex.: despacho, WhatsApp, certidão"></label>
-                        <label>Categoria<select id="documentCategory"><option value="todos">Todas</option><option>Despachos</option><option>Certidões</option><option>Ofícios</option><option>WhatsApp</option><option>Declarações</option><option>Personalizados</option></select></label>
-                        <div id="documentTemplateList" class="document-template-list"></div>
-                    </aside>
-                    <main class="documents-editor">
-                        <div class="grid two-columns">
-                            <label>Título do modelo<input id="documentTitle" placeholder="Título"></label>
-                            <label>Categoria<select id="documentEditorCategory"><option>Despachos</option><option>Certidões</option><option>Ofícios</option><option>WhatsApp</option><option>Declarações</option><option>Personalizados</option></select></label>
-                        </div>
-                        <label>Modelo com variáveis<textarea id="documentTemplate" rows="10" placeholder="Use variáveis como {nome}, {processo}, {cnae}, {zoneamento}, {endereco} e {data}."></textarea></label>
-                        <section class="document-variables-card">
-                            <div class="section-heading"><div><h3>Variáveis do documento</h3><p class="mini-description">Os campos são identificados automaticamente no modelo.</p></div></div>
-                            <div id="documentVariables" class="document-variables-grid"></div>
-                        </section>
-                        <label>Pré-visualização<textarea id="documentPreview" rows="12" readonly></textarea></label>
-                        <div class="button-row documents-actions">
-                            <button id="documentCopy" type="button">Copiar texto</button>
-                            <button id="documentSave" class="secondary-button" type="button">Salvar modelo</button>
-                            <button id="documentExportTxt" class="secondary-button" type="button">Exportar TXT</button>
-                            <button id="documentDelete" class="danger-button" type="button">Excluir modelo</button>
-                            <button id="documentClear" class="secondary-button" type="button">Limpar campos</button>
-                        </div>
-                        <p id="documentFeedback" class="feedback-message" aria-live="polite"></p>
-                    </main>
-                </div>
-                <div class="tab-footer-navigation"><button class="back-home-button" type="button" data-open-tab="inicio"><span aria-hidden="true">←</span>Voltar para a Página Inicial</button></div>
-            </div>
-        </section>
-
         <section id="biblioteca" class="tab-panel productivity-panel">
             <div class="card">
                 <div class="section-heading main-heading"><div><span class="eyebrow">Produtividade</span><h2>Biblioteca de ferramentas</h2><p class="section-description">Catálogo central para localizar ferramentas, favoritos e modelos reutilizáveis.</p></div><span class="version-badge v3">v3.3</span></div>
@@ -909,7 +871,7 @@
                     <section class="settings-card">
                         <h3>Novidades da 3.3.0</h3>
                         <ul class="about-list">
-                            <li>Central de Documentos com modelos, variáveis, pré-visualização e exportação TXT.</li>
+                            <li>Nova Biblioteca de Ferramentas com catálogo, categorias e favoritos.</li>
                             <li>Histórico Global com pesquisa, filtros, cópia e exportação.</li>
                             <li>Centralização dos modelos rápidos já existentes.</li>
                         </ul>
@@ -920,16 +882,13 @@
                     <h3>Módulos disponíveis</h3>
                     <div class="about-modules">
                         <span>Nome de arquivo</span><span>Inscrição imobiliária</span><span>Número de lote</span>
-                        <span>Calculadora UVRM</span><span>Percentual</span><span>Central de documentos</span><span>Biblioteca</span><span>Histórico global</span><span>Configurações</span>
+                        <span>Calculadora UVRM</span><span>Percentual</span><span>Biblioteca</span><span>Histórico global</span><span>Configurações</span>
                     </div>
                 </section>
 
                 <section class="settings-card">
                     <h3>Histórico da Série 3</h3>
                     <div class="about-timeline">
-                        <article><strong>3.4.2</strong><p>Nome de exibição configurável e ícones SVG coloridos incorporados ao sistema.</p></article>
-                        <article><strong>3.4.1</strong><p>Refatoração conservadora: remoção de resíduos do template e arquivos vazios, sem alteração funcional.</p></article>
-                        <article><strong>3.4.0</strong><p>Central de Documentos, modelos administrativos e correção do botão Limpar campos.</p></article>
                         <article><strong>3.3.0</strong><p>Biblioteca de ferramentas, modelos rápidos e histórico global aprimorado.</p></article>
                         <article><strong>3.2.2</strong><p>Dashboard profissional com cartões e ícones vetoriais.</p></article>
                         <article><strong>3.0.1</strong><p>Limpeza visual dos módulos e criação da área Sobre.</p></article>
@@ -975,7 +934,6 @@
     <script src="assets/js/modules/uvrm.js"></script>
     <script src="assets/js/modules/percentual.js"></script>
     <script src="assets/js/modules/configuracoes.js"></script>
-    <script src="assets/js/modules/documentos.js"></script>
     <script src="assets/js/app.js"></script>
     <script src="assets/js/core/experience-31.js"></script>
     <script src="assets/js/core/dashboard-32.js"></script>
