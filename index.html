@@ -19,7 +19,6 @@
     <link rel="stylesheet" href="assets/css/v3/dashboard-32.css">
     <link rel="stylesheet" href="assets/css/v3/productivity-33.css">
     <link rel="stylesheet" href="assets/css/v3/documents-34.css">
-    <link rel="stylesheet" href="assets/css/v4/workflows-40.css">
     <link rel="stylesheet" href="assets/css/v4/online-41.css">
 </head>
 <body>
@@ -830,51 +829,6 @@
         </section>
 
 
-        <section id="fluxos" class="tab-panel workflow-panel">
-            <div class="card workflow-shell">
-                <div class="section-heading main-heading">
-                    <div><span class="eyebrow">Versão 4.0</span><h2>Fluxos de trabalho</h2><p class="section-description">Cadastre uma vez os dados do atendimento e encaminhe o contexto para os módulos relacionados.</p></div>
-                    <span id="workflowStatusBadge" class="version-badge v3">Em andamento</span>
-                </div>
-                <div class="workflow-layout">
-                    <main>
-                        <section class="workflow-card">
-                            <div class="section-heading"><div><h3>Contexto do atendimento</h3><p class="mini-description">As informações permanecem salvas localmente até o fluxo ser finalizado ou limpo.</p></div></div>
-                            <div class="grid two-columns">
-                                <label>Interessado / Razão social<input id="workflowNome" maxlength="120" placeholder="Nome da pessoa ou razão social"></label>
-                                <label>Número do processo<input id="workflowProcesso" maxlength="40" placeholder="Ex.: 22667/2026"></label>
-                                <label>Endereço<input id="workflowEndereco" maxlength="180" placeholder="Endereço do imóvel ou estabelecimento"></label>
-                                <label>CNAE / Atividade<input id="workflowCnae" maxlength="120" placeholder="Código ou descrição da atividade"></label>
-                                <label>Zoneamento<input id="workflowZoneamento" maxlength="80" placeholder="Ex.: R1, M7, ZEC-3"></label>
-                                <label>Assunto<input id="workflowAssunto" maxlength="120" placeholder="Ex.: Viabilidade, Uso do Solo, CLI"></label>
-                            </div>
-                            <label>Observações<textarea id="workflowObservacoes" rows="4" placeholder="Anotações da análise ou providências necessárias"></textarea></label>
-                            <div class="button-row">
-                                <button id="workflowSave" type="button">Salvar fluxo</button>
-                                <button id="workflowFinish" class="secondary-button" type="button">Finalizar e arquivar</button>
-                                <button id="workflowExport" class="secondary-button" type="button">Exportar JSON</button>
-                                <button id="workflowClear" class="danger-button" type="button">Limpar fluxo</button>
-                            </div>
-                            <p id="workflowFeedback" class="feedback-message" aria-live="polite"></p>
-                        </section>
-                        <section class="workflow-card">
-                            <div class="section-heading"><div><h3>Encaminhar para uma ferramenta</h3><p class="mini-description">Os dados compatíveis serão transferidos automaticamente.</p></div></div>
-                            <div class="workflow-actions">
-                                <button type="button" data-workflow-open="central-documentos" data-icon="documents"><strong>Central de documentos</strong><span>Preencher variáveis do modelo</span></button>
-                                <button type="button" data-workflow-open="arquivo" data-icon="file"><strong>Nome de arquivo</strong><span>Preencher nome e processo</span></button>
-                                <button type="button" data-workflow-open="uvrm" data-icon="coins"><strong>Calculadora UVRM</strong><span>Calcular valores do atendimento</span></button>
-                                <button type="button" data-workflow-open="historico-global" data-icon="history"><strong>Histórico global</strong><span>Consultar registros anteriores</span></button>
-                            </div>
-                        </section>
-                    </main>
-                    <aside class="workflow-side">
-                        <section class="workflow-card"><h3>Etapas</h3><ol id="workflowSteps" class="workflow-steps"></ol></section>
-                        <section class="workflow-card"><h3>Fluxos arquivados</h3><div id="workflowHistory" class="workflow-history"></div></section>
-                    </aside>
-                </div>
-                <div class="tab-footer-navigation"><button class="back-home-button" type="button" data-open-tab="inicio"><span aria-hidden="true">←</span>Voltar para a Página Inicial</button></div>
-            </div>
-        </section>
 
         <section id="central-documentos" class="tab-panel documents-panel">
             <div class="card documents-shell">
@@ -1031,7 +985,6 @@
     <script src="assets/js/modules/percentual.js"></script>
     <script src="assets/js/modules/configuracoes.js"></script>
     <script src="assets/js/modules/documentos.js"></script>
-    <script src="assets/js/modules/fluxos.js"></script>
     <script src="assets/js/app.js"></script>
     <script src="assets/js/core/experience-31.js"></script>
     <script src="assets/js/core/dashboard-32.js"></script>
