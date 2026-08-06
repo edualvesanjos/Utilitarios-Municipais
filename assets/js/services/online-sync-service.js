@@ -69,7 +69,7 @@
     }
 
     function safeRemove(key) {
-        try { localStorage.removeItem(key); } catch {}
+        try { localStorage.removeItem(key); } catch { }
     }
 
     function parseDate(value) {
@@ -213,7 +213,7 @@
         try {
             const prefs = JSON.parse(safeGet(prefsKey, "{}"));
             displayName = String(prefs.displayName || "Usuário").trim().slice(0, 40) || "Usuário";
-        } catch {}
+        } catch { }
         const { error } = await client.from("profiles").upsert(
             { id: user.id, display_name: displayName },
             { onConflict: "id" }
