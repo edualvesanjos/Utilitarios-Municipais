@@ -39,6 +39,20 @@ function applyVersion241Defaults() {
     saveFormData();
 }
 
+
+function applyVersion412Cleanup() {
+    const migrationKey = `${STORAGE_PREFIX}migration:4.1.2`;
+
+    if (localStorage.getItem(migrationKey) === "done") {
+        return;
+    }
+
+    // O módulo Fluxos de trabalho foi retirado na versão 4.1.2.
+    localStorage.removeItem(`${STORAGE_PREFIX}workflowCurrent`);
+    localStorage.removeItem(`${STORAGE_PREFIX}workflowHistory`);
+    localStorage.setItem(migrationKey, "done");
+}
+
 function renderAllExistingHistories() {
     safeInvoke(renderFileHistory);
     safeInvoke(renderRegistrationHistory);
@@ -51,10 +65,14 @@ function initializeApplication() {
     applyApplicationMetadata();
     if (typeof initializeV3Architecture === "function") initializeV3Architecture();
     migrateCompatibleStorageKeys();
-    $("#salvarCampos").checked = shouldSaveFields();
+    const salvarCampos = $("#salvarCampos");
+    if (salvarCampos) {
+        salvarCampos.checked = shouldSaveFields();
+    }
 
     restoreFormData();
     applyVersion241Defaults();
+    applyVersion412Cleanup();
 
     $("#arquivoSeparador").value = fileBuilderState.separator;
     $("#arquivoAnaliseProjeto").checked =
