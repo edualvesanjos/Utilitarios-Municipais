@@ -1,4 +1,27 @@
-# 4.2.1
+# Changelog
+
+## 4.2.3 — Correção de falsos conflitos
+
+- Removido o rastreamento genérico de cliques e alterações em toda a interface.
+- Adicionado monitoramento seletivo somente das chaves incluídas na sincronização.
+- Adicionada comparação determinística entre o conteúdo local e o conteúdo remoto.
+- Pendências e conflitos antigos são eliminados automaticamente quando os dados são idênticos.
+- O `updated_at` retornado pelo Supabase é utilizado como referência da sincronização.
+- Adicionada tolerância temporal para evitar conflito por diferenças mínimas de relógio.
+- Atualizados versão interna, schema local, README, manifest e painel Novidades.
+
+## 4.2.2 — Gerenciamento da sincronização
+
+- Indicador visual de estado: local, sincronizando, sincronizado, pendente, offline, conflito e erro.
+- Exibição da última sincronização, última tentativa e quantidade de grupos pendentes.
+- Botão de sincronização bidirecional para comparar dados locais e remotos.
+- Detecção de alterações concorrentes entre dispositivos.
+- Resolução explícita de conflitos, permitindo manter os dados locais ou utilizar os dados online.
+- Retomada automática da sincronização ao restabelecer a conexão e ao retornar à aplicação.
+- Favicon SVG embutido no `index.html`.
+- Atualização do painel Novidades do módulo Sobre.
+
+# 4.2.2
 
 - Ativada a primeira sincronização seletiva sobre a infraestrutura da versão 4.2.0.
 - Sincronização de preferências, nome de exibição, aparência, favoritos e continuidade do Dashboard.

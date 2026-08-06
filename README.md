@@ -1,8 +1,8 @@
-# Utilitários Municipais — v4.2.1
+# Utilitários Municipais — v4.2.3
 
-## Primeira sincronização seletiva
+## Correção do gerenciamento da sincronização
 
-A versão 4.2.1 utiliza a infraestrutura criada na 4.2.0 para sincronizar somente dados pequenos e necessários à experiência do usuário. O aplicativo continua funcionando com `localStorage` quando não há login, conexão ou disponibilidade do Supabase.
+A versão 4.2.3 corrige os falsos conflitos apresentados pela versão 4.2.2. O aplicativo continua sincronizando somente dados pequenos e necessários à experiência do usuário, preservando o funcionamento local quando não houver internet ou sessão no Supabase.
 
 ### Dados sincronizados
 
@@ -10,6 +10,15 @@ A versão 4.2.1 utiliza a infraestrutura criada na 4.2.0 para sincronizar soment
 - nome de exibição, tema, fonte, cor, layout e seções do Dashboard;
 - ferramentas favoritas;
 - aba ativa, última ferramenta e ferramentas recentes.
+
+### Correções da versão 4.2.3
+
+- cliques, cópias, cálculos e navegação comum não são mais tratados como alterações pendentes;
+- somente as chaves efetivamente sincronizadas são monitoradas;
+- os conteúdos local e remoto são comparados antes da abertura do conflito;
+- dados idênticos limpam automaticamente pendências e conflitos antigos;
+- o horário `updated_at` retornado pelo Supabase passa a ser usado como referência após o envio;
+- foi adicionada tolerância temporal para diferenças de poucos milissegundos entre navegador e servidor.
 
 ### Dados mantidos somente no navegador
 
@@ -20,8 +29,6 @@ A versão 4.2.1 utiliza a infraestrutura criada na 4.2.0 para sincronizar soment
 - valor e casas decimais da UVRM;
 - backups e logs locais.
 
-Quando uma alteração ocorre sem conexão, ela é marcada como pendente e pode ser enviada automaticamente após a reconexão. A resolução avançada de conflitos entre dispositivos permanece planejada para a versão 4.2.2.
-
 ## Execução no StackBlitz
 
 ```bash
@@ -29,12 +36,12 @@ npm install
 npm run dev
 ```
 
-## Supabase
+## Teste recomendado
 
-1. Execute `SUPABASE_SETUP.sql` no SQL Editor, caso ainda não tenha sido aplicado.
-2. Mantenha o provedor Email habilitado em Authentication.
-3. Cadastre a URL publicada do aplicativo em Authentication > URL Configuration.
-4. Abra Configurações > Conta e sincronização online.
-5. Entre ou crie uma conta e use **Sincronizar agora**.
+1. Entre na conta do Supabase.
+2. Clique em **Sincronizar agora**.
+3. Navegue entre módulos, faça cálculos e copie resultados. A tela de conflito não deve aparecer.
+4. Altere um favorito ou uma preferência. O estado deve mudar para pendente e depois para sincronizado.
+5. Faça alterações diferentes em dois computadores antes de sincronizar para validar o conflito real.
 
 O módulo **Fluxos de trabalho** permanece removido desde a versão 4.1.2.

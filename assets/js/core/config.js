@@ -2,8 +2,8 @@
 
 const APP_CONFIG = Object.freeze({
     name: "Utilitários Municipais",
-    version: "4.2.1",
-    schemaVersion: 8,
+    version: "4.2.3",
+    schemaVersion: 10,
     storagePrefix: "utilitariosMunicipais:",
     environment: "development",
     debug: false,
