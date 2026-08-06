@@ -1,3 +1,23 @@
+# 4.2.1
+
+- Ativada a primeira sincronização seletiva sobre a infraestrutura da versão 4.2.0.
+- Sincronização de preferências, nome de exibição, aparência, favoritos e continuidade do Dashboard.
+- Inclusão das chaves de última ferramenta, aba ativa e ferramentas recentes.
+- Históricos, modelos, documentos e configurações da UVRM permanecem exclusivamente locais.
+- Inclusão de estado de alterações pendentes e reenvio automático após reconexão.
+- Restrição da restauração às categorias oficialmente suportadas nesta etapa.
+- Migração do schema local para a versão 8.
+
+# 4.2.0
+
+- Criação de cliente Supabase centralizado e reutilizável.
+- Fortalecimento do StorageService com fallback e tratamento de falhas.
+- Inclusão de Logger, ErrorHandler e VersionService.
+- Migração do schema local para a versão 7.
+- Sincronização online adaptada para utilizar a nova infraestrutura.
+- Preservação das funcionalidades e dos dados locais da versão 4.1.2.
+- Inclusão de `.env.example` para documentação da configuração.
+
 # 4.1.2
 
 - Removido o módulo **Fluxos de trabalho** da navegação, do registro de ferramentas e da interface.

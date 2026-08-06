@@ -1,29 +1,40 @@
-# Utilitários Municipais — v4.1.2
+# Utilitários Municipais — v4.2.1
 
-Aplicação web modular para rotinas municipais, executada no navegador e compatível com Vite/StackBlitz.
+## Primeira sincronização seletiva
 
-## Alteração desta versão
+A versão 4.2.1 utiliza a infraestrutura criada na 4.2.0 para sincronizar somente dados pequenos e necessários à experiência do usuário. O aplicativo continua funcionando com `localStorage` quando não há login, conexão ou disponibilidade do Supabase.
 
-O módulo **Fluxos de trabalho** foi retirado por não ser necessário nesta etapa do projeto. Também foram removidas suas referências de interface e seus arquivos exclusivos. Dados locais antigos do módulo são eliminados automaticamente ao iniciar a versão 4.1.2.
+### Dados sincronizados
 
-## Armazenamento
+- preferências gerais e persistência de campos;
+- nome de exibição, tema, fonte, cor, layout e seções do Dashboard;
+- ferramentas favoritas;
+- aba ativa, última ferramenta e ferramentas recentes.
 
-A aplicação mantém funcionamento híbrido: dados locais no navegador e sincronização seletiva com Supabase. A sincronização online permanece limitada a preferências, favoritos, modelos e configurações da UVRM; dados de fluxos não são enviados.
+### Dados mantidos somente no navegador
 
-Execute no StackBlitz com:
+- históricos dos módulos;
+- estatísticas de uso e atividades;
+- modelos de nome de arquivo e documentos;
+- documentos personalizados;
+- valor e casas decimais da UVRM;
+- backups e logs locais.
+
+Quando uma alteração ocorre sem conexão, ela é marcada como pendente e pode ser enviada automaticamente após a reconexão. A resolução avançada de conflitos entre dispositivos permanece planejada para a versão 4.2.2.
+
+## Execução no StackBlitz
 
 ```bash
 npm install
 npm run dev
 ```
 
-## Supabase — versão 4.1
+## Supabase
 
-1. Execute `SUPABASE_SETUP.sql` no SQL Editor do projeto.
-2. Em Authentication > Providers, mantenha o provedor Email habilitado.
-3. Em Authentication > URL Configuration, cadastre a URL publicada do aplicativo.
+1. Execute `SUPABASE_SETUP.sql` no SQL Editor, caso ainda não tenha sido aplicado.
+2. Mantenha o provedor Email habilitado em Authentication.
+3. Cadastre a URL publicada do aplicativo em Authentication > URL Configuration.
 4. Abra Configurações > Conta e sincronização online.
-5. Crie uma conta ou entre com e-mail e senha.
-6. Use **Sincronizar agora** para enviar as preferências locais.
+5. Entre ou crie uma conta e use **Sincronizar agora**.
 
-A aplicação permanece funcional sem login e sem internet. Nesta etapa são sincronizados: aparência, nome de exibição, favoritos, modelos do sistema e configurações da UVRM.
+O módulo **Fluxos de trabalho** permanece removido desde a versão 4.1.2.

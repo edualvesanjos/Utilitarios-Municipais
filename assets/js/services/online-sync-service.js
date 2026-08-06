@@ -1,34 +1,37 @@
-/* Versão 4.1 — autenticação e sincronização online com Supabase. */
+/* Versão 4.2.1 — primeira sincronização seletiva de preferências e favoritos. */
 (function () {
     "use strict";
 
-    const ONLINE_KEYS = Object.freeze({
-        preferences: [
-            `${APP_CONFIG.storagePrefix}ux31:prefs`,
-            `${APP_CONFIG.storagePrefix}compactMode`,
+    const SYNC_GROUPS = Object.freeze({
+        preferences: Object.freeze([
             `${APP_CONFIG.storagePrefix}saveFields`
-        ],
-        favorites: [
+        ]),
+        favorites: Object.freeze([
             `${APP_CONFIG.storagePrefix}favorites`
-        ],
-        models: [
-            `${APP_CONFIG.storagePrefix}fileModels`,
-            `${APP_CONFIG.storagePrefix}documentTemplates`
-        ],
-        settings: [
-            `${APP_CONFIG.storagePrefix}uvrmValue`,
-            `${APP_CONFIG.storagePrefix}uvrmDecimals`
-        ]
+        ]),
+        personalization: Object.freeze([
+            `${APP_CONFIG.storagePrefix}ux31:prefs`,
+            `${APP_CONFIG.storagePrefix}compactMode`
+        ]),
+        navigation: Object.freeze([
+            `${APP_CONFIG.storagePrefix}activeTab`,
+            `${APP_CONFIG.storagePrefix}lastToolTab`,
+            `${APP_CONFIG.storagePrefix}recentTools`
+        ])
     });
 
     const STATE_KEY = `${APP_CONFIG.storagePrefix}online:state`;
     const LAST_SYNC_KEY = `${APP_CONFIG.storagePrefix}online:lastSync`;
     const AUTO_SYNC_KEY = `${APP_CONFIG.storagePrefix}online:autoSync`;
     const DEVICE_KEY = `${APP_CONFIG.storagePrefix}online:deviceId`;
+    const PENDING_KEY = `${APP_CONFIG.storagePrefix}online:pending`;
+    const SYNC_SCHEMA_VERSION = 2;
+
     let client = null;
     let session = null;
     let syncTimer = null;
     let applyingRemote = false;
+    let syncInProgress = false;
 
     function notify(message, type = "success") {
         if (window.NotificationService && typeof NotificationService[type] === "function") {
@@ -36,47 +39,68 @@
         } else if (typeof showToast === "function") {
             showToast(message);
         } else {
-            console.log(message);
+            window.Logger?.info(message);
+        }
+    }
+
+    function safeGet(key, fallback = null) {
+        try {
+            const value = localStorage.getItem(key);
+            return value === null ? fallback : value;
+        } catch (error) {
+            window.ErrorHandler?.report(error, "Leitura da sincronização", { silent: true });
+            return fallback;
+        }
+    }
+
+    function safeSet(key, value) {
+        try {
+            localStorage.setItem(key, String(value));
+            return true;
+        } catch (error) {
+            window.ErrorHandler?.report(error, "Gravação da sincronização", { silent: true });
+            return false;
         }
     }
 
     function getDeviceId() {
-        let id = localStorage.getItem(DEVICE_KEY);
+        let id = safeGet(DEVICE_KEY, "");
         if (!id) {
-            id = (crypto.randomUUID?.() || `device-${Date.now()}-${Math.random().toString(16).slice(2)}`);
-            localStorage.setItem(DEVICE_KEY, id);
+            id = crypto.randomUUID?.() || `device-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+            safeSet(DEVICE_KEY, id);
         }
         return id;
     }
 
     function setOnlineState(value) {
-        localStorage.setItem(STATE_KEY, JSON.stringify(value));
+        safeSet(STATE_KEY, JSON.stringify(value));
         renderOnlineStatus();
     }
 
-    function getOnlineState() {
-        try {
-            return JSON.parse(localStorage.getItem(STATE_KEY) || "{}");
-        } catch {
-            return {};
-        }
+    function isAutoSyncEnabled() {
+        return safeGet(AUTO_SYNC_KEY, "true") !== "false";
     }
 
-    function isAutoSyncEnabled() {
-        return localStorage.getItem(AUTO_SYNC_KEY) !== "false";
+    function setPending(value) {
+        safeSet(PENDING_KEY, value ? "true" : "false");
+        renderOnlineStatus();
+    }
+
+    function hasPendingChanges() {
+        return safeGet(PENDING_KEY, "false") === "true";
     }
 
     function collectGroup(keys) {
         const content = {};
         keys.forEach((key) => {
-            const value = localStorage.getItem(key);
+            const value = safeGet(key, null);
             if (value !== null) content[key] = value;
         });
         return content;
     }
 
     function collectLocalData() {
-        return Object.entries(ONLINE_KEYS).map(([data_type, keys]) => ({
+        return Object.entries(SYNC_GROUPS).map(([data_type, keys]) => ({
             data_type,
             content: collectGroup(keys)
         }));
@@ -87,8 +111,9 @@
         applyingRemote = true;
         try {
             Object.entries(content).forEach(([key, value]) => {
-                if (key.startsWith(APP_CONFIG.storagePrefix)) {
-                    localStorage.setItem(key, String(value));
+                const permitted = Object.values(SYNC_GROUPS).some((keys) => keys.includes(key));
+                if (permitted && key.startsWith(APP_CONFIG.storagePrefix)) {
+                    safeSet(key, value);
                 }
             });
         } finally {
@@ -98,7 +123,7 @@
 
     function refreshApplication() {
         if (typeof refreshPersistedApplicationData === "function") {
-            refreshPersistedApplicationData();
+            try { refreshPersistedApplicationData(); } catch {}
         }
         if (typeof applyPrefs === "function") {
             try { applyPrefs(); } catch {}
@@ -109,6 +134,9 @@
         if (typeof refreshUsageViews === "function") {
             try { refreshUsageViews(); } catch {}
         }
+        if (typeof updateDashboardLastToolHighlight === "function") {
+            try { updateDashboardLastToolHighlight(); } catch {}
+        }
     }
 
     async function ensureProfile(user) {
@@ -116,7 +144,7 @@
         const prefsKey = `${APP_CONFIG.storagePrefix}ux31:prefs`;
         let displayName = "Usuário";
         try {
-            const prefs = JSON.parse(localStorage.getItem(prefsKey) || "{}");
+            const prefs = JSON.parse(safeGet(prefsKey, "{}"));
             displayName = String(prefs.displayName || "Usuário").trim().slice(0, 40) || "Usuário";
         } catch {}
         const { error } = await client.from("profiles").upsert(
@@ -135,85 +163,118 @@
                 app_version: APP_CONFIG.version,
                 device_id: getDeviceId(),
                 synced_items: syncedItems,
-                details
+                details: { sync_schema: SYNC_SCHEMA_VERSION, ...details }
             });
         } catch (error) {
-            console.warn("Não foi possível gravar o log de sincronização.", error);
+            window.Logger?.warn("Não foi possível gravar o log de sincronização.", error);
         }
     }
 
     async function pushLocalData({ silent = false } = {}) {
+        if (syncInProgress) return false;
         if (!client || !session?.user) {
             if (!silent) notify("Faça login para sincronizar.", "warning");
             return false;
         }
         if (!navigator.onLine) {
-            if (!silent) notify("Sem conexão. Os dados permanecem salvos localmente.", "warning");
+            setPending(true);
+            setOnlineState({ status: "offline", message: "Sincronização pendente" });
+            if (!silent) notify("Sem conexão. As alterações permanecem salvas localmente.", "warning");
             return false;
         }
 
-        const userId = session.user.id;
-        const rows = collectLocalData().map((item) => ({
-            user_id: userId,
-            data_type: item.data_type,
-            content: item.content,
-            version: 1
-        }));
+        syncInProgress = true;
+        setOnlineState({ status: "syncing" });
+        try {
+            const rows = collectLocalData().map((item) => ({
+                user_id: session.user.id,
+                data_type: item.data_type,
+                content: item.content,
+                version: SYNC_SCHEMA_VERSION
+            }));
 
-        const { error } = await client
-            .from("user_data")
-            .upsert(rows, { onConflict: "user_id,data_type" });
+            const { error } = await client
+                .from("user_data")
+                .upsert(rows, { onConflict: "user_id,data_type" });
 
-        if (error) {
+            if (error) throw error;
+
+            const now = new Date().toISOString();
+            safeSet(LAST_SYNC_KEY, now);
+            setPending(false);
+            setOnlineState({ status: "synced", at: now });
+            await ensureProfile(session.user);
+            await writeSyncLog("success", rows.length, {
+                direction: "upload",
+                groups: rows.map((row) => row.data_type)
+            });
+            if (!silent) notify("Preferências e favoritos sincronizados com o Supabase.");
+            return true;
+        } catch (error) {
+            setPending(true);
             setOnlineState({ status: "error", message: error.message });
             await writeSyncLog("error", 0, { direction: "upload", error: error.message });
+            window.ErrorHandler?.report(error, "Envio ao Supabase", { silent: true });
             if (!silent) notify(`Falha ao sincronizar: ${error.message}`, "error");
             return false;
+        } finally {
+            syncInProgress = false;
         }
-
-        const now = new Date().toISOString();
-        localStorage.setItem(LAST_SYNC_KEY, now);
-        setOnlineState({ status: "synced", at: now });
-        await ensureProfile(session.user);
-        await writeSyncLog("success", rows.length, { direction: "upload" });
-        if (!silent) notify("Dados locais sincronizados com o Supabase.");
-        return true;
     }
 
     async function pullRemoteData({ silent = false } = {}) {
-        if (!client || !session?.user || !navigator.onLine) return false;
-
-        const { data, error } = await client
-            .from("user_data")
-            .select("data_type,content,updated_at")
-            .eq("user_id", session.user.id);
-
-        if (error) {
-            setOnlineState({ status: "error", message: error.message });
-            await writeSyncLog("error", 0, { direction: "download", error: error.message });
-            if (!silent) notify(`Falha ao baixar dados: ${error.message}`, "error");
+        if (syncInProgress || !client || !session?.user) return false;
+        if (!navigator.onLine) {
+            if (!silent) notify("Sem conexão. Não foi possível baixar os dados online.", "warning");
             return false;
         }
 
-        if (!data?.length) {
-            return pushLocalData({ silent });
+        syncInProgress = true;
+        setOnlineState({ status: "syncing" });
+        try {
+            const { data, error } = await client
+                .from("user_data")
+                .select("data_type,content,updated_at,version")
+                .eq("user_id", session.user.id)
+                .in("data_type", Object.keys(SYNC_GROUPS));
+
+            if (error) throw error;
+
+            if (!data?.length) {
+                syncInProgress = false;
+                return pushLocalData({ silent });
+            }
+
+            data.forEach((row) => {
+                if (SYNC_GROUPS[row.data_type]) applyGroup(row.content);
+            });
+
+            const now = new Date().toISOString();
+            safeSet(LAST_SYNC_KEY, now);
+            setPending(false);
+            setOnlineState({ status: "synced", at: now });
+            refreshApplication();
+            await writeSyncLog("success", data.length, {
+                direction: "download",
+                groups: data.map((row) => row.data_type)
+            });
+            if (!silent) notify("Preferências e favoritos online foram restaurados.");
+            return true;
+        } catch (error) {
+            setOnlineState({ status: "error", message: error.message });
+            await writeSyncLog("error", 0, { direction: "download", error: error.message });
+            window.ErrorHandler?.report(error, "Download do Supabase", { silent: true });
+            if (!silent) notify(`Falha ao baixar dados: ${error.message}`, "error");
+            return false;
+        } finally {
+            syncInProgress = false;
         }
-
-        data.forEach((row) => {
-            if (ONLINE_KEYS[row.data_type]) applyGroup(row.content);
-        });
-
-        const now = new Date().toISOString();
-        localStorage.setItem(LAST_SYNC_KEY, now);
-        setOnlineState({ status: "synced", at: now });
-        refreshApplication();
-        await writeSyncLog("success", data.length, { direction: "download" });
-        if (!silent) notify("Dados online restaurados neste navegador.");
-        return true;
     }
 
     function scheduleAutoSync() {
-        if (applyingRemote || !isAutoSyncEnabled() || !session?.user) return;
+        if (applyingRemote || !session?.user) return;
+        setPending(true);
+        if (!isAutoSyncEnabled()) return;
         clearTimeout(syncTimer);
         syncTimer = setTimeout(() => pushLocalData({ silent: true }), 1800);
     }
@@ -226,7 +287,7 @@
 
     function renderOnlineStatus() {
         const email = session?.user?.email || "";
-        const lastSync = localStorage.getItem(LAST_SYNC_KEY);
+        const lastSync = safeGet(LAST_SYNC_KEY, "");
         document.querySelectorAll("[data-online-user]").forEach((el) => {
             el.textContent = email || "Não conectado";
         });
@@ -240,10 +301,27 @@
             el.hidden = !!session?.user;
         });
         const badge = document.getElementById("onlineStatusBadge");
-        if (badge) {
-            badge.textContent = session?.user ? (navigator.onLine ? "Online" : "Offline") : "Local";
-            badge.dataset.state = session?.user ? (navigator.onLine ? "online" : "offline") : "local";
+        if (!badge) return;
+
+        let text = "Local";
+        let state = "local";
+        if (session?.user) {
+            if (!navigator.onLine) {
+                text = hasPendingChanges() ? "Offline — pendente" : "Offline";
+                state = "offline";
+            } else if (syncInProgress) {
+                text = "Sincronizando";
+                state = "syncing";
+            } else if (hasPendingChanges()) {
+                text = "Pendente";
+                state = "pending";
+            } else {
+                text = "Sincronizado";
+                state = "online";
+            }
         }
+        badge.textContent = text;
+        badge.dataset.state = state;
     }
 
     function createAuthModal() {
@@ -257,7 +335,7 @@
                 <button class="online-modal-close" type="button" aria-label="Fechar">×</button>
                 <span class="eyebrow">Supabase</span>
                 <h2 id="onlineAuthTitle">Acesso online</h2>
-                <p class="help-text">Entre para sincronizar preferências, favoritos, modelos e configurações da UVRM.</p>
+                <p class="help-text">Entre para sincronizar preferências, personalização, favoritos e continuidade do Dashboard.</p>
                 <label>E-mail<input id="onlineEmail" type="email" autocomplete="email" required></label>
                 <label>Senha<input id="onlinePassword" type="password" autocomplete="current-password" minlength="6" required></label>
                 <div class="actions">
@@ -316,7 +394,9 @@
 
     function openAuthModal() {
         createAuthModal();
-        document.getElementById("onlineAuthModal").hidden = false;
+        const modal = document.getElementById("onlineAuthModal");
+        if (!modal) return;
+        modal.hidden = false;
         document.getElementById("onlineEmail")?.focus();
     }
 
@@ -329,9 +409,9 @@
         panel.innerHTML = `
             <div class="section-heading">
                 <div>
-                    <span class="eyebrow">Versão 4.1</span>
+                    <span class="eyebrow">Versão 4.2.1</span>
                     <h3>Conta e sincronização online</h3>
-                    <p class="help-text">O armazenamento local continua ativo. A conta online permite recuperar dados em outro computador.</p>
+                    <p class="help-text">O armazenamento local continua ativo. A conta online permite recuperar as preferências em outro computador.</p>
                 </div>
                 <span id="onlineStatusBadge" class="online-status-badge">Local</span>
             </div>
@@ -351,18 +431,19 @@
                 <input id="onlineAutoSync" type="checkbox">
                 Sincronizar automaticamente quando houver alterações
             </label>
-            <p class="help-text">Nesta etapa são sincronizados: aparência, nome de exibição, favoritos, modelos e valor da UVRM.</p>`;
+            <p class="help-text">Sincronizados nesta etapa: preferências, nome de exibição, aparência, favoritos, última ferramenta e continuidade do Dashboard. Históricos, modelos, documentos e valores da UVRM permanecem somente neste navegador.</p>`;
         root.prepend(panel);
 
         panel.querySelector("#onlineOpenAuth").addEventListener("click", openAuthModal);
         panel.querySelector("#onlineSyncNow").addEventListener("click", () => pushLocalData());
         panel.querySelector("#onlineRestore").addEventListener("click", () => pullRemoteData());
-        panel.querySelector("#onlineSignOut").addEventListener("click", () => client.auth.signOut());
+        panel.querySelector("#onlineSignOut").addEventListener("click", () => client?.auth.signOut());
         const auto = panel.querySelector("#onlineAutoSync");
         auto.checked = isAutoSyncEnabled();
         auto.addEventListener("change", () => {
-            localStorage.setItem(AUTO_SYNC_KEY, String(auto.checked));
+            safeSet(AUTO_SYNC_KEY, auto.checked);
             notify(auto.checked ? "Sincronização automática ativada." : "Sincronização automática desativada.");
+            if (auto.checked && hasPendingChanges()) scheduleAutoSync();
         });
         renderOnlineStatus();
     }
@@ -371,26 +452,23 @@
         addSettingsPanel();
         createAuthModal();
 
-        if (!window.supabase?.createClient) {
-            setOnlineState({ status: "unavailable", message: "Biblioteca Supabase não carregada." });
+        client = window.SupabaseClientService?.getClient() || null;
+        if (!client) {
+            const message = window.SupabaseClientService?.getError()?.message || "Cliente Supabase indisponível.";
+            setOnlineState({ status: "unavailable", message });
             renderOnlineStatus();
+            window.Logger?.warn(message);
             return;
         }
 
-        client = window.supabase.createClient(
-            APP_CONFIG.supabaseUrl,
-            APP_CONFIG.supabasePublishableKey,
-            {
-                auth: {
-                    persistSession: true,
-                    autoRefreshToken: true,
-                    detectSessionInUrl: true
-                }
-            }
-        );
-
-        const { data } = await client.auth.getSession();
-        session = data.session;
+        try {
+            const { data, error } = await client.auth.getSession();
+            if (error) throw error;
+            session = data.session;
+        } catch (error) {
+            window.ErrorHandler?.report(error, "Sessão Supabase", { silent: true });
+            session = null;
+        }
         renderOnlineStatus();
 
         client.auth.onAuthStateChange(async (event, nextSession) => {
@@ -412,7 +490,9 @@
         }
 
         window.addEventListener("storage", (event) => {
-            if (event.key?.startsWith(APP_CONFIG.storagePrefix)) scheduleAutoSync();
+            if (event.key && Object.values(SYNC_GROUPS).some((keys) => keys.includes(event.key))) {
+                scheduleAutoSync();
+            }
         });
         document.addEventListener("change", scheduleAutoSync, true);
         document.addEventListener("click", (event) => {
@@ -420,7 +500,9 @@
         }, true);
         window.addEventListener("online", () => {
             renderOnlineStatus();
-            if (session?.user && isAutoSyncEnabled()) pushLocalData({ silent: true });
+            if (session?.user && isAutoSyncEnabled() && hasPendingChanges()) {
+                pushLocalData({ silent: true });
+            }
         });
         window.addEventListener("offline", renderOnlineStatus);
 
@@ -428,7 +510,9 @@
             sync: pushLocalData,
             restore: pullRemoteData,
             openLogin: openAuthModal,
-            getSession: () => session
+            getSession: () => session,
+            getGroups: () => Object.keys(SYNC_GROUPS),
+            hasPendingChanges
         });
     }
 

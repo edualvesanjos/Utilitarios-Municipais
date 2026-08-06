@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0f4c81">
     <title>Utilitários Municipais</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%232563eb'/><text x='32' y='42' text-anchor='middle' font-family='Arial' font-size='34' font-weight='bold' fill='white'>UM</text></svg>">
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="assets/css/base.css">
     <link rel="stylesheet" href="assets/css/components.css">
@@ -26,9 +27,7 @@
         <div class="header-content header-content-v32">
             <div class="v32-brand">
                 <span class="v32-brand-icon" aria-hidden="true">🏛</span>
-                <div>
-                    <h1 data-app-name>Utilitários Municipais</h1><small>Ferramentas internas</small>
-                </div>
+                <div><h1 data-app-name>Utilitários Municipais</h1><small>Ferramentas internas</small></div>
                 <span class="v32-version">v<span data-app-version></span></span>
             </div>
         </div>
@@ -36,54 +35,21 @@
 
     <main class="app-container">
         <nav class="tabs ux-main-navigation v32-main-navigation" aria-label="Navegação principal">
-            <button class="tab-button ux-nav-primary active" type="button" data-tab="inicio"><span class="nav-svg-icon"
-                    data-static-icon="home" aria-hidden="true"></span> Início</button>
+            <button class="tab-button ux-nav-primary active" type="button" data-tab="inicio"><span class="nav-svg-icon" data-static-icon="home" aria-hidden="true"></span> Início</button>
             <div class="ux-tools-menu">
-                <button id="uxToolsMenuButton" class="ux-nav-primary ux-tools-menu-button" type="button"
-                    aria-haspopup="true" aria-expanded="false" aria-controls="uxToolsMenuDropdown"><span
-                        class="nav-svg-icon" data-static-icon="tools" aria-hidden="true"></span> Ferramentas <span
-                        aria-hidden="true">⌄</span></button>
+                <button id="uxToolsMenuButton" class="ux-nav-primary ux-tools-menu-button" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="uxToolsMenuDropdown"><span class="nav-svg-icon" data-static-icon="tools" aria-hidden="true"></span> Ferramentas <span aria-hidden="true">⌄</span></button>
                 <div id="uxToolsMenuDropdown" class="ux-tools-dropdown v32-tools-dropdown" role="menu" hidden>
-                    <section class="ux-tools-group"><strong>Documentos</strong><button class="tab-button" type="button"
-                            data-tab="central-documentos" role="menuitem"><span class="menu-tool-icon"
-                                data-tool-icon="documents"></span> Central de documentos</button><button
-                            class="tab-button" type="button" data-tab="arquivo" role="menuitem"><span
-                                class="menu-tool-icon" data-tool-icon="file"></span> Nome de arquivo</button></section>
-                    <section class="ux-tools-group"><strong>Cadastros</strong><button class="tab-button" type="button"
-                            data-tab="inscricao" role="menuitem"><span class="menu-tool-icon"
-                                data-tool-icon="building"></span> Inscrição imobiliária</button><button
-                            class="tab-button" type="button" data-tab="lote" role="menuitem"><span
-                                class="menu-tool-icon" data-tool-icon="grid"></span> Número de lote</button></section>
-                    <section class="ux-tools-group"><strong>Cálculos</strong><button class="tab-button" type="button"
-                            data-tab="uvrm" role="menuitem"><span class="menu-tool-icon" data-tool-icon="coins"></span>
-                            Calculadora UVRM</button><button class="tab-button" type="button" data-tab="percentual"
-                            role="menuitem"><span class="menu-tool-icon" data-tool-icon="percent"></span>
-                            Percentual</button></section>
-                    <section class="ux-tools-group"><strong>Produtividade</strong><button class="tab-button"
-                            type="button" data-tab="biblioteca" role="menuitem"><span class="menu-tool-icon"
-                                data-tool-icon="library"></span> Biblioteca de ferramentas</button><button
-                            class="tab-button" type="button" data-tab="historico-global" role="menuitem"><span
-                                class="menu-tool-icon" data-tool-icon="history"></span> Histórico global</button>
-                    </section>
-                    <section class="ux-tools-group"><strong>Sistema</strong><button class="tab-button" type="button"
-                            data-tab="configuracoes" role="menuitem"><span class="menu-tool-icon"
-                                data-tool-icon="settings"></span> Configurações</button><button class="tab-button"
-                            type="button" data-tab="sobre" role="menuitem"><span class="menu-tool-icon"
-                                data-tool-icon="info"></span> Sobre</button></section>
+                    <section class="ux-tools-group"><strong>Documentos</strong><button class="tab-button" type="button" data-tab="central-documentos" role="menuitem"><span class="menu-tool-icon" data-tool-icon="documents"></span> Central de documentos</button><button class="tab-button" type="button" data-tab="arquivo" role="menuitem"><span class="menu-tool-icon" data-tool-icon="file"></span> Nome de arquivo</button></section>
+                    <section class="ux-tools-group"><strong>Cadastros</strong><button class="tab-button" type="button" data-tab="inscricao" role="menuitem"><span class="menu-tool-icon" data-tool-icon="building"></span> Inscrição imobiliária</button><button class="tab-button" type="button" data-tab="lote" role="menuitem"><span class="menu-tool-icon" data-tool-icon="grid"></span> Número de lote</button></section>
+                    <section class="ux-tools-group"><strong>Cálculos</strong><button class="tab-button" type="button" data-tab="uvrm" role="menuitem"><span class="menu-tool-icon" data-tool-icon="coins"></span> Calculadora UVRM</button><button class="tab-button" type="button" data-tab="percentual" role="menuitem"><span class="menu-tool-icon" data-tool-icon="percent"></span> Percentual</button></section>
+                    <section class="ux-tools-group"><strong>Produtividade</strong><button class="tab-button" type="button" data-tab="biblioteca" role="menuitem"><span class="menu-tool-icon" data-tool-icon="library"></span> Biblioteca de ferramentas</button><button class="tab-button" type="button" data-tab="historico-global" role="menuitem"><span class="menu-tool-icon" data-tool-icon="history"></span> Histórico global</button></section>
+                    <section class="ux-tools-group"><strong>Sistema</strong><button class="tab-button" type="button" data-tab="configuracoes" role="menuitem"><span class="menu-tool-icon" data-tool-icon="settings"></span> Configurações</button><button class="tab-button" type="button" data-tab="sobre" role="menuitem"><span class="menu-tool-icon" data-tool-icon="info"></span> Sobre</button></section>
                 </div>
             </div>
-            <button class="tab-button ux-nav-primary" type="button" data-tab="configuracoes"><span class="nav-svg-icon"
-                    data-static-icon="settings" aria-hidden="true"></span> Configurações</button>
-            <button class="tab-button ux-nav-primary" type="button" data-tab="sobre"><span class="nav-svg-icon"
-                    data-static-icon="info" aria-hidden="true"></span> Sobre</button>
-            <label class="v32-top-search"><span class="nav-svg-icon" data-static-icon="search"
-                    aria-hidden="true"></span><input id="dashboardToolSearch" type="search" autocomplete="off"
-                    placeholder="Pesquisar ferramentas, comandos, cálculos..."><kbd>Ctrl + K</kbd>
-                <div id="dashboardSearchResults" class="dashboard-search-results" aria-live="polite"></div>
-            </label>
-            <div class="v32-header-actions"><button id="v32ThemeToggle" type="button"
-                    title="Alternar tema">◐</button><button id="v32FontToggle" type="button"
-                    title="Alternar tamanho da fonte">Aᴬ</button></div>
+            <button class="tab-button ux-nav-primary" type="button" data-tab="configuracoes"><span class="nav-svg-icon" data-static-icon="settings" aria-hidden="true"></span> Configurações</button>
+            <button class="tab-button ux-nav-primary" type="button" data-tab="sobre"><span class="nav-svg-icon" data-static-icon="info" aria-hidden="true"></span> Sobre</button>
+            <label class="v32-top-search"><span class="nav-svg-icon" data-static-icon="search" aria-hidden="true"></span><input id="dashboardToolSearch" type="search" autocomplete="off" placeholder="Pesquisar ferramentas, comandos, cálculos..."><kbd>Ctrl + K</kbd><div id="dashboardSearchResults" class="dashboard-search-results" aria-live="polite"></div></label>
+            <div class="v32-header-actions"><button id="v32ThemeToggle" type="button" title="Alternar tema">◐</button><button id="v32FontToggle" type="button" title="Alternar tamanho da fonte">Aᴬ</button></div>
         </nav>
 
 
@@ -91,116 +57,47 @@
             <div class="v32-dashboard-grid">
                 <main class="v32-dashboard-main">
                     <section class="v32-welcome card">
-                        <div><span class="eyebrow">Painel principal</span>
-                            <h2 id="dashboardGreeting">Olá, Usuário!</h2>
-                            <p>Bem-vindo aos Utilitários Municipais.</p>
-                            <p>Use a pesquisa, a paleta de comandos (<strong>Ctrl + Espaço</strong>) ou acesse uma
-                                ferramenta abaixo.</p>
-                        </div>
+                        <div><span class="eyebrow">Painel principal</span><h2 id="dashboardGreeting">Olá, Usuário!</h2><p>Bem-vindo aos Utilitários Municipais.</p><p>Use a pesquisa, a paleta de comandos (<strong>Ctrl + Espaço</strong>) ou acesse uma ferramenta abaixo.</p></div>
                         <div class="v32-welcome-art" aria-hidden="true"><span>▥</span><span>▦</span><span>⌨</span></div>
                     </section>
 
                     <section class="v32-section card" id="dashboardFavoritesSection">
-                        <div class="section-heading">
-                            <div>
-                                <h3>Acesso rápido</h3>
-                                <p class="mini-description">Favoritos e ferramentas disponíveis.</p>
-                            </div><button class="text-button" type="button" id="v32ShowAllTools">Ver todas</button>
-                        </div>
+                        <div class="section-heading"><div><h3>Acesso rápido</h3><p class="mini-description">Favoritos e ferramentas disponíveis.</p></div><button class="text-button" type="button" id="v32ShowAllTools">Ver todas</button></div>
                         <div id="dashboardFavoriteTools" class="dashboard-tools dashboard-favorite-tools"></div>
-                        <div id="dashboardAllTools" class="dashboard-tools v32-all-tools"
-                            aria-label="Ferramentas disponíveis"></div>
+                        <div id="dashboardAllTools" class="dashboard-tools v32-all-tools" aria-label="Ferramentas disponíveis"></div>
                     </section>
 
                     <section class="v32-section card">
-                        <div class="section-heading">
-                            <div>
-                                <h3>Continuar de onde parou</h3>
-                                <p class="mini-description">Ferramentas utilizadas recentemente.</p>
-                            </div>
-                        </div>
+                        <div class="section-heading"><div><h3>Continuar de onde parou</h3><p class="mini-description">Ferramentas utilizadas recentemente.</p></div></div>
                         <div id="dashboardRecentTools" class="dashboard-smart-tools v32-recent-tools"></div>
                         <div id="dashboardMostUsedTools" class="dashboard-smart-tools" hidden></div>
                     </section>
 
                     <section class="v32-section card dashboard-recent-card">
-                        <div class="section-heading">
-                            <div>
-                                <h3>Atividades recentes</h3>
-                                <p class="mini-description">Últimos cálculos e ações armazenados neste navegador.</p>
-                            </div><button id="dashboardRefresh" class="text-button" type="button">Atualizar</button>
-                        </div>
+                        <div class="section-heading"><div><h3>Atividades recentes</h3><p class="mini-description">Últimos cálculos e ações armazenados neste navegador.</p></div><button id="dashboardRefresh" class="text-button" type="button">Atualizar</button></div>
                         <ul id="dashboardRecentList" class="dashboard-recent-list"></ul>
                     </section>
 
                     <div class="dashboard-summary-grid v32-hidden-data" hidden>
-                        <span id="dashboardFileModels">0</span><span id="dashboardFileHistory">0</span><span
-                            id="dashboardRegistrationHistory">0</span><span id="dashboardLotHistory">0</span><span
-                            id="dashboardUvrmHistory">0</span><span id="dashboardPercentageHistory">0</span><span
-                            id="dashboardNextLotSequence">1</span><span id="dashboardUvrmValue">R$ 0,00</span><span
-                            id="dashboardLastBackup">Nenhum</span>
+                        <span id="dashboardFileModels">0</span><span id="dashboardFileHistory">0</span><span id="dashboardRegistrationHistory">0</span><span id="dashboardLotHistory">0</span><span id="dashboardUvrmHistory">0</span><span id="dashboardPercentageHistory">0</span><span id="dashboardNextLotSequence">1</span><span id="dashboardUvrmValue">R$ 0,00</span><span id="dashboardLastBackup">Nenhum</span>
                     </div>
                     <div id="dashboardToolCategories" hidden></div>
                 </main>
 
                 <aside class="v32-dashboard-side">
                     <section class="card v32-side-card">
-                        <div class="section-heading">
-                            <h3>Indicadores</h3><small>Dados locais</small>
-                        </div>
+                        <div class="section-heading"><h3>Indicadores</h3><small>Dados locais</small></div>
                         <div class="v32-indicators">
-                            <div><span class="v32-indicator-icon">▣</span>
-                                <p>Ferramentas disponíveis<strong id="v32ToolCount">0</strong></p>
-                            </div>
-                            <div><span class="v32-indicator-icon">★</span>
-                                <p>Favoritos<strong id="dashboardFavoriteCount">0</strong></p>
-                            </div>
-                            <div><span class="v32-indicator-icon">▦</span>
-                                <p>Ações realizadas<strong id="dashboardTotalActions">0</strong></p>
-                            </div>
-                            <div><span class="v32-indicator-icon">↗</span>
-                                <p>Acessos aos módulos<strong id="dashboardTotalAccesses">0</strong></p>
-                            </div>
+                            <div><span class="v32-indicator-icon">▣</span><p>Ferramentas disponíveis<strong id="v32ToolCount">0</strong></p></div>
+                            <div><span class="v32-indicator-icon">★</span><p>Favoritos<strong id="dashboardFavoriteCount">0</strong></p></div>
+                            <div><span class="v32-indicator-icon">▦</span><p>Ações realizadas<strong id="dashboardTotalActions">0</strong></p></div>
+                            <div><span class="v32-indicator-icon">↗</span><p>Acessos aos módulos<strong id="dashboardTotalAccesses">0</strong></p></div>
                         </div>
                         <p class="v32-most-used">Mais utilizada: <strong id="dashboardMostUsedTool">Nenhuma</strong></p>
                     </section>
-                    <section class="card v32-side-card">
-                        <div class="section-heading">
-                            <h3>Atalhos de teclado</h3>
-                        </div>
-                        <dl class="v32-shortcuts">
-                            <div>
-                                <dt>Ctrl + Espaço</dt>
-                                <dd>Paleta de comandos</dd>
-                            </div>
-                            <div>
-                                <dt>Ctrl + K</dt>
-                                <dd>Pesquisar</dd>
-                            </div>
-                            <div>
-                                <dt>F1</dt>
-                                <dd>Ajuda</dd>
-                            </div>
-                            <div>
-                                <dt>Esc</dt>
-                                <dd>Fechar pesquisa</dd>
-                            </div>
-                        </dl>
-                    </section>
-                    <section class="card v32-side-card">
-                        <div class="section-heading">
-                            <h3>Dica rápida</h3>
-                        </div>
-                        <p id="v32Tip">Marque as ferramentas mais utilizadas como favoritas para encontrá-las no acesso
-                            rápido.</p>
-                    </section>
-                    <section class="card v32-side-card v32-storage-card">
-                        <div class="section-heading">
-                            <h3>Dados do sistema</h3>
-                        </div>
-                        <p>Armazenamento local ativo</p>
-                        <p>Último backup: <strong id="v32LastBackup">Nenhum backup</strong></p>
-                    </section>
+                    <section class="card v32-side-card"><div class="section-heading"><h3>Atalhos de teclado</h3></div><dl class="v32-shortcuts"><div><dt>Ctrl + Espaço</dt><dd>Paleta de comandos</dd></div><div><dt>Ctrl + K</dt><dd>Pesquisar</dd></div><div><dt>F1</dt><dd>Ajuda</dd></div><div><dt>Esc</dt><dd>Fechar pesquisa</dd></div></dl></section>
+                    <section class="card v32-side-card"><div class="section-heading"><h3>Dica rápida</h3></div><p id="v32Tip">Marque as ferramentas mais utilizadas como favoritas para encontrá-las no acesso rápido.</p></section>
+                    <section class="card v32-side-card v32-storage-card"><div class="section-heading"><h3>Dados do sistema</h3></div><p>Armazenamento local ativo</p><p>Último backup: <strong id="v32LastBackup">Nenhum backup</strong></p></section>
                 </aside>
             </div>
         </section>
@@ -251,10 +148,10 @@
                         </div>
 
                         <div class="options-panel">
-                            <label class="checkbox-row">
-                                <input id="arquivoRemoverPontos" type="checkbox" checked>
-                                Remover pontos (.) dos números
-                            </label>
+                                <label class="checkbox-row">
+                                    <input id="arquivoRemoverPontos" type="checkbox" checked>
+                                    Remover pontos (.) dos números
+                                </label>
 
                             <label class="checkbox-row">
                                 <input id="arquivoAnaliseProjeto" type="checkbox">
@@ -306,13 +203,13 @@
                             <ol id="arquivoOrdemBlocos" class="block-order-list"></ol>
                         </div>
 
-                        <div class="tab-footer-navigation">
-                            <button class="back-home-button" type="button" data-open-tab="inicio">
-                                <span aria-hidden="true">←</span>
-                                Voltar para a Página Inicial
-                            </button>
-                        </div>
-                    </section>
+            <div class="tab-footer-navigation">
+                <button class="back-home-button" type="button" data-open-tab="inicio">
+                    <span aria-hidden="true">←</span>
+                    Voltar para a Página Inicial
+                </button>
+            </div>
+        </section>
 
                     <aside class="generator-sidebar">
                         <section class="sidebar-card">
@@ -352,8 +249,7 @@
                     <div>
                         <h2>Padrão de inscrição imobiliária</h2>
                         <p class="section-description">
-                            Cole ou digite a inscrição em qualquer formato; o sistema identifica e normaliza
-                            automaticamente.
+                            Cole ou digite a inscrição em qualquer formato; o sistema identifica e normaliza automaticamente.
                         </p>
                     </div>
 
@@ -380,8 +276,13 @@
 
                         <label>
                             Inscrição
-                            <input id="inscricaoValor" type="text" inputmode="numeric" autocomplete="off"
-                                placeholder="Cole ou digite a inscrição">
+                            <input
+                                id="inscricaoValor"
+                                type="text"
+                                inputmode="numeric"
+                                autocomplete="off"
+                                placeholder="Cole ou digite a inscrição"
+                            >
                         </label>
 
                         <div class="registration-status">
@@ -421,13 +322,13 @@
                             Copiar automaticamente quando a inscrição estiver completa
                         </label>
 
-                        <div class="tab-footer-navigation">
-                            <button class="back-home-button" type="button" data-open-tab="inicio">
-                                <span aria-hidden="true">←</span>
-                                Voltar para a Página Inicial
-                            </button>
-                        </div>
-                    </section>
+            <div class="tab-footer-navigation">
+                <button class="back-home-button" type="button" data-open-tab="inicio">
+                    <span aria-hidden="true">←</span>
+                    Voltar para a Página Inicial
+                </button>
+            </div>
+        </section>
 
                     <aside class="generator-sidebar">
                         <section class="sidebar-card">
@@ -547,13 +448,13 @@
                             <button id="reiniciarSequenciaLotes" class="danger-outline">Reiniciar sequência</button>
                         </div>
 
-                        <div class="tab-footer-navigation">
-                            <button class="back-home-button" type="button" data-open-tab="inicio">
-                                <span aria-hidden="true">←</span>
-                                Voltar para a Página Inicial
-                            </button>
-                        </div>
-                    </section>
+            <div class="tab-footer-navigation">
+                <button class="back-home-button" type="button" data-open-tab="inicio">
+                    <span aria-hidden="true">←</span>
+                    Voltar para a Página Inicial
+                </button>
+            </div>
+        </section>
 
                     <aside class="generator-sidebar">
                         <section class="sidebar-card">
@@ -590,8 +491,7 @@
                     <div>
                         <h2>Calculadora UVRM</h2>
                         <p class="section-description">
-                            Monte uma lista com vários lançamentos em reais ou UVRM, copie cada valor separadamente e
-                            acompanhe o total da operação.
+                            Monte uma lista com vários lançamentos em reais ou UVRM, copie cada valor separadamente e acompanhe o total da operação.
                         </p>
                     </div>
                     <span class="feature-badge">Lista de lançamentos</span>
@@ -602,8 +502,7 @@
                         <div class="grid two-columns">
                             <label>
                                 Valor atual da UVRM (R$)
-                                <input id="uvrmValorUnitario" type="text" inputmode="decimal" autocomplete="off"
-                                    value="39,99">
+                                <input id="uvrmValorUnitario" type="text" inputmode="decimal" autocomplete="off" value="39,99">
                             </label>
                             <label>
                                 Casas decimais da UVRM
@@ -630,8 +529,7 @@
 
                             <label>
                                 Descrição <span class="optional-label">(opcional)</span>
-                                <input id="uvrmDescricao" type="text" autocomplete="off" maxlength="100"
-                                    placeholder="Ex.: Taxa de licença">
+                                <input id="uvrmDescricao" type="text" autocomplete="off" maxlength="100" placeholder="Ex.: Taxa de licença">
                             </label>
 
                             <div class="grid two-columns">
@@ -644,19 +542,16 @@
                                 </label>
                                 <label>
                                     <span id="uvrmValorLancamentoLabel">Valor em UVRM</span>
-                                    <input id="uvrmValorLancamento" type="text" inputmode="decimal" autocomplete="off"
-                                        placeholder="0,00">
+                                    <input id="uvrmValorLancamento" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00">
                                 </label>
                                 <label id="uvrmMultiplicadorCampo">
                                     Quantidade
-                                    <input id="uvrmMultiplicador" type="number" inputmode="numeric" min="1" step="1"
-                                        value="1" autocomplete="off">
+                                    <input id="uvrmMultiplicador" type="number" inputmode="numeric" min="1" step="1" value="1" autocomplete="off">
                                     <small class="field-hint">Ex.: quantidade de dias, meses ou ocorrências.</small>
                                 </label>
                             </div>
 
-                            <p id="uvrmAjuda" class="help-text">O resultado será calculado antes de adicionar à lista.
-                            </p>
+                            <p id="uvrmAjuda" class="help-text">O resultado será calculado antes de adicionar à lista.</p>
 
                             <div class="preview-card">
                                 <span>Pré-visualização do lançamento</span>
@@ -675,8 +570,7 @@
                             <div class="section-heading">
                                 <div>
                                     <h3>Lançamentos da operação atual</h3>
-                                    <p class="mini-description">Copie individualmente o valor de cada item para lançar
-                                        no sistema.</p>
+                                    <p class="mini-description">Copie individualmente o valor de cada item para lançar no sistema.</p>
                                 </div>
                                 <span id="uvrmContador" class="counter-badge">0 itens</span>
                             </div>
@@ -714,17 +608,14 @@
 
                         <section class="sidebar-card">
                             <h3>Como funciona</h3>
-                            <p class="help-text">O valor unitário da UVRM e a lista atual são salvos automaticamente
-                                neste navegador.</p>
-                            <p class="help-text">Ao finalizar uma operação, todos os itens e o total ficam disponíveis
-                                no histórico.</p>
+                            <p class="help-text">O valor unitário da UVRM e a lista atual são salvos automaticamente neste navegador.</p>
+                            <p class="help-text">Ao finalizar uma operação, todos os itens e o total ficam disponíveis no histórico.</p>
                         </section>
                     </aside>
                 </div>
 
                 <div class="tab-footer-navigation">
-                    <button class="back-home-button" type="button" data-open-tab="inicio"><span
-                            aria-hidden="true">←</span> Voltar para a Página Inicial</button>
+                    <button class="back-home-button" type="button" data-open-tab="inicio"><span aria-hidden="true">←</span> Voltar para a Página Inicial</button>
                 </div>
             </div>
         </section>
@@ -758,14 +649,12 @@
                         <div class="grid two-columns">
                             <label>
                                 <span id="percentualRotuloValor1">Valor base</span>
-                                <input id="percentualValor1" type="text" inputmode="decimal" autocomplete="off"
-                                    placeholder="0,00">
+                                <input id="percentualValor1" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00">
                             </label>
 
                             <label>
                                 <span id="percentualRotuloValor2">Percentual</span>
-                                <input id="percentualValor2" type="text" inputmode="decimal" autocomplete="off"
-                                    placeholder="0">
+                                <input id="percentualValor2" type="text" inputmode="decimal" autocomplete="off" placeholder="0">
                             </label>
                         </div>
 
@@ -813,13 +702,13 @@
                             <button id="limparPercentual" class="secondary">Limpar campos</button>
                         </div>
 
-                        <div class="tab-footer-navigation">
-                            <button class="back-home-button" type="button" data-open-tab="inicio">
-                                <span aria-hidden="true">←</span>
-                                Voltar para a Página Inicial
-                            </button>
-                        </div>
-                    </section>
+            <div class="tab-footer-navigation">
+                <button class="back-home-button" type="button" data-open-tab="inicio">
+                    <span aria-hidden="true">←</span>
+                    Voltar para a Página Inicial
+                </button>
+            </div>
+        </section>
 
                     <aside class="generator-sidebar">
                         <section class="sidebar-card">
@@ -863,88 +752,60 @@
         <section id="configuracoes" class="tab-panel">
             <div class="card">
                 <div class="section-heading main-heading">
-                    <div>
-                        <h2>Configurações e dados</h2>
-                        <p class="section-description">Gerencie preferências, históricos e backups do aplicativo.</p>
-                    </div>
+                    <div><h2>Configurações e dados</h2><p class="section-description">Gerencie preferências, históricos e backups do aplicativo.</p></div>
                 </div>
                 <div class="generator-grid">
                     <section class="builder-panel">
                         <div class="registration-status settings-summary">
-                            <div><span class="status-label">Modelos salvos</span><strong
-                                    id="configModelosSalvos">0</strong></div>
-                            <div><span class="status-label">Itens em históricos</span><strong
-                                    id="configHistoricosSalvos">0</strong></div>
-                            <div><span class="status-label">Sequência de lote</span><strong
-                                    id="configSequenciaLote">00003</strong></div>
+                            <div><span class="status-label">Modelos salvos</span><strong id="configModelosSalvos">0</strong></div>
+                            <div><span class="status-label">Itens em históricos</span><strong id="configHistoricosSalvos">0</strong></div>
+                            <div><span class="status-label">Sequência de lote</span><strong id="configSequenciaLote">00003</strong></div>
                         </div>
                         <section class="settings-card">
-                            <h3>Backup completo</h3>
-                            <p class="help-text">Exporte todas as preferências, modelos, sequências e históricos para um
-                                arquivo JSON.</p>
-                            <div class="actions"><button id="exportarBackup" class="primary">Exportar
-                                    backup</button><label class="file-button secondary">Importar backup<input
-                                        id="importarBackup" type="file" accept=".json,application/json"></label></div>
+                            <h3>Backup completo</h3><p class="help-text">Exporte todas as preferências, modelos, sequências e históricos para um arquivo JSON.</p>
+                            <div class="actions"><button id="exportarBackup" class="primary">Exportar backup</button><label class="file-button secondary">Importar backup<input id="importarBackup" type="file" accept=".json,application/json"></label></div>
                             <p id="backupStatus" class="feedback" aria-live="polite"></p>
 
-                            <div class="tab-footer-navigation">
-                                <button class="back-home-button" type="button" data-open-tab="inicio">
-                                    <span aria-hidden="true">←</span>
-                                    Voltar para a Página Inicial
-                                </button>
-                            </div>
-                        </section>
+            <div class="tab-footer-navigation">
+                <button class="back-home-button" type="button" data-open-tab="inicio">
+                    <span aria-hidden="true">←</span>
+                    Voltar para a Página Inicial
+                </button>
+            </div>
+        </section>
                         <section class="settings-card">
-                            <h3>Limpeza seletiva</h3>
-                            <p class="help-text">Remova somente os dados desejados, sem afetar os demais módulos.</p>
+                            <h3>Limpeza seletiva</h3><p class="help-text">Remova somente os dados desejados, sem afetar os demais módulos.</p>
                             <div class="settings-checklist">
-                                <label class="checkbox-row"><input id="limparModelosArquivos" type="checkbox">Modelos do
-                                    gerador de nomes</label>
-                                <label class="checkbox-row"><input id="limparHistoricosGerais" type="checkbox">Todos os
-                                    históricos</label>
-                                <label class="checkbox-row"><input id="limparPreferenciasCampos" type="checkbox">Valores
-                                    e preferências dos campos</label>
-                                <label class="checkbox-row"><input id="reiniciarSequenciaNoReset"
-                                        type="checkbox">Reiniciar sequência de lotes</label>
+                                <label class="checkbox-row"><input id="limparModelosArquivos" type="checkbox">Modelos do gerador de nomes</label>
+                                <label class="checkbox-row"><input id="limparHistoricosGerais" type="checkbox">Todos os históricos</label>
+                                <label class="checkbox-row"><input id="limparPreferenciasCampos" type="checkbox">Valores e preferências dos campos</label>
+                                <label class="checkbox-row"><input id="reiniciarSequenciaNoReset" type="checkbox">Reiniciar sequência de lotes</label>
                             </div>
-                            <div class="actions"><button id="executarLimpezaSeletiva" class="danger-outline">Executar
-                                    limpeza selecionada</button></div>
+                            <div class="actions"><button id="executarLimpezaSeletiva" class="danger-outline">Executar limpeza selecionada</button></div>
                         </section>
 
                         <section class="settings-card">
                             <h3>Interface e produtividade</h3>
                             <div class="settings-checklist">
-                                <label class="checkbox-row"><input id="modoCompacto" type="checkbox">Interface
-                                    compacta</label>
+                                <label class="checkbox-row"><input id="modoCompacto" type="checkbox">Interface compacta</label>
                             </div>
-                            <p class="help-text">Atalhos: <strong>Ctrl+K</strong> pesquisa, <strong>Ctrl+1 a
-                                    Ctrl+6</strong> abre módulos, <strong>Esc</strong> limpa a pesquisa e
-                                <strong>Ctrl+Shift+C</strong> copia o principal resultado visível.</p>
+                            <p class="help-text">Atalhos: <strong>Ctrl+K</strong> pesquisa, <strong>Ctrl+1 a Ctrl+6</strong> abre módulos, <strong>Esc</strong> limpa a pesquisa e <strong>Ctrl+Shift+C</strong> copia o principal resultado visível.</p>
                         </section>
                         <section class="settings-card">
                             <h3>Exportações e redefinições</h3>
                             <div class="actions">
-                                <button id="exportarEstatisticasCsv" class="secondary" type="button">Estatísticas
-                                    CSV</button>
-                                <button id="exportarEstatisticasJson" class="secondary" type="button">Estatísticas
-                                    JSON</button>
-                                <button id="exportarEstatisticasTxt" class="secondary" type="button">Estatísticas
-                                    TXT</button>
-                                <button id="resetarFavoritos" class="danger-outline" type="button">Resetar
-                                    favoritos</button>
-                                <button id="resetarHistoricos" class="danger-outline" type="button">Resetar
-                                    históricos</button>
+                                <button id="exportarEstatisticasCsv" class="secondary" type="button">Estatísticas CSV</button>
+                                <button id="exportarEstatisticasJson" class="secondary" type="button">Estatísticas JSON</button>
+                                <button id="exportarEstatisticasTxt" class="secondary" type="button">Estatísticas TXT</button>
+                                <button id="resetarFavoritos" class="danger-outline" type="button">Resetar favoritos</button>
+                                <button id="resetarHistoricos" class="danger-outline" type="button">Resetar históricos</button>
                             </div>
                         </section>
 
                         <section class="settings-card">
                             <div class="section-heading">
-                                <div>
-                                    <h3>Estatísticas detalhadas</h3>
-                                    <p class="help-text">Acessos e ações registrados localmente por módulo.</p>
-                                </div>
-                                <button id="resetarEstatisticas" class="text-button" type="button">Zerar
-                                    estatísticas</button>
+                                <div><h3>Estatísticas detalhadas</h3><p class="help-text">Acessos e ações registrados localmente por módulo.</p></div>
+                                <button id="resetarEstatisticas" class="text-button" type="button">Zerar estatísticas</button>
                             </div>
                             <div class="settings-statistics-summary">
                                 <div><span>Total de acessos</span><strong id="configTotalAccesses">0</strong></div>
@@ -953,39 +814,16 @@
                             </div>
                             <div class="statistics-table-wrap">
                                 <table class="statistics-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Ferramenta</th>
-                                            <th>Acessos</th>
-                                            <th>Ações</th>
-                                            <th>Total</th>
-                                        </tr>
-                                    </thead>
+                                    <thead><tr><th>Ferramenta</th><th>Acessos</th><th>Ações</th><th>Total</th></tr></thead>
                                     <tbody id="configStatisticsBody"></tbody>
                                 </table>
                             </div>
                         </section>
-                        <section class="settings-card danger-zone">
-                            <h3>Restaurar aplicativo</h3>
-                            <p class="help-text">Remove todos os dados locais e retorna o aplicativo ao estado inicial.
-                            </p>
-                            <div class="actions"><button id="limparTudo" class="danger-outline">Apagar todos os
-                                    dados</button></div>
-                        </section>
+                        <section class="settings-card danger-zone"><h3>Restaurar aplicativo</h3><p class="help-text">Remove todos os dados locais e retorna o aplicativo ao estado inicial.</p><div class="actions"><button id="limparTudo" class="danger-outline">Apagar todos os dados</button></div></section>
                     </section>
                     <aside class="generator-sidebar">
-                        <section class="sidebar-card">
-                            <h3>Informações do aplicativo</h3>
-                            <div class="format-examples">
-                                <div><span>Versão</span><code data-app-version></code></div>
-                                <div><span>Armazenamento</span><code>Local do navegador</code></div>
-                                <div><span>Formato do backup</span><code>JSON</code></div>
-                            </div>
-                        </section>
-                        <section class="sidebar-card">
-                            <h3>Último backup</h3>
-                            <p id="ultimoBackupInfo" class="help-text">Nenhum backup registrado.</p>
-                        </section>
+                        <section class="sidebar-card"><h3>Informações do aplicativo</h3><div class="format-examples"><div><span>Versão</span><code data-app-version></code></div><div><span>Armazenamento</span><code>Local do navegador</code></div><div><span>Formato do backup</span><code>JSON</code></div></div></section>
+                        <section class="sidebar-card"><h3>Último backup</h3><p id="ultimoBackupInfo" class="help-text">Nenhum backup registrado.</p></section>
                     </aside>
                 </div>
             </div>
@@ -996,50 +834,23 @@
         <section id="central-documentos" class="tab-panel documents-panel">
             <div class="card documents-shell">
                 <div class="section-heading main-heading">
-                    <div><span class="eyebrow">Versão 3.4</span>
-                        <h2>Central de documentos</h2>
-                        <p class="section-description">Crie textos administrativos a partir de modelos, preencha
-                            variáveis e salve modelos próprios.</p>
-                    </div>
+                    <div><span class="eyebrow">Versão 3.4</span><h2>Central de documentos</h2><p class="section-description">Crie textos administrativos a partir de modelos, preencha variáveis e salve modelos próprios.</p></div>
                     <button id="documentNewModel" class="secondary-button" type="button">Novo modelo</button>
                 </div>
                 <div class="documents-layout">
                     <aside class="documents-sidebar">
-                        <label>Pesquisar modelos<input id="documentSearch" type="search"
-                                placeholder="Ex.: despacho, WhatsApp, certidão"></label>
-                        <label>Categoria<select id="documentCategory">
-                                <option value="todos">Todas</option>
-                                <option>Despachos</option>
-                                <option>Certidões</option>
-                                <option>Ofícios</option>
-                                <option>WhatsApp</option>
-                                <option>Declarações</option>
-                                <option>Personalizados</option>
-                            </select></label>
+                        <label>Pesquisar modelos<input id="documentSearch" type="search" placeholder="Ex.: despacho, WhatsApp, certidão"></label>
+                        <label>Categoria<select id="documentCategory"><option value="todos">Todas</option><option>Despachos</option><option>Certidões</option><option>Ofícios</option><option>WhatsApp</option><option>Declarações</option><option>Personalizados</option></select></label>
                         <div id="documentTemplateList" class="document-template-list"></div>
                     </aside>
                     <main class="documents-editor">
                         <div class="grid two-columns">
                             <label>Título do modelo<input id="documentTitle" placeholder="Título"></label>
-                            <label>Categoria<select id="documentEditorCategory">
-                                    <option>Despachos</option>
-                                    <option>Certidões</option>
-                                    <option>Ofícios</option>
-                                    <option>WhatsApp</option>
-                                    <option>Declarações</option>
-                                    <option>Personalizados</option>
-                                </select></label>
+                            <label>Categoria<select id="documentEditorCategory"><option>Despachos</option><option>Certidões</option><option>Ofícios</option><option>WhatsApp</option><option>Declarações</option><option>Personalizados</option></select></label>
                         </div>
-                        <label>Modelo com variáveis<textarea id="documentTemplate" rows="10"
-                                placeholder="Use variáveis como {nome}, {processo}, {cnae}, {zoneamento}, {endereco} e {data}."></textarea></label>
+                        <label>Modelo com variáveis<textarea id="documentTemplate" rows="10" placeholder="Use variáveis como {nome}, {processo}, {cnae}, {zoneamento}, {endereco} e {data}."></textarea></label>
                         <section class="document-variables-card">
-                            <div class="section-heading">
-                                <div>
-                                    <h3>Variáveis do documento</h3>
-                                    <p class="mini-description">Os campos são identificados automaticamente no modelo.
-                                    </p>
-                                </div>
-                            </div>
+                            <div class="section-heading"><div><h3>Variáveis do documento</h3><p class="mini-description">Os campos são identificados automaticamente no modelo.</p></div></div>
                             <div id="documentVariables" class="document-variables-grid"></div>
                         </section>
                         <label>Pré-visualização<textarea id="documentPreview" rows="12" readonly></textarea></label>
@@ -1053,92 +864,28 @@
                         <p id="documentFeedback" class="feedback-message" aria-live="polite"></p>
                     </main>
                 </div>
-                <div class="tab-footer-navigation"><button class="back-home-button" type="button"
-                        data-open-tab="inicio"><span aria-hidden="true">←</span>Voltar para a Página Inicial</button>
-                </div>
+                <div class="tab-footer-navigation"><button class="back-home-button" type="button" data-open-tab="inicio"><span aria-hidden="true">←</span>Voltar para a Página Inicial</button></div>
             </div>
         </section>
 
         <section id="biblioteca" class="tab-panel productivity-panel">
             <div class="card">
-                <div class="section-heading main-heading">
-                    <div><span class="eyebrow">Produtividade</span>
-                        <h2>Biblioteca de ferramentas</h2>
-                        <p class="section-description">Catálogo central para localizar ferramentas, favoritos e modelos
-                            reutilizáveis.</p>
-                    </div><span class="version-badge v3">v3.3</span>
-                </div>
-                <div class="productivity-toolbar"><label class="productivity-search"><span>Pesquisar</span><input
-                            id="librarySearch" type="search"
-                            placeholder="Ferramenta, categoria ou palavra-chave"></label><label><span>Categoria</span><select
-                            id="libraryCategory">
-                            <option value="todos">Todas</option>
-                        </select></label><label><span>Exibição</span><select id="libraryView">
-                            <option value="grid">Grade</option>
-                            <option value="list">Lista</option>
-                        </select></label></div>
-                <div class="library-summary">
-                    <div><span>Ferramentas</span><strong id="libraryToolCount">0</strong></div>
-                    <div><span>Favoritos</span><strong id="libraryFavoriteCount">0</strong></div>
-                    <div><span>Modelos de arquivo</span><strong id="libraryModelCount">0</strong></div>
-                </div>
-                <section class="productivity-section">
-                    <div class="section-heading">
-                        <div>
-                            <h3>Catálogo</h3>
-                            <p class="mini-description">Abra uma ferramenta ou altere seus favoritos.</p>
-                        </div>
-                    </div>
-                    <div id="libraryTools" class="library-tools"></div>
-                </section>
-                <section class="productivity-section">
-                    <div class="section-heading">
-                        <div>
-                            <h3>Modelos rápidos</h3>
-                            <p class="mini-description">Modelos existentes do Montador de nome de arquivo.</p>
-                        </div><button class="text-button" type="button" data-open-tab="arquivo">Gerenciar
-                            modelos</button>
-                    </div>
-                    <div id="libraryModels" class="library-models"></div>
-                </section>
-                <div class="tab-footer-navigation"><button class="back-home-button" type="button"
-                        data-open-tab="inicio"><span aria-hidden="true">←</span>Voltar para a Página Inicial</button>
-                </div>
+                <div class="section-heading main-heading"><div><span class="eyebrow">Produtividade</span><h2>Biblioteca de ferramentas</h2><p class="section-description">Catálogo central para localizar ferramentas, favoritos e modelos reutilizáveis.</p></div><span class="version-badge v3">v3.3</span></div>
+                <div class="productivity-toolbar"><label class="productivity-search"><span>Pesquisar</span><input id="librarySearch" type="search" placeholder="Ferramenta, categoria ou palavra-chave"></label><label><span>Categoria</span><select id="libraryCategory"><option value="todos">Todas</option></select></label><label><span>Exibição</span><select id="libraryView"><option value="grid">Grade</option><option value="list">Lista</option></select></label></div>
+                <div class="library-summary"><div><span>Ferramentas</span><strong id="libraryToolCount">0</strong></div><div><span>Favoritos</span><strong id="libraryFavoriteCount">0</strong></div><div><span>Modelos de arquivo</span><strong id="libraryModelCount">0</strong></div></div>
+                <section class="productivity-section"><div class="section-heading"><div><h3>Catálogo</h3><p class="mini-description">Abra uma ferramenta ou altere seus favoritos.</p></div></div><div id="libraryTools" class="library-tools"></div></section>
+                <section class="productivity-section"><div class="section-heading"><div><h3>Modelos rápidos</h3><p class="mini-description">Modelos existentes do Montador de nome de arquivo.</p></div><button class="text-button" type="button" data-open-tab="arquivo">Gerenciar modelos</button></div><div id="libraryModels" class="library-models"></div></section>
+                <div class="tab-footer-navigation"><button class="back-home-button" type="button" data-open-tab="inicio"><span aria-hidden="true">←</span>Voltar para a Página Inicial</button></div>
             </div>
         </section>
 
         <section id="historico-global" class="tab-panel productivity-panel">
             <div class="card">
-                <div class="section-heading main-heading">
-                    <div><span class="eyebrow">Produtividade</span>
-                        <h2>Histórico global</h2>
-                        <p class="section-description">Consulte em um único lugar os registros produzidos pelos módulos.
-                        </p>
-                    </div>
-                    <div class="actions"><button id="globalHistoryExportCsv" class="secondary-button"
-                            type="button">Exportar CSV</button><button id="globalHistoryExportJson"
-                            class="secondary-button" type="button">Exportar JSON</button></div>
-                </div>
-                <div class="productivity-toolbar"><label class="productivity-search"><span>Pesquisar</span><input
-                            id="globalHistorySearch" type="search"
-                            placeholder="Conteúdo do registro"></label><label><span>Módulo</span><select
-                            id="globalHistoryModule">
-                            <option value="todos">Todos os módulos</option>
-                        </select></label><label><span>Período</span><select id="globalHistoryPeriod">
-                            <option value="todos">Todo o período</option>
-                            <option value="hoje">Hoje</option>
-                            <option value="7">Últimos 7 dias</option>
-                            <option value="30">Últimos 30 dias</option>
-                        </select></label></div>
-                <div class="library-summary">
-                    <div><span>Registros encontrados</span><strong id="globalHistoryCount">0</strong></div>
-                    <div><span>Módulos com dados</span><strong id="globalHistoryModuleCount">0</strong></div>
-                    <div><span>Último registro</span><strong id="globalHistoryLast">Nenhum</strong></div>
-                </div>
+                <div class="section-heading main-heading"><div><span class="eyebrow">Produtividade</span><h2>Histórico global</h2><p class="section-description">Consulte em um único lugar os registros produzidos pelos módulos.</p></div><div class="actions"><button id="globalHistoryExportCsv" class="secondary-button" type="button">Exportar CSV</button><button id="globalHistoryExportJson" class="secondary-button" type="button">Exportar JSON</button></div></div>
+                <div class="productivity-toolbar"><label class="productivity-search"><span>Pesquisar</span><input id="globalHistorySearch" type="search" placeholder="Conteúdo do registro"></label><label><span>Módulo</span><select id="globalHistoryModule"><option value="todos">Todos os módulos</option></select></label><label><span>Período</span><select id="globalHistoryPeriod"><option value="todos">Todo o período</option><option value="hoje">Hoje</option><option value="7">Últimos 7 dias</option><option value="30">Últimos 30 dias</option></select></label></div>
+                <div class="library-summary"><div><span>Registros encontrados</span><strong id="globalHistoryCount">0</strong></div><div><span>Módulos com dados</span><strong id="globalHistoryModuleCount">0</strong></div><div><span>Último registro</span><strong id="globalHistoryLast">Nenhum</strong></div></div>
                 <div id="globalHistoryList" class="global-history-list"></div>
-                <div class="tab-footer-navigation"><button class="back-home-button" type="button"
-                        data-open-tab="inicio"><span aria-hidden="true">←</span>Voltar para a Página Inicial</button>
-                </div>
+                <div class="tab-footer-navigation"><button class="back-home-button" type="button" data-open-tab="inicio"><span aria-hidden="true">←</span>Voltar para a Página Inicial</button></div>
             </div>
         </section>
 
@@ -1148,8 +895,7 @@
                     <div>
                         <span class="eyebrow">Informações do aplicativo</span>
                         <h2>Sobre os Utilitários Municipais</h2>
-                        <p class="section-description">Consulte a versão instalada, as novidades e o histórico de
-                            evolução do sistema.</p>
+                        <p class="section-description">Consulte a versão instalada, as novidades e o histórico de evolução do sistema.</p>
                     </div>
                     <span class="version-badge v3">Versão <span data-app-version></span></span>
                 </div>
@@ -1158,31 +904,19 @@
                     <section class="settings-card">
                         <h3>Versão atual</h3>
                         <dl class="about-details">
-                            <div>
-                                <dt>Aplicativo</dt>
-                                <dd data-app-name>Utilitários Municipais</dd>
-                            </div>
-                            <div>
-                                <dt>Versão</dt>
-                                <dd data-app-version></dd>
-                            </div>
-                            <div>
-                                <dt>Arquitetura</dt>
-                                <dd>Modular — Série 4</dd>
-                            </div>
-                            <div>
-                                <dt>Armazenamento</dt>
-                                <dd>Local + Supabase</dd>
-                            </div>
+                            <div><dt>Aplicativo</dt><dd data-app-name>Utilitários Municipais</dd></div>
+                            <div><dt>Versão</dt><dd data-app-version></dd></div>
+                            <div><dt>Arquitetura</dt><dd>Modular — Série 4</dd></div>
+                            <div><dt>Armazenamento</dt><dd>Local + Supabase</dd></div>
                         </dl>
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 4.1.2</h3>
+                        <h3>Novidades da 4.2.1</h3>
                         <ul class="about-list">
-                            <li>Remoção do módulo Fluxos de trabalho e de suas referências na interface.</li>
-                            <li>Limpeza automática dos dados locais legados relacionados aos fluxos.</li>
-                            <li>Preservação da autenticação e da sincronização híbrida com Supabase.</li>
+                            <li>Sincronização seletiva de preferências, personalização e favoritos.</li>
+                            <li>Continuidade do Dashboard e última ferramenta disponíveis entre dispositivos.</li>
+                            <li>Fila local de alterações pendentes para períodos sem conexão.</li>
                         </ul>
                     </section>
                 </div>
@@ -1191,58 +925,31 @@
                     <h3>Módulos disponíveis</h3>
                     <div class="about-modules">
                         <span>Nome de arquivo</span><span>Inscrição imobiliária</span><span>Número de lote</span>
-                        <span>Calculadora UVRM</span><span>Percentual</span><span>Central de
-                            documentos</span><span>Biblioteca</span><span>Histórico
-                            global</span><span>Configurações</span>
+                        <span>Calculadora UVRM</span><span>Percentual</span><span>Central de documentos</span><span>Biblioteca</span><span>Histórico global</span><span>Configurações</span>
                     </div>
                 </section>
 
                 <section class="settings-card">
                     <h3>Histórico da Série 3</h3>
                     <div class="about-timeline">
-                        <article><strong>4.1.2</strong>
-                            <p>Remoção do módulo Fluxos de trabalho, limpeza de dados legados e revisão das referências
-                                internas.</p>
-                        </article>
-                        <article><strong>4.1.1</strong>
-                            <p>Revisão de consistência, correção da inicialização e configuração do ambiente
-                                Vite/StackBlitz.</p>
-                        </article>
-                        <article><strong>4.1.0</strong>
-                            <p>Login, sincronização online e funcionamento híbrido com Supabase.</p>
-                        </article>
-                        <article><strong>4.0.0</strong>
-                            <p>Fluxos integrados, contexto compartilhado e encaminhamento entre módulos.</p>
-                        </article>
-                        <article><strong>3.4.2</strong>
-                            <p>Nome de exibição configurável e ícones SVG coloridos incorporados ao sistema.</p>
-                        </article>
-                        <article><strong>3.4.1</strong>
-                            <p>Refatoração conservadora: remoção de resíduos do template e arquivos vazios, sem
-                                alteração funcional.</p>
-                        </article>
-                        <article><strong>3.4.0</strong>
-                            <p>Central de Documentos, modelos administrativos e correção do botão Limpar campos.</p>
-                        </article>
-                        <article><strong>3.3.0</strong>
-                            <p>Biblioteca de ferramentas, modelos rápidos e histórico global aprimorado.</p>
-                        </article>
-                        <article><strong>3.2.2</strong>
-                            <p>Dashboard profissional com cartões e ícones vetoriais.</p>
-                        </article>
-                        <article><strong>3.0.1</strong>
-                            <p>Limpeza visual dos módulos e criação da área Sobre.</p>
-                        </article>
-                        <article><strong>3.0.0</strong>
-                            <p>Nova arquitetura modular, registro central de ferramentas, persistência unificada e
-                                componentes reutilizáveis.</p>
-                        </article>
+                        <article><strong>4.2.1</strong><p>Primeira sincronização seletiva: preferências, personalização, favoritos e continuidade do Dashboard, com pendências offline.</p></article>
+                        <article><strong>4.2.0</strong><p>Infraestrutura centralizada para armazenamento, Supabase, logs, tratamento de erros e versionamento, preservando as funcionalidades existentes.</p></article>
+                        <article><strong>4.1.2</strong><p>Remoção do módulo Fluxos de trabalho, limpeza de dados legados e revisão das referências internas.</p></article>
+                        <article><strong>4.1.1</strong><p>Revisão de consistência, correção da inicialização e configuração do ambiente Vite/StackBlitz.</p></article>
+                        <article><strong>4.1.0</strong><p>Login, sincronização online e funcionamento híbrido com Supabase.</p></article>
+                        <article><strong>4.0.0</strong><p>Fluxos integrados, contexto compartilhado e encaminhamento entre módulos.</p></article>
+                        <article><strong>3.4.2</strong><p>Nome de exibição configurável e ícones SVG coloridos incorporados ao sistema.</p></article>
+                        <article><strong>3.4.1</strong><p>Refatoração conservadora: remoção de resíduos do template e arquivos vazios, sem alteração funcional.</p></article>
+                        <article><strong>3.4.0</strong><p>Central de Documentos, modelos administrativos e correção do botão Limpar campos.</p></article>
+                        <article><strong>3.3.0</strong><p>Biblioteca de ferramentas, modelos rápidos e histórico global aprimorado.</p></article>
+                        <article><strong>3.2.2</strong><p>Dashboard profissional com cartões e ícones vetoriais.</p></article>
+                        <article><strong>3.0.1</strong><p>Limpeza visual dos módulos e criação da área Sobre.</p></article>
+                        <article><strong>3.0.0</strong><p>Nova arquitetura modular, registro central de ferramentas, persistência unificada e componentes reutilizáveis.</p></article>
                     </div>
                 </section>
 
                 <div class="tab-footer-navigation">
-                    <button class="back-home-button" type="button" data-open-tab="inicio"><span
-                            aria-hidden="true">←</span>Voltar para a Página Inicial</button>
+                    <button class="back-home-button" type="button" data-open-tab="inicio"><span aria-hidden="true">←</span>Voltar para a Página Inicial</button>
                 </div>
             </div>
         </section>
@@ -1256,7 +963,11 @@
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
     <script src="assets/js/core/config.js"></script>
+    <script src="assets/js/services/logger.js"></script>
+    <script src="assets/js/services/error-handler.js"></script>
+    <script src="assets/js/services/version-service.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="assets/js/services/supabase-client.js"></script>
     <script src="assets/js/registry/tools.js"></script>
     <script src="assets/js/services/storage-service.js"></script>
     <script src="assets/js/services/online-sync-service.js"></script>
@@ -1287,5 +998,4 @@
     <script src="assets/js/core/dashboard-32.js"></script>
     <script src="assets/js/core/productivity-33.js"></script>
 </body>
-
 </html>
