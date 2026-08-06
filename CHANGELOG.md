@@ -1,3 +1,11 @@
+# 4.1.2
+
+- Removido o módulo **Fluxos de trabalho** da navegação, do registro de ferramentas e da interface.
+- Removidos os arquivos JavaScript, CSS e metadados exclusivos do módulo.
+- Adicionada limpeza automática das chaves locais `workflowCurrent` e `workflowHistory`.
+- Confirmado que os dados de fluxos não integram a lista de dados sincronizados com o Supabase.
+- Atualizadas as referências de versão e a área Sobre.
+
 # 4.1.1
 
 - Corrigida a inicialização quando o controle legado `#salvarCampos` não existe no HTML.

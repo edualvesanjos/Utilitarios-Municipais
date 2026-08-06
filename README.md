@@ -1,22 +1,21 @@
-# Utilitários Municipais — v4.0.0
+# Utilitários Municipais — v4.1.2
 
-Aplicação web modular para rotinas municipais.
+Aplicação web modular para rotinas municipais, executada no navegador e compatível com Vite/StackBlitz.
 
-## Novidade principal
+## Alteração desta versão
 
-A versão 4 inicia os **Fluxos Integrados**. O novo módulo permite registrar os dados do atendimento uma única vez e encaminhá-los para a Central de Documentos, Montador de Nome de Arquivo, Calculadora UVRM e Histórico Global.
+O módulo **Fluxos de trabalho** foi retirado por não ser necessário nesta etapa do projeto. Também foram removidas suas referências de interface e seus arquivos exclusivos. Dados locais antigos do módulo são eliminados automaticamente ao iniciar a versão 4.1.2.
 
-## Recursos do fluxo
+## Armazenamento
 
-- salvamento automático do atendimento atual;
-- acompanhamento visual das etapas;
-- arquivamento de fluxos finalizados;
-- exportação em JSON;
-- transferência de campos compatíveis entre módulos;
-- compatibilidade com dados e configurações da Série 3.
+A aplicação mantém funcionamento híbrido: dados locais no navegador e sincronização seletiva com Supabase. A sincronização online permanece limitada a preferências, favoritos, modelos e configurações da UVRM; dados de fluxos não são enviados.
 
-Abra `index.html` em um navegador moderno.
+Execute no StackBlitz com:
 
+```bash
+npm install
+npm run dev
+```
 
 ## Supabase — versão 4.1
 
