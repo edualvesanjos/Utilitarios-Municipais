@@ -461,7 +461,7 @@ button,
     padding: 16px;
 }
 
-.result-box > span {
+.result-box>span {
     display: block;
     margin-bottom: 9px;
     color: #6b7786;
@@ -539,6 +539,7 @@ pre {
 }
 
 @media (max-width: 720px) {
+
     .two-columns,
     .three-columns,
     .results-grid,
@@ -566,5 +567,48 @@ pre {
         grid-column: 1 / -1;
     }
 }
-.toast[data-type="success"]{background:#14733c}.toast[data-type="warning"]{background:#9a6700}.toast[data-type="error"]{background:#b42318}.toast{z-index:9999;min-width:220px;border-left:5px solid rgba(255,255,255,.45)}
-body.compact-mode .card,body.compact-mode .builder-panel,body.compact-mode .sidebar-card,body.compact-mode .settings-card{padding:14px}body.compact-mode .app-header{padding-top:12px;padding-bottom:12px}body.compact-mode input,body.compact-mode select,body.compact-mode button{min-height:34px}body.compact-mode .form-group,body.compact-mode .actions{margin-top:8px}body.compact-mode .dashboard-tool-card{padding:12px}
+
+.toast[data-type="success"] {
+    background: #14733c
+}
+
+.toast[data-type="warning"] {
+    background: #9a6700
+}
+
+.toast[data-type="error"] {
+    background: #b42318
+}
+
+.toast {
+    z-index: 9999;
+    min-width: 220px;
+    border-left: 5px solid rgba(255, 255, 255, .45)
+}
+
+body.compact-mode .card,
+body.compact-mode .builder-panel,
+body.compact-mode .sidebar-card,
+body.compact-mode .settings-card {
+    padding: 14px
+}
+
+body.compact-mode .app-header {
+    padding-top: 12px;
+    padding-bottom: 12px
+}
+
+body.compact-mode input,
+body.compact-mode select,
+body.compact-mode button {
+    min-height: 34px
+}
+
+body.compact-mode .form-group,
+body.compact-mode .actions {
+    margin-top: 8px
+}
+
+body.compact-mode .dashboard-tool-card {
+    padding: 12px
+}

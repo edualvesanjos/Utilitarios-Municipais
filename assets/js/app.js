@@ -51,7 +51,10 @@ function initializeApplication() {
     applyApplicationMetadata();
     if (typeof initializeV3Architecture === "function") initializeV3Architecture();
     migrateCompatibleStorageKeys();
-    $("#salvarCampos").checked = shouldSaveFields();
+    const salvarCampos = $("#salvarCampos");
+    if (salvarCampos) {
+        salvarCampos.checked = shouldSaveFields();
+    }
 
     restoreFormData();
     applyVersion241Defaults();

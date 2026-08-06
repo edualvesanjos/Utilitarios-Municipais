@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0f4c81">
     <title>Utilitários Municipais</title>
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="assets/css/base.css">
     <link rel="stylesheet" href="assets/css/components.css">
     <link rel="stylesheet" href="assets/css/modules/dashboard.css">
@@ -17,6 +18,9 @@
     <link rel="stylesheet" href="assets/css/v3/experience-31.css">
     <link rel="stylesheet" href="assets/css/v3/dashboard-32.css">
     <link rel="stylesheet" href="assets/css/v3/productivity-33.css">
+    <link rel="stylesheet" href="assets/css/v3/documents-34.css">
+    <link rel="stylesheet" href="assets/css/v4/workflows-40.css">
+    <link rel="stylesheet" href="assets/css/v4/online-41.css">
 </head>
 <body>
     <header class="app-header app-header-v32">
@@ -35,10 +39,10 @@
             <div class="ux-tools-menu">
                 <button id="uxToolsMenuButton" class="ux-nav-primary ux-tools-menu-button" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="uxToolsMenuDropdown"><span class="nav-svg-icon" data-static-icon="tools" aria-hidden="true"></span> Ferramentas <span aria-hidden="true">⌄</span></button>
                 <div id="uxToolsMenuDropdown" class="ux-tools-dropdown v32-tools-dropdown" role="menu" hidden>
-                    <section class="ux-tools-group"><strong>Documentos</strong><button class="tab-button" type="button" data-tab="arquivo" role="menuitem"><span class="menu-tool-icon" data-tool-icon="file"></span> Nome de arquivo</button></section>
+                    <section class="ux-tools-group"><strong>Documentos</strong><button class="tab-button" type="button" data-tab="central-documentos" role="menuitem"><span class="menu-tool-icon" data-tool-icon="documents"></span> Central de documentos</button><button class="tab-button" type="button" data-tab="arquivo" role="menuitem"><span class="menu-tool-icon" data-tool-icon="file"></span> Nome de arquivo</button></section>
                     <section class="ux-tools-group"><strong>Cadastros</strong><button class="tab-button" type="button" data-tab="inscricao" role="menuitem"><span class="menu-tool-icon" data-tool-icon="building"></span> Inscrição imobiliária</button><button class="tab-button" type="button" data-tab="lote" role="menuitem"><span class="menu-tool-icon" data-tool-icon="grid"></span> Número de lote</button></section>
                     <section class="ux-tools-group"><strong>Cálculos</strong><button class="tab-button" type="button" data-tab="uvrm" role="menuitem"><span class="menu-tool-icon" data-tool-icon="coins"></span> Calculadora UVRM</button><button class="tab-button" type="button" data-tab="percentual" role="menuitem"><span class="menu-tool-icon" data-tool-icon="percent"></span> Percentual</button></section>
-                    <section class="ux-tools-group"><strong>Produtividade</strong><button class="tab-button" type="button" data-tab="biblioteca" role="menuitem"><span class="menu-tool-icon" data-tool-icon="library"></span> Biblioteca de ferramentas</button><button class="tab-button" type="button" data-tab="historico-global" role="menuitem"><span class="menu-tool-icon" data-tool-icon="history"></span> Histórico global</button></section>
+                    <section class="ux-tools-group"><strong>Produtividade</strong><button class="tab-button" type="button" data-tab="fluxos" role="menuitem"><span class="menu-tool-icon" data-tool-icon="workflow"></span> Fluxos de trabalho</button><button class="tab-button" type="button" data-tab="biblioteca" role="menuitem"><span class="menu-tool-icon" data-tool-icon="library"></span> Biblioteca de ferramentas</button><button class="tab-button" type="button" data-tab="historico-global" role="menuitem"><span class="menu-tool-icon" data-tool-icon="history"></span> Histórico global</button></section>
                     <section class="ux-tools-group"><strong>Sistema</strong><button class="tab-button" type="button" data-tab="configuracoes" role="menuitem"><span class="menu-tool-icon" data-tool-icon="settings"></span> Configurações</button><button class="tab-button" type="button" data-tab="sobre" role="menuitem"><span class="menu-tool-icon" data-tool-icon="info"></span> Sobre</button></section>
                 </div>
             </div>
@@ -53,7 +57,7 @@
             <div class="v32-dashboard-grid">
                 <main class="v32-dashboard-main">
                     <section class="v32-welcome card">
-                        <div><span class="eyebrow">Painel principal</span><h2>Olá, Eduardo!</h2><p>Bem-vindo aos Utilitários Municipais.</p><p>Use a pesquisa, a paleta de comandos (<strong>Ctrl + Espaço</strong>) ou acesse uma ferramenta abaixo.</p></div>
+                        <div><span class="eyebrow">Painel principal</span><h2 id="dashboardGreeting">Olá, Usuário!</h2><p>Bem-vindo aos Utilitários Municipais.</p><p>Use a pesquisa, a paleta de comandos (<strong>Ctrl + Espaço</strong>) ou acesse uma ferramenta abaixo.</p></div>
                         <div class="v32-welcome-art" aria-hidden="true"><span>▥</span><span>▦</span><span>⌨</span></div>
                     </section>
 
@@ -825,6 +829,90 @@
             </div>
         </section>
 
+
+        <section id="fluxos" class="tab-panel workflow-panel">
+            <div class="card workflow-shell">
+                <div class="section-heading main-heading">
+                    <div><span class="eyebrow">Versão 4.0</span><h2>Fluxos de trabalho</h2><p class="section-description">Cadastre uma vez os dados do atendimento e encaminhe o contexto para os módulos relacionados.</p></div>
+                    <span id="workflowStatusBadge" class="version-badge v3">Em andamento</span>
+                </div>
+                <div class="workflow-layout">
+                    <main>
+                        <section class="workflow-card">
+                            <div class="section-heading"><div><h3>Contexto do atendimento</h3><p class="mini-description">As informações permanecem salvas localmente até o fluxo ser finalizado ou limpo.</p></div></div>
+                            <div class="grid two-columns">
+                                <label>Interessado / Razão social<input id="workflowNome" maxlength="120" placeholder="Nome da pessoa ou razão social"></label>
+                                <label>Número do processo<input id="workflowProcesso" maxlength="40" placeholder="Ex.: 22667/2026"></label>
+                                <label>Endereço<input id="workflowEndereco" maxlength="180" placeholder="Endereço do imóvel ou estabelecimento"></label>
+                                <label>CNAE / Atividade<input id="workflowCnae" maxlength="120" placeholder="Código ou descrição da atividade"></label>
+                                <label>Zoneamento<input id="workflowZoneamento" maxlength="80" placeholder="Ex.: R1, M7, ZEC-3"></label>
+                                <label>Assunto<input id="workflowAssunto" maxlength="120" placeholder="Ex.: Viabilidade, Uso do Solo, CLI"></label>
+                            </div>
+                            <label>Observações<textarea id="workflowObservacoes" rows="4" placeholder="Anotações da análise ou providências necessárias"></textarea></label>
+                            <div class="button-row">
+                                <button id="workflowSave" type="button">Salvar fluxo</button>
+                                <button id="workflowFinish" class="secondary-button" type="button">Finalizar e arquivar</button>
+                                <button id="workflowExport" class="secondary-button" type="button">Exportar JSON</button>
+                                <button id="workflowClear" class="danger-button" type="button">Limpar fluxo</button>
+                            </div>
+                            <p id="workflowFeedback" class="feedback-message" aria-live="polite"></p>
+                        </section>
+                        <section class="workflow-card">
+                            <div class="section-heading"><div><h3>Encaminhar para uma ferramenta</h3><p class="mini-description">Os dados compatíveis serão transferidos automaticamente.</p></div></div>
+                            <div class="workflow-actions">
+                                <button type="button" data-workflow-open="central-documentos" data-icon="documents"><strong>Central de documentos</strong><span>Preencher variáveis do modelo</span></button>
+                                <button type="button" data-workflow-open="arquivo" data-icon="file"><strong>Nome de arquivo</strong><span>Preencher nome e processo</span></button>
+                                <button type="button" data-workflow-open="uvrm" data-icon="coins"><strong>Calculadora UVRM</strong><span>Calcular valores do atendimento</span></button>
+                                <button type="button" data-workflow-open="historico-global" data-icon="history"><strong>Histórico global</strong><span>Consultar registros anteriores</span></button>
+                            </div>
+                        </section>
+                    </main>
+                    <aside class="workflow-side">
+                        <section class="workflow-card"><h3>Etapas</h3><ol id="workflowSteps" class="workflow-steps"></ol></section>
+                        <section class="workflow-card"><h3>Fluxos arquivados</h3><div id="workflowHistory" class="workflow-history"></div></section>
+                    </aside>
+                </div>
+                <div class="tab-footer-navigation"><button class="back-home-button" type="button" data-open-tab="inicio"><span aria-hidden="true">←</span>Voltar para a Página Inicial</button></div>
+            </div>
+        </section>
+
+        <section id="central-documentos" class="tab-panel documents-panel">
+            <div class="card documents-shell">
+                <div class="section-heading main-heading">
+                    <div><span class="eyebrow">Versão 3.4</span><h2>Central de documentos</h2><p class="section-description">Crie textos administrativos a partir de modelos, preencha variáveis e salve modelos próprios.</p></div>
+                    <button id="documentNewModel" class="secondary-button" type="button">Novo modelo</button>
+                </div>
+                <div class="documents-layout">
+                    <aside class="documents-sidebar">
+                        <label>Pesquisar modelos<input id="documentSearch" type="search" placeholder="Ex.: despacho, WhatsApp, certidão"></label>
+                        <label>Categoria<select id="documentCategory"><option value="todos">Todas</option><option>Despachos</option><option>Certidões</option><option>Ofícios</option><option>WhatsApp</option><option>Declarações</option><option>Personalizados</option></select></label>
+                        <div id="documentTemplateList" class="document-template-list"></div>
+                    </aside>
+                    <main class="documents-editor">
+                        <div class="grid two-columns">
+                            <label>Título do modelo<input id="documentTitle" placeholder="Título"></label>
+                            <label>Categoria<select id="documentEditorCategory"><option>Despachos</option><option>Certidões</option><option>Ofícios</option><option>WhatsApp</option><option>Declarações</option><option>Personalizados</option></select></label>
+                        </div>
+                        <label>Modelo com variáveis<textarea id="documentTemplate" rows="10" placeholder="Use variáveis como {nome}, {processo}, {cnae}, {zoneamento}, {endereco} e {data}."></textarea></label>
+                        <section class="document-variables-card">
+                            <div class="section-heading"><div><h3>Variáveis do documento</h3><p class="mini-description">Os campos são identificados automaticamente no modelo.</p></div></div>
+                            <div id="documentVariables" class="document-variables-grid"></div>
+                        </section>
+                        <label>Pré-visualização<textarea id="documentPreview" rows="12" readonly></textarea></label>
+                        <div class="button-row documents-actions">
+                            <button id="documentCopy" type="button">Copiar texto</button>
+                            <button id="documentSave" class="secondary-button" type="button">Salvar modelo</button>
+                            <button id="documentExportTxt" class="secondary-button" type="button">Exportar TXT</button>
+                            <button id="documentDelete" class="danger-button" type="button">Excluir modelo</button>
+                            <button id="documentClear" class="secondary-button" type="button">Limpar campos</button>
+                        </div>
+                        <p id="documentFeedback" class="feedback-message" aria-live="polite"></p>
+                    </main>
+                </div>
+                <div class="tab-footer-navigation"><button class="back-home-button" type="button" data-open-tab="inicio"><span aria-hidden="true">←</span>Voltar para a Página Inicial</button></div>
+            </div>
+        </section>
+
         <section id="biblioteca" class="tab-panel productivity-panel">
             <div class="card">
                 <div class="section-heading main-heading"><div><span class="eyebrow">Produtividade</span><h2>Biblioteca de ferramentas</h2><p class="section-description">Catálogo central para localizar ferramentas, favoritos e modelos reutilizáveis.</p></div><span class="version-badge v3">v3.3</span></div>
@@ -863,17 +951,17 @@
                         <dl class="about-details">
                             <div><dt>Aplicativo</dt><dd data-app-name>Utilitários Municipais</dd></div>
                             <div><dt>Versão</dt><dd data-app-version></dd></div>
-                            <div><dt>Arquitetura</dt><dd>Modular — Série 3</dd></div>
-                            <div><dt>Armazenamento</dt><dd>Local do navegador</dd></div>
+                            <div><dt>Arquitetura</dt><dd>Modular — Série 4</dd></div>
+                            <div><dt>Armazenamento</dt><dd>Local + Supabase</dd></div>
                         </dl>
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 3.3.0</h3>
+                        <h3>Novidades da 4.1.1</h3>
                         <ul class="about-list">
-                            <li>Nova Biblioteca de Ferramentas com catálogo, categorias e favoritos.</li>
-                            <li>Histórico Global com pesquisa, filtros, cópia e exportação.</li>
-                            <li>Centralização dos modelos rápidos já existentes.</li>
+                            <li>Autenticação por e-mail e senha com Supabase.</li>
+                            <li>Sincronização híbrida de preferências, favoritos, modelos e UVRM.</li>
+                            <li>Recuperação de senha, indicador de sessão e log técnico de sincronização.</li>
                         </ul>
                     </section>
                 </div>
@@ -882,13 +970,19 @@
                     <h3>Módulos disponíveis</h3>
                     <div class="about-modules">
                         <span>Nome de arquivo</span><span>Inscrição imobiliária</span><span>Número de lote</span>
-                        <span>Calculadora UVRM</span><span>Percentual</span><span>Biblioteca</span><span>Histórico global</span><span>Configurações</span>
+                        <span>Calculadora UVRM</span><span>Percentual</span><span>Fluxos de trabalho</span><span>Central de documentos</span><span>Biblioteca</span><span>Histórico global</span><span>Configurações</span>
                     </div>
                 </section>
 
                 <section class="settings-card">
                     <h3>Histórico da Série 3</h3>
                     <div class="about-timeline">
+                        <article><strong>4.1.1</strong><p>Revisão de consistência, correção da inicialização e configuração do ambiente Vite/StackBlitz.</p></article>
+                        <article><strong>4.1.0</strong><p>Login, sincronização online e funcionamento híbrido com Supabase.</p></article>
+                        <article><strong>4.0.0</strong><p>Fluxos integrados, contexto compartilhado e encaminhamento entre módulos.</p></article>
+                        <article><strong>3.4.2</strong><p>Nome de exibição configurável e ícones SVG coloridos incorporados ao sistema.</p></article>
+                        <article><strong>3.4.1</strong><p>Refatoração conservadora: remoção de resíduos do template e arquivos vazios, sem alteração funcional.</p></article>
+                        <article><strong>3.4.0</strong><p>Central de Documentos, modelos administrativos e correção do botão Limpar campos.</p></article>
                         <article><strong>3.3.0</strong><p>Biblioteca de ferramentas, modelos rápidos e histórico global aprimorado.</p></article>
                         <article><strong>3.2.2</strong><p>Dashboard profissional com cartões e ícones vetoriais.</p></article>
                         <article><strong>3.0.1</strong><p>Limpeza visual dos módulos e criação da área Sobre.</p></article>
@@ -911,8 +1005,10 @@
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
     <script src="assets/js/core/config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <script src="assets/js/registry/tools.js"></script>
     <script src="assets/js/services/storage-service.js"></script>
+    <script src="assets/js/services/online-sync-service.js"></script>
     <script src="assets/js/core/storage.js"></script>
     <script src="assets/js/core/utils.js"></script>
     <script src="assets/js/components/notifications.js"></script>
@@ -934,6 +1030,8 @@
     <script src="assets/js/modules/uvrm.js"></script>
     <script src="assets/js/modules/percentual.js"></script>
     <script src="assets/js/modules/configuracoes.js"></script>
+    <script src="assets/js/modules/documentos.js"></script>
+    <script src="assets/js/modules/fluxos.js"></script>
     <script src="assets/js/app.js"></script>
     <script src="assets/js/core/experience-31.js"></script>
     <script src="assets/js/core/dashboard-32.js"></script>
