@@ -1,31 +1,24 @@
-# Utilitários Municipais — v4.2.5
+# Utilitários Municipais — v4.2.6
 
-## Correção do gerenciamento da sincronização
+## Sincronização online da Central de Documentos
 
-A versão 4.2.5 corrige o aproveitamento horizontal da aba Configurações, eliminando o espaço em branco lateral e mantendo as melhorias de sincronização e usabilidade consolidadas anteriormente.
+A versão 4.2.6 amplia de forma controlada a sincronização com o Supabase. Além dos grupos já sincronizados, os **modelos personalizados da Central de Documentos** passam a ser mantidos online por usuário.
 
 ### Dados sincronizados
 
 - preferências gerais e persistência de campos;
 - nome de exibição, tema, fonte, cor, layout e seções do Dashboard;
 - ferramentas favoritas;
-- aba ativa, última ferramenta e ferramentas recentes.
+- aba ativa, última ferramenta e ferramentas recentes;
+- **modelos personalizados da Central de Documentos**.
 
-### Alterações da versão 4.2.5
+Os modelos padrão da Central de Documentos continuam incorporados ao aplicativo e não são gravados no banco, evitando duplicação de dados.
 
-- cliques, cópias, cálculos e navegação comum não são mais tratados como alterações pendentes;
-- somente as chaves efetivamente sincronizadas são monitoradas;
-- os conteúdos local e remoto são comparados antes da abertura do conflito;
-- dados idênticos limpam automaticamente pendências e conflitos antigos;
-- o horário `updated_at` retornado pelo Supabase passa a ser usado como referência após o envio;
-- foi adicionada tolerância temporal para diferenças de poucos milissegundos entre navegador e servidor.
-
-### Dados mantidos somente no navegador
+### Dados que continuam somente no navegador
 
 - históricos dos módulos;
 - estatísticas de uso e atividades;
-- modelos de nome de arquivo e documentos;
-- documentos personalizados;
+- modelos do Montador de Nome de Arquivo;
 - valor e casas decimais da UVRM;
 - backups e logs locais.
 
@@ -36,12 +29,14 @@ npm install
 npm run dev
 ```
 
-## Teste recomendado
+## Teste recomendado da 4.2.6
 
-1. Entre na conta do Supabase.
-2. Clique em **Sincronizar agora**.
-3. Navegue entre módulos, faça cálculos e copie resultados. A tela de conflito não deve aparecer.
-4. Altere um favorito ou uma preferência. O estado deve mudar para pendente e depois para sincronizado.
-5. Faça alterações diferentes em dois computadores antes de sincronizar para validar o conflito real.
+1. Entre com a mesma conta em dois computadores/navegadores.
+2. No primeiro, crie um modelo personalizado na Central de Documentos e aguarde o estado **Sincronizado**.
+3. No segundo, execute **Sincronizar agora** ou reabra a aplicação.
+4. Confirme que o modelo aparece na Central de Documentos.
+5. Edite o modelo no segundo computador e confirme a atualização no primeiro.
+6. Exclua um modelo personalizado e confirme que a exclusão também é propagada.
+7. Faça um teste sem internet: crie/edite um modelo, restabeleça a conexão e confirme a sincronização posterior.
 
-O módulo **Fluxos de trabalho** permanece removido desde a versão 4.1.2.
+Não é necessária alteração estrutural no banco para esta versão: a tabela `public.user_data` já aceita a nova categoria `documents`.

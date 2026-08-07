@@ -1,4 +1,4 @@
-/* Versão 4.2.5: Central de Documentos. */
+/* Versão 4.2.6: Central de Documentos com modelos personalizados sincronizáveis. */
 (() => {
     "use strict";
     const $ = (s) => document.querySelector(s);
@@ -27,6 +27,22 @@
     function deleteModel() { if (!selectedId?.startsWith("custom-")) { setFeedback("Somente modelos personalizados podem ser excluídos.", "error"); return; } localStorage.setItem(CUSTOM_KEY, JSON.stringify(loadCustom().filter(x => x.id !== selectedId))); clearEditor(); setFeedback("Modelo excluído.", "success"); }
     async function copyPreview() { const text = $("#documentPreview").value.trim(); if (!text) { setFeedback("Não há texto para copiar.", "error"); return; } if (typeof copyText === "function") await copyText(text); else await navigator.clipboard.writeText(text); setFeedback("Texto copiado.", "success"); }
     function exportTxt() { const text = $("#documentPreview").value.trim(); if (!text) { setFeedback("Não há texto para exportar.", "error"); return; } const blob = new Blob([text], { type: "text/plain;charset=utf-8" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = ($("#documentTitle").value || "documento").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "").toLowerCase() + ".txt"; a.click(); URL.revokeObjectURL(a.href); }
+    function refreshFromStorage() {
+        const templates = allTemplates();
+        const selected = templates.find((item) => item.id === selectedId);
+        renderList();
+        if (selected) {
+            $("#documentTitle").value = selected.title;
+            $("#documentEditorCategory").value = selected.category;
+            $("#documentTemplate").value = selected.content;
+            variableValues = {};
+            renderVariables();
+        } else if (BUILT_INS.length) {
+            selectTemplate(BUILT_INS[0].id);
+        }
+    }
+    window.refreshDocumentTemplates = refreshFromStorage;
+    window.DocumentosModule = Object.freeze({ refresh: refreshFromStorage });
     function init() { if (!$("#central-documentos")) return; $("#documentSearch").addEventListener("input", renderList); $("#documentCategory").addEventListener("change", renderList); $("#documentTemplate").addEventListener("input", renderVariables); $("#documentTitle").addEventListener("input", renderPreview); $("#documentNewModel").addEventListener("click", clearEditor); $("#documentClear").addEventListener("click", () => { variableValues = {}; renderVariables(); setFeedback("Campos de variáveis limpos.", "success"); }); $("#documentSave").addEventListener("click", saveModel); $("#documentDelete").addEventListener("click", deleteModel); $("#documentCopy").addEventListener("click", copyPreview); $("#documentExportTxt").addEventListener("click", exportTxt); renderList(); selectTemplate(BUILT_INS[0].id); }
     document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", init) : init();
 })();

@@ -1,4 +1,4 @@
-/* Versão 4.2.5 — correção de falsos conflitos e rastreamento seletivo da sincronização. */
+/* Versão 4.2.6 — sincronização seletiva incluindo modelos personalizados da Central de Documentos. */
 (function () {
     "use strict";
 
@@ -13,7 +13,8 @@
             `${APP_CONFIG.storagePrefix}activeTab`,
             `${APP_CONFIG.storagePrefix}lastToolTab`,
             `${APP_CONFIG.storagePrefix}recentTools`
-        ])
+        ]),
+        documents: Object.freeze([`${APP_CONFIG.storagePrefix}documentTemplates`])
     });
 
     const STATE_KEY = `${APP_CONFIG.storagePrefix}online:state`;
@@ -26,7 +27,8 @@
     const PENDING_KEY = `${APP_CONFIG.storagePrefix}online:pending`;
     const CONFLICT_KEY = `${APP_CONFIG.storagePrefix}online:conflict`;
     const MIGRATION_KEY = `${APP_CONFIG.storagePrefix}online:conflictFix423`;
-    const SYNC_SCHEMA_VERSION = 4;
+    const DOCUMENTS_MIGRATION_KEY = `${APP_CONFIG.storagePrefix}online:documents426`;
+    const SYNC_SCHEMA_VERSION = 5;
     const CONFLICT_TOLERANCE_MS = 2500;
 
     let client = null;
@@ -159,6 +161,33 @@
         return stableStringify(localSnapshotObject()) === stableStringify(remoteSnapshotObject(rows));
     }
 
+    function documentTemplatesCount(content = collectGroup(SYNC_GROUPS.documents)) {
+        const key = `${APP_CONFIG.storagePrefix}documentTemplates`;
+        const raw = content?.[key];
+        if (raw == null) return 0;
+        try {
+            const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
+            return Array.isArray(parsed) ? parsed.length : 0;
+        } catch {
+            return 0;
+        }
+    }
+
+    async function uploadMissingDocumentGroup(rows) {
+        if (!session?.user || rows.some((row) => row.data_type === "documents")) return rows;
+        const content = collectGroup(SYNC_GROUPS.documents);
+        if (!documentTemplatesCount(content)) return rows;
+        const { error } = await client.from("user_data").upsert({
+            user_id: session.user.id,
+            data_type: "documents",
+            content,
+            version: SYNC_SCHEMA_VERSION
+        }, { onConflict: "user_id,data_type" });
+        if (error) throw error;
+        await writeSyncLog("success", 1, { direction: "upload", groups: ["documents"], migration: "4.2.6" });
+        return fetchRemoteRows();
+    }
+
     function resetWatchedSnapshot() {
         watchedLocalSnapshot = stableStringify(localSnapshotObject());
     }
@@ -197,7 +226,8 @@
             "applyPrefs",
             "renderDashboardFavorites",
             "refreshUsageViews",
-            "updateDashboardLastToolHighlight"
+            "updateDashboardLastToolHighlight",
+            "refreshDocumentTemplates"
         ];
         refreshers.forEach((name) => {
             if (typeof window[name] === "function") {
@@ -347,7 +377,8 @@
         safeSet(LAST_ATTEMPT_KEY, nowIso());
         setOnlineState({ status: "syncing", direction: "download" });
         try {
-            const rows = await fetchRemoteRows();
+            let rows = await fetchRemoteRows();
+            rows = await uploadMissingDocumentGroup(rows);
             if (!rows.length) {
                 syncInProgress = false;
                 return pushLocalData({ silent, force: true });
@@ -387,7 +418,8 @@
         if (syncInProgress) return false;
 
         try {
-            const rows = await fetchRemoteRows();
+            let rows = await fetchRemoteRows();
+            rows = await uploadMissingDocumentGroup(rows);
             if (rows.length && snapshotsEqual(rows)) {
                 const remoteAt = latestRemoteTimestamp(rows);
                 const syncedAt = remoteAt ? new Date(remoteAt).toISOString() : nowIso();
@@ -533,7 +565,7 @@
                 <button class="online-modal-close" type="button" aria-label="Fechar">×</button>
                 <span class="eyebrow">Supabase</span>
                 <h2 id="onlineAuthTitle">Acesso online</h2>
-                <p class="help-text">Entre para sincronizar preferências, personalização, favoritos e continuidade do Dashboard.</p>
+                <p class="help-text">Entre para sincronizar preferências, personalização, favoritos, continuidade do Dashboard e seus modelos personalizados da Central de Documentos.</p>
                 <label>E-mail<input id="onlineEmail" type="email" autocomplete="email" required></label>
                 <label>Senha<input id="onlinePassword" type="password" autocomplete="current-password" minlength="6" required></label>
                 <div class="actions"><button id="onlineSignIn" class="primary" type="button">Entrar</button><button id="onlineSignUp" class="secondary" type="button">Criar conta</button></div>
@@ -584,7 +616,7 @@
         panel.className = "settings-card online-settings-card";
         panel.innerHTML = `
             <div class="section-heading">
-                <div><span class="eyebrow">Versão 4.2.5</span><h3>Conta e gerenciamento da sincronização</h3><p class="help-text">O armazenamento local continua ativo. A sincronização online mantém preferências e favoritos disponíveis em outros computadores.</p></div>
+                <div><span class="eyebrow">Versão 4.2.6</span><h3>Conta e gerenciamento da sincronização</h3><p class="help-text">O armazenamento local continua ativo. A sincronização online mantém preferências, favoritos e modelos personalizados da Central de Documentos disponíveis em outros computadores.</p></div>
                 <span id="onlineStatusBadge" class="online-status-badge">Local</span>
             </div>
             <p id="onlineStatusDetail" class="online-status-detail">Dados armazenados neste navegador.</p>
@@ -602,7 +634,7 @@
                 <button id="onlineSignOut" class="danger-outline" type="button">Sair</button>
             </div>
             <label class="checkbox-row"><input id="onlineAutoSync" type="checkbox">Sincronizar automaticamente quando houver alterações</label>
-            <p class="help-text">Sincronizados: preferências, nome de exibição, aparência, favoritos, última ferramenta e continuidade do Dashboard. Históricos, modelos, documentos e valores da UVRM permanecem somente neste navegador.</p>`;
+            <p class="help-text">Sincronizados: preferências, nome de exibição, aparência, favoritos, última ferramenta, continuidade do Dashboard e modelos personalizados da Central de Documentos. Históricos dos módulos, estatísticas e valores da UVRM permanecem somente neste navegador.</p>`;
         root.prepend(panel);
         panel.querySelector("#onlineOpenAuth").addEventListener("click", openAuthModal);
         panel.querySelector("#onlineSyncNow").addEventListener("click", () => synchronize());
@@ -641,6 +673,10 @@
         if (safeGet(MIGRATION_KEY, "false") !== "true") {
             setConflict(false);
             safeSet(MIGRATION_KEY, "true");
+        }
+        if (safeGet(DOCUMENTS_MIGRATION_KEY, "false") !== "true") {
+            if (documentTemplatesCount() > 0) setPending(true, true);
+            safeSet(DOCUMENTS_MIGRATION_KEY, "true");
         }
         renderOnlineStatus();
 

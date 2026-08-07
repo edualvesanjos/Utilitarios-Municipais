@@ -1,5 +1,15 @@
 # Changelog
 
+## 4.2.6 — Sincronização da Central de Documentos
+
+- Inclui os modelos personalizados da Central de Documentos na sincronização online por usuário.
+- Mantém os modelos padrão apenas no código da aplicação, sem duplicá-los no Supabase.
+- Propaga criação, edição e exclusão de modelos personalizados entre dispositivos da mesma conta.
+- Atualiza a Central de Documentos após a aplicação de dados recebidos do Supabase.
+- Adiciona migração segura para enviar modelos locais existentes quando ainda não houver o grupo `documents` online.
+- Mantém históricos, estatísticas e UVRM fora da sincronização para testes controlados antes da versão 4.3.
+- Atualiza versão interna, painel Novidades, README e metadados.
+
 ## 4.2.5 — Correção do layout de Configurações
 
 - Corrige o deslocamento das opções para a esquerda na aba Configurações.
