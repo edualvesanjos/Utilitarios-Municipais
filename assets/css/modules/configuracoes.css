@@ -108,3 +108,36 @@
         grid-template-columns: 1fr
     }
 }
+
+/* Versão 4.2.5 — correção do aproveitamento horizontal em Configurações */
+#configuracoes .generator-grid {
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+}
+
+#configuracoes .builder-panel,
+#configuracoes .generator-sidebar {
+    width: 100%;
+    min-width: 0;
+}
+
+#configuracoes .generator-sidebar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+}
+
+#configuracoes .generator-sidebar .sidebar-card {
+    margin: 0;
+}
+
+#configuracoes .ux-settings-panel,
+#configuracoes .online-settings-card {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+@media (max-width: 900px) {
+    #configuracoes .generator-sidebar {
+        grid-template-columns: 1fr;
+    }
+}

@@ -57,7 +57,7 @@
             <div class="v32-dashboard-grid">
                 <main class="v32-dashboard-main">
                     <section class="v32-welcome card">
-                        <div><span class="eyebrow">Painel principal</span><h2 id="dashboardGreeting">Olá, Usuário!</h2><p>Bem-vindo aos Utilitários Municipais.</p><p>Use a pesquisa, a paleta de comandos (<strong>Ctrl + Espaço</strong>) ou acesse uma ferramenta abaixo.</p></div>
+                        <div><div class="dashboard-greeting-line"><span class="eyebrow">Painel principal</span><span id="homeOnlineStatusBadge" class="online-status-badge home-sync-badge" data-state="local">Local</span></div><h2 id="dashboardGreeting">Olá, Usuário!</h2><p>Bem-vindo aos Utilitários Municipais.</p><p>Use a pesquisa, a paleta de comandos (<strong>Ctrl + Espaço</strong>) ou acesse uma ferramenta abaixo.</p></div>
                         <div class="v32-welcome-art" aria-hidden="true"><span>▥</span><span>▦</span><span>⌨</span></div>
                     </section>
 
@@ -766,13 +766,6 @@
                             <div class="actions"><button id="exportarBackup" class="primary">Exportar backup</button><label class="file-button secondary">Importar backup<input id="importarBackup" type="file" accept=".json,application/json"></label></div>
                             <p id="backupStatus" class="feedback" aria-live="polite"></p>
 
-            <div class="tab-footer-navigation">
-                <button class="back-home-button" type="button" data-open-tab="inicio">
-                    <span aria-hidden="true">←</span>
-                    Voltar para a Página Inicial
-                </button>
-            </div>
-        </section>
                         <section class="settings-card">
                             <h3>Limpeza seletiva</h3><p class="help-text">Remova somente os dados desejados, sem afetar os demais módulos.</p>
                             <div class="settings-checklist">
@@ -826,6 +819,9 @@
                         <section class="sidebar-card"><h3>Último backup</h3><p id="ultimoBackupInfo" class="help-text">Nenhum backup registrado.</p></section>
                     </aside>
                 </div>
+                <div class="tab-footer-navigation">
+                    <button class="back-home-button" type="button" data-open-tab="inicio"><span aria-hidden="true">←</span>Voltar para a Página Inicial</button>
+                </div>
             </div>
         </section>
 
@@ -834,7 +830,7 @@
         <section id="central-documentos" class="tab-panel documents-panel">
             <div class="card documents-shell">
                 <div class="section-heading main-heading">
-                    <div><span class="eyebrow">Versão 3.4</span><h2>Central de documentos</h2><p class="section-description">Crie textos administrativos a partir de modelos, preencha variáveis e salve modelos próprios.</p></div>
+                    <div><span class="eyebrow">Versão 4.2.5</span><h2>Central de documentos</h2><p class="section-description">Crie textos administrativos a partir de modelos, preencha variáveis e salve modelos próprios.</p></div>
                     <button id="documentNewModel" class="secondary-button" type="button">Novo modelo</button>
                 </div>
                 <div class="documents-layout">
@@ -882,7 +878,7 @@
         <section id="historico-global" class="tab-panel productivity-panel">
             <div class="card">
                 <div class="section-heading main-heading"><div><span class="eyebrow">Produtividade</span><h2>Histórico global</h2><p class="section-description">Consulte em um único lugar os registros produzidos pelos módulos.</p></div><div class="actions"><button id="globalHistoryExportCsv" class="secondary-button" type="button">Exportar CSV</button><button id="globalHistoryExportJson" class="secondary-button" type="button">Exportar JSON</button></div></div>
-                <div class="productivity-toolbar"><label class="productivity-search"><span>Pesquisar</span><input id="globalHistorySearch" type="search" placeholder="Conteúdo do registro"></label><label><span>Módulo</span><select id="globalHistoryModule"><option value="todos">Todos os módulos</option></select></label><label><span>Período</span><select id="globalHistoryPeriod"><option value="todos">Todo o período</option><option value="hoje">Hoje</option><option value="7">Últimos 7 dias</option><option value="30">Últimos 30 dias</option></select></label></div>
+                <div class="productivity-toolbar"><label class="productivity-search"><span>Pesquisar</span><input id="globalHistorySearch" type="search" placeholder="Conteúdo do registro"></label><label><span>Módulo</span><select id="globalHistoryModule"><option value="todos">Todos os módulos</option></select></label><label><span>Período</span><select id="globalHistoryPeriod"><option value="todos">Todo o período</option><option value="hoje" selected>Hoje</option><option value="7">Últimos 7 dias</option><option value="30">Últimos 30 dias</option></select></label></div>
                 <div class="library-summary"><div><span>Registros encontrados</span><strong id="globalHistoryCount">0</strong></div><div><span>Módulos com dados</span><strong id="globalHistoryModuleCount">0</strong></div><div><span>Último registro</span><strong id="globalHistoryLast">Nenhum</strong></div></div>
                 <div id="globalHistoryList" class="global-history-list"></div>
                 <div class="tab-footer-navigation"><button class="back-home-button" type="button" data-open-tab="inicio"><span aria-hidden="true">←</span>Voltar para a Página Inicial</button></div>
@@ -912,11 +908,12 @@
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 4.2.3</h3>
+                        <h3>Novidades da 4.2.5</h3>
                         <ul class="about-list">
-                            <li>Correção dos falsos conflitos que apareciam durante o uso normal do aplicativo.</li>
-                            <li>Monitoramento restrito às preferências e aos dados realmente sincronizados.</li>
-                            <li>Comparação do conteúdo local e online antes de abrir a resolução de conflitos.</li>
+                            <li>Configurações passam a utilizar toda a largura disponível da página.</li>
+                            <li>Eliminado o espaço em branco lateral causado pelo layout herdado de duas colunas.</li>
+                            <li>Informações auxiliares do aplicativo são reorganizadas de forma responsiva abaixo das configurações.</li>
+                            <li>Mantidas as correções de sincronização, documentos, histórico global e módulo Sobre da versão anterior.</li>
                         </ul>
                     </section>
                 </div>
@@ -930,8 +927,9 @@
                 </section>
 
                 <section class="settings-card">
-                    <h3>Histórico da Série 3</h3>
+                    <h3>Histórico de versões</h3>
                     <div class="about-timeline">
+                        <article><strong>4.2.5</strong><p>Correção do layout de Configurações para melhor aproveitamento horizontal e responsividade.</p></article>
                         <article><strong>4.2.3</strong><p>Correção dos falsos conflitos, comparação de conteúdo e rastreamento seletivo das alterações sincronizadas.</p></article>
                         <article><strong>4.2.2</strong><p>Gerenciamento da sincronização: estado visual, sincronização bidirecional, retomada automática e resolução de conflitos.</p></article>
                         <article><strong>4.2.1</strong><p>Primeira sincronização seletiva: preferências, personalização, favoritos e continuidade do Dashboard, com pendências offline.</p></article>

@@ -1,8 +1,8 @@
-# Utilitários Municipais — v4.2.3
+# Utilitários Municipais — v4.2.5
 
 ## Correção do gerenciamento da sincronização
 
-A versão 4.2.3 corrige os falsos conflitos apresentados pela versão 4.2.2. O aplicativo continua sincronizando somente dados pequenos e necessários à experiência do usuário, preservando o funcionamento local quando não houver internet ou sessão no Supabase.
+A versão 4.2.5 corrige o aproveitamento horizontal da aba Configurações, eliminando o espaço em branco lateral e mantendo as melhorias de sincronização e usabilidade consolidadas anteriormente.
 
 ### Dados sincronizados
 
@@ -11,7 +11,7 @@ A versão 4.2.3 corrige os falsos conflitos apresentados pela versão 4.2.2. O a
 - ferramentas favoritas;
 - aba ativa, última ferramenta e ferramentas recentes.
 
-### Correções da versão 4.2.3
+### Alterações da versão 4.2.5
 
 - cliques, cópias, cálculos e navegação comum não são mais tratados como alterações pendentes;
 - somente as chaves efetivamente sincronizadas são monitoradas;

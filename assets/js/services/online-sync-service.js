@@ -1,4 +1,4 @@
-/* Versão 4.2.3 — correção de falsos conflitos e rastreamento seletivo da sincronização. */
+/* Versão 4.2.5 — correção de falsos conflitos e rastreamento seletivo da sincronização. */
 (function () {
     "use strict";
 
@@ -69,7 +69,7 @@
     }
 
     function safeRemove(key) {
-        try { localStorage.removeItem(key); } catch { }
+        try { localStorage.removeItem(key); } catch {}
     }
 
     function parseDate(value) {
@@ -213,7 +213,7 @@
         try {
             const prefs = JSON.parse(safeGet(prefsKey, "{}"));
             displayName = String(prefs.displayName || "Usuário").trim().slice(0, 40) || "Usuário";
-        } catch { }
+        } catch {}
         const { error } = await client.from("profiles").upsert(
             { id: user.id, display_name: displayName },
             { onConflict: "id" }
@@ -441,9 +441,9 @@
         const conflictButton = document.getElementById("onlineResolveConflict");
         if (conflictButton) conflictButton.hidden = !hasConflict();
 
-        const badge = document.getElementById("onlineStatusBadge");
+        const badges = [document.getElementById("onlineStatusBadge"), document.getElementById("homeOnlineStatusBadge")].filter(Boolean);
         const detail = document.getElementById("onlineStatusDetail");
-        if (!badge) return;
+        if (!badges.length) return;
 
         let text = "Local";
         let state = "local";
@@ -471,8 +471,12 @@
                 message = lastSync ? `Última sincronização: ${formatDate(lastSync)}.` : "Conta conectada.";
             }
         }
-        badge.textContent = text;
-        badge.dataset.state = state;
+        badges.forEach((badge) => {
+            badge.textContent = text;
+            badge.dataset.state = state;
+            badge.title = message;
+            badge.setAttribute("aria-label", `Sincronização: ${text}. ${message}`);
+        });
         if (detail) detail.textContent = message;
     }
 
@@ -580,7 +584,7 @@
         panel.className = "settings-card online-settings-card";
         panel.innerHTML = `
             <div class="section-heading">
-                <div><span class="eyebrow">Versão 4.2.3</span><h3>Conta e gerenciamento da sincronização</h3><p class="help-text">O armazenamento local continua ativo. A sincronização online mantém preferências e favoritos disponíveis em outros computadores.</p></div>
+                <div><span class="eyebrow">Versão 4.2.5</span><h3>Conta e gerenciamento da sincronização</h3><p class="help-text">O armazenamento local continua ativo. A sincronização online mantém preferências e favoritos disponíveis em outros computadores.</p></div>
                 <span id="onlineStatusBadge" class="online-status-badge">Local</span>
             </div>
             <p id="onlineStatusDetail" class="online-status-detail">Dados armazenados neste navegador.</p>

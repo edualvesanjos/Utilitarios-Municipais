@@ -78,3 +78,22 @@
         grid-template-columns: 1fr
     }
 }
+
+/* Ajustes de interface — v4.2.4 */
+.documents-panel .main-heading {
+    align-items: flex-start;
+}
+.documents-panel #documentNewModel {
+    margin-left: auto;
+    align-self: flex-start;
+    white-space: nowrap;
+}
+@media(max-width:650px) {
+    .documents-panel .main-heading {
+        align-items: stretch;
+    }
+    .documents-panel #documentNewModel {
+        margin-left: 0;
+        width: 100%;
+    }
+}

@@ -1,5 +1,23 @@
 # Changelog
 
+## 4.2.5 — Correção do layout de Configurações
+
+- Corrige o deslocamento das opções para a esquerda na aba Configurações.
+- Faz o conteúdo principal utilizar toda a largura disponível da página.
+- Reorganiza os cartões auxiliares em uma grade responsiva abaixo das configurações.
+- Preserva as funcionalidades e correções consolidadas na versão 4.2.4.
+
+## 4.2.5 — Estabilização e melhorias de usabilidade
+
+- Indicador de sincronização também na página Início, utilizando o mesmo estado da área Configurações.
+- Remoção da sobrescrita antiga do painel Novidades e atualização correta do módulo Sobre.
+- Remoção da opção duplicada Interface compacta no grupo Interface.
+- Botão Voltar para a Página Inicial movido para o rodapé de Configurações.
+- Reposicionamento do botão Novo modelo na Central de documentos.
+- Remoção dos modelos Mensagem inicial de atendimento e Declaração de residência.
+- Separação das variáveis assinatura e cargo, ambas sem preenchimento padrão.
+- Histórico global iniciado com o filtro de período Hoje.
+
 ## 4.2.3 — Correção de falsos conflitos
 
 - Removido o rastreamento genérico de cliques e alterações em toda a interface.
