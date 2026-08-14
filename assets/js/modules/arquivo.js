@@ -193,14 +193,23 @@ function getFileHistory() {
     return getJson(FILE_HISTORY_KEY, []);
 }
 
+function fileHistoryValue(entry) {
+    if (typeof entry === "string") return entry;
+    return entry && typeof entry === "object" ? String(entry.value || entry.text || entry.name || "") : "";
+}
+
 function addFileHistory(item) {
+    const value = String(item || "").trim();
+    if (!value) return;
+
     const history = getFileHistory()
-        .filter((entry) => entry !== item)
+        .filter((entry) => fileHistoryValue(entry) !== value)
         .slice(0, 14);
 
-    history.unshift(item);
+    history.unshift({ value, timestamp: new Date().toISOString() });
     setJson(FILE_HISTORY_KEY, history);
     renderFileHistory();
+    if (typeof renderProductivity33 === "function") renderProductivity33();
 }
 
 function renderFileHistory() {
@@ -216,14 +225,21 @@ function renderFileHistory() {
     list.innerHTML = "";
 
     history.forEach((item) => {
+        const value = fileHistoryValue(item);
+        if (!value) return;
         const li = document.createElement("li");
         const text = document.createElement("span");
         const button = document.createElement("button");
 
-        text.textContent = item;
+        text.textContent = value;
         button.textContent = "Copiar";
         button.className = "secondary mini-button";
-        button.addEventListener("click", () => copyText(item));
+        button.addEventListener("click", async () => {
+            const copied = await copyText(value);
+            if (copied) {
+                setFeedback($("#arquivoMensagem"), "Nome copiado.", "success");
+            }
+        });
 
         li.append(text, button);
         list.appendChild(li);

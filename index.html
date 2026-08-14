@@ -830,13 +830,14 @@
         <section id="central-documentos" class="tab-panel documents-panel">
             <div class="card documents-shell">
                 <div class="section-heading main-heading">
-                    <div><span class="eyebrow">Versão 4.2.6</span><h2>Central de documentos</h2><p class="section-description">Crie textos administrativos a partir de modelos, preencha variáveis e salve modelos próprios.</p></div>
+                    <div><span class="eyebrow">Versão 4.2.7</span><h2>Central de documentos</h2><p class="section-description">Crie textos administrativos a partir de modelos, preencha variáveis e salve modelos próprios.</p></div>
                     <button id="documentNewModel" class="secondary-button" type="button">Novo modelo</button>
                 </div>
                 <div class="documents-layout">
                     <aside class="documents-sidebar">
                         <label>Pesquisar modelos<input id="documentSearch" type="search" placeholder="Ex.: despacho, WhatsApp, certidão"></label>
                         <label>Categoria<select id="documentCategory"><option value="todos">Todas</option><option>Despachos</option><option>Certidões</option><option>Ofícios</option><option>WhatsApp</option><option>Declarações</option><option>Personalizados</option></select></label>
+                        <label>Ordem<select id="documentOrder"><option value="titulo">Título</option><option value="categoria">Categoria</option></select></label>
                         <div id="documentTemplateList" class="document-template-list"></div>
                     </aside>
                     <main class="documents-editor">
@@ -908,12 +909,12 @@
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 4.2.6</h3>
+                        <h3>Novidades da 4.2.7</h3>
                         <ul class="about-list">
-                            <li>Modelos personalizados da Central de Documentos passam a integrar a sincronização online.</li>
-                            <li>Criação, edição e exclusão de modelos personalizados são propagadas entre computadores da mesma conta.</li>
-                            <li>Modelos padrão continuam incorporados ao aplicativo e não geram dados desnecessários no Supabase.</li>
-                            <li>Históricos e dados volumosos continuam locais para permitir testes controlados antes da versão 4.3.</li>
+                            <li>Central de Documentos ganhou ordenação alfabética por Título ou Categoria, com preferência preservada entre acessos.</li>
+                            <li>Biblioteca padrão de documentos foi revisada e simplificada conforme o uso atual.</li>
+                            <li>O botão Copiar nome do Montador agora confirma a cópia e registra o resultado com data no histórico do módulo e no Histórico global.</li>
+                            <li>As correções preservam a sincronização seletiva da Central de Documentos introduzida na série 4.2.</li>
                         </ul>
                     </section>
                 </div>
@@ -929,6 +930,7 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline">
+                        <article><strong>4.2.7</strong><p>Ordenação persistente na Central de Documentos, revisão dos modelos padrão e correção do histórico do Montador de Nome de Arquivo.</p></article>
                         <article><strong>4.2.6</strong><p>Sincronização online dos modelos personalizados da Central de Documentos para validação da capacidade de sincronização entre dispositivos.</p></article>
                         <article><strong>4.2.5</strong><p>Correção do layout de Configurações para melhor aproveitamento horizontal e responsividade.</p></article>
                         <article><strong>4.2.3</strong><p>Correção dos falsos conflitos, comparação de conteúdo e rastreamento seletivo das alterações sincronizadas.</p></article>

@@ -1,13 +1,11 @@
-/* Versão 4.2.6: Central de Documentos com modelos personalizados sincronizáveis. */
+/* Versão 4.2.7: Central de Documentos com ordenação persistente e biblioteca padrão revisada. */
 (() => {
     "use strict";
     const $ = (s) => document.querySelector(s);
     const CUSTOM_KEY = "utilitariosMunicipais:documentTemplates";
+    const SORT_KEY = "utilitariosMunicipais:documentSort";
     const BUILT_INS = [
-        { id: "despacho-zoneamento", title: "Despacho — atividade proibida pelo zoneamento", category: "Despachos", content: "Prezado(a)(s),\n\nConsiderando o Anexo VII da Lei Complementar nº 952/2025, informamos que a atividade {cnae} é PROIBIDA no endereço {endereco}, conforme o zoneamento {zoneamento}.\n\nDiante do exposto, fica inviabilizado o prosseguimento do pedido referente ao processo {processo}.\n\nAtenciosamente,\n{assinatura}\n{cargo}" },
-        { id: "despacho-arquivamento", title: "Despacho de arquivamento", category: "Despachos", content: "Considerando o atendimento da solicitação constante no processo {processo}, encaminhem-se os autos para as providências cabíveis.\n\nApós, arquive-se.\n\n{data}\n\n{assinatura}\n{cargo}" },
-        { id: "oficio-solicitacao", title: "Ofício — solicitação de providências", category: "Ofícios", content: "Assunto: {assunto}\n\nSenhor(a) {destinatario},\n\nSolicitamos as providências necessárias quanto a {objeto}, referente ao processo {processo}.\n\nAtenciosamente,\n{assinatura}\n{cargo}" },
-        { id: "certidao-generica", title: "Certidão administrativa", category: "Certidões", content: "CERTIDÃO\n\nCertificamos, para os devidos fins, que {texto}.\n\nProcesso: {processo}\nInteressado(a): {nome}\n\n{cidade}, {data}.\n\n{assinatura}\n{cargo}" }
+        { id: "despacho-zoneamento", title: "Despacho — atividade proibida pelo zoneamento", category: "Despachos", content: "Prezado(a)(s),\n\nConsiderando o Anexo VII da Lei Complementar nº 952/2025, informamos que a atividade {cnae} é PROIBIDA no endereço {endereco}, conforme o zoneamento {zoneamento}.\n\nDiante do exposto, fica inviabilizado o prosseguimento do pedido referente ao processo {processo}.\n\nAtenciosamente,\n{assinatura}\n{cargo}" }
     ];
     let selectedId = null;
     let variableValues = {};
@@ -15,7 +13,28 @@
     const allTemplates = () => [...BUILT_INS, ...loadCustom()];
     const escapeHtml = (v) => String(v ?? "").replace(/[&<>\"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
     function setFeedback(msg, type = "") { const el = $("#documentFeedback"); if (!el) return; el.textContent = msg || ""; el.className = `feedback-message ${type}`; }
-    function filtered() { const q = ($("#documentSearch")?.value || "").toLocaleLowerCase("pt-BR"); const c = $("#documentCategory")?.value || "todos"; return allTemplates().filter(x => (c === "todos" || x.category === c) && (!q || `${x.title} ${x.category} ${x.content}`.toLocaleLowerCase("pt-BR").includes(q))); }
+    function getSortOrder() {
+        const saved = localStorage.getItem(SORT_KEY);
+        return saved === "categoria" ? "categoria" : "titulo";
+    }
+    function setSortOrder(value) {
+        localStorage.setItem(SORT_KEY, value === "categoria" ? "categoria" : "titulo");
+    }
+    function filtered() {
+        const q = ($("#documentSearch")?.value || "").toLocaleLowerCase("pt-BR");
+        const c = $("#documentCategory")?.value || "todos";
+        const order = $("#documentOrder")?.value || getSortOrder();
+        const collator = new Intl.Collator("pt-BR", { sensitivity: "base", numeric: true });
+        return allTemplates()
+            .filter(x => (c === "todos" || x.category === c) && (!q || `${x.title} ${x.category} ${x.content}`.toLocaleLowerCase("pt-BR").includes(q)))
+            .sort((a, b) => {
+                if (order === "categoria") {
+                    const categoryCompare = collator.compare(a.category, b.category);
+                    return categoryCompare || collator.compare(a.title, b.title);
+                }
+                return collator.compare(a.title, b.title) || collator.compare(a.category, b.category);
+            });
+    }
     function renderList() { const host = $("#documentTemplateList"); if (!host) return; const items = filtered(); host.innerHTML = items.length ? items.map(x => `<button type="button" class="document-template-item ${x.id === selectedId ? "active" : ""}" data-document-id="${escapeHtml(x.id)}"><span><strong>${escapeHtml(x.title)}</strong><small>${escapeHtml(x.category)}</small></span><span aria-hidden="true">›</span></button>`).join("") : '<p class="empty-state">Nenhum modelo encontrado.</p>'; host.querySelectorAll("[data-document-id]").forEach(b => b.addEventListener("click", () => selectTemplate(b.dataset.documentId))); }
     function selectTemplate(id) { const x = allTemplates().find(t => t.id === id); if (!x) return; selectedId = id; variableValues = {}; $("#documentTitle").value = x.title; $("#documentEditorCategory").value = x.category; $("#documentTemplate").value = x.content; renderVariables(); renderList(); }
     function variables() { return [...new Set((($("#documentTemplate")?.value || "").match(/\{[^{}]+\}/g) || []).map(v => v.slice(1, -1).trim()).filter(Boolean))]; }
@@ -43,6 +62,28 @@
     }
     window.refreshDocumentTemplates = refreshFromStorage;
     window.DocumentosModule = Object.freeze({ refresh: refreshFromStorage });
-    function init() { if (!$("#central-documentos")) return; $("#documentSearch").addEventListener("input", renderList); $("#documentCategory").addEventListener("change", renderList); $("#documentTemplate").addEventListener("input", renderVariables); $("#documentTitle").addEventListener("input", renderPreview); $("#documentNewModel").addEventListener("click", clearEditor); $("#documentClear").addEventListener("click", () => { variableValues = {}; renderVariables(); setFeedback("Campos de variáveis limpos.", "success"); }); $("#documentSave").addEventListener("click", saveModel); $("#documentDelete").addEventListener("click", deleteModel); $("#documentCopy").addEventListener("click", copyPreview); $("#documentExportTxt").addEventListener("click", exportTxt); renderList(); selectTemplate(BUILT_INS[0].id); }
+    function init() {
+        if (!$("#central-documentos")) return;
+        $("#documentSearch").addEventListener("input", renderList);
+        $("#documentCategory").addEventListener("change", renderList);
+        const order = $("#documentOrder");
+        if (order) {
+            order.value = getSortOrder();
+            order.addEventListener("change", () => {
+                setSortOrder(order.value);
+                renderList();
+            });
+        }
+        $("#documentTemplate").addEventListener("input", renderVariables);
+        $("#documentTitle").addEventListener("input", renderPreview);
+        $("#documentNewModel").addEventListener("click", clearEditor);
+        $("#documentClear").addEventListener("click", () => { variableValues = {}; renderVariables(); setFeedback("Campos de variáveis limpos.", "success"); });
+        $("#documentSave").addEventListener("click", saveModel);
+        $("#documentDelete").addEventListener("click", deleteModel);
+        $("#documentCopy").addEventListener("click", copyPreview);
+        $("#documentExportTxt").addEventListener("click", exportTxt);
+        renderList();
+        if (BUILT_INS.length) selectTemplate(BUILT_INS[0].id);
+    }
     document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", init) : init();
 })();

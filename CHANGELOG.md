@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.2.7 — Ordenação de documentos e correção do histórico
+
+- Adicionado campo **Ordem** na Central de Documentos, com ordenação alfabética por Título ou Categoria.
+- Preferência de ordenação persistida no navegador.
+- Removidos os modelos padrão Despacho de arquivamento, Ofício — solicitação de providências e Certidão administrativa.
+- Corrigido o botão **Copiar nome** do Montador para confirmar a cópia e registrar o valor no histórico do módulo e no Histórico global com data/hora.
+- Mantida a sincronização online seletiva dos modelos personalizados da Central de Documentos.
+
 ## 4.2.6 — Sincronização da Central de Documentos
 
 - Inclui os modelos personalizados da Central de Documentos na sincronização online por usuário.
