@@ -16,8 +16,6 @@
 .document-template-list {
     display: grid;
     gap: 8px;
-    max-height: 650px;
-    overflow: auto
 }
 
 .document-template-item {
@@ -70,9 +68,6 @@
         grid-template-columns: 1fr
     }
 
-    .document-template-list {
-        max-height: 280px
-    }
 
     .document-variables-grid {
         grid-template-columns: 1fr

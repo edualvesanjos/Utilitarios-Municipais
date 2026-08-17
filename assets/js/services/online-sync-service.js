@@ -758,7 +758,6 @@
             if (event === "SIGNED_IN" && session?.user) {
                 await ensureProfile(session.user);
                 await synchronize({ silent: true });
-                notify("Conta conectada ao Supabase.");
             }
             if (event === "SIGNED_OUT") {
                 setConflict(false);

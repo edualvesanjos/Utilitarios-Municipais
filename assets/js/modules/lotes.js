@@ -4,7 +4,7 @@
 
 function getLastLotSequence() {
     const stored = Number(localStorage.getItem(LOT_SEQUENCE_KEY));
-    return Number.isInteger(stored) && stored >= 1 ? stored : 1;
+    return Number.isInteger(stored) && stored >= 0 ? stored : 0;
 }
 
 function formatLotPart(value, size, pad=true) {
@@ -181,8 +181,10 @@ $("#reiniciarSequenciaLotes").addEventListener("click", async () => {
         return;
     }
 
-    localStorage.setItem(LOT_SEQUENCE_KEY, "1");
-    $("#loteSequenciaInicial").value = 2;
+    // Zero is used only as the internal state before the first sequence.
+    // The first lot generated after a reset is therefore 00001.
+    localStorage.setItem(LOT_SEQUENCE_KEY, "0");
+    $("#loteSequenciaInicial").value = 1;
     $("#loteResultado").textContent = "—";
 
     updateLastLotDisplay();

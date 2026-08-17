@@ -1,5 +1,5 @@
-# Utilitários Municipais — v4.3.1.1
-Versão 4.3.1.1. Hotfix da 4.3.1 para corrigir a persistência da sequência do módulo Número de lote, sem alterar o escopo das próximas etapas da série 4.3. A identificação da conta e a fundação de históricos online permanecem preservadas.
+# Utilitários Municipais — v4.3.2
+Versão 4.3.2. Hotfix da 4.3.1 para corrigir a persistência da sequência do módulo Número de lote, sem alterar o escopo das próximas etapas da série 4.3. A identificação da conta e a fundação de históricos online permanecem preservadas.
 
 
 ## Principais alterações
@@ -24,7 +24,7 @@ SUPABASE_HISTORY_4.3.0.sql
 
 O script é seguro para reexecução e, ao final, apresenta uma auditoria da tabela `history_entries`. O resultado esperado é RLS habilitado e 4 políticas.
 
-O arquivo `SUPABASE_SETUP.sql` também foi atualizado e representa a instalação completa consolidada até a versão 4.3.1.1.
+O arquivo `SUPABASE_SETUP.sql` também foi atualizado e representa a instalação completa consolidada até a versão 4.3.2.
 
 ## Ambiente
 
@@ -34,3 +34,10 @@ npm run dev
 ```
 
 O projeto mantém Vite, armazenamento local e sincronização seletiva com Supabase. O arquivo `.env` continua fora do repositório conforme `.gitignore`.
+
+### Ajustes da 4.3.2
+
+- Corrigido o reinício da sequência de lotes: após reiniciar, o primeiro lote gerado utiliza `00001` e somente o seguinte avança para `00002`.
+- Removido o aviso redundante “Conta conectada ao Supabase” ao retornar para a aba; a sessão passa a ser atualizada silenciosamente.
+- Ajustado o painel de modelos da Central de Documentos para eliminar a barra de rolagem vertical interna.
+- Removido do Painel principal o indicador redundante de sincronização ao lado da identificação/saudação; o estado permanece no cabeçalho e no rodapé.

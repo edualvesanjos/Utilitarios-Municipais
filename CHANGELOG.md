@@ -1,5 +1,17 @@
 # Changelog
 
+## 4.3.2
+
+### Corrigido
+- Reinício da sequência de Lotes agora prepara e gera efetivamente `00001` como primeiro número; a geração seguinte avança para `00002`.
+- Estado reiniciado da sequência permanece correto mesmo se a página for recarregada antes da primeira geração.
+- Central de Documentos não força mais barra de rolagem vertical interna na lista de modelos.
+
+### Ajustado
+- Removido o toast “Conta conectada ao Supabase” das atualizações de sessão; retorno à aba ocorre silenciosamente.
+- Removido o indicador redundante de sincronização do Painel principal; cabeçalho e rodapé permanecem como referências de conta e sincronização.
+
+
 ## 4.3.1.1 — Hotfix da sequência do módulo Lotes
 
 - Corrigida a recuperação da última sequência efetivamente gerada ao abrir ou atualizar o site.
