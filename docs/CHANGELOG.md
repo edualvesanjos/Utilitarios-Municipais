@@ -1,5 +1,21 @@
 # Changelog
 
+## 4.3.3
+
+### Corrigido
+- Removido o texto literal `\\n` abaixo de **Calculadora UVRM > Novo Lançamento > Descrição**.
+
+### Organizado
+- `README.md` mantido na raiz para o GitHub.
+- CHANGELOG, sincronização e relatórios técnicos movidos para `docs/`.
+- Releases movidos para `docs/releases/`.
+- Scripts SQL movidos para `sql/`.
+
+### Mantido
+- Autopreenchimento UVRM da 4.3.2.1.
+- Nenhuma alteração no schema do Supabase.
+
+
 ## 4.3.2.1
 
 ### Adicionado
