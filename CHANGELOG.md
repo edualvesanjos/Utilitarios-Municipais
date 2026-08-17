@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.3.1.1 — Hotfix da sequência do módulo Lotes
+
+- Corrigida a recuperação da última sequência efetivamente gerada ao abrir ou atualizar o site.
+- A Sequência inicial agora é sempre preparada como `última sequência + 1`, usando `lastLotSequence` como fonte autoritativa.
+- A sequência do módulo Lotes deixou de depender da opção genérica **Salvar campos**, evitando restauração de valor antigo ou retorno indevido para 4.
+- Mantido o comportamento de reinício manual da sequência para 00001/00002.
+- Nenhuma alteração de banco de dados ou do escopo funcional planejado para a série 4.3.
+
 ## 4.3.1 — Identidade da conta e status de sincronização
 
 - Adicionado indicador de usuário conectado no canto superior direito do cabeçalho.

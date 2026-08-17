@@ -4,7 +4,7 @@
 
 function getLastLotSequence() {
     const stored = Number(localStorage.getItem(LOT_SEQUENCE_KEY));
-    return Number.isInteger(stored) && stored >= 3 ? stored : 3;
+    return Number.isInteger(stored) && stored >= 1 ? stored : 1;
 }
 
 function formatLotPart(value, size, pad=true) {
@@ -75,6 +75,12 @@ function updateLastLotDisplay() {
         String(last + 1).padStart(5, "0");
 }
 
+function restoreLotSequenceState() {
+    const last = getLastLotSequence();
+    $("#loteSequenciaInicial").value = last + 1;
+    updateLastLotDisplay();
+}
+
 function getLotHistory() {
     return getJson(LOT_HISTORY_KEY, []);
 }
@@ -118,8 +124,6 @@ function renderLotHistory() {
     "loteSetor",
     "loteQuadra",
     "loteQuantidade",
-    "loteSequenciaInicial",
-    "loteSeparador",
     "loteSequenciaInicial",
     "loteSeparador"
 ].forEach((id) => {
@@ -169,7 +173,7 @@ $("#limparLotes").addEventListener("click", () => {
 
 $("#reiniciarSequenciaLotes").addEventListener("click", async () => {
     const confirmed = await confirmAction(
-        "Deseja reiniciar a sequência para 00003?",
+        "Deseja reiniciar a sequência para 00001?",
         { title: "Reiniciar sequência", confirmText: "Reiniciar" }
     );
 
@@ -177,8 +181,8 @@ $("#reiniciarSequenciaLotes").addEventListener("click", async () => {
         return;
     }
 
-    localStorage.setItem(LOT_SEQUENCE_KEY, "3");
-    $("#loteSequenciaInicial").value = 4;
+    localStorage.setItem(LOT_SEQUENCE_KEY, "1");
+    $("#loteSequenciaInicial").value = 2;
     $("#loteResultado").textContent = "—";
 
     updateLastLotDisplay();

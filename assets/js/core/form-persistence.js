@@ -6,7 +6,6 @@ const persistentFieldIds = [
     "loteSetor",
     "loteQuadra",
     "loteQuantidade",
-    "loteSequenciaInicial",
     "loteSeparador",
     "uvrmValorUnitario",
     "uvrmCasas",

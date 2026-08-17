@@ -439,12 +439,12 @@
                         <div class="registration-status">
                             <div>
                                 <span class="status-label">Última sequência salva</span>
-                                <strong id="loteUltimaSequencia">00003</strong>
+                                <strong id="loteUltimaSequencia">00001</strong>
                             </div>
 
                             <div>
                                 <span class="status-label">Próxima sequência</span>
-                                <strong id="loteProximaSequencia">00004</strong>
+                                <strong id="loteProximaSequencia">00002</strong>
                             </div>
 
                             <div>
@@ -785,7 +785,7 @@
                         <div class="registration-status settings-summary">
                             <div><span class="status-label">Modelos salvos</span><strong id="configModelosSalvos">0</strong></div>
                             <div><span class="status-label">Itens em históricos</span><strong id="configHistoricosSalvos">0</strong></div>
-                            <div><span class="status-label">Sequência de lote</span><strong id="configSequenciaLote">00003</strong></div>
+                            <div><span class="status-label">Sequência de lote</span><strong id="configSequenciaLote">00001</strong></div>
                         </div>
                         <section class="settings-card">
                             <h3>Backup completo</h3><p class="help-text">Exporte todas as preferências, modelos, sequências e históricos para um arquivo JSON.</p>
@@ -935,12 +935,12 @@
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 4.3.1</h3>
+                        <h3>Novidades da 4.3.1.1</h3>
                         <ul class="about-list">
-                            <li>O cabeçalho agora identifica claramente o usuário conectado, utilizando o nome de exibição configurado no sistema.</li>
-                            <li>O menu da conta reúne e-mail, estado da conexão, acesso às configurações de sincronização, sincronização manual e saída da conta.</li>
-                            <li>O rodapé passou a representar o estado técnico da sincronização separadamente da identidade do usuário.</li>
-                            <li>Os estados de conta autenticada, trabalho offline, sincronização, pendência, conflito e armazenamento somente local são apresentados de forma distinta.</li>
+                            <li>Corrigida a persistência da última sequência no módulo Número de lote ao atualizar ou reabrir o site.</li>
+                            <li>A Sequência inicial agora continua automaticamente a partir da última sequência efetivamente gerada.</li>
+                            <li>O controle de sequência passou a ser independente da opção genérica Salvar campos, evitando retorno indevido para valores antigos.</li>
+                            <li>Hotfix isolado, sem alteração do escopo das próximas etapas planejadas da série 4.3.</li>
                         </ul>
                     </section>
                 </div>
@@ -956,6 +956,7 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline">
+                        <article><strong>4.3.1.1</strong><p>Hotfix do módulo Número de lote: recuperação confiável da última sequência e preparação automática da próxima ao reabrir o sistema.</p></article>
                         <article><strong>4.3.1</strong><p>Identificação da conta no cabeçalho e status técnico no rodapé, separando autenticação, conectividade e sincronização.</p></article>
                         <article><strong>4.3.0</strong><p>Fundação do histórico online: nova tabela protegida por RLS, registros idempotentes por dispositivo e serviço local preparado para sincronização gradual.</p></article>
                         <article><strong>4.2.7</strong><p>Ordenação persistente na Central de Documentos, revisão dos modelos padrão e correção do histórico do Montador de Nome de Arquivo.</p></article>

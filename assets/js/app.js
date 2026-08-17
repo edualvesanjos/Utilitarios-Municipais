@@ -92,12 +92,11 @@ function initializeApplication() {
     renderRegistrationHistory();
     updateRegistrationField();
 
-    if (!$("#loteSequenciaInicial").value) {
-        $("#loteSequenciaInicial").value = getLastLotSequence() + 1;
-    }
+    // A sequência do módulo Lotes é independente da preferência genérica "Salvar campos".
+    // Ao abrir/recarregar, sempre continua a partir da última sequência efetivamente gerada.
+    restoreLotSequenceState();
 
     renderLotHistory();
-    updateLastLotDisplay();
     updateLotPreview();
 
     const storedUvrmValue = localStorage.getItem(UVRM_VALUE_KEY);

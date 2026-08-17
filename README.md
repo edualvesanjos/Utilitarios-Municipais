@@ -1,8 +1,11 @@
-# Utilitários Municipais — v4.3.1
-Versão 4.3.1. Esta etapa melhora a identificação da sessão no uso diário: o cabeçalho informa quem está conectado e o rodapé passa a representar separadamente o estado técnico da sincronização. A fundação de históricos online criada na 4.3.0 permanece preservada.
+# Utilitários Municipais — v4.3.1.1
+Versão 4.3.1.1. Hotfix da 4.3.1 para corrigir a persistência da sequência do módulo Número de lote, sem alterar o escopo das próximas etapas da série 4.3. A identificação da conta e a fundação de históricos online permanecem preservadas.
 
 
 ## Principais alterações
+
+- Corrigida a sequência do módulo Número de lote: após gerar lotes, fechar, atualizar ou reabrir o site, a próxima sequência parte da última sequência efetivamente gravada.
+- A sequência inicial não depende mais da preferência genérica Salvar campos; o controle próprio `lastLotSequence` é a fonte autoritativa.
 
 - Novo componente de conta no canto superior direito do cabeçalho, exibindo o nome de exibição e o estado Online/Offline.
 - Menu da conta com e-mail, acesso a Conta e sincronização, ação Sincronizar agora e Sair da conta.
@@ -21,7 +24,7 @@ SUPABASE_HISTORY_4.3.0.sql
 
 O script é seguro para reexecução e, ao final, apresenta uma auditoria da tabela `history_entries`. O resultado esperado é RLS habilitado e 4 políticas.
 
-O arquivo `SUPABASE_SETUP.sql` também foi atualizado e representa a instalação completa consolidada até a versão 4.3.1.
+O arquivo `SUPABASE_SETUP.sql` também foi atualizado e representa a instalação completa consolidada até a versão 4.3.1.1.
 
 ## Ambiente
 
