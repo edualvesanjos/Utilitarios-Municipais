@@ -2,6 +2,8 @@
 
 const DEFAULT_UVRM_VALUE = 39.99;
 const UVRM_CURRENT_LIST_KEY = `${STORAGE_PREFIX}uvrmCurrentList`;
+const UVRM_DESCRIPTION_HISTORY_KEY = `${STORAGE_PREFIX}uvrmDescriptionHistory`;
+const UVRM_DESCRIPTION_HISTORY_LIMIT = 30;
 let uvrmEditingId = null;
 let uvrmPreview = null;
 
@@ -32,6 +34,40 @@ function getUvrmDecimals() {
 function getUvrmCurrentList() { return getJson(UVRM_CURRENT_LIST_KEY, []); }
 function saveUvrmCurrentList(items) { setJson(UVRM_CURRENT_LIST_KEY, items); renderUvrmCurrentList(); }
 function getUvrmHistory() { return getJson(UVRM_HISTORY_KEY, []); }
+function normalizeUvrmDescription(value) {
+    return String(value || "").trim().replace(/\s+/g, " ");
+}
+
+function getUvrmDescriptionHistory() {
+    const stored = getJson(UVRM_DESCRIPTION_HISTORY_KEY, []);
+    return Array.isArray(stored)
+        ? stored.map(normalizeUvrmDescription).filter(Boolean).slice(0, UVRM_DESCRIPTION_HISTORY_LIMIT)
+        : [];
+}
+
+function renderUvrmDescriptionSuggestions() {
+    const list = $("#uvrmDescricaoSugestoes");
+    if (!list) return;
+    list.replaceChildren(...getUvrmDescriptionHistory().map(description => {
+        const option = document.createElement("option");
+        option.value = description;
+        return option;
+    }));
+}
+
+function rememberUvrmDescription(value) {
+    const description = normalizeUvrmDescription(value);
+    if (!description) return;
+
+    const normalizedKey = description.toLocaleLowerCase("pt-BR");
+    const history = getUvrmDescriptionHistory()
+        .filter(item => item.toLocaleLowerCase("pt-BR") !== normalizedKey);
+
+    history.unshift(description);
+    setJson(UVRM_DESCRIPTION_HISTORY_KEY, history.slice(0, UVRM_DESCRIPTION_HISTORY_LIMIT));
+    renderUvrmDescriptionSuggestions();
+}
+
 
 function clearUvrmResult(message = "Informe o valor do lançamento.") {
     $("#uvrmResultado").textContent = "—";
@@ -104,6 +140,7 @@ function addOrUpdateUvrmEntry() {
         return;
     }
     const items = getUvrmCurrentList();
+    rememberUvrmDescription(uvrmPreview.description);
     const entry = { ...uvrmPreview, id: uvrmEditingId || createUniqueId(), createdAt: new Date().toISOString() };
     const index = items.findIndex(item => item.id === uvrmEditingId);
     if (index >= 0) items[index] = entry; else items.push(entry);
@@ -267,3 +304,5 @@ $("#salvarOperacaoUvrm").addEventListener("click", saveUvrmOperation);
 $("#limparListaUvrm").addEventListener("click", () => { if(!getUvrmCurrentList().length)return; if(confirm("Limpar todos os lançamentos da operação atual?")){ localStorage.removeItem(UVRM_CURRENT_LIST_KEY); renderUvrmCurrentList(); resetUvrmEntryForm(); } });
 $("#limparHistoricoUvrm").addEventListener("click", () => { if(confirm("Limpar todo o histórico UVRM?")){ localStorage.removeItem(UVRM_HISTORY_KEY); renderUvrmHistory(); showToast("Histórico UVRM removido."); } });
 $("#pesquisaHistoricoUvrm").addEventListener("input", renderUvrmHistory);
+
+renderUvrmDescriptionSuggestions();

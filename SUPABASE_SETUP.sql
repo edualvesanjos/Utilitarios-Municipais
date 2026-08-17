@@ -1,5 +1,5 @@
 -- ============================================================
--- UTILITÁRIOS MUNICIPAIS v4.3.2
+-- UTILITÁRIOS MUNICIPAIS v4.3.2.1
 -- Supabase: tabelas, gatilhos, RLS e políticas por usuário
 -- Execute integralmente no SQL Editor do Supabase.
 -- ============================================================

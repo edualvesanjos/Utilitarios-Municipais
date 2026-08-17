@@ -1,5 +1,16 @@
 # Changelog
 
+## 4.3.2.1
+
+### Adicionado
+- Histórico local de descrições utilizadas em **Calculadora UVRM > Novo Lançamento**.
+- Sugestões de autopreenchimento no próprio campo **Descrição**, reutilizando textos já usados.
+- Deduplicação das descrições e limite de 30 sugestões recentes.
+
+### Mantido
+- Nenhuma alteração no schema do Supabase; o histórico de descrições permanece local nesta etapa.
+
+
 ## 4.3.2
 
 ### Corrigido
