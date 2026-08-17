@@ -1,5 +1,16 @@
 # Changelog
 
+## 4.3.0 — Fundação do histórico online
+
+- Criada a tabela `history_entries` no Supabase para futuros históricos operacionais sincronizados por usuário.
+- Adicionados `client_id` único por usuário, `device_id`, módulo, ação, valor, metadados e data da ocorrência.
+- Adicionados índices, trigger de atualização, RLS e quatro políticas próprias da tabela de históricos.
+- Criado `HistoryService` com modelo canônico de registro, fila local de pendências e operações preparatórias de upload e consulta remota.
+- Atualizado o schema local para a versão 13.
+- Mantida desativada a sincronização automática dos históricos existentes nesta etapa, evitando migração prematura ou duplicidades.
+- Preservada integralmente a sincronização seletiva consolidada na série 4.2.
+- Atualizados versão interna, README, manifest, metadados, SQL consolidado e painel Novidades.
+
 ## 4.2.7 — Ordenação de documentos e correção do histórico
 
 - Adicionado campo **Ordem** na Central de Documentos, com ordenação alfabética por Título ou Categoria.

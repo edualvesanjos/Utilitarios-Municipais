@@ -1,4 +1,4 @@
-/* Versão 4.2.7 — sincronização seletiva preservada, incluindo modelos personalizados da Central de Documentos. */
+/* Versão 4.3.0 — sincronização seletiva preservada, incluindo modelos personalizados da Central de Documentos. */
 (function () {
     "use strict";
 
@@ -616,7 +616,7 @@
         panel.className = "settings-card online-settings-card";
         panel.innerHTML = `
             <div class="section-heading">
-                <div><span class="eyebrow">Versão 4.2.7</span><h3>Conta e gerenciamento da sincronização</h3><p class="help-text">O armazenamento local continua ativo. A sincronização online mantém preferências, favoritos e modelos personalizados da Central de Documentos disponíveis em outros computadores.</p></div>
+                <div><span class="eyebrow">Versão 4.3.0</span><h3>Conta e gerenciamento da sincronização</h3><p class="help-text">O armazenamento local continua ativo. A sincronização online mantém preferências, favoritos e modelos personalizados da Central de Documentos disponíveis em outros computadores.</p></div>
                 <span id="onlineStatusBadge" class="online-status-badge">Local</span>
             </div>
             <p id="onlineStatusDetail" class="online-status-detail">Dados armazenados neste navegador.</p>

@@ -830,7 +830,7 @@
         <section id="central-documentos" class="tab-panel documents-panel">
             <div class="card documents-shell">
                 <div class="section-heading main-heading">
-                    <div><span class="eyebrow">Versão 4.2.7</span><h2>Central de documentos</h2><p class="section-description">Crie textos administrativos a partir de modelos, preencha variáveis e salve modelos próprios.</p></div>
+                    <div><span class="eyebrow">Versão 4.3.0</span><h2>Central de documentos</h2><p class="section-description">Crie textos administrativos a partir de modelos, preencha variáveis e salve modelos próprios.</p></div>
                     <button id="documentNewModel" class="secondary-button" type="button">Novo modelo</button>
                 </div>
                 <div class="documents-layout">
@@ -909,12 +909,12 @@
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 4.2.7</h3>
+                        <h3>Novidades da 4.3.0</h3>
                         <ul class="about-list">
-                            <li>Central de Documentos ganhou ordenação alfabética por Título ou Categoria, com preferência preservada entre acessos.</li>
-                            <li>Biblioteca padrão de documentos foi revisada e simplificada conforme o uso atual.</li>
-                            <li>O botão Copiar nome do Montador agora confirma a cópia e registra o resultado com data no histórico do módulo e no Histórico global.</li>
-                            <li>As correções preservam a sincronização seletiva da Central de Documentos introduzida na série 4.2.</li>
+                            <li>Foi criada a fundação do histórico online, com estrutura própria no Supabase para registros operacionais por usuário.</li>
+                            <li>Os novos registros passam a ter identificação idempotente, módulo, ação, valor, data e dispositivo, preparando a prevenção de duplicidades entre computadores.</li>
+                            <li>O novo HistoryService mantém uma fila local preparada para sincronização gradual nas próximas versões.</li>
+                            <li>Os históricos atuais continuam locais nesta etapa; nenhuma migração automática foi ativada na 4.3.0.</li>
                         </ul>
                     </section>
                 </div>
@@ -930,6 +930,7 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline">
+                        <article><strong>4.3.0</strong><p>Fundação do histórico online: nova tabela protegida por RLS, registros idempotentes por dispositivo e serviço local preparado para sincronização gradual.</p></article>
                         <article><strong>4.2.7</strong><p>Ordenação persistente na Central de Documentos, revisão dos modelos padrão e correção do histórico do Montador de Nome de Arquivo.</p></article>
                         <article><strong>4.2.6</strong><p>Sincronização online dos modelos personalizados da Central de Documentos para validação da capacidade de sincronização entre dispositivos.</p></article>
                         <article><strong>4.2.5</strong><p>Correção do layout de Configurações para melhor aproveitamento horizontal e responsividade.</p></article>
@@ -973,6 +974,7 @@
     <script src="assets/js/services/supabase-client.js"></script>
     <script src="assets/js/registry/tools.js"></script>
     <script src="assets/js/services/storage-service.js"></script>
+    <script src="assets/js/services/history-service.js"></script>
     <script src="assets/js/services/online-sync-service.js"></script>
     <script src="assets/js/core/storage.js"></script>
     <script src="assets/js/core/utils.js"></script>

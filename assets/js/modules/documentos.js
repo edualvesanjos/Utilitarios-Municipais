@@ -1,4 +1,4 @@
-/* Versão 4.2.7: Central de Documentos com ordenação persistente e biblioteca padrão revisada. */
+/* Versão 4.3.0: Central de Documentos com ordenação persistente e biblioteca padrão revisada. */
 (() => {
     "use strict";
     const $ = (s) => document.querySelector(s);
