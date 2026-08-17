@@ -30,6 +30,32 @@
                 <div><h1 data-app-name>Utilitários Municipais</h1><small>Ferramentas internas</small></div>
                 <span class="v32-version">v<span data-app-version></span></span>
             </div>
+            <div class="header-account" id="headerAccount">
+                <button id="headerAccountButton" class="header-account-button" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="headerAccountMenu">
+                    <span id="headerAccountDot" class="header-account-dot" data-state="local" aria-hidden="true"></span>
+                    <span class="header-account-copy">
+                        <strong id="headerAccountName">Entrar</strong>
+                        <small id="headerAccountState">Somente local</small>
+                    </span>
+                    <span class="header-account-chevron" aria-hidden="true">⌄</span>
+                </button>
+                <div id="headerAccountMenu" class="header-account-menu" hidden>
+                    <div class="header-account-identity">
+                        <span class="eyebrow">Conta conectada</span>
+                        <strong id="headerAccountMenuName">Não conectado</strong>
+                        <small id="headerAccountEmail">Use o armazenamento local ou entre em uma conta.</small>
+                    </div>
+                    <div class="header-account-menu-status"><span id="headerMenuStatusDot" class="header-account-dot" data-state="local" aria-hidden="true"></span><span id="headerMenuStatusText">Somente local</span></div>
+                    <div class="header-account-menu-actions" data-header-authenticated hidden>
+                        <button id="headerAccountSettings" type="button">Conta e sincronização</button>
+                        <button id="headerSyncNow" type="button">Sincronizar agora</button>
+                        <button id="headerSignOut" class="header-signout" type="button">Sair da conta</button>
+                    </div>
+                    <div class="header-account-menu-actions" data-header-anonymous>
+                        <button id="headerSignIn" class="header-signin" type="button">Entrar ou criar conta</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -830,7 +856,7 @@
         <section id="central-documentos" class="tab-panel documents-panel">
             <div class="card documents-shell">
                 <div class="section-heading main-heading">
-                    <div><span class="eyebrow">Versão 4.3.0</span><h2>Central de documentos</h2><p class="section-description">Crie textos administrativos a partir de modelos, preencha variáveis e salve modelos próprios.</p></div>
+                    <div><span class="eyebrow">Versão 4.3.1</span><h2>Central de documentos</h2><p class="section-description">Crie textos administrativos a partir de modelos, preencha variáveis e salve modelos próprios.</p></div>
                     <button id="documentNewModel" class="secondary-button" type="button">Novo modelo</button>
                 </div>
                 <div class="documents-layout">
@@ -909,12 +935,12 @@
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 4.3.0</h3>
+                        <h3>Novidades da 4.3.1</h3>
                         <ul class="about-list">
-                            <li>Foi criada a fundação do histórico online, com estrutura própria no Supabase para registros operacionais por usuário.</li>
-                            <li>Os novos registros passam a ter identificação idempotente, módulo, ação, valor, data e dispositivo, preparando a prevenção de duplicidades entre computadores.</li>
-                            <li>O novo HistoryService mantém uma fila local preparada para sincronização gradual nas próximas versões.</li>
-                            <li>Os históricos atuais continuam locais nesta etapa; nenhuma migração automática foi ativada na 4.3.0.</li>
+                            <li>O cabeçalho agora identifica claramente o usuário conectado, utilizando o nome de exibição configurado no sistema.</li>
+                            <li>O menu da conta reúne e-mail, estado da conexão, acesso às configurações de sincronização, sincronização manual e saída da conta.</li>
+                            <li>O rodapé passou a representar o estado técnico da sincronização separadamente da identidade do usuário.</li>
+                            <li>Os estados de conta autenticada, trabalho offline, sincronização, pendência, conflito e armazenamento somente local são apresentados de forma distinta.</li>
                         </ul>
                     </section>
                 </div>
@@ -930,6 +956,7 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline">
+                        <article><strong>4.3.1</strong><p>Identificação da conta no cabeçalho e status técnico no rodapé, separando autenticação, conectividade e sincronização.</p></article>
                         <article><strong>4.3.0</strong><p>Fundação do histórico online: nova tabela protegida por RLS, registros idempotentes por dispositivo e serviço local preparado para sincronização gradual.</p></article>
                         <article><strong>4.2.7</strong><p>Ordenação persistente na Central de Documentos, revisão dos modelos padrão e correção do histórico do Montador de Nome de Arquivo.</p></article>
                         <article><strong>4.2.6</strong><p>Sincronização online dos modelos personalizados da Central de Documentos para validação da capacidade de sincronização entre dispositivos.</p></article>
@@ -961,7 +988,14 @@
     </main>
 
     <footer class="app-footer">
-        <p><span data-app-name>Utilitários Municipais</span> • Versão <span data-app-version></span></p>
+        <div class="app-footer-content">
+            <p><span data-app-name>Utilitários Municipais</span> • Versão <span data-app-version></span></p>
+            <div class="footer-sync-status" id="footerSyncStatus">
+                <span id="footerSyncDot" class="footer-sync-dot" data-state="local" aria-hidden="true"></span>
+                <strong id="footerSyncText">Somente local</strong>
+                <span id="footerSyncTime">Sem sincronização online</span>
+            </div>
+        </div>
     </footer>
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>

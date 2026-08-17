@@ -1,5 +1,16 @@
 # Changelog
 
+## 4.3.1 — Identidade da conta e status de sincronização
+
+- Adicionado indicador de usuário conectado no canto superior direito do cabeçalho.
+- O cabeçalho utiliza o nome de exibição configurado no sistema e apresenta Online, Offline ou Somente local.
+- Adicionado menu da conta com e-mail, acesso às configurações de sincronização, sincronização manual, login e saída.
+- O rodapé passa a representar o estado técnico da sincronização separadamente da identidade da conta.
+- Estados técnicos contemplados: local, sincronizando, sincronizado, pendente, offline, conflito e erro.
+- Exibida a data/hora da última sincronização no rodapé quando disponível.
+- Mantida integralmente a fundação de histórico online da 4.3.0 e os dados locais existentes.
+- Atualizados versão interna, README, manifest, metadados e painel Novidades.
+
 ## 4.3.0 — Fundação do histórico online
 
 - Criada a tabela `history_entries` no Supabase para futuros históricos operacionais sincronizados por usuário.

@@ -1,4 +1,4 @@
-/* Versão 4.3.0 — sincronização seletiva preservada, incluindo modelos personalizados da Central de Documentos. */
+/* Versão 4.3.1 — conta no cabeçalho e estado técnico de sincronização no rodapé. */
 (function () {
     "use strict";
 
@@ -460,8 +460,51 @@
         return Number.isNaN(date.getTime()) ? "Nunca" : date.toLocaleString("pt-BR");
     }
 
+
+    function getDisplayName() {
+        try {
+            const raw = safeGet(`${APP_CONFIG.storagePrefix}ux31:prefs`, "");
+            const prefs = raw ? JSON.parse(raw) : {};
+            const name = String(prefs?.displayName || "").replace(/\s+/g, " ").trim().slice(0, 40);
+            if (name) return name;
+        } catch {}
+        const email = session?.user?.email || "";
+        return email ? email.split("@")[0] : "Entrar";
+    }
+
+    function closeHeaderAccountMenu() {
+        const menu = document.getElementById("headerAccountMenu");
+        const button = document.getElementById("headerAccountButton");
+        if (menu) menu.hidden = true;
+        if (button) button.setAttribute("aria-expanded", "false");
+    }
+
+    function setupHeaderAccountControls() {
+        const button = document.getElementById("headerAccountButton");
+        const menu = document.getElementById("headerAccountMenu");
+        if (!button || !menu || button.dataset.ready === "true") return;
+        button.dataset.ready = "true";
+        button.addEventListener("click", (event) => {
+            event.stopPropagation();
+            menu.hidden = !menu.hidden;
+            button.setAttribute("aria-expanded", String(!menu.hidden));
+        });
+        menu.addEventListener("click", (event) => event.stopPropagation());
+        document.addEventListener("click", closeHeaderAccountMenu);
+        document.addEventListener("keydown", (event) => { if (event.key === "Escape") closeHeaderAccountMenu(); });
+        document.getElementById("headerSignIn")?.addEventListener("click", () => { closeHeaderAccountMenu(); openAuthModal(); });
+        document.getElementById("headerSyncNow")?.addEventListener("click", () => { closeHeaderAccountMenu(); synchronize(); });
+        document.getElementById("headerSignOut")?.addEventListener("click", () => { closeHeaderAccountMenu(); client?.auth.signOut(); });
+        document.getElementById("headerAccountSettings")?.addEventListener("click", () => {
+            closeHeaderAccountMenu();
+            document.querySelector('.ux-main-navigation > [data-tab="configuracoes"]')?.click();
+            window.setTimeout(() => document.getElementById("onlineSettingsPanel")?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
+        });
+    }
+
     function renderOnlineStatus() {
         const email = session?.user?.email || "";
+        const displayName = getDisplayName();
         const lastSync = safeGet(LAST_SYNC_KEY, "");
         const lastAttempt = safeGet(LAST_ATTEMPT_KEY, "");
         document.querySelectorAll("[data-online-user]").forEach((el) => { el.textContent = email || "Não conectado"; });
@@ -470,17 +513,17 @@
         document.querySelectorAll("[data-online-pending]").forEach((el) => { el.textContent = hasPendingChanges() ? `${Object.keys(SYNC_GROUPS).length} grupos` : "Nenhuma"; });
         document.querySelectorAll("[data-online-authenticated]").forEach((el) => { el.hidden = !session?.user; });
         document.querySelectorAll("[data-online-anonymous]").forEach((el) => { el.hidden = !!session?.user; });
+        document.querySelectorAll("[data-header-authenticated]").forEach((el) => { el.hidden = !session?.user; });
+        document.querySelectorAll("[data-header-anonymous]").forEach((el) => { el.hidden = !!session?.user; });
         const conflictButton = document.getElementById("onlineResolveConflict");
         if (conflictButton) conflictButton.hidden = !hasConflict();
-
-        const badges = [document.getElementById("onlineStatusBadge"), document.getElementById("homeOnlineStatusBadge")].filter(Boolean);
-        const detail = document.getElementById("onlineStatusDetail");
-        if (!badges.length) return;
 
         let text = "Local";
         let state = "local";
         let message = "Dados armazenados neste navegador.";
+        let accountState = "Somente local";
         if (session?.user) {
+            accountState = navigator.onLine ? "Online" : "Offline";
             if (!navigator.onLine) {
                 text = hasPendingChanges() ? "Offline — pendente" : "Offline";
                 state = "offline";
@@ -503,13 +546,40 @@
                 message = lastSync ? `Última sincronização: ${formatDate(lastSync)}.` : "Conta conectada.";
             }
         }
+
+        const badges = [document.getElementById("onlineStatusBadge"), document.getElementById("homeOnlineStatusBadge")].filter(Boolean);
         badges.forEach((badge) => {
             badge.textContent = text;
             badge.dataset.state = state;
             badge.title = message;
             badge.setAttribute("aria-label", `Sincronização: ${text}. ${message}`);
         });
+        const detail = document.getElementById("onlineStatusDetail");
         if (detail) detail.textContent = message;
+
+        const accountName = document.getElementById("headerAccountName");
+        const accountStateEl = document.getElementById("headerAccountState");
+        const accountMenuName = document.getElementById("headerAccountMenuName");
+        const accountEmail = document.getElementById("headerAccountEmail");
+        const accountDot = document.getElementById("headerAccountDot");
+        const menuDot = document.getElementById("headerMenuStatusDot");
+        const menuStatusText = document.getElementById("headerMenuStatusText");
+        const accountVisualState = session?.user ? (navigator.onLine ? "online" : "offline") : "local";
+        if (accountName) accountName.textContent = session?.user ? displayName : "Entrar";
+        if (accountStateEl) accountStateEl.textContent = accountState;
+        if (accountMenuName) accountMenuName.textContent = session?.user ? displayName : "Não conectado";
+        if (accountEmail) accountEmail.textContent = email || "Use o armazenamento local ou entre em uma conta.";
+        [accountDot, menuDot].filter(Boolean).forEach((dot) => { dot.dataset.state = accountVisualState; });
+        if (menuStatusText) menuStatusText.textContent = accountState;
+
+        const footerDot = document.getElementById("footerSyncDot");
+        const footerText = document.getElementById("footerSyncText");
+        const footerTime = document.getElementById("footerSyncTime");
+        if (footerDot) footerDot.dataset.state = state;
+        if (footerText) footerText.textContent = session?.user ? text : "Somente local";
+        if (footerTime) footerTime.textContent = session?.user
+            ? (lastSync ? `Última sincronização: ${formatDate(lastSync)}` : message)
+            : "Sem sincronização online";
     }
 
     function createConflictModal() {
@@ -616,7 +686,7 @@
         panel.className = "settings-card online-settings-card";
         panel.innerHTML = `
             <div class="section-heading">
-                <div><span class="eyebrow">Versão 4.3.0</span><h3>Conta e gerenciamento da sincronização</h3><p class="help-text">O armazenamento local continua ativo. A sincronização online mantém preferências, favoritos e modelos personalizados da Central de Documentos disponíveis em outros computadores.</p></div>
+                <div><span class="eyebrow">Versão 4.3.1</span><h3>Conta e gerenciamento da sincronização</h3><p class="help-text">O armazenamento local continua ativo. A sincronização online mantém preferências, favoritos e modelos personalizados da Central de Documentos disponíveis em outros computadores.</p></div>
                 <span id="onlineStatusBadge" class="online-status-badge">Local</span>
             </div>
             <p id="onlineStatusDetail" class="online-status-detail">Dados armazenados neste navegador.</p>
@@ -655,6 +725,7 @@
         addSettingsPanel();
         createAuthModal();
         createConflictModal();
+        setupHeaderAccountControls();
         client = window.SupabaseClientService?.getClient() || null;
         if (!client) {
             const message = window.SupabaseClientService?.getError()?.message || "Cliente Supabase indisponível.";
