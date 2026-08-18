@@ -1,5 +1,63 @@
 # Changelog
 
+## 4.3.3
+
+### Corrigido
+- Removido o texto literal `\\n` abaixo de **Calculadora UVRM > Novo Lançamento > Descrição**.
+
+### Organizado
+- `README.md` mantido na raiz para o GitHub.
+- CHANGELOG, sincronização e relatórios técnicos movidos para `docs/`.
+- Releases movidos para `docs/releases/`.
+- Scripts SQL movidos para `sql/`.
+
+### Mantido
+- Autopreenchimento UVRM da 4.3.2.1.
+- Nenhuma alteração no schema do Supabase.
+
+
+## 4.3.2.1
+
+### Adicionado
+- Histórico local de descrições utilizadas em **Calculadora UVRM > Novo Lançamento**.
+- Sugestões de autopreenchimento no próprio campo **Descrição**, reutilizando textos já usados.
+- Deduplicação das descrições e limite de 30 sugestões recentes.
+
+### Mantido
+- Nenhuma alteração no schema do Supabase; o histórico de descrições permanece local nesta etapa.
+
+
+## 4.3.2
+
+### Corrigido
+- Reinício da sequência de Lotes agora prepara e gera efetivamente `00001` como primeiro número; a geração seguinte avança para `00002`.
+- Estado reiniciado da sequência permanece correto mesmo se a página for recarregada antes da primeira geração.
+- Central de Documentos não força mais barra de rolagem vertical interna na lista de modelos.
+
+### Ajustado
+- Removido o toast “Conta conectada ao Supabase” das atualizações de sessão; retorno à aba ocorre silenciosamente.
+- Removido o indicador redundante de sincronização do Painel principal; cabeçalho e rodapé permanecem como referências de conta e sincronização.
+
+
+## 4.3.1.1 — Hotfix da sequência do módulo Lotes
+
+- Corrigida a recuperação da última sequência efetivamente gerada ao abrir ou atualizar o site.
+- A Sequência inicial agora é sempre preparada como `última sequência + 1`, usando `lastLotSequence` como fonte autoritativa.
+- A sequência do módulo Lotes deixou de depender da opção genérica **Salvar campos**, evitando restauração de valor antigo ou retorno indevido para 4.
+- Mantido o comportamento de reinício manual da sequência para 00001/00002.
+- Nenhuma alteração de banco de dados ou do escopo funcional planejado para a série 4.3.
+
+## 4.3.1 — Identidade da conta e status de sincronização
+
+- Adicionado indicador de usuário conectado no canto superior direito do cabeçalho.
+- O cabeçalho utiliza o nome de exibição configurado no sistema e apresenta Online, Offline ou Somente local.
+- Adicionado menu da conta com e-mail, acesso às configurações de sincronização, sincronização manual, login e saída.
+- O rodapé passa a representar o estado técnico da sincronização separadamente da identidade da conta.
+- Estados técnicos contemplados: local, sincronizando, sincronizado, pendente, offline, conflito e erro.
+- Exibida a data/hora da última sincronização no rodapé quando disponível.
+- Mantida integralmente a fundação de histórico online da 4.3.0 e os dados locais existentes.
+- Atualizados versão interna, README, manifest, metadados e painel Novidades.
+
 ## 4.3.0 — Fundação do histórico online
 
 - Criada a tabela `history_entries` no Supabase para futuros históricos operacionais sincronizados por usuário.
