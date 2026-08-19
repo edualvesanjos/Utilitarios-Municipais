@@ -322,6 +322,8 @@ $("#copiarPercentualCompleto").addEventListener("click", async () => {
 });
 
 $("#limparPercentual").addEventListener("click", () => {
+    $("#percentualModo").value = "percentual";
+    updatePercentageInterface();
     $("#percentualValor1").value = "";
     $("#percentualValor2").value = "";
     resetPercentageResult();

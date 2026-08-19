@@ -56,8 +56,12 @@
         copyButton.disabled = true;
     }
 
-    function updateInterface() {
+    function updateInterface({ clearDependentFields = false } = {}) {
         const between = operation.value === "entre";
+        if (clearDependentFields) {
+            end.value = "";
+            quantity.value = "";
+        }
         endField.hidden = !between;
         quantityField.hidden = between;
         end.disabled = !between;
@@ -141,7 +145,7 @@
         start.focus();
     }
 
-    operation.addEventListener("change", updateInterface);
+    operation.addEventListener("change", () => updateInterface({ clearDependentFields: true }));
     calculateButton.addEventListener("click", calculate);
     clearButton.addEventListener("click", clearAll);
 

@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.3.5.1
+
+### Corrigido
+- Ajustes em Datas, Lotes, Percentual, Configurações, sincronização, backup e `.gitignore`.
+
+
 
 ## 4.3.5
 

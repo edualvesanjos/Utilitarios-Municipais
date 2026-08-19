@@ -18,14 +18,14 @@ function updateSettingsStatistics() {
 }
 
 function updateSettingsSummary() {
-    const modelCount = getStoredArrayLength(FILE_MODELS_KEY);
-    const historyCount = settingsHistoryKeys.reduce((total, key) => total + getStoredArrayLength(key), 0);
-    $("#configModelosSalvos").textContent = String(modelCount);
-    $("#configHistoricosSalvos").textContent = String(historyCount);
-    $("#configSequenciaLote").textContent = String(getLastLotSequence()).padStart(5, "0");
     const lastBackup = localStorage.getItem(LAST_BACKUP_KEY);
     $("#ultimoBackupInfo").textContent = lastBackup ? `Último backup exportado em ${formatDateTime(lastBackup)}.` : "Nenhum backup registrado.";
     updateSettingsStatistics();
+}
+
+function formatBackupTimestamp(date = new Date()) {
+    const pad = (value) => String(value).padStart(2, "0");
+    return `${pad(date.getDate())}${pad(date.getMonth() + 1)}${date.getFullYear()}${pad(date.getHours())}${pad(date.getMinutes())}${pad(date.getSeconds())}`;
 }
 
 function buildBackupPayload() {
@@ -49,7 +49,7 @@ $("#exportarBackup").addEventListener("click", () => {
     saveFormData();
     const payload = buildBackupPayload();
     downloadTextFile(
-        `utilitarios-municipais-backup-${todayIsoDate()}.json`,
+        `Utilitarios-Municipais-Bck-${formatBackupTimestamp(new Date())}.json`,
         JSON.stringify(payload, null, 2),
         "application/json;charset=utf-8"
     );
