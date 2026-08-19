@@ -1,10 +1,13 @@
-/* Utilitários Municipais v4.3.0 — fundação do histórico sincronizável. */
+/* Utilitários Municipais v4.3.4 — sincronização gradual dos históricos operacionais. */
 (function () {
     "use strict";
 
     const OUTBOX_KEY = "history:outbox";
     const DEVICE_KEY = "online:deviceId";
     const HISTORY_SCHEMA_VERSION = 1;
+    const MIGRATION_KEY = "history:migrated:4.3.4";
+    const PREFIX = "utilitariosMunicipais:";
+    const LOCAL_HISTORY = Object.freeze({ arquivo: { key: `${PREFIX}fileHistory`, limit: 15 }, inscricao: { key: `${PREFIX}registrationHistory`, limit: 15 }, lote: { key: `${PREFIX}lotHistory`, limit: 15 }, uvrm: { key: `${PREFIX}uvrmHistory`, limit: 50 }, percentual: { key: `${PREFIX}percentageHistory`, limit: 30 } });
     const SUPPORTED_MODULES = Object.freeze(["arquivo", "inscricao", "lote", "uvrm", "percentual"]);
 
     function nowIso() {
@@ -137,6 +140,83 @@
         return data || [];
     }
 
+
+    function stableStringify(value) {
+        if (value === null || typeof value !== "object") return JSON.stringify(value);
+        if (Array.isArray(value)) return `[${value.map(stableStringify).join(",")}]`;
+        return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${stableStringify(value[key])}`).join(",")}}`;
+    }
+
+    function deterministicClientId(module, value) {
+        const text = `${module}|${stableStringify(value)}`;
+        const hashes = [2166136261, 2246822519, 3266489917, 668265263];
+        for (let j = 0; j < hashes.length; j += 1) {
+            let h = hashes[j] >>> 0;
+            for (let i = 0; i < text.length; i += 1) { h ^= text.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; }
+            hashes[j] = h >>> 0;
+        }
+        const hex = hashes.map((h) => h.toString(16).padStart(8, "0")).join("");
+        return `${hex.slice(0,8)}-${hex.slice(8,12)}-4${hex.slice(13,16)}-a${hex.slice(17,20)}-${hex.slice(20,32)}`;
+    }
+
+    function timestampFromValue(value) {
+        return value?.createdAt || value?.copiedAt || value?.timestamp || null;
+    }
+
+    function queueHistory(module, value, action = "record", options = {}) {
+        const record = enqueue({ module, action, value, timestamp: options.timestamp || timestampFromValue(value), clientId: options.clientId || null, metadata: options.metadata || {} });
+        window.setTimeout(() => syncAll({ silent: true }).catch(() => {}), 0);
+        return record;
+    }
+
+    function migrateLegacyLocalHistories() {
+        if (StorageService.getText(MIGRATION_KEY, "") === "done") return 0;
+        let queued = 0;
+        Object.entries(LOCAL_HISTORY).forEach(([module, cfg]) => {
+            const items = StorageService.get(cfg.key, []);
+            if (!Array.isArray(items)) return;
+            items.forEach((value) => {
+                const clientId = deterministicClientId(module, value);
+                const before = listPending().length;
+                enqueue({ module, action: "legacy_import", value, timestamp: timestampFromValue(value), clientId, metadata: { migrated_from_local: true } });
+                if (listPending().length > before) queued += 1;
+            });
+        });
+        StorageService.setText(MIGRATION_KEY, "done");
+        return queued;
+    }
+
+    function mergeRemoteRows(rows) {
+        let added = 0;
+        Object.entries(LOCAL_HISTORY).forEach(([module, cfg]) => {
+            const local = StorageService.get(cfg.key, []);
+            const items = Array.isArray(local) ? local.slice() : [];
+            const seen = new Set(items.map(stableStringify));
+            rows.filter((row) => row.module === module).slice().reverse().forEach((row) => {
+                const value = row.value;
+                if (!value || typeof value !== "object") return;
+                const fingerprint = stableStringify(value);
+                if (!seen.has(fingerprint)) { items.unshift(value); seen.add(fingerprint); added += 1; }
+            });
+            StorageService.set(cfg.key, items.slice(0, cfg.limit));
+        });
+        if (added) {
+            ["renderFileHistory","renderRegistrationHistory","renderLotHistory","renderUvrmHistory","renderPercentageHistory","renderProductivity33","updateDashboardSummary"].forEach((name) => {
+                try { if (typeof window[name] === "function") window[name](); } catch {}
+            });
+        }
+        return added;
+    }
+
+    async function syncAll({ silent = true } = {}) {
+        migrateLegacyLocalHistories();
+        const uploaded = await uploadPending();
+        const sync = window.OnlineSyncService;
+        if (!sync?.getSession?.()?.user || !navigator.onLine) return { ...uploaded, downloaded: 0 };
+        const remote = await listRemote({ limit: 500 });
+        const downloaded = mergeRemoteRows(remote);
+        return { ...uploaded, downloaded };
+    }
     window.HistoryService = Object.freeze({
         schemaVersion: HISTORY_SCHEMA_VERSION,
         supportedModules: SUPPORTED_MODULES,
@@ -147,6 +227,15 @@
         clearPending,
         uploadPending,
         listRemote,
-        getDeviceId
+        getDeviceId,
+        queueHistory,
+        migrateLegacyLocalHistories,
+        mergeRemoteRows,
+        syncAll
+    });
+
+    window.addEventListener("online", () => window.setTimeout(() => syncAll({ silent: true }).catch(() => {}), 300));
+    document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible" && navigator.onLine) window.setTimeout(() => syncAll({ silent: true }).catch(() => {}), 300);
     });
 })();

@@ -758,6 +758,7 @@
             if (event === "SIGNED_IN" && session?.user) {
                 await ensureProfile(session.user);
                 await synchronize({ silent: true });
+                await window.HistoryService?.syncAll?.({ silent: true });
             }
             if (event === "SIGNED_OUT") {
                 setConflict(false);

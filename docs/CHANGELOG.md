@@ -1,5 +1,38 @@
 # Changelog
 
+
+## 4.3.5
+
+### Adicionado
+- Novo módulo **Datas** com contador entre datas e operações de soma/subtração de dias corridos.
+- Painel de resultado, cópia, limpeza e validações.
+- Integração à navegação, pesquisa global e Biblioteca.
+
+### Corrigido
+- Removido o resíduo literal `\n` do campo Descrição da Calculadora UVRM.
+
+### Banco de dados
+- Sem alteração de schema.
+
+
+## 4.3.4
+
+### Sincronização de históricos
+- Os cinco históricos operacionais (Nome de arquivo, Inscrição, Lotes, UVRM e Percentual) passam a registrar novos eventos na fila online.
+- Históricos locais anteriores são migrados uma única vez usando identificadores determinísticos, reduzindo duplicidades entre dispositivos.
+- Upload usa `upsert` pela chave única `(user_id, client_id)`, tornando reenvios idempotentes.
+- Registros remotos são mesclados ao histórico local por conteúdo, sem duplicar itens equivalentes.
+- Fila pendente é retomada ao reconectar, voltar para a aba ou autenticar.
+
+### Interface
+- Removido o indicador de versão ao lado de “Sobre os Utilitários Municipais”.
+- Removida a seção “Módulos disponíveis” de Sobre.
+- Removido o indicador de versão ao lado de “Biblioteca de ferramentas”.
+
+### Banco de dados
+- Sem alteração de schema: utiliza a tabela `history_entries` criada na 4.3.0.
+
+
 ## 4.3.3
 
 ### Corrigido

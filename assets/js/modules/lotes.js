@@ -98,6 +98,7 @@ function addLotHistory(lots) {
     const history = getLotHistory().slice(0, 14);
     history.unshift(item);
     setJson(LOT_HISTORY_KEY, history);
+    window.HistoryService?.queueHistory?.("lote", item, "generated");
     renderLotHistory();
 }
 
