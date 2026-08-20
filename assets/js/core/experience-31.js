@@ -16,7 +16,7 @@ const get=(k,f)=>{try{const v=localStorage.getItem(UX_PREFIX+k);return v===null?
 const set=(k,v)=>localStorage.setItem(UX_PREFIX+k,JSON.stringify(v));
 function normalizeDisplayName(value){const name=String(value||"").replace(/\s+/g," ").trim().slice(0,40);return name||"Usuário"}
 function applyDisplayName(prefs){const name=normalizeDisplayName(prefs?.displayName);const greeting=document.getElementById("dashboardGreeting");if(greeting)greeting.textContent=`Olá, ${name}!`}
-function applyPrefs(){const p=get("prefs",{theme:"light",compact:false,font:"normal",layout:"grid",displayName:"",widgets:{favorites:true,smart:true,indicators:true,summary:true,recent:true}});applyDisplayName(p);document.body.dataset.theme=p.theme;document.body.classList.toggle("ux-compact",!!p.compact);document.body.classList.toggle("ux-font-large",p.font==="large");document.documentElement.style.setProperty("--ux-accent",p.accent||"#0f4c81");const all=document.getElementById("dashboardAllTools");if(all)all.dataset.layout=p.layout||"grid";const map={favorites:"dashboardFavoritesSection",smart:null,indicators:null,summary:null,recent:null};document.getElementById("dashboardFavoritesSection")?.classList.toggle("ux-hidden-widget",p.widgets?.favorites===false);document.querySelector(".dashboard-smart-grid")?.classList.toggle("ux-hidden-widget",p.widgets?.smart===false);document.querySelector(".dashboard-usage-indicators")?.classList.toggle("ux-hidden-widget",p.widgets?.indicators===false);document.querySelector(".dashboard-summary-grid")?.classList.toggle("ux-hidden-widget",p.widgets?.summary===false);document.querySelector(".dashboard-recent-card")?.classList.toggle("ux-hidden-widget",p.widgets?.recent===false)}
+function applyPrefs(){const p=get("prefs",{theme:"light",compact:false,font:"normal",layout:"grid",displayName:"",widgets:{favorites:true,smart:true,indicators:true,summary:true,recent:true}});applyDisplayName(p);document.body.dataset.theme=p.theme;document.body.classList.toggle("ux-compact",!!p.compact);document.body.classList.toggle("ux-font-large",p.font==="large");document.documentElement.style.setProperty("--ux-accent",p.accent||"#0f4c81");document.documentElement.style.setProperty("--primary-color",p.accent||"#0f4c81");const all=document.getElementById("dashboardAllTools");if(all)all.dataset.layout=p.layout||"grid";const map={favorites:"dashboardFavoritesSection",smart:null,indicators:null,summary:null,recent:null};document.getElementById("dashboardFavoritesSection")?.classList.toggle("ux-hidden-widget",p.widgets?.favorites===false);document.querySelector(".dashboard-smart-grid")?.classList.toggle("ux-hidden-widget",p.widgets?.smart===false);document.querySelector(".dashboard-usage-indicators")?.classList.toggle("ux-hidden-widget",p.widgets?.indicators===false);document.querySelector(".dashboard-summary-grid")?.classList.toggle("ux-hidden-widget",p.widgets?.summary===false);document.querySelector(".dashboard-recent-card")?.classList.toggle("ux-hidden-widget",p.widgets?.recent===false)}
 function createToolbar(){const target=document.querySelector("#inicio .dashboard-hero");if(!target||document.getElementById("uxDashboardToolbar"))return;const wrap=document.createElement("section");wrap.id="uxDashboardToolbar";wrap.className="card";wrap.innerHTML=`<div class="section-heading"><div><span class="eyebrow">Personalização</span><h3>Experiência do Dashboard</h3></div></div><div class="ux-toolbar"><label>Layout <select id="uxLayout"><option value="grid">Grade</option><option value="list">Lista</option><option value="compact">Compacto</option></select></label><button id="uxOpenCommands" type="button" class="secondary">Paleta de comandos</button></div><div class="ux-personalize"><label><input data-ux-widget="favorites" type="checkbox"> Favoritos</label><label><input data-ux-widget="smart" type="checkbox"> Recentes e mais usadas</label><label><input data-ux-widget="indicators" type="checkbox"> Indicadores</label><label><input data-ux-widget="summary" type="checkbox"> Resumo</label><label><input data-ux-widget="recent" type="checkbox"> Atividades recentes</label></div>`;target.after(wrap);const p=get("prefs",{layout:"grid",widgets:{favorites:true,smart:true,indicators:true,summary:true,recent:true}});document.getElementById("uxLayout").value=p.layout||"grid";document.querySelectorAll("[data-ux-widget]").forEach(i=>i.checked=p.widgets?.[i.dataset.uxWidget]!==false);document.getElementById("uxLayout").onchange=e=>{const x=get("prefs",{});x.layout=e.target.value;set("prefs",x);applyPrefs()};document.querySelectorAll("[data-ux-widget]").forEach(i=>i.onchange=()=>{const x=get("prefs",{});x.widgets={...(x.widgets||{}),[i.dataset.uxWidget]:i.checked};set("prefs",x);applyPrefs()});document.getElementById("uxOpenCommands").onclick=openPalette}
 function addSettings(){
     const root=document.querySelector("#configuracoes .settings-list")||document.querySelector("#configuracoes .generator-main")||document.querySelector("#configuracoes .builder-panel");
@@ -64,7 +64,14 @@ function addSettings(){
                 <div class="ux-interface-grid">
                     <label class="ux-setting-field"><span>Tema</span><select id="uxTheme"><option value="light">Claro</option><option value="dark">Escuro</option><option value="contrast">Alto contraste</option></select></label>
                     <label class="ux-setting-field"><span>Tamanho da fonte</span><select id="uxFont"><option value="normal">Normal</option><option value="large">Ampliada</option></select></label>
-                    <label class="ux-setting-field ux-color-field"><span>Cor principal</span><input id="uxAccent" type="color" value="#0f4c81"></label>
+                    <div class="ux-setting-field ux-color-field">
+                        <span>Cor principal</span>
+                        <div class="ux-color-apply-row">
+                            <input id="uxAccent" type="color" value="#0f4c81" aria-label="Selecionar cor principal">
+                            <button id="uxAccentApply" class="secondary" type="button">Aplicar</button>
+                        </div>
+                        <small id="uxAccentFeedback" class="help-text" aria-live="polite"></small>
+                    </div>
                 </div>
             </fieldset>
         </div>`;
@@ -78,7 +85,17 @@ function addSettings(){
     document.getElementById("uxAccent").value=p.accent||"#0f4c81";
     document.getElementById("uxLayout").addEventListener("change",e=>{const x=get("prefs",{});x.layout=e.target.value;set("prefs",x);applyPrefs()});
     document.querySelectorAll("[data-ux-widget]").forEach(i=>i.addEventListener("change",()=>{const x=get("prefs",{});x.widgets={...(x.widgets||{}),[i.dataset.uxWidget]:i.checked};set("prefs",x);applyPrefs()}));
-    ["uxTheme","uxFont","uxAccent"].forEach(id=>document.getElementById(id).addEventListener("input",()=>{const x=get("prefs",{});x.theme=document.getElementById("uxTheme").value;x.font=document.getElementById("uxFont").value;x.accent=document.getElementById("uxAccent").value;x.compact=document.getElementById("uxCompact").checked;set("prefs",x);applyPrefs()}));
+    ["uxTheme","uxFont"].forEach(id=>document.getElementById(id).addEventListener("input",()=>{const x=get("prefs",{});x.theme=document.getElementById("uxTheme").value;x.font=document.getElementById("uxFont").value;x.compact=document.getElementById("uxCompact").checked;set("prefs",x);applyPrefs()}));
+    document.getElementById("uxAccentApply").addEventListener("click",()=>{
+        const x=get("prefs",{});
+        x.accent=document.getElementById("uxAccent").value;
+        set("prefs",x);
+        applyPrefs();
+        const feedback=document.getElementById("uxAccentFeedback");
+        if(feedback){feedback.textContent="Cor aplicada com sucesso!";feedback.classList.add("success")}
+        if(typeof showToast==="function")showToast("Cor aplicada com sucesso!");
+        else if(window.NotificationService?.success)window.NotificationService.success("Cor aplicada com sucesso!");
+    });
     const displayNameInput=document.getElementById("uxDisplayName");
     const saveDisplayName=()=>{const x=get("prefs",{});x.displayName=String(displayNameInput.value||"").replace(/\s+/g," ").trim().slice(0,40);displayNameInput.value=x.displayName;set("prefs",x);applyPrefs()};
     displayNameInput.addEventListener("change",saveDisplayName);

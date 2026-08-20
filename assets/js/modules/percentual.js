@@ -76,6 +76,7 @@ function addPercentageHistory(fullText, resultValue) {
 
     history.unshift(item);
     setJson(PERCENTAGE_HISTORY_KEY, history);
+    window.HistoryService?.queueHistory?.("percentual", item, "calculated");
     renderPercentageHistory();
 }
 
@@ -321,6 +322,8 @@ $("#copiarPercentualCompleto").addEventListener("click", async () => {
 });
 
 $("#limparPercentual").addEventListener("click", () => {
+    $("#percentualModo").value = "percentual";
+    updatePercentageInterface();
     $("#percentualValor1").value = "";
     $("#percentualValor2").value = "";
     resetPercentageResult();

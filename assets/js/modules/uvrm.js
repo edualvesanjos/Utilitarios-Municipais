@@ -18,6 +18,8 @@ function formatDecimal(value, decimals) {
     return Number(value).toLocaleString("pt-BR", { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
 }
 
+function roundCurrency(value) { return Math.round((Number(value) + Number.EPSILON) * 100) / 100; }
+
 function formatUvrmCurrency(value) {
     return Number(value).toLocaleString("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
@@ -108,7 +110,8 @@ function calculateUvrmPreview() {
         return;
     }
 
-    const reais = type === "uvrm" ? input * multiplier * unit : input;
+    const rawReais = type === "uvrm" ? input * multiplier * unit : input;
+    const reais = roundCurrency(rawReais);
     const quantity = type === "uvrm" ? input * multiplier : input / unit;
     const formattedReais = formatUvrmCurrency(reais);
     const formattedQuantity = formatDecimal(quantity, decimals);
@@ -160,7 +163,7 @@ function getUvrmEntryDetail(item) {
 function renderUvrmCurrentList() {
     const items = getUvrmCurrentList();
     const container = $("#uvrmListaAtual");
-    const total = items.reduce((sum, item) => sum + Number(item.reais || 0), 0);
+    const total = roundCurrency(items.reduce((sum, item) => sum + roundCurrency(item.reais || 0), 0));
     $("#uvrmContador").textContent = `${items.length} ${items.length === 1 ? "item" : "itens"}`;
     $("#uvrmTotalAtual").textContent = formatUvrmCurrency(total);
 
@@ -216,7 +219,7 @@ function editUvrmEntry(item) {
 
 function buildUvrmPlainValues(items) { return items.map(item => formatUvrmCurrency(item.reais)).join("\n"); }
 function buildUvrmDetailedText(items) {
-    const total = items.reduce((sum, item) => sum + Number(item.reais || 0), 0);
+    const total = roundCurrency(items.reduce((sum, item) => sum + roundCurrency(item.reais || 0), 0));
     const lines = items.map((item, index) => `${index + 1}. ${item.description || "Lançamento"}: ${formatUvrmCurrency(item.reais)}`);
     return [...lines, `Total: ${formatUvrmCurrency(total)}`].join("\n");
 }
@@ -224,11 +227,12 @@ function buildUvrmDetailedText(items) {
 function saveUvrmOperation() {
     const items = getUvrmCurrentList();
     if (!items.length) return showToast("Adicione pelo menos um lançamento.", "warning");
-    const total = items.reduce((sum, item) => sum + Number(item.reais || 0), 0);
+    const total = roundCurrency(items.reduce((sum, item) => sum + roundCurrency(item.reais || 0), 0));
     const operation = { id: createUniqueId(), items, total, itemCount: items.length, createdAt: new Date().toISOString(), fullText: buildUvrmDetailedText(items), plainValue: formatUvrmCurrency(total) };
     const history = getUvrmHistory();
     history.unshift(operation);
     setJson(UVRM_HISTORY_KEY, history.slice(0, 50));
+    window.HistoryService?.queueHistory?.("uvrm", operation, "saved");
     localStorage.removeItem(UVRM_CURRENT_LIST_KEY);
     renderUvrmCurrentList();
     renderUvrmHistory();
@@ -299,7 +303,7 @@ $("#cancelarEdicaoUvrm").addEventListener("click", resetUvrmEntryForm);
 $("#limparUvrm").addEventListener("click", resetUvrmEntryForm);
 $("#copiarTodosUvrm").addEventListener("click", () => { const items=getUvrmCurrentList(); if(!items.length)return showToast("A lista está vazia.","warning"); copyText(buildUvrmPlainValues(items)); });
 $("#copiarUvrmCompleto").addEventListener("click", () => { const items=getUvrmCurrentList(); if(!items.length)return showToast("A lista está vazia.","warning"); copyText(buildUvrmDetailedText(items)); });
-$("#copiarUvrmValor").addEventListener("click", () => { const items=getUvrmCurrentList(); if(!items.length)return showToast("A lista está vazia.","warning"); copyText(formatUvrmCurrency(items.reduce((s,i)=>s+Number(i.reais||0),0))); });
+$("#copiarUvrmValor").addEventListener("click", () => { const items=getUvrmCurrentList(); if(!items.length)return showToast("A lista está vazia.","warning"); copyText(formatUvrmCurrency(roundCurrency(items.reduce((s,i)=>s+roundCurrency(i.reais||0),0)))); });
 $("#salvarOperacaoUvrm").addEventListener("click", saveUvrmOperation);
 $("#limparListaUvrm").addEventListener("click", () => { if(!getUvrmCurrentList().length)return; if(confirm("Limpar todos os lançamentos da operação atual?")){ localStorage.removeItem(UVRM_CURRENT_LIST_KEY); renderUvrmCurrentList(); resetUvrmEntryForm(); } });
 $("#limparHistoricoUvrm").addEventListener("click", () => { if(confirm("Limpar todo o histórico UVRM?")){ localStorage.removeItem(UVRM_HISTORY_KEY); renderUvrmHistory(); showToast("Histórico UVRM removido."); } });

@@ -84,6 +84,7 @@ function addRegistrationHistory(masked, type) {
 
     history.unshift(item);
     setJson(REGISTRATION_HISTORY_KEY, history);
+    window.HistoryService?.queueHistory?.("inscricao", item, "copied");
     renderRegistrationHistory();
 }
 

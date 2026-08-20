@@ -98,6 +98,7 @@ function addLotHistory(lots) {
     const history = getLotHistory().slice(0, 14);
     history.unshift(item);
     setJson(LOT_HISTORY_KEY, history);
+    window.HistoryService?.queueHistory?.("lote", item, "generated");
     renderLotHistory();
 }
 
@@ -132,7 +133,7 @@ function renderLotHistory() {
     field.addEventListener("change", updateLotPreview);
 });
 
-$("#gerarLotes").addEventListener("click", () => {
+$("#gerarLotes").addEventListener("click", async () => {
     const lots = generateLotList();
     const { initial, quantity } = getLotFormValues();
     const finalSequence = initial + quantity - 1;
@@ -146,12 +147,10 @@ $("#gerarLotes").addEventListener("click", () => {
     updateLastLotDisplay();
     updateLotPreview();
     addLotHistory(lots);
-    showToast(`${lots.length} lote(s) gerado(s). Próxima sequência preparada.`);
+    await copyText(lots.join("\n"));
+    showToast(`${lots.length} lote(s) gerado(s) e copiado(s). Próxima sequência preparada.`);
 });
 
-$("#copiarLotes").addEventListener("click", () => {
-    copyText($("#loteResultado").textContent);
-});
 
 $("#baixarLotesTxt").addEventListener("click", () => {
     const content = $("#loteResultado").textContent.trim();
