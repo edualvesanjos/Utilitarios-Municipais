@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="assets/css/modules/inscricao.css">
     <link rel="stylesheet" href="assets/css/modules/uvrm.css">
     <link rel="stylesheet" href="assets/css/modules/percentual.css">
+    <link rel="stylesheet" href="assets/css/modules/datas.css">
     <link rel="stylesheet" href="assets/css/modules/configuracoes.css">
     <link rel="stylesheet" href="assets/css/modules/sobre.css">
     <link rel="stylesheet" href="assets/css/v3/architecture.css">
@@ -67,7 +68,7 @@
                 <div id="uxToolsMenuDropdown" class="ux-tools-dropdown v32-tools-dropdown" role="menu" hidden>
                     <section class="ux-tools-group"><strong>Documentos</strong><button class="tab-button" type="button" data-tab="central-documentos" role="menuitem"><span class="menu-tool-icon" data-tool-icon="documents"></span> Central de documentos</button><button class="tab-button" type="button" data-tab="arquivo" role="menuitem"><span class="menu-tool-icon" data-tool-icon="file"></span> Nome de arquivo</button></section>
                     <section class="ux-tools-group"><strong>Cadastros</strong><button class="tab-button" type="button" data-tab="inscricao" role="menuitem"><span class="menu-tool-icon" data-tool-icon="building"></span> Inscrição imobiliária</button><button class="tab-button" type="button" data-tab="lote" role="menuitem"><span class="menu-tool-icon" data-tool-icon="grid"></span> Número de lote</button></section>
-                    <section class="ux-tools-group"><strong>Cálculos</strong><button class="tab-button" type="button" data-tab="uvrm" role="menuitem"><span class="menu-tool-icon" data-tool-icon="coins"></span> Calculadora UVRM</button><button class="tab-button" type="button" data-tab="percentual" role="menuitem"><span class="menu-tool-icon" data-tool-icon="percent"></span> Percentual</button></section>
+                    <section class="ux-tools-group"><strong>Cálculos</strong><button class="tab-button" type="button" data-tab="uvrm" role="menuitem"><span class="menu-tool-icon" data-tool-icon="coins"></span> Calculadora UVRM</button><button class="tab-button" type="button" data-tab="percentual" role="menuitem"><span class="menu-tool-icon" data-tool-icon="percent"></span> Percentual</button><button class="tab-button" type="button" data-tab="datas" role="menuitem"><span class="menu-tool-icon" data-tool-icon="calendar"></span> Datas</button></section>
                     <section class="ux-tools-group"><strong>Produtividade</strong><button class="tab-button" type="button" data-tab="biblioteca" role="menuitem"><span class="menu-tool-icon" data-tool-icon="library"></span> Biblioteca de ferramentas</button><button class="tab-button" type="button" data-tab="historico-global" role="menuitem"><span class="menu-tool-icon" data-tool-icon="history"></span> Histórico global</button></section>
                     <section class="ux-tools-group"><strong>Sistema</strong><button class="tab-button" type="button" data-tab="configuracoes" role="menuitem"><span class="menu-tool-icon" data-tool-icon="settings"></span> Configurações</button><button class="tab-button" type="button" data-tab="sobre" role="menuitem"><span class="menu-tool-icon" data-tool-icon="info"></span> Sobre</button></section>
                 </div>
@@ -460,7 +461,6 @@
 
                         <div class="actions">
                             <button id="gerarLotes" class="primary">Gerar lote(s)</button>
-                            <button id="copiarLotes" class="secondary">Copiar resultado</button>
                             <button id="baixarLotesTxt" class="secondary">Baixar TXT</button>
                             <button id="limparLotes" class="secondary">Limpar resultado</button>
                         </div>
@@ -555,7 +555,8 @@
 
                             <label>
                                 Descrição <span class="optional-label">(opcional)</span>
-                                <input id="uvrmDescricao" type="text" list="uvrmDescricaoSugestoes" autocomplete="off" maxlength="100" placeholder="Ex.: Taxa de licença">\n                                <datalist id="uvrmDescricaoSugestoes"></datalist>
+                                <input id="uvrmDescricao" type="text" list="uvrmDescricaoSugestoes" autocomplete="off" maxlength="100" placeholder="Ex.: Taxa de licença">
+                                <datalist id="uvrmDescricaoSugestoes"></datalist>
                             </label>
 
                             <div class="grid two-columns">
@@ -775,6 +776,62 @@
             </div>
         </section>
 
+
+<section id="datas" class="tab-panel">
+    <div class="card">
+        <div class="section-heading main-heading">
+            <div>
+                <h2>Datas</h2>
+                <p class="section-description">Conte dias entre datas ou calcule uma nova data somando ou subtraindo dias corridos.</p>
+            </div>
+        </div>
+
+        <div class="datas-grid">
+            <section class="builder-panel">
+                <div class="form-grid">
+                    <label>
+                        Operação
+                        <select id="datasOperacao">
+                            <option value="entre" selected>Contador de dias entre datas</option>
+                            <option value="somar">Somar Dias em Datas</option>
+                            <option value="subtrair">Subtrair Dias em Datas</option>
+                        </select>
+                    </label>
+
+                    <label>
+                        Data inicial
+                        <input id="datasInicio" type="date">
+                    </label>
+
+                    <label id="datasFinalCampo">
+                        Data final
+                        <input id="datasFinal" type="date">
+                    </label>
+
+                    <label id="datasQuantidadeCampo" hidden>
+                        Quantidade de dias
+                        <input id="datasQuantidade" type="number" min="0" step="1" inputmode="numeric" placeholder="Ex.: 30">
+                    </label>
+                </div>
+
+                <p id="datasFeedback" class="feedback-message" aria-live="polite"></p>
+
+                <div class="actions">
+                    <button id="calcularDatas" class="primary" type="button">Calcular</button>
+                    <button id="limparDatas" class="secondary" type="button">Limpar</button>
+                </div>
+            </section>
+
+            <aside class="datas-result-card" aria-live="polite">
+                <span id="datasResultadoRotulo" class="eyebrow">RESULTADO</span>
+                <strong id="datasResultado">—</strong>
+                <p id="datasResultadoDetalhe">Informe os dados para calcular.</p>
+                <button id="copiarDatasResultado" class="secondary" type="button" disabled>Copiar resultado</button>
+            </aside>
+        </div>
+    </div>
+</section>
+
         <section id="configuracoes" class="tab-panel">
             <div class="card">
                 <div class="section-heading main-heading">
@@ -782,11 +839,6 @@
                 </div>
                 <div class="generator-grid">
                     <section class="builder-panel">
-                        <div class="registration-status settings-summary">
-                            <div><span class="status-label">Modelos salvos</span><strong id="configModelosSalvos">0</strong></div>
-                            <div><span class="status-label">Itens em históricos</span><strong id="configHistoricosSalvos">0</strong></div>
-                            <div><span class="status-label">Sequência de lote</span><strong id="configSequenciaLote">00001</strong></div>
-                        </div>
                         <section class="settings-card">
                             <h3>Backup completo</h3><p class="help-text">Exporte todas as preferências, modelos, sequências e históricos para um arquivo JSON.</p>
                             <div class="actions"><button id="exportarBackup" class="primary">Exportar backup</button><label class="file-button secondary">Importar backup<input id="importarBackup" type="file" accept=".json,application/json"></label></div>
@@ -856,7 +908,7 @@
         <section id="central-documentos" class="tab-panel documents-panel">
             <div class="card documents-shell">
                 <div class="section-heading main-heading">
-                    <div><span class="eyebrow">Versão 4.3.3</span><h2>Central de documentos</h2><p class="section-description">Crie textos administrativos a partir de modelos, preencha variáveis e salve modelos próprios.</p></div>
+                    <div><span class="eyebrow">Versão 4.3.5.1</span><h2>Central de documentos</h2><p class="section-description">Crie textos administrativos a partir de modelos, preencha variáveis e salve modelos próprios.</p></div>
                     <button id="documentNewModel" class="secondary-button" type="button">Novo modelo</button>
                 </div>
                 <div class="documents-layout">
@@ -893,7 +945,7 @@
 
         <section id="biblioteca" class="tab-panel productivity-panel">
             <div class="card">
-                <div class="section-heading main-heading"><div><span class="eyebrow">Produtividade</span><h2>Biblioteca de ferramentas</h2><p class="section-description">Catálogo central para localizar ferramentas, favoritos e modelos reutilizáveis.</p></div><span class="version-badge v3">v3.3</span></div>
+                <div class="section-heading main-heading"><div><span class="eyebrow">Produtividade</span><h2>Biblioteca de ferramentas</h2><p class="section-description">Catálogo central para localizar ferramentas, favoritos e modelos reutilizáveis.</p></div></div>
                 <div class="productivity-toolbar"><label class="productivity-search"><span>Pesquisar</span><input id="librarySearch" type="search" placeholder="Ferramenta, categoria ou palavra-chave"></label><label><span>Categoria</span><select id="libraryCategory"><option value="todos">Todas</option></select></label><label><span>Exibição</span><select id="libraryView"><option value="grid">Grade</option><option value="list">Lista</option></select></label></div>
                 <div class="library-summary"><div><span>Ferramentas</span><strong id="libraryToolCount">0</strong></div><div><span>Favoritos</span><strong id="libraryFavoriteCount">0</strong></div><div><span>Modelos de arquivo</span><strong id="libraryModelCount">0</strong></div></div>
                 <section class="productivity-section"><div class="section-heading"><div><h3>Catálogo</h3><p class="mini-description">Abra uma ferramenta ou altere seus favoritos.</p></div></div><div id="libraryTools" class="library-tools"></div></section>
@@ -920,7 +972,6 @@
                         <h2>Sobre os Utilitários Municipais</h2>
                         <p class="section-description">Consulte a versão instalada, as novidades e o histórico de evolução do sistema.</p>
                     </div>
-                    <span class="version-badge v3">Versão <span data-app-version></span></span>
                 </div>
 
                 <div class="about-grid">
@@ -935,27 +986,23 @@
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 4.3.3</h3>
+                        <h3>Novidades da 4.3.5.1</h3>
                         <ul class="about-list">
-                            <li>Corrigida a persistência da última sequência no módulo Número de lote ao atualizar ou reabrir o site.</li>
-                            <li>A Sequência inicial agora continua automaticamente a partir da última sequência efetivamente gerada.</li>
-                            <li>O controle de sequência passou a ser independente da opção genérica Salvar campos, evitando retorno indevido para valores antigos.</li>
-                            <li>Hotfix isolado, sem alteração do escopo das próximas etapas planejadas da série 4.3.</li>
+                                <li><strong>Novo módulo Datas:</strong> contador entre datas, soma e subtração de dias corridos, com validações, copiar e limpar.</li>
+                                <li><strong>Calculadora UVRM:</strong> removido o resíduo visual <code>\\n</code> abaixo do campo Descrição.</li>
+                            <li>Históricos dos módulos passam a entrar na fila de sincronização online, preservando o armazenamento local.</li>
+                            <li>Registros pendentes são reenviados com identificador idempotente para evitar duplicidades no Supabase.</li>
+                            <li>Históricos remotos são mesclados ao navegador sem duplicar registros equivalentes.</li>
+                            <li>Históricos locais anteriores são migrados uma única vez para a fila online.</li>
+                            <li>Ajustes visuais em Sobre e Biblioteca removem indicadores redundantes.</li>
                         </ul>
                     </section>
                 </div>
 
                 <section class="settings-card">
-                    <h3>Módulos disponíveis</h3>
-                    <div class="about-modules">
-                        <span>Nome de arquivo</span><span>Inscrição imobiliária</span><span>Número de lote</span>
-                        <span>Calculadora UVRM</span><span>Percentual</span><span>Central de documentos</span><span>Biblioteca</span><span>Histórico global</span><span>Configurações</span>
-                    </div>
-                </section>
-
-                <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline">
+                        <article><strong>4.3.4</strong><p>Sincronização gradual dos históricos dos módulos, migração local idempotente e prevenção de duplicidades entre dispositivos.</p></article>
                         <article><strong>4.3.1.1</strong><p>Hotfix do módulo Número de lote: recuperação confiável da última sequência e preparação automática da próxima ao reabrir o sistema.</p></article>
                         <article><strong>4.3.1</strong><p>Identificação da conta no cabeçalho e status técnico no rodapé, separando autenticação, conectividade e sincronização.</p></article>
                         <article><strong>4.3.0</strong><p>Fundação do histórico online: nova tabela protegida por RLS, registros idempotentes por dispositivo e serviço local preparado para sincronização gradual.</p></article>
@@ -1031,6 +1078,7 @@
     <script src="assets/js/modules/lotes.js"></script>
     <script src="assets/js/modules/uvrm.js"></script>
     <script src="assets/js/modules/percentual.js"></script>
+    <script src="assets/js/modules/datas.js"></script>
     <script src="assets/js/modules/configuracoes.js"></script>
     <script src="assets/js/modules/documentos.js"></script>
     <script src="assets/js/app.js"></script>

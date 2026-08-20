@@ -112,3 +112,7 @@
     .app-footer-content { width:100%; flex-direction:column; align-items:flex-start; }
     .footer-sync-status { flex-wrap:wrap; justify-content:flex-start; }
 }
+
+/* v4.3.5.1 — botões de conta/sincronização com altura uniforme */
+#onlineSettingsPanel .actions { align-items: stretch; }
+#onlineSettingsPanel .actions button { min-height: 42px; display: inline-flex; align-items: center; justify-content: center; }
