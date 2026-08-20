@@ -548,3 +548,22 @@ body[data-theme="contrast"] .ux-tools-menu-button.active {
 .ux-display-name-field { margin-bottom:16px }
 .ux-display-name-field input { width:100% }
 .ux-display-name-field small { display:block; margin-top:5px; font-weight:400 }
+
+/* v4.3.5.2 — seletor de cor principal com aplicação explícita */
+.ux-color-apply-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.ux-color-apply-row #uxAccent {
+    flex: 1 1 auto;
+    min-width: 64px;
+}
+.ux-color-apply-row #uxAccentApply {
+    flex: 0 0 auto;
+    min-height: 40px;
+}
+#uxAccentFeedback.success {
+    color: var(--success-color, #157347);
+    font-weight: 600;
+}

@@ -696,8 +696,8 @@
                 <div><span>Última tentativa</span><strong data-online-last-attempt>Nunca</strong></div>
                 <div><span>Pendências</span><strong data-online-pending>Nenhuma</strong></div>
             </div>
-            <div class="actions" data-online-anonymous><button id="onlineOpenAuth" class="primary" type="button">Entrar ou criar conta</button></div>
-            <div class="actions" data-online-authenticated hidden>
+            <div class="actions online-account-actions" data-online-anonymous><button id="onlineOpenAuth" class="primary" type="button">Entrar ou criar conta</button></div>
+            <div class="actions online-account-actions" data-online-authenticated hidden>
                 <button id="onlineSyncNow" class="primary" type="button">Sincronizar agora</button>
                 <button id="onlineRestore" class="secondary" type="button">Usar dados online</button>
                 <button id="onlineResolveConflict" class="secondary" type="button" hidden>Resolver conflito</button>

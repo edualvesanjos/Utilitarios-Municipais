@@ -1,5 +1,13 @@
 # Changelog
 
+
+## 4.3.5.2
+
+### Corrigido
+- Cor principal com botão **Aplicar**, confirmação visual e persistência.
+- Botões de conta/sincronização alinhados horizontalmente.
+
+
 ## 4.3.5.1
 
 ### Corrigido
