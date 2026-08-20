@@ -567,3 +567,8 @@ body[data-theme="contrast"] .ux-tools-menu-button.active {
     color: var(--success-color, #157347);
     font-weight: 600;
 }
+
+/* v4.3.5.3 */
+.ux-color-apply-row { display:flex; align-items:center; gap:8px; }
+.ux-color-apply-row #uxAccent { flex:0 0 auto !important; width:56px !important; min-width:56px !important; max-width:56px !important; height:38px; padding:2px; }
+.ux-color-apply-row #uxAccentApply { flex:0 0 auto !important; min-height:38px; padding:8px 14px; white-space:nowrap; }

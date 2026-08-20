@@ -696,12 +696,12 @@
                 <div><span>Última tentativa</span><strong data-online-last-attempt>Nunca</strong></div>
                 <div><span>Pendências</span><strong data-online-pending>Nenhuma</strong></div>
             </div>
-            <div class="actions online-account-actions" data-online-anonymous><button id="onlineOpenAuth" class="primary" type="button">Entrar ou criar conta</button></div>
-            <div class="actions online-account-actions" data-online-authenticated hidden>
-                <button id="onlineSyncNow" class="primary" type="button">Sincronizar agora</button>
-                <button id="onlineRestore" class="secondary" type="button">Usar dados online</button>
-                <button id="onlineResolveConflict" class="secondary" type="button" hidden>Resolver conflito</button>
-                <button id="onlineSignOut" class="danger-outline" type="button">Sair</button>
+            <div class="actions online-account-actions" id="onlineAccountActions">
+                <button id="onlineOpenAuth" class="primary" type="button" data-online-anonymous>Entrar ou criar conta</button>
+                <button id="onlineSyncNow" class="primary" type="button" data-online-authenticated hidden>Sincronizar agora</button>
+                <button id="onlineRestore" class="secondary" type="button" data-online-authenticated hidden>Usar dados online</button>
+                <button id="onlineResolveConflict" class="secondary" type="button" data-online-authenticated hidden>Resolver conflito</button>
+                <button id="onlineSignOut" class="danger-outline" type="button" data-online-authenticated hidden>Sair</button>
             </div>
             <label class="checkbox-row"><input id="onlineAutoSync" type="checkbox">Sincronizar automaticamente quando houver alterações</label>
             <p class="help-text">Sincronizados: preferências, nome de exibição, aparência, favoritos, última ferramenta, continuidade do Dashboard e modelos personalizados da Central de Documentos. Históricos dos módulos, estatísticas e valores da UVRM permanecem somente neste navegador.</p>`;

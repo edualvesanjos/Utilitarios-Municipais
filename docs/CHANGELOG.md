@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.3.5.3
+
+### Corrigido
+- Total UVRM por soma de valores já arredondados.
+- Seletor de Cor principal compacto.
+- Botões de conta/sincronização na mesma linha em desktop.
+
+
 
 ## 4.3.5.2
 
