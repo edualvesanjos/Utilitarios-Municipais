@@ -164,3 +164,17 @@
 .app-environment-badge[data-environment="production"] {
     opacity: .72;
 }
+
+/* v4.3.6.1 — DEV deve ser um alerta visual; produção não exibe badge */
+.app-environment-badge[data-environment="development"]{
+    background:#b42318;
+    color:#fff;
+    border-color:#b42318;
+    opacity:1;
+    min-height:30px;
+    padding:4px 11px;
+    font-size:.85rem;
+    font-weight:900;
+    box-shadow:0 1px 4px rgba(0,0,0,.18);
+}
+.app-environment-badge[data-environment="production"]{display:none!important}

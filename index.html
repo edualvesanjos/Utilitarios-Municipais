@@ -401,17 +401,19 @@
                 </div>
                 <div class="generator-grid">
                     <section class="builder-panel">
-                        <label>Tipo de documento
-                            <select id="documentoFiscalTipo">
-                                <option value="auto" selected>Detectar automaticamente</option>
-                                <option value="cnpj">CNPJ</option>
-                                <option value="cpf">CPF</option>
-                            </select>
-                        </label>
+                        <fieldset class="document-type-options">
+                            <legend>Tipo de documento</legend>
+                            <label class="radio-row"><input type="radio" name="documentoFiscalTipo" value="auto" checked> Detectar automaticamente</label>
+                            <label class="radio-row"><input type="radio" name="documentoFiscalTipo" value="cnpj"> CNPJ</label>
+                            <label class="radio-row"><input type="radio" name="documentoFiscalTipo" value="cpf"> CPF</label>
+                        </fieldset>
                         <label>CPF ou CNPJ
                             <input id="documentoFiscalEntrada" type="text" inputmode="numeric" autocomplete="off" maxlength="18" placeholder="Digite ou cole o número">
                         </label>
-                        <label class="checkbox-row"><input id="documentoFiscalAutoCopy" type="checkbox">Copiar automaticamente</label>
+                        <div class="document-copy-options">
+                            <label class="checkbox-row"><input id="documentoFiscalAutoCopy" type="checkbox"> Copiar automaticamente</label>
+                            <label class="checkbox-row"><input id="documentoFiscalSemMascara" type="checkbox"> Sem máscara</label>
+                        </div>
                         <div class="registration-status">
                             <div><span class="status-label">Tipo detectado</span><strong id="documentoFiscalTipoDetectado">—</strong></div>
                             <div><span class="status-label">Situação</span><strong id="documentoFiscalStatus">Aguardando</strong></div>
@@ -880,6 +882,9 @@
                 <button id="copiarDatasResultado" class="secondary" type="button" disabled>Copiar resultado</button>
             </aside>
         </div>
+        <div class="tab-footer-navigation">
+            <button class="back-home-button" type="button" data-open-tab="inicio"><span aria-hidden="true">←</span> Voltar para a Página Inicial</button>
+        </div>
     </div>
 </section>
 
@@ -1025,6 +1030,7 @@
                             <div><dt>Versão</dt><dd data-app-version></dd></div>
                             <div><dt>Arquitetura</dt><dd>Modular — Série 4</dd></div>
                             <div><dt>Armazenamento</dt><dd>Local + Supabase</dd></div>
+                            <div><dt>Ambiente BD</dt><dd id="aboutDatabaseEnvironment">—</dd></div>
                         </dl>
                     </section>
 
@@ -1137,9 +1143,12 @@
             const badge = document.getElementById("appEnvironmentBadge");
             if (!badge) return;
             const environment = window.APP_ENVIRONMENT || "production";
-            badge.textContent = environment === "development" ? "DEV" : "PROD";
+            const isDevelopment = environment === "development";
+            badge.textContent = isDevelopment ? "DEV" : "";
             badge.dataset.environment = environment;
-            badge.hidden = false;
+            badge.hidden = !isDevelopment;
+            const aboutEnvironment = document.getElementById("aboutDatabaseEnvironment");
+            if (aboutEnvironment) aboutEnvironment.textContent = isDevelopment ? "Desenvolvimento" : "Produção";
             document.documentElement.dataset.appEnvironment = environment;
         })();
     </script>

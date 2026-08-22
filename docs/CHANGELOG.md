@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.3.6.1
+
+### Alterado
+- Refinamentos de backup, históricos UVRM/Percentual, CPF/CNPJ, Datas e identificação do ambiente de banco.
+
+
 ## 4.3.6
 
 ### Adicionado

@@ -49,7 +49,7 @@ $("#exportarBackup").addEventListener("click", () => {
     saveFormData();
     const payload = buildBackupPayload();
     downloadTextFile(
-        `Utilitarios-Municipais-Bck-${formatBackupTimestamp(new Date())}.json`,
+        `UM-BKP-${APP_VERSION}-${formatBackupTimestamp(new Date())}.json`,
         JSON.stringify(payload, null, 2),
         "application/json;charset=utf-8"
     );
