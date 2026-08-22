@@ -143,3 +143,17 @@
     font-size: .78rem;
     margin-top: 2px
 }
+/* v4.3.6.1 — histórico com rolagem somente vertical */
+#uvrmHistorico {
+    max-height: 420px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-width: 0;
+}
+#uvrmHistorico .uvrm-history-card,
+#uvrmHistorico .uvrm-history-card * {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
