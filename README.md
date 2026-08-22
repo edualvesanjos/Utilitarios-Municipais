@@ -81,3 +81,9 @@ A versão corrente é controlada por `APP_VERSION` em `assets/js/core/config.js`
 ### 4.3.6 — CPF / CNPJ
 
 Novo módulo independente para normalização e validação de CPF/CNPJ, com histórico local e cópia automática opcional. A sincronização fica para 4.4.x.
+
+### Ambientes Supabase
+
+O projeto suporta ambientes separados de **Desenvolvimento** e **Produção**.
+
+Consulte `docs/AMBIENTES_SUPABASE.md` antes de alterar banco, RLS ou sincronização. O ambiente ativo é definido por `APP_ENVIRONMENT` em `assets/js/core/config.js`.

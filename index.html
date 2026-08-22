@@ -30,7 +30,7 @@
             <div class="v32-brand">
                 <span class="v32-brand-icon" aria-hidden="true">🏛</span>
                 <div><h1 data-app-name>Utilitários Municipais</h1><small>Ferramentas internas</small></div>
-                <span class="v32-version">v<span data-app-version></span></span>
+                <span class="v32-version">v<span data-app-version></span></span><span id="appEnvironmentBadge" class="app-environment-badge" hidden></span>
             </div>
             <div class="header-account" id="headerAccount">
                 <button id="headerAccountButton" class="header-account-button" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="headerAccountMenu">
@@ -1131,6 +1131,17 @@
     <script src="assets/js/core/productivity-33.js"></script>
     <script id="appVersionBinder4354">
         document.querySelectorAll("[data-app-version]").forEach((el) => { el.textContent = window.APP_VERSION || ""; });
+    </script>
+    <script id="environmentBadgeDevInfra">
+        (() => {
+            const badge = document.getElementById("appEnvironmentBadge");
+            if (!badge) return;
+            const environment = window.APP_ENVIRONMENT || "production";
+            badge.textContent = environment === "development" ? "DEV" : "PROD";
+            badge.dataset.environment = environment;
+            badge.hidden = false;
+            document.documentElement.dataset.appEnvironment = environment;
+        })();
     </script>
 </body>
 </html>

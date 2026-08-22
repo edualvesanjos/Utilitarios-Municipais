@@ -15,7 +15,13 @@
 
     function isConfigured() {
         const { url, key } = getConfiguration();
-        return Boolean(url && key);
+        const placeholder = /SEU-PROJETO-DE-TESTE|COLE_A_CHAVE|example|placeholder/i;
+        return Boolean(
+            url &&
+            key &&
+            !placeholder.test(url) &&
+            !placeholder.test(key)
+        );
     }
 
     function getClient() {
@@ -25,7 +31,12 @@
         try {
             if (!window.supabase?.createClient) throw new Error("Biblioteca Supabase não carregada.");
             const { url, key } = getConfiguration();
-            if (!url || !key) throw new Error("Configuração do Supabase ausente.");
+            if (!isConfigured()) {
+                throw new Error(
+                    `Supabase não configurado para o ambiente "${APP_CONFIG.environment}". ` +
+                    "Preencha URL e Publishable key em assets/js/core/config.js."
+                );
+            }
 
             instance = window.supabase.createClient(url, key, {
                 auth: {
@@ -47,6 +58,10 @@
         getClient,
         isConfigured,
         getConfiguration,
+        getEnvironment: () => ({
+            id: APP_CONFIG.environment,
+            name: APP_CONFIG.environmentName
+        }),
         getError: () => initializationError
     });
 })();
