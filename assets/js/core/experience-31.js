@@ -68,9 +68,9 @@ function addSettings(){
                         <span>Cor principal</span>
                         <div class="ux-color-apply-row">
                             <input id="uxAccent" type="color" value="#0f4c81" aria-label="Selecionar cor principal">
-                            <button id="uxAccentApply" class="secondary" type="button">Aplicar</button>
+                            <button id="uxInterfaceApply" class="secondary" type="button">Aplicar</button>
                         </div>
-                        <small id="uxAccentFeedback" class="help-text" aria-live="polite"></small>
+                        <small id="uxInterfaceFeedback" class="help-text" aria-live="polite"></small>
                     </div>
                 </div>
             </fieldset>
@@ -85,16 +85,17 @@ function addSettings(){
     document.getElementById("uxAccent").value=p.accent||"#0f4c81";
     document.getElementById("uxLayout").addEventListener("change",e=>{const x=get("prefs",{});x.layout=e.target.value;set("prefs",x);applyPrefs()});
     document.querySelectorAll("[data-ux-widget]").forEach(i=>i.addEventListener("change",()=>{const x=get("prefs",{});x.widgets={...(x.widgets||{}),[i.dataset.uxWidget]:i.checked};set("prefs",x);applyPrefs()}));
-    ["uxTheme","uxFont"].forEach(id=>document.getElementById(id).addEventListener("input",()=>{const x=get("prefs",{});x.theme=document.getElementById("uxTheme").value;x.font=document.getElementById("uxFont").value;x.compact=document.getElementById("uxCompact").checked;set("prefs",x);applyPrefs()}));
-    document.getElementById("uxAccentApply").addEventListener("click",()=>{
+    document.getElementById("uxInterfaceApply").addEventListener("click",()=>{
         const x=get("prefs",{});
+        x.theme=document.getElementById("uxTheme").value;
+        x.font=document.getElementById("uxFont").value;
         x.accent=document.getElementById("uxAccent").value;
         set("prefs",x);
         applyPrefs();
-        const feedback=document.getElementById("uxAccentFeedback");
-        if(feedback){feedback.textContent="Cor aplicada com sucesso!";feedback.classList.add("success")}
-        if(typeof showToast==="function")showToast("Cor aplicada com sucesso!");
-        else if(window.NotificationService?.success)window.NotificationService.success("Cor aplicada com sucesso!");
+        const feedback=document.getElementById("uxInterfaceFeedback");
+        if(feedback){feedback.textContent="Configurações de interface aplicadas com sucesso!";feedback.classList.add("success")}
+        if(typeof showToast==="function")showToast("Configurações de interface aplicadas com sucesso!");
+        else if(window.NotificationService?.success)window.NotificationService.success("Configurações de interface aplicadas com sucesso!");
     });
     const displayNameInput=document.getElementById("uxDisplayName");
     const saveDisplayName=()=>{const x=get("prefs",{});x.displayName=String(displayNameInput.value||"").replace(/\s+/g," ").trim().slice(0,40);displayNameInput.value=x.displayName;set("prefs",x);applyPrefs()};

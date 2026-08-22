@@ -1,3 +1,6 @@
+const APP_VERSION = "4.3.6";
+window.APP_VERSION = APP_VERSION;
+
 /* Configuração central da aplicação. */
 
 const APP_CONFIG = Object.freeze({
