@@ -401,12 +401,20 @@
                 </div>
                 <div class="generator-grid">
                     <section class="builder-panel">
-                        <fieldset class="document-type-options">
-                            <legend>Tipo de documento</legend>
-                            <label class="radio-row"><input type="radio" name="documentoFiscalTipo" value="auto" checked> Detectar automaticamente</label>
-                            <label class="radio-row"><input type="radio" name="documentoFiscalTipo" value="cnpj"> CNPJ</label>
-                            <label class="radio-row"><input type="radio" name="documentoFiscalTipo" value="cpf"> CPF</label>
-                        </fieldset>
+                        <div class="registration-type-selector" role="radiogroup" aria-label="Tipo de documento">
+                            <label class="registration-type-option">
+                                <input type="radio" name="documentoFiscalTipo" value="auto" checked>
+                                <span>Detectar automaticamente</span>
+                            </label>
+                            <label class="registration-type-option">
+                                <input type="radio" name="documentoFiscalTipo" value="cnpj">
+                                <span>CNPJ</span>
+                            </label>
+                            <label class="registration-type-option">
+                                <input type="radio" name="documentoFiscalTipo" value="cpf">
+                                <span>CPF</span>
+                            </label>
+                        </div>
                         <label>CPF ou CNPJ
                             <input id="documentoFiscalEntrada" type="text" inputmode="numeric" autocomplete="off" maxlength="18" placeholder="Digite ou cole o número">
                         </label>

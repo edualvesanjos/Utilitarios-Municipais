@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.3.6.2
+
+### Interface
+- CPF / CNPJ adota o mesmo padrão visual de radio buttons do módulo Inscrição imobiliária.
+
+
 ## 4.3.6.1
 
 ### Alterado

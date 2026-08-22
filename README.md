@@ -76,7 +76,7 @@ Hotfix de precisão do total UVRM e refinamentos de layout.
 
 ### Alteração manual da versão
 
-A versão corrente é controlada por `APP_VERSION` em `assets/js/core/config.js`. Para iniciar manualmente uma nova versão, altere somente essa constante, por exemplo `const APP_VERSION = "4.3.6.1";`. CHANGELOG e arquivos de release permanecem históricos.
+A versão corrente é controlada por `APP_VERSION` em `assets/js/core/config.js`. Para iniciar manualmente uma nova versão, altere somente essa constante, por exemplo `const APP_VERSION = "4.3.6.2";`. CHANGELOG e arquivos de release permanecem históricos.
 
 ### 4.3.6 — CPF / CNPJ
 
@@ -91,3 +91,7 @@ Consulte `docs/AMBIENTES_SUPABASE.md` antes de alterar banco, RLS ou sincroniza�
 ### 4.3.6.1
 
 Hotfix de interface, backup, históricos e identificação visual do ambiente DEV.
+
+### 4.3.6.2 DEV
+
+Ajuste visual do seletor de tipo em CPF/CNPJ para seguir o padrão do módulo Inscrição.
