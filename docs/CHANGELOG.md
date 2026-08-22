@@ -1,5 +1,31 @@
 # Changelog
 
+## 4.3.6.2
+
+### Interface
+- CPF / CNPJ adota o mesmo padrão visual de radio buttons do módulo Inscrição imobiliária.
+
+
+## 4.3.6.1
+
+### Alterado
+- Refinamentos de backup, históricos UVRM/Percentual, CPF/CNPJ, Datas e identificação do ambiente de banco.
+
+
+## 4.3.6
+
+### Adicionado
+- Novo módulo CPF / CNPJ com detecção automática, máscaras, validação, histórico local e cópia automática opcional.
+
+
+## 4.3.5.4
+
+### Alterado
+- Aplicação unificada de Tema, Tamanho da fonte e Cor principal.
+- Removido Interface e produtividade.
+- Criada constante central `APP_VERSION`.
+
+
 ## 4.3.5.3
 
 ### Corrigido

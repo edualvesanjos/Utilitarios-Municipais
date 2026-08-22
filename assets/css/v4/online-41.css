@@ -144,3 +144,37 @@
 #onlineSettingsPanel #onlineAccountActions > button { width:100%; min-width:0; min-height:44px; margin:0; }
 #onlineSettingsPanel #onlineResolveConflict:not([hidden]) { grid-column:1 / -1; }
 @media (max-width:900px){ #onlineSettingsPanel #onlineAccountActions{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
+
+/* Infraestrutura de ambientes — v4.3.6 */
+.app-environment-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 22px;
+    padding: 2px 7px;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    font-size: .7rem;
+    font-weight: 800;
+    letter-spacing: .05em;
+}
+.app-environment-badge[data-environment="development"] {
+    opacity: .82;
+}
+.app-environment-badge[data-environment="production"] {
+    opacity: .72;
+}
+
+/* v4.3.6.1 — DEV deve ser um alerta visual; produção não exibe badge */
+.app-environment-badge[data-environment="development"]{
+    background:#b42318;
+    color:#fff;
+    border-color:#b42318;
+    opacity:1;
+    min-height:30px;
+    padding:4px 11px;
+    font-size:.85rem;
+    font-weight:900;
+    box-shadow:0 1px 4px rgba(0,0,0,.18);
+}
+.app-environment-badge[data-environment="production"]{display:none!important}

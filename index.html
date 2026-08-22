@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="assets/css/components.css">
     <link rel="stylesheet" href="assets/css/modules/dashboard.css">
     <link rel="stylesheet" href="assets/css/modules/inscricao.css">
+    <link rel="stylesheet" href="assets/css/modules/cpf-cnpj.css">
     <link rel="stylesheet" href="assets/css/modules/uvrm.css">
     <link rel="stylesheet" href="assets/css/modules/percentual.css">
     <link rel="stylesheet" href="assets/css/modules/datas.css">
@@ -29,7 +30,7 @@
             <div class="v32-brand">
                 <span class="v32-brand-icon" aria-hidden="true">🏛</span>
                 <div><h1 data-app-name>Utilitários Municipais</h1><small>Ferramentas internas</small></div>
-                <span class="v32-version">v<span data-app-version></span></span>
+                <span class="v32-version">v<span data-app-version></span></span><span id="appEnvironmentBadge" class="app-environment-badge" hidden></span>
             </div>
             <div class="header-account" id="headerAccount">
                 <button id="headerAccountButton" class="header-account-button" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="headerAccountMenu">
@@ -67,7 +68,7 @@
                 <button id="uxToolsMenuButton" class="ux-nav-primary ux-tools-menu-button" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="uxToolsMenuDropdown"><span class="nav-svg-icon" data-static-icon="tools" aria-hidden="true"></span> Ferramentas <span aria-hidden="true">⌄</span></button>
                 <div id="uxToolsMenuDropdown" class="ux-tools-dropdown v32-tools-dropdown" role="menu" hidden>
                     <section class="ux-tools-group"><strong>Documentos</strong><button class="tab-button" type="button" data-tab="central-documentos" role="menuitem"><span class="menu-tool-icon" data-tool-icon="documents"></span> Central de documentos</button><button class="tab-button" type="button" data-tab="arquivo" role="menuitem"><span class="menu-tool-icon" data-tool-icon="file"></span> Nome de arquivo</button></section>
-                    <section class="ux-tools-group"><strong>Cadastros</strong><button class="tab-button" type="button" data-tab="inscricao" role="menuitem"><span class="menu-tool-icon" data-tool-icon="building"></span> Inscrição imobiliária</button><button class="tab-button" type="button" data-tab="lote" role="menuitem"><span class="menu-tool-icon" data-tool-icon="grid"></span> Número de lote</button></section>
+                    <section class="ux-tools-group"><strong>Cadastros</strong><button class="tab-button" type="button" data-tab="inscricao" role="menuitem"><span class="menu-tool-icon" data-tool-icon="building"></span> Inscrição imobiliária</button><button class="tab-button" type="button" data-tab="cpf-cnpj" role="menuitem"><span class="menu-tool-icon" data-tool-icon="idcard"></span> CPF / CNPJ</button><button class="tab-button" type="button" data-tab="lote" role="menuitem"><span class="menu-tool-icon" data-tool-icon="grid"></span> Número de lote</button></section>
                     <section class="ux-tools-group"><strong>Cálculos</strong><button class="tab-button" type="button" data-tab="uvrm" role="menuitem"><span class="menu-tool-icon" data-tool-icon="coins"></span> Calculadora UVRM</button><button class="tab-button" type="button" data-tab="percentual" role="menuitem"><span class="menu-tool-icon" data-tool-icon="percent"></span> Percentual</button><button class="tab-button" type="button" data-tab="datas" role="menuitem"><span class="menu-tool-icon" data-tool-icon="calendar"></span> Datas</button></section>
                     <section class="ux-tools-group"><strong>Produtividade</strong><button class="tab-button" type="button" data-tab="biblioteca" role="menuitem"><span class="menu-tool-icon" data-tool-icon="library"></span> Biblioteca de ferramentas</button><button class="tab-button" type="button" data-tab="historico-global" role="menuitem"><span class="menu-tool-icon" data-tool-icon="history"></span> Histórico global</button></section>
                     <section class="ux-tools-group"><strong>Sistema</strong><button class="tab-button" type="button" data-tab="configuracoes" role="menuitem"><span class="menu-tool-icon" data-tool-icon="settings"></span> Configurações</button><button class="tab-button" type="button" data-tab="sobre" role="menuitem"><span class="menu-tool-icon" data-tool-icon="info"></span> Sobre</button></section>
@@ -385,6 +386,66 @@
                             </div>
                         </section>
                     </aside>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="cpf-cnpj" class="tab-panel">
+            <div class="card">
+                <div class="section-heading main-heading">
+                    <div>
+                        <h2>CPF / CNPJ</h2>
+                        <p class="section-description">Normalize, valide e copie documentos fiscais com máscaras automáticas.</p>
+                    </div>
+                </div>
+                <div class="generator-grid">
+                    <section class="builder-panel">
+                        <div class="registration-type-selector" role="radiogroup" aria-label="Tipo de documento">
+                            <label class="registration-type-option">
+                                <input type="radio" name="documentoFiscalTipo" value="auto" checked>
+                                <span>Detectar automaticamente</span>
+                            </label>
+                            <label class="registration-type-option">
+                                <input type="radio" name="documentoFiscalTipo" value="cnpj">
+                                <span>CNPJ</span>
+                            </label>
+                            <label class="registration-type-option">
+                                <input type="radio" name="documentoFiscalTipo" value="cpf">
+                                <span>CPF</span>
+                            </label>
+                        </div>
+                        <label>CPF ou CNPJ
+                            <input id="documentoFiscalEntrada" type="text" inputmode="numeric" autocomplete="off" maxlength="18" placeholder="Digite ou cole o número">
+                        </label>
+                        <div class="document-copy-options">
+                            <label class="checkbox-row"><input id="documentoFiscalAutoCopy" type="checkbox"> Copiar automaticamente</label>
+                            <label class="checkbox-row"><input id="documentoFiscalSemMascara" type="checkbox"> Sem máscara</label>
+                        </div>
+                        <div class="registration-status">
+                            <div><span class="status-label">Tipo detectado</span><strong id="documentoFiscalTipoDetectado">—</strong></div>
+                            <div><span class="status-label">Situação</span><strong id="documentoFiscalStatus">Aguardando</strong></div>
+                        </div>
+                        <div class="result-box"><span>Documento normalizado</span><strong id="documentoFiscalResultado">—</strong></div>
+                        <p id="documentoFiscalFeedback" class="feedback-message" aria-live="polite"></p>
+                        <div class="actions">
+                            <button id="copiarDocumentoFiscal" class="primary" type="button" disabled>Copiar</button>
+                            <button id="limparDocumentoFiscal" class="secondary" type="button">Limpar</button>
+                        </div>
+                    </section>
+                    <aside class="generator-sidebar">
+                        <section class="sidebar-card">
+                            <div class="section-heading"><h3>Histórico local</h3><button id="limparHistoricoDocumentoFiscal" class="text-button" type="button">Limpar</button></div>
+                            <ul id="documentoFiscalHistorico" class="history-list compact-list"><li class="empty-state">Nenhum documento normalizado recentemente.</li></ul>
+                        </section>
+                        <section class="sidebar-card">
+                            <h3>Formatos</h3>
+                            <div class="format-examples"><div><span>CPF</span><code>000.000.000-00</code></div><div><span>CNPJ</span><code>00.000.000/0000-00</code></div></div>
+                        </section>
+                    </aside>
+                </div>
+                <div class="tab-footer-navigation">
+                    <button class="back-home-button" type="button" data-open-tab="inicio"><span aria-hidden="true">←</span>Voltar para a Página Inicial</button>
                 </div>
             </div>
         </section>
@@ -829,6 +890,9 @@
                 <button id="copiarDatasResultado" class="secondary" type="button" disabled>Copiar resultado</button>
             </aside>
         </div>
+        <div class="tab-footer-navigation">
+            <button class="back-home-button" type="button" data-open-tab="inicio"><span aria-hidden="true">←</span> Voltar para a Página Inicial</button>
+        </div>
     </div>
 </section>
 
@@ -854,15 +918,7 @@
                             </div>
                             <div class="actions"><button id="executarLimpezaSeletiva" class="danger-outline">Executar limpeza selecionada</button></div>
                         </section>
-
-                        <section class="settings-card">
-                            <h3>Interface e produtividade</h3>
-                            <div class="settings-checklist">
-                                <label class="checkbox-row"><input id="modoCompacto" type="checkbox">Interface compacta</label>
-                            </div>
-                            <p class="help-text">Atalhos: <strong>Ctrl+K</strong> pesquisa, <strong>Ctrl+1 a Ctrl+6</strong> abre módulos, <strong>Esc</strong> limpa a pesquisa e <strong>Ctrl+Shift+C</strong> copia o principal resultado visível.</p>
-                        </section>
-                        <section class="settings-card">
+<section class="settings-card">
                             <h3>Exportações e redefinições</h3>
                             <div class="actions">
                                 <button id="exportarEstatisticasCsv" class="secondary" type="button">Estatísticas CSV</button>
@@ -908,7 +964,7 @@
         <section id="central-documentos" class="tab-panel documents-panel">
             <div class="card documents-shell">
                 <div class="section-heading main-heading">
-                    <div><span class="eyebrow">Versão 4.3.5.3</span><h2>Central de documentos</h2><p class="section-description">Crie textos administrativos a partir de modelos, preencha variáveis e salve modelos próprios.</p></div>
+                    <div><span class="eyebrow">Versão <span data-app-version></span></span><h2>Central de documentos</h2><p class="section-description">Crie textos administrativos a partir de modelos, preencha variáveis e salve modelos próprios.</p></div>
                     <button id="documentNewModel" class="secondary-button" type="button">Novo modelo</button>
                 </div>
                 <div class="documents-layout">
@@ -982,11 +1038,12 @@
                             <div><dt>Versão</dt><dd data-app-version></dd></div>
                             <div><dt>Arquitetura</dt><dd>Modular — Série 4</dd></div>
                             <div><dt>Armazenamento</dt><dd>Local + Supabase</dd></div>
+                            <div><dt>Ambiente BD</dt><dd id="aboutDatabaseEnvironment">—</dd></div>
                         </dl>
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 4.3.5.3</h3>
+                        <h3>Novidades da <span data-app-version></span></h3>
                         <ul class="about-list">
                                 <li><strong>Novo módulo Datas:</strong> contador entre datas, soma e subtração de dias corridos, com validações, copiar e limpar.</li>
                                 <li><strong>Calculadora UVRM:</strong> removido o resíduo visual <code>\\n</code> abaixo do campo Descrição.</li>
@@ -1075,6 +1132,7 @@
     <script src="assets/js/modules/arquivo.js"></script>
     <script src="assets/js/core/form-persistence.js"></script>
     <script src="assets/js/modules/inscricao.js"></script>
+    <script src="assets/js/modules/cpf-cnpj.js"></script>
     <script src="assets/js/modules/lotes.js"></script>
     <script src="assets/js/modules/uvrm.js"></script>
     <script src="assets/js/modules/percentual.js"></script>
@@ -1085,5 +1143,22 @@
     <script src="assets/js/core/experience-31.js"></script>
     <script src="assets/js/core/dashboard-32.js"></script>
     <script src="assets/js/core/productivity-33.js"></script>
+    <script id="appVersionBinder4354">
+        document.querySelectorAll("[data-app-version]").forEach((el) => { el.textContent = window.APP_VERSION || ""; });
+    </script>
+    <script id="environmentBadgeDevInfra">
+        (() => {
+            const badge = document.getElementById("appEnvironmentBadge");
+            if (!badge) return;
+            const environment = window.APP_ENVIRONMENT || "production";
+            const isDevelopment = environment === "development";
+            badge.textContent = isDevelopment ? "DEV" : "";
+            badge.dataset.environment = environment;
+            badge.hidden = !isDevelopment;
+            const aboutEnvironment = document.getElementById("aboutDatabaseEnvironment");
+            if (aboutEnvironment) aboutEnvironment.textContent = isDevelopment ? "Desenvolvimento" : "Produção";
+            document.documentElement.dataset.appEnvironment = environment;
+        })();
+    </script>
 </body>
 </html>
