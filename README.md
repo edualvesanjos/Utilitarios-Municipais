@@ -92,6 +92,10 @@ Consulte `docs/AMBIENTES_SUPABASE.md` antes de alterar banco, RLS ou sincroniza�
 
 Hotfix de interface, backup, históricos e identificação visual do ambiente DEV.
 
-### 4.3.6.2 DEV
+### 4.3.6.2
 
 Ajuste visual do seletor de tipo em CPF/CNPJ para seguir o padrão do módulo Inscrição.
+
+### Pacote de produção 4.3.6.2
+
+Este pacote foi fechado com `APP_ENVIRONMENT = "production"` após validação da versão no branch `develop`.
