@@ -76,6 +76,7 @@ function addPercentageHistory(fullText, resultValue) {
 
     history.unshift(item);
     setJson(PERCENTAGE_HISTORY_KEY, history);
+    window.HistoryService?.notifyLocalChange?.();
     window.HistoryService?.queueHistory?.("percentual", item, "calculated");
     renderPercentageHistory();
 }

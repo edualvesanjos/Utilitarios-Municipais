@@ -1012,10 +1012,10 @@
 
         <section id="historico-global" class="tab-panel productivity-panel">
             <div class="card">
-                <div class="section-heading main-heading"><div><span class="eyebrow">Produtividade</span><h2>Histórico global</h2><p class="section-description">Consulte em um único lugar os registros produzidos pelos módulos.</p></div><div class="actions"><button id="globalHistoryExportCsv" class="secondary-button" type="button">Exportar CSV</button><button id="globalHistoryExportJson" class="secondary-button" type="button">Exportar JSON</button></div></div>
+                <div class="section-heading main-heading"><div><span class="eyebrow">Produtividade</span><h2>Histórico global</h2><p class="section-description">Consulte e sincronize em um único lugar os registros produzidos pelos módulos, mantendo funcionamento local quando estiver offline.</p></div><div class="actions"><button id="globalHistorySync" class="primary-button" type="button">Sincronizar histórico</button><button id="globalHistoryExportCsv" class="secondary-button" type="button">Exportar CSV</button><button id="globalHistoryExportJson" class="secondary-button" type="button">Exportar JSON</button></div></div>
                 <div class="productivity-toolbar"><label class="productivity-search"><span>Pesquisar</span><input id="globalHistorySearch" type="search" placeholder="Conteúdo do registro"></label><label><span>Módulo</span><select id="globalHistoryModule"><option value="todos">Todos os módulos</option></select></label><label><span>Período</span><select id="globalHistoryPeriod"><option value="todos">Todo o período</option><option value="hoje" selected>Hoje</option><option value="7">Últimos 7 dias</option><option value="30">Últimos 30 dias</option></select></label></div>
                 <div class="library-summary"><div><span>Registros encontrados</span><strong id="globalHistoryCount">0</strong></div><div><span>Módulos com dados</span><strong id="globalHistoryModuleCount">0</strong></div><div><span>Último registro</span><strong id="globalHistoryLast">Nenhum</strong></div></div>
-                <div id="globalHistoryList" class="global-history-list"></div>
+                <p id="globalHistorySyncStatus" class="help-text" aria-live="polite"></p><div id="globalHistoryList" class="global-history-list"></div>
                 <div class="tab-footer-navigation"><button class="back-home-button" type="button" data-open-tab="inicio"><span aria-hidden="true">←</span>Voltar para a Página Inicial</button></div>
             </div>
         </section>
@@ -1045,13 +1045,11 @@
                     <section class="settings-card">
                         <h3>Novidades da <span data-app-version></span></h3>
                         <ul class="about-list">
-                                <li><strong>Novo módulo Datas:</strong> contador entre datas, soma e subtração de dias corridos, com validações, copiar e limpar.</li>
-                                <li><strong>Calculadora UVRM:</strong> removido o resíduo visual <code>\\n</code> abaixo do campo Descrição.</li>
-                            <li>Históricos dos módulos passam a entrar na fila de sincronização online, preservando o armazenamento local.</li>
-                            <li>Registros pendentes são reenviados com identificador idempotente para evitar duplicidades no Supabase.</li>
-                            <li>Históricos remotos são mesclados ao navegador sem duplicar registros equivalentes.</li>
-                            <li>Históricos locais anteriores são migrados uma única vez para a fila online.</li>
-                            <li>Ajustes visuais em Sobre e Biblioteca removem indicadores redundantes.</li>
+                            <li><strong>Histórico Global sincronizado:</strong> registros locais e online passam a ser mesclados com deduplicação.</li>
+                            <li><strong>Novos módulos:</strong> Datas e CPF/CNPJ passam a integrar o Histórico Global e a fila de sincronização.</li>
+                            <li><strong>Offline-first:</strong> os históricos continuam funcionando localmente sem internet e são enviados quando a conexão retorna.</li>
+                            <li><strong>Sincronização manual:</strong> incluído botão no Histórico Global para forçar atualização durante os testes.</li>
+                            <li><strong>Ambiente seguro:</strong> a 4.4.0 permanece configurada para o Supabase DEV.</li>
                         </ul>
                     </section>
                 </div>

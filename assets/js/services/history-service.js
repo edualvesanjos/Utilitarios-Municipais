@@ -1,14 +1,21 @@
-/* Utilitários Municipais v4.3.4 — sincronização gradual dos históricos operacionais. */
+/* Utilitários Municipais v4.4.0.1 — correção das chaves do Histórico Global sincronizado. */
 (function () {
     "use strict";
 
     const OUTBOX_KEY = "history:outbox";
     const DEVICE_KEY = "online:deviceId";
     const HISTORY_SCHEMA_VERSION = 1;
-    const MIGRATION_KEY = "history:migrated:4.3.4";
-    const PREFIX = "utilitariosMunicipais:";
-    const LOCAL_HISTORY = Object.freeze({ arquivo: { key: `${PREFIX}fileHistory`, limit: 15 }, inscricao: { key: `${PREFIX}registrationHistory`, limit: 15 }, lote: { key: `${PREFIX}lotHistory`, limit: 15 }, uvrm: { key: `${PREFIX}uvrmHistory`, limit: 50 }, percentual: { key: `${PREFIX}percentageHistory`, limit: 30 } });
-    const SUPPORTED_MODULES = Object.freeze(["arquivo", "inscricao", "lote", "uvrm", "percentual"]);
+    const MIGRATION_KEY = "history:migrated:4.4.0.1";
+    const LOCAL_HISTORY = Object.freeze({
+        arquivo: { key: "fileHistory", limit: 15 },
+        inscricao: { key: "registrationHistory", limit: 15 },
+        lote: { key: "lotHistory", limit: 15 },
+        uvrm: { key: "uvrmHistory", limit: 50 },
+        percentual: { key: "percentageHistory", limit: 30 },
+        datas: { key: "datesHistory", limit: 30 },
+        "cpf-cnpj": { key: "documentoFiscalHistory", limit: 20 }
+    });
+    const SUPPORTED_MODULES = Object.freeze(["arquivo", "inscricao", "lote", "uvrm", "percentual", "datas", "cpf-cnpj"]);
 
     function nowIso() {
         return new Date().toISOString();
@@ -169,8 +176,7 @@
         return record;
     }
 
-    function migrateLegacyLocalHistories() {
-        if (StorageService.getText(MIGRATION_KEY, "") === "done") return 0;
+    function scanLocalHistories() {
         let queued = 0;
         Object.entries(LOCAL_HISTORY).forEach(([module, cfg]) => {
             const items = StorageService.get(cfg.key, []);
@@ -178,12 +184,27 @@
             items.forEach((value) => {
                 const clientId = deterministicClientId(module, value);
                 const before = listPending().length;
-                enqueue({ module, action: "legacy_import", value, timestamp: timestampFromValue(value), clientId, metadata: { migrated_from_local: true } });
+                enqueue({
+                    module,
+                    action: "record",
+                    value,
+                    timestamp: timestampFromValue(value),
+                    clientId,
+                    metadata: { source: "local_history", deduplicated: true }
+                });
                 if (listPending().length > before) queued += 1;
             });
         });
         StorageService.setText(MIGRATION_KEY, "done");
         return queued;
+    }
+
+    let syncScheduleTimer = null;
+    function notifyLocalChange() {
+        clearTimeout(syncScheduleTimer);
+        syncScheduleTimer = window.setTimeout(() => {
+            syncAll({ silent: true }).catch(() => {});
+        }, 900);
     }
 
     function mergeRemoteRows(rows) {
@@ -209,7 +230,7 @@
     }
 
     async function syncAll({ silent = true } = {}) {
-        migrateLegacyLocalHistories();
+        scanLocalHistories();
         const uploaded = await uploadPending();
         const sync = window.OnlineSyncService;
         if (!sync?.getSession?.()?.user || !navigator.onLine) return { ...uploaded, downloaded: 0 };
@@ -220,6 +241,7 @@
     window.HistoryService = Object.freeze({
         schemaVersion: HISTORY_SCHEMA_VERSION,
         supportedModules: SUPPORTED_MODULES,
+        localHistoryConfig: LOCAL_HISTORY,
         createRecord,
         enqueue,
         listPending,
@@ -229,7 +251,8 @@
         listRemote,
         getDeviceId,
         queueHistory,
-        migrateLegacyLocalHistories,
+        scanLocalHistories,
+        notifyLocalChange,
         mergeRemoteRows,
         syncAll
     });

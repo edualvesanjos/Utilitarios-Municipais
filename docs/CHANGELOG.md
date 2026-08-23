@@ -1,5 +1,31 @@
 # Changelog
 
+## 4.4.0.1
+
+### Corrigido
+- Chaves locais do HistoryService deixam de receber prefixo duplicado.
+- Varredura local e mesclagem remota do Histórico Global corrigidas.
+- Status de sincronização informa enviados e recebidos.
+
+### Banco de dados
+- Sem alteração de schema ou RLS.
+
+
+## 4.4.0
+
+### Adicionado
+- Histórico Global sincronizado para sete módulos.
+- Datas e CPF/CNPJ integrados aos históricos e à sincronização.
+- Sincronização manual no Histórico Global.
+
+### Alterado
+- Varredura idempotente contínua dos históricos locais.
+- Mesclagem local/remota com deduplicação e operação offline-first.
+
+### Banco de dados
+- Sem alteração de schema; utiliza `history_entries`.
+
+
 ## 4.3.6.2
 
 ### Interface

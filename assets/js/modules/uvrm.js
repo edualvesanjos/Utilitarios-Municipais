@@ -232,6 +232,7 @@ function saveUvrmOperation() {
     const history = getUvrmHistory();
     history.unshift(operation);
     setJson(UVRM_HISTORY_KEY, history.slice(0, 50));
+    window.HistoryService?.notifyLocalChange?.();
     window.HistoryService?.queueHistory?.("uvrm", operation, "saved");
     localStorage.removeItem(UVRM_CURRENT_LIST_KEY);
     renderUvrmCurrentList();

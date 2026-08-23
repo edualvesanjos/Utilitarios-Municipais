@@ -6,7 +6,9 @@ const HISTORY_SOURCES=[
  {id:'inscricao',name:'Inscrição imobiliária',key:REGISTRATION_HISTORY_KEY,icon:'building'},
  {id:'lote',name:'Número de lote',key:LOT_HISTORY_KEY,icon:'grid'},
  {id:'uvrm',name:'Calculadora UVRM',key:UVRM_HISTORY_KEY,icon:'coins'},
- {id:'percentual',name:'Percentual',key:PERCENTAGE_HISTORY_KEY,icon:'percent'}
+ {id:'percentual',name:'Percentual',key:PERCENTAGE_HISTORY_KEY,icon:'percent'},
+ {id:'datas',name:'Datas',key:DATES_HISTORY_KEY,icon:'calendar'},
+ {id:'cpf-cnpj',name:'CPF / CNPJ',key:DOCUMENT_FISCAL_HISTORY_KEY,icon:'idcard'}
 ];
 function norm(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()}
 function itemText(item){if(typeof dashboardRecentText==='function')return dashboardRecentText(item);if(typeof item==='string')return item;return item&&typeof item==='object'?Object.values(item).filter(v=>['string','number'].includes(typeof v)).slice(0,4).join(' • '):''}
@@ -19,7 +21,29 @@ function filteredHistory(){const q=norm(document.getElementById('globalHistorySe
 function renderGlobalHistory(){const box=document.getElementById('globalHistoryList');if(!box)return;const rows=filteredHistory();document.getElementById('globalHistoryCount').textContent=String(rows.length);document.getElementById('globalHistoryModuleCount').textContent=String(new Set(rows.map(x=>x.source.id)).size);document.getElementById('globalHistoryLast').textContent=rows[0]?.date?rows[0].date.toLocaleString('pt-BR'):'Nenhum';box.innerHTML=rows.length?rows.map((x,i)=>`<article class="global-history-item">${toolIconMarkup(x.source.icon)}<div class="global-history-content"><strong>${x.source.name}</strong><p title="${String(x.text).replace(/"/g,'&quot;')}">${x.text}</p><small>${x.date?x.date.toLocaleString('pt-BR'):'Data não registrada'}</small></div><div class="global-history-actions"><button class="small-button" type="button" data-global-copy="${i}">Copiar</button><button class="small-button secondary" type="button" data-open-tab="${x.source.id}">Abrir</button></div></article>`).join(''):'<div class="global-history-empty">Nenhum registro corresponde aos filtros.</div>';box._rows=rows;}
 function download(name,type,text){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
 function exportHistory(format){const rows=filteredHistory().map(x=>({modulo:x.source.name,conteudo:x.text,data:x.date?x.date.toISOString():''}));if(format==='json')download('historico-global.json','application/json',JSON.stringify(rows,null,2));else{const esc=v=>`"${String(v).replace(/"/g,'""')}"`;download('historico-global.csv','text/csv;charset=utf-8','Módulo;Conteúdo;Data\n'+rows.map(r=>[r.modulo,r.conteudo,r.data].map(esc).join(';')).join('\n'));}if(typeof trackToolAction==='function')trackToolAction('historico-global','exportar');}
-function init(){const period=document.getElementById('globalHistoryPeriod');if(period)period.value='hoje';populateSelect(document.getElementById('libraryCategory'),TOOL_CATEGORIES.filter(x=>x.id!=='todos').map(x=>({value:x.id,label:x.name})));populateSelect(document.getElementById('globalHistoryModule'),HISTORY_SOURCES.map(x=>({value:x.id,label:x.name})));['librarySearch','libraryCategory','libraryView'].forEach(id=>document.getElementById(id)?.addEventListener(id==='librarySearch'?'input':'change',renderLibrary));['globalHistorySearch','globalHistoryModule','globalHistoryPeriod'].forEach(id=>document.getElementById(id)?.addEventListener(id==='globalHistorySearch'?'input':'change',renderGlobalHistory));document.getElementById('globalHistoryExportCsv')?.addEventListener('click',()=>exportHistory('csv'));document.getElementById('globalHistoryExportJson')?.addEventListener('click',()=>exportHistory('json'));document.addEventListener('click',e=>{const fav=e.target.closest('[data-library-favorite]');if(fav){e.preventDefault();e.stopPropagation();toggleFavorite(fav.dataset.libraryFavorite);renderLibrary();}const model=e.target.closest('[data-library-model]');if(model){activateTab('arquivo');NotificationService?.info?.('Modelo disponível no Montador de nome de arquivo.');}const copy=e.target.closest('[data-global-copy]');if(copy){const rows=document.getElementById('globalHistoryList')._rows||[];const row=rows[Number(copy.dataset.globalCopy)];if(row)copyText(row.text);}});renderLibrary();renderGlobalHistory();}
+async function syncGlobalHistory(){
+ const button=document.getElementById('globalHistorySync');
+ const status=document.getElementById('globalHistorySyncStatus');
+ if(button)button.disabled=true;
+ if(status)status.textContent='Sincronizando...';
+ try{
+   const result=await window.HistoryService?.syncAll?.({silent:false});
+   renderGlobalHistory();
+   if(status){
+     const pending=window.HistoryService?.listPending?.().length||0;
+     if(pending){
+       status.textContent=`${pending} registro(s) pendente(s).`;
+     }else{
+       const uploaded=Number(result?.uploaded||0), downloaded=Number(result?.downloaded||0);
+       status.textContent=`Histórico sincronizado. Enviados: ${uploaded} • Recebidos: ${downloaded}`;
+     }
+   }
+ }catch(error){
+   if(status)status.textContent='Não foi possível sincronizar o histórico.';
+   console.error(error);
+ }finally{if(button)button.disabled=false}
+}
+function init(){const period=document.getElementById('globalHistoryPeriod');if(period)period.value='hoje';populateSelect(document.getElementById('libraryCategory'),TOOL_CATEGORIES.filter(x=>x.id!=='todos').map(x=>({value:x.id,label:x.name})));populateSelect(document.getElementById('globalHistoryModule'),HISTORY_SOURCES.map(x=>({value:x.id,label:x.name})));['librarySearch','libraryCategory','libraryView'].forEach(id=>document.getElementById(id)?.addEventListener(id==='librarySearch'?'input':'change',renderLibrary));['globalHistorySearch','globalHistoryModule','globalHistoryPeriod'].forEach(id=>document.getElementById(id)?.addEventListener(id==='globalHistorySearch'?'input':'change',renderGlobalHistory));document.getElementById('globalHistoryExportCsv')?.addEventListener('click',()=>exportHistory('csv'));document.getElementById('globalHistoryExportJson')?.addEventListener('click',()=>exportHistory('json'));document.getElementById('globalHistorySync')?.addEventListener('click',syncGlobalHistory);document.addEventListener('click',e=>{const fav=e.target.closest('[data-library-favorite]');if(fav){e.preventDefault();e.stopPropagation();toggleFavorite(fav.dataset.libraryFavorite);renderLibrary();}const model=e.target.closest('[data-library-model]');if(model){activateTab('arquivo');NotificationService?.info?.('Modelo disponível no Montador de nome de arquivo.');}const copy=e.target.closest('[data-global-copy]');if(copy){const rows=document.getElementById('globalHistoryList')._rows||[];const row=rows[Number(copy.dataset.globalCopy)];if(row)copyText(row.text);}});renderLibrary();renderGlobalHistory();}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 window.renderProductivity33=()=>{renderLibrary();renderGlobalHistory()};
 })();

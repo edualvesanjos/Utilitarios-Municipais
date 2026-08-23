@@ -20,7 +20,7 @@ function hist(){const v=getJson(HISTORY_KEY,[]);return Array.isArray(v)?v:[]}
 function render(){const h=hist();if(!h.length){historyList.innerHTML='<li class="empty-state">Nenhum documento normalizado recentemente.</li>';return}
 historyList.innerHTML=h.map(x=>`<li><span><strong>${escapeHtml(x.normalized)}</strong><small>${escapeHtml(x.type.toUpperCase())}</small></span><button type="button" class="secondary mini-button" data-copy-document="${escapeHtml(x.normalized)}">Copiar</button></li>`).join("");
 historyList.querySelectorAll("[data-copy-document]").forEach(b=>b.addEventListener("click",()=>copyText(b.dataset.copyDocument)))}
-function save(x){const h=hist().filter(e=>e.normalized!==x.normalized);h.unshift(x);setJson(HISTORY_KEY,h.slice(0,LIMIT));render()}
+function save(x){const h=hist().filter(e=>e.normalized!==x.normalized);h.unshift(x);setJson(HISTORY_KEY,h.slice(0,LIMIT));render();window.HistoryService?.notifyLocalChange?.();window.renderProductivity33?.()}
 async function update(){const raw=digits(input.value), type=resolve(raw), max=type==="cpf"?11:14, d=raw.slice(0,max), formatted=type==="cpf"?fmtCpf(d):fmtCnpj(d);input.value=formatted;detected.textContent=type.toUpperCase();
 const complete=d.length===max, valid=complete&&(type==="cpf"?validCpf(d):validCnpj(d));const output=noMask?.checked?d:formatted;
 current=valid?output:"";result.textContent=output||"—";copyBtn.disabled=!valid;

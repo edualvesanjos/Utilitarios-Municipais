@@ -19,6 +19,16 @@
     if (!operation || !start || !end || !quantity || !result) return;
 
     let copyValue = "";
+    const DATES_HISTORY_LIMIT = 30;
+
+    function saveDatesHistory(entry) {
+        const history = getJson(DATES_HISTORY_KEY, []);
+        const rows = Array.isArray(history) ? history : [];
+        rows.unshift(entry);
+        setJson(DATES_HISTORY_KEY, rows.slice(0, DATES_HISTORY_LIMIT));
+        window.HistoryService?.notifyLocalChange?.();
+        window.renderProductivity33?.();
+    }
 
     function parseDate(value) {
         if (!value) return null;
@@ -119,6 +129,16 @@
                 `${weeks} ${weeks === 1 ? "semana" : "semanas"} e ` +
                 `${remainder} ${remainder === 1 ? "dia" : "dias"}.`;
             copyValue = result.textContent;
+            saveDatesHistory({
+                id: typeof createUniqueId === "function" ? createUniqueId() : `${Date.now()}-datas`,
+                operation: "entre",
+                start: start.value,
+                end: end.value,
+                days,
+                result: copyValue,
+                detail: detail.textContent,
+                createdAt: new Date().toISOString()
+            });
         } else {
             const direction = operation.value === "somar" ? 1 : -1;
             const calculated = new Date(values.initial.getTime());
@@ -131,6 +151,15 @@
                 `${formatDate(values.initial)} ${sign} ${values.days} ` +
                 `${values.days === 1 ? "dia" : "dias"}.`;
             copyValue = result.textContent;
+            saveDatesHistory({
+                id: typeof createUniqueId === "function" ? createUniqueId() : `${Date.now()}-datas`,
+                operation: operation.value,
+                start: start.value,
+                quantity: values.days,
+                result: copyValue,
+                detail: detail.textContent,
+                createdAt: new Date().toISOString()
+            });
         }
 
         copyButton.disabled = false;
