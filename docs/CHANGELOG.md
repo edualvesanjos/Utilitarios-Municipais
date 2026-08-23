@@ -1,5 +1,16 @@
 # Changelog
 
+## 4.4.0.2
+
+### Corrigido
+- UUIDs e campos técnicos deixam de aparecer no Histórico Global.
+- Deduplicação passa a ignorar IDs técnicos.
+- Mesclagem local/remota utiliza fingerprint sanitizado.
+
+### Banco de dados
+- Sem alteração de schema ou RLS.
+
+
 ## 4.4.0.1
 
 ### Corrigido

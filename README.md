@@ -76,7 +76,7 @@ Hotfix de precisão do total UVRM e refinamentos de layout.
 
 ### Alteração manual da versão
 
-A versão corrente é controlada por `APP_VERSION` em `assets/js/core/config.js`. Para iniciar manualmente uma nova versão, altere somente essa constante, por exemplo `const APP_VERSION = "4.4.0.1";`. CHANGELOG e arquivos de release permanecem históricos.
+A versão corrente é controlada por `APP_VERSION` em `assets/js/core/config.js`. Para iniciar manualmente uma nova versão, altere somente essa constante, por exemplo `const APP_VERSION = "4.4.0.2";`. CHANGELOG e arquivos de release permanecem históricos.
 
 ### 4.3.6 — CPF / CNPJ
 
@@ -103,3 +103,7 @@ Início da série 4.4 com Histórico Global sincronizado, integração de Datas 
 ### 4.4.0.1 DEV
 
 Corrige a leitura/escrita dos históricos pela camada `StorageService`, eliminando o prefixo duplicado e restabelecendo upload/download entre navegadores.
+
+### 4.4.0.2 DEV
+
+Oculta campos técnicos no Histórico Global e fortalece a deduplicação entre navegadores ignorando identificadores técnicos.

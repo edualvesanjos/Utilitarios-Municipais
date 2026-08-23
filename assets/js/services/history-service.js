@@ -1,4 +1,4 @@
-/* Utilitários Municipais v4.4.0.1 — correção das chaves do Histórico Global sincronizado. */
+/* Utilitários Municipais v4.4.0.2 — deduplicação e apresentação do Histórico Global. */
 (function () {
     "use strict";
 
@@ -148,6 +148,30 @@
     }
 
 
+    const TECHNICAL_FIELDS = new Set([
+        "id",
+        "client_id",
+        "clientId",
+        "device_id",
+        "deviceId",
+        "schema_version",
+        "schemaVersion",
+        "sync_status",
+        "created_at",
+        "updated_at"
+    ]);
+
+    function sanitizeForFingerprint(value) {
+        if (Array.isArray(value)) return value.map(sanitizeForFingerprint);
+        if (!value || typeof value !== "object") return value;
+
+        return Object.fromEntries(
+            Object.entries(value)
+                .filter(([key]) => !TECHNICAL_FIELDS.has(key))
+                .map(([key, item]) => [key, sanitizeForFingerprint(item)])
+        );
+    }
+
     function stableStringify(value) {
         if (value === null || typeof value !== "object") return JSON.stringify(value);
         if (Array.isArray(value)) return `[${value.map(stableStringify).join(",")}]`;
@@ -155,7 +179,7 @@
     }
 
     function deterministicClientId(module, value) {
-        const text = `${module}|${stableStringify(value)}`;
+        const text = `${module}|${stableStringify(sanitizeForFingerprint(value))}`;
         const hashes = [2166136261, 2246822519, 3266489917, 668265263];
         for (let j = 0; j < hashes.length; j += 1) {
             let h = hashes[j] >>> 0;
@@ -212,11 +236,11 @@
         Object.entries(LOCAL_HISTORY).forEach(([module, cfg]) => {
             const local = StorageService.get(cfg.key, []);
             const items = Array.isArray(local) ? local.slice() : [];
-            const seen = new Set(items.map(stableStringify));
+            const seen = new Set(items.map((item) => stableStringify(sanitizeForFingerprint(item))));
             rows.filter((row) => row.module === module).slice().reverse().forEach((row) => {
                 const value = row.value;
                 if (!value || typeof value !== "object") return;
-                const fingerprint = stableStringify(value);
+                const fingerprint = stableStringify(sanitizeForFingerprint(value));
                 if (!seen.has(fingerprint)) { items.unshift(value); seen.add(fingerprint); added += 1; }
             });
             StorageService.set(cfg.key, items.slice(0, cfg.limit));
@@ -242,6 +266,7 @@
         schemaVersion: HISTORY_SCHEMA_VERSION,
         supportedModules: SUPPORTED_MODULES,
         localHistoryConfig: LOCAL_HISTORY,
+        sanitizeForFingerprint,
         createRecord,
         enqueue,
         listPending,
