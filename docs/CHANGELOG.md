@@ -1,5 +1,16 @@
 # Changelog
 
+## 4.4.0.3
+
+### Corrigido
+- Remoção automática de abas inválidas como `null`.
+- Validação defensiva antes de abrir/restaurar abas.
+- Histórico de versões e Novidades atualizados.
+
+### Banco de dados
+- Sem alteração de schema ou RLS.
+
+
 ## 4.4.0.2
 
 ### Corrigido

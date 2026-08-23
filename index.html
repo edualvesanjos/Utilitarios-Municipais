@@ -1045,11 +1045,11 @@
                     <section class="settings-card">
                         <h3>Novidades da <span data-app-version></span></h3>
                         <ul class="about-list">
-                            <li><strong>Histórico Global sincronizado:</strong> registros locais e online passam a ser mesclados com deduplicação.</li>
-                            <li><strong>Novos módulos:</strong> Datas e CPF/CNPJ passam a integrar o Histórico Global e a fila de sincronização.</li>
-                            <li><strong>Offline-first:</strong> os históricos continuam funcionando localmente sem internet e são enviados quando a conexão retorna.</li>
-                            <li><strong>Sincronização manual:</strong> incluído botão no Histórico Global para forçar atualização durante os testes.</li>
-                            <li><strong>Ambiente seguro:</strong> a 4.4.0 permanece configurada para o Supabase DEV.</li>
+                            <li><strong>Histórico Global:</strong> sincronização entre navegadores estabilizada com chaves locais corrigidas.</li>
+                            <li><strong>Deduplicação:</strong> registros equivalentes não são recriados em sincronizações repetidas e IDs técnicos são ignorados.</li>
+                            <li><strong>Apresentação:</strong> UUIDs e campos técnicos deixam de aparecer no Histórico Global.</li>
+                            <li><strong>Abas:</strong> estados inválidos como <code>null</code> são removidos automaticamente e não podem mais ser restaurados.</li>
+                            <li><strong>Ambiente:</strong> testes continuam isolados no Supabase DEV.</li>
                         </ul>
                     </section>
                 </div>
@@ -1057,6 +1057,16 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline">
+                        <article><strong>4.4.0.3</strong><p>Correção defensiva do gerenciamento de abas, removendo estados inválidos como null, e atualização do Histórico de versões.</p></article>
+                        <article><strong>4.4.0.2</strong><p>Deduplicação aprimorada do Histórico Global e ocultação de UUIDs e demais campos técnicos na apresentação.</p></article>
+                        <article><strong>4.4.0.1</strong><p>Correção das chaves locais da sincronização, restabelecendo envio e recebimento dos históricos entre navegadores.</p></article>
+                        <article><strong>4.4.0</strong><p>Histórico Global sincronizado, integração de Datas e CPF/CNPJ e funcionamento offline-first com Supabase DEV.</p></article>
+                        <article><strong>4.3.6.2</strong><p>Ajuste visual do seletor de tipo do módulo CPF/CNPJ e consolidação do fluxo de desenvolvimento por branches.</p></article>
+                        <article><strong>4.3.6.1</strong><p>Refinamentos de CPF/CNPJ, identificação do ambiente DEV, ajustes de históricos, backup e interface.</p></article>
+                        <article><strong>4.3.6</strong><p>Novo módulo CPF/CNPJ com normalização, detecção automática, histórico local, cópia e opção de cópia automática.</p></article>
+                        <article><strong>4.3.5.4</strong><p>Aplicação controlada de preferências de interface e consolidação das configurações antes da série 4.3.6.</p></article>
+                        <article><strong>4.3.5.3</strong><p>Correção da soma da Calculadora UVRM e ajustes de layout das configurações.</p></article>
+
                         <article><strong>4.3.4</strong><p>Sincronização gradual dos históricos dos módulos, migração local idempotente e prevenção de duplicidades entre dispositivos.</p></article>
                         <article><strong>4.3.1.1</strong><p>Hotfix do módulo Número de lote: recuperação confiável da última sequência e preparação automática da próxima ao reabrir o sistema.</p></article>
                         <article><strong>4.3.1</strong><p>Identificação da conta no cabeçalho e status técnico no rodapé, separando autenticação, conectividade e sincronização.</p></article>
