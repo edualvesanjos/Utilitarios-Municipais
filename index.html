@@ -1014,7 +1014,7 @@
             <div class="card">
                 <div class="section-heading main-heading"><div><span class="eyebrow">Produtividade</span><h2>Histórico global</h2><p class="section-description">Consulte e sincronize em um único lugar os registros produzidos pelos módulos, mantendo funcionamento local quando estiver offline.</p></div><div class="actions"><button id="globalHistorySync" class="primary-button" type="button">Sincronizar histórico</button><button id="globalHistoryExportCsv" class="secondary-button" type="button">Exportar CSV</button><button id="globalHistoryExportJson" class="secondary-button" type="button">Exportar JSON</button></div></div>
                 <div class="productivity-toolbar"><label class="productivity-search"><span>Pesquisar</span><input id="globalHistorySearch" type="search" placeholder="Conteúdo do registro"></label><label><span>Módulo</span><select id="globalHistoryModule"><option value="todos">Todos os módulos</option></select></label><label><span>Período</span><select id="globalHistoryPeriod"><option value="todos">Todo o período</option><option value="hoje" selected>Hoje</option><option value="7">Últimos 7 dias</option><option value="30">Últimos 30 dias</option></select></label></div>
-                <div class="library-summary"><div><span>Registros encontrados</span><strong id="globalHistoryCount">0</strong></div><div><span>Módulos com dados</span><strong id="globalHistoryModuleCount">0</strong></div><div><span>Último registro</span><strong id="globalHistoryLast">Nenhum</strong></div></div>
+                <div class="library-summary"><div><span>Registros encontrados</span><strong id="globalHistoryCount">0</strong></div><div><span>Módulos com dados</span><strong id="globalHistoryModuleCount">0</strong></div><div><span>Pendentes</span><strong id="globalHistoryPending">0</strong></div><div><span>Última sincronização</span><strong id="globalHistoryLastSync">Nunca</strong></div><div><span>Último registro</span><strong id="globalHistoryLast">Nenhum</strong></div></div>
                 <p id="globalHistorySyncStatus" class="help-text" aria-live="polite"></p><div id="globalHistoryList" class="global-history-list"></div>
                 <div class="tab-footer-navigation"><button class="back-home-button" type="button" data-open-tab="inicio"><span aria-hidden="true">←</span>Voltar para a Página Inicial</button></div>
             </div>
@@ -1045,11 +1045,11 @@
                     <section class="settings-card">
                         <h3>Novidades da <span data-app-version></span></h3>
                         <ul class="about-list">
-                            <li><strong>Histórico Global:</strong> sincronização entre navegadores estabilizada com chaves locais corrigidas.</li>
-                            <li><strong>Deduplicação:</strong> registros equivalentes não são recriados em sincronizações repetidas e IDs técnicos são ignorados.</li>
-                            <li><strong>Apresentação:</strong> UUIDs e campos técnicos deixam de aparecer no Histórico Global.</li>
-                            <li><strong>Abas:</strong> estados inválidos como <code>null</code> são removidos automaticamente e não podem mais ser restaurados.</li>
-                            <li><strong>Ambiente:</strong> testes continuam isolados no Supabase DEV.</li>
+                            <li><strong>Confiabilidade:</strong> sincronizações simultâneas são consolidadas para evitar execuções concorrentes.</li>
+                            <li><strong>Reenvio automático:</strong> falhas mantêm os registros na fila e acionam novas tentativas com intervalo progressivo.</li>
+                            <li><strong>Retomada:</strong> a fila é processada ao recuperar internet, voltar à aba ou reabrir o aplicativo.</li>
+                            <li><strong>Visibilidade:</strong> Histórico Global mostra pendências e horário da última sincronização bem-sucedida.</li>
+                            <li><strong>Escala:</strong> leitura remota paginada suporta até 2.000 registros nesta etapa.</li>
                         </ul>
                     </section>
                 </div>
@@ -1057,6 +1057,8 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline">
+                        <article><strong>4.4.1</strong><p>Confiabilidade da sincronização: fila de pendências, reenvio automático, retomada após offline e proteção contra sincronizações concorrentes.</p></article>
+
                         <article><strong>4.4.0.3</strong><p>Correção defensiva do gerenciamento de abas, removendo estados inválidos como null, e atualização do Histórico de versões.</p></article>
                         <article><strong>4.4.0.2</strong><p>Deduplicação aprimorada do Histórico Global e ocultação de UUIDs e demais campos técnicos na apresentação.</p></article>
                         <article><strong>4.4.0.1</strong><p>Correção das chaves locais da sincronização, restabelecendo envio e recebimento dos históricos entre navegadores.</p></article>

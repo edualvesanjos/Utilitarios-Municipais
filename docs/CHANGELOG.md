@@ -1,5 +1,20 @@
 # Changelog
 
+## 4.4.1
+
+### Adicionado
+- Reenvio automático progressivo da fila de históricos.
+- Estado de sincronização com pendências e última sincronização.
+- Retomada automática após offline/reabertura.
+- Leitura remota paginada.
+
+### Alterado
+- Sincronizações concorrentes passam a compartilhar a mesma execução.
+
+### Banco de dados
+- Sem alteração de schema ou RLS.
+
+
 ## 4.4.0.3
 
 ### Corrigido

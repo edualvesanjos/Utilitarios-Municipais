@@ -1,4 +1,4 @@
-/* Utilitários Municipais v4.4.0.2 — deduplicação e apresentação do Histórico Global. */
+/* Utilitários Municipais v4.4.1 — confiabilidade da sincronização do Histórico Global. */
 (function () {
     "use strict";
 
@@ -6,6 +6,9 @@
     const DEVICE_KEY = "online:deviceId";
     const HISTORY_SCHEMA_VERSION = 1;
     const MIGRATION_KEY = "history:migrated:4.4.0.1";
+    const SYNC_STATE_KEY = "history:syncState";
+    const RETRY_BASE_MS = 3000;
+    const RETRY_MAX_MS = 60000;
     const LOCAL_HISTORY = Object.freeze({
         arquivo: { key: "fileHistory", limit: 15 },
         inscricao: { key: "registrationHistory", limit: 15 },
@@ -69,8 +72,30 @@
             occurred_at: safeTimestamp(timestamp),
             device_id: getDeviceId(),
             schema_version: HISTORY_SCHEMA_VERSION,
-            sync_status: "pending"
+            sync_status: "pending",
+            retry_count: 0,
+            last_attempt_at: null,
+            last_error: null
         };
+    }
+
+    function getSyncState() {
+        const state = StorageService.get(SYNC_STATE_KEY, {});
+        return {
+            syncing: Boolean(state?.syncing),
+            lastSuccessAt: state?.lastSuccessAt || null,
+            lastAttemptAt: state?.lastAttemptAt || null,
+            lastError: state?.lastError || null,
+            uploaded: Number(state?.uploaded || 0),
+            downloaded: Number(state?.downloaded || 0)
+        };
+    }
+
+    function setSyncState(patch = {}) {
+        const next = { ...getSyncState(), ...patch };
+        StorageService.set(SYNC_STATE_KEY, next);
+        window.dispatchEvent(new CustomEvent("history-sync-state", { detail: next }));
+        return next;
     }
 
     function listPending() {
@@ -98,14 +123,34 @@
         StorageService.remove(OUTBOX_KEY);
     }
 
+    function updatePendingAttempt(clientIds, { error = null } = {}) {
+        const ids = new Set(Array.isArray(clientIds) ? clientIds : [clientIds]);
+        const now = nowIso();
+        const rows = listPending().map((row) => {
+            if (!ids.has(row.client_id)) return row;
+            return {
+                ...row,
+                retry_count: Number(row.retry_count || 0) + 1,
+                last_attempt_at: now,
+                last_error: error ? String(error).slice(0, 500) : null
+            };
+        });
+        StorageService.set(OUTBOX_KEY, rows);
+        return rows;
+    }
+
     async function uploadPending() {
         const sync = window.OnlineSyncService;
         const session = sync?.getSession?.();
         const client = window.SupabaseClientService?.getClient?.();
         const rows = listPending();
+
         if (!rows.length) return { uploaded: 0, remaining: 0 };
         if (!client || !session?.user) return { uploaded: 0, remaining: rows.length, reason: "not_authenticated" };
         if (!navigator.onLine) return { uploaded: 0, remaining: rows.length, reason: "offline" };
+
+        const clientIds = rows.map((row) => row.client_id);
+        updatePendingAttempt(clientIds);
 
         const payload = rows.map((row) => ({
             id: row.id,
@@ -120,31 +165,52 @@
             schema_version: row.schema_version || HISTORY_SCHEMA_VERSION
         }));
 
-        const { data, error } = await client
-            .from("history_entries")
-            .upsert(payload, { onConflict: "user_id,client_id", ignoreDuplicates: false })
-            .select("client_id");
-        if (error) throw error;
-        const uploadedIds = (data || []).map((item) => item.client_id);
-        removePending(uploadedIds);
-        return { uploaded: uploadedIds.length, remaining: listPending().length };
+        try {
+            const { data, error } = await client
+                .from("history_entries")
+                .upsert(payload, { onConflict: "user_id,client_id", ignoreDuplicates: false })
+                .select("client_id");
+
+            if (error) throw error;
+
+            const uploadedIds = (data || []).map((item) => item.client_id);
+            removePending(uploadedIds);
+            return { uploaded: uploadedIds.length, remaining: listPending().length };
+        } catch (error) {
+            updatePendingAttempt(clientIds, { error: error?.message || error });
+            throw error;
+        }
     }
 
-    async function listRemote({ module = null, limit = 100 } = {}) {
+    async function listRemote({ module = null, limit = 1000 } = {}) {
         const sync = window.OnlineSyncService;
         const session = sync?.getSession?.();
         const client = window.SupabaseClientService?.getClient?.();
         if (!client || !session?.user) return [];
-        let query = client
-            .from("history_entries")
-            .select("id,client_id,module,action,value,metadata,occurred_at,device_id,schema_version,created_at,updated_at")
-            .eq("user_id", session.user.id)
-            .order("occurred_at", { ascending: false })
-            .limit(Math.max(1, Math.min(Number(limit) || 100, 500)));
-        if (module) query = query.eq("module", module);
-        const { data, error } = await query;
-        if (error) throw error;
-        return data || [];
+
+        const requested = Math.max(1, Math.min(Number(limit) || 1000, 2000));
+        const pageSize = Math.min(250, requested);
+        const rows = [];
+
+        for (let offset = 0; offset < requested; offset += pageSize) {
+            let query = client
+                .from("history_entries")
+                .select("id,client_id,module,action,value,metadata,occurred_at,device_id,schema_version,created_at,updated_at")
+                .eq("user_id", session.user.id)
+                .order("occurred_at", { ascending: false })
+                .range(offset, Math.min(offset + pageSize - 1, requested - 1));
+
+            if (module) query = query.eq("module", module);
+
+            const { data, error } = await query;
+            if (error) throw error;
+
+            const page = data || [];
+            rows.push(...page);
+            if (page.length < pageSize) break;
+        }
+
+        return rows.slice(0, requested);
     }
 
 
@@ -224,6 +290,29 @@
     }
 
     let syncScheduleTimer = null;
+    let retryTimer = null;
+    let syncInFlight = null;
+
+    function retryDelay() {
+        const maxRetry = listPending().reduce((max, row) => Math.max(max, Number(row.retry_count || 0)), 0);
+        return Math.min(RETRY_BASE_MS * Math.max(1, 2 ** Math.min(maxRetry, 4)), RETRY_MAX_MS);
+    }
+
+    function clearRetryTimer() {
+        if (retryTimer) {
+            clearTimeout(retryTimer);
+            retryTimer = null;
+        }
+    }
+
+    function scheduleRetry() {
+        clearRetryTimer();
+        if (!listPending().length || !navigator.onLine) return;
+        retryTimer = window.setTimeout(() => {
+            syncAll({ silent: true }).catch(() => {});
+        }, retryDelay());
+    }
+
     function notifyLocalChange() {
         clearTimeout(syncScheduleTimer);
         syncScheduleTimer = window.setTimeout(() => {
@@ -253,15 +342,64 @@
         return added;
     }
 
-    async function syncAll({ silent = true } = {}) {
+    async function performSync({ silent = true } = {}) {
         scanLocalHistories();
-        const uploaded = await uploadPending();
-        const sync = window.OnlineSyncService;
-        if (!sync?.getSession?.()?.user || !navigator.onLine) return { ...uploaded, downloaded: 0 };
-        const remote = await listRemote({ limit: 500 });
-        const downloaded = mergeRemoteRows(remote);
-        return { ...uploaded, downloaded };
+        setSyncState({
+            syncing: true,
+            lastAttemptAt: nowIso(),
+            lastError: null
+        });
+
+        try {
+            const uploaded = await uploadPending();
+            const sync = window.OnlineSyncService;
+
+            if (!sync?.getSession?.()?.user || !navigator.onLine) {
+                const result = { ...uploaded, downloaded: 0 };
+                setSyncState({
+                    syncing: false,
+                    uploaded: result.uploaded || 0,
+                    downloaded: 0,
+                    lastError: uploaded.reason || null
+                });
+                if (uploaded.remaining) scheduleRetry();
+                return result;
+            }
+
+            const remote = await listRemote({ limit: 2000 });
+            const downloaded = mergeRemoteRows(remote);
+            const result = { ...uploaded, downloaded };
+
+            setSyncState({
+                syncing: false,
+                lastSuccessAt: nowIso(),
+                lastError: null,
+                uploaded: result.uploaded || 0,
+                downloaded
+            });
+
+            if (result.remaining) scheduleRetry();
+            else clearRetryTimer();
+
+            return result;
+        } catch (error) {
+            setSyncState({
+                syncing: false,
+                lastError: String(error?.message || error || "Falha de sincronização")
+            });
+            scheduleRetry();
+            throw error;
+        }
     }
+
+    function syncAll(options = {}) {
+        if (syncInFlight) return syncInFlight;
+        syncInFlight = performSync(options).finally(() => {
+            syncInFlight = null;
+        });
+        return syncInFlight;
+    }
+
     window.HistoryService = Object.freeze({
         schemaVersion: HISTORY_SCHEMA_VERSION,
         supportedModules: SUPPORTED_MODULES,
@@ -270,6 +408,7 @@
         createRecord,
         enqueue,
         listPending,
+        getSyncState,
         removePending,
         clearPending,
         uploadPending,
@@ -278,12 +417,28 @@
         queueHistory,
         scanLocalHistories,
         notifyLocalChange,
+        scheduleRetry,
         mergeRemoteRows,
         syncAll
     });
 
-    window.addEventListener("online", () => window.setTimeout(() => syncAll({ silent: true }).catch(() => {}), 300));
-    document.addEventListener("visibilitychange", () => {
-        if (document.visibilityState === "visible" && navigator.onLine) window.setTimeout(() => syncAll({ silent: true }).catch(() => {}), 300);
+    window.addEventListener("online", () => {
+        clearRetryTimer();
+        window.setTimeout(() => syncAll({ silent: true }).catch(() => {}), 300);
     });
+
+    window.addEventListener("offline", () => {
+        clearRetryTimer();
+        setSyncState({ syncing: false, lastError: "offline" });
+    });
+
+    document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible" && navigator.onLine) {
+            window.setTimeout(() => syncAll({ silent: true }).catch(() => {}), 300);
+        }
+    });
+
+    window.setTimeout(() => {
+        if (listPending().length && navigator.onLine) syncAll({ silent: true }).catch(() => {});
+    }, 1200);
 })();
