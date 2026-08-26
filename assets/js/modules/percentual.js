@@ -331,11 +331,6 @@ $("#limparPercentual").addEventListener("click", () => {
     saveFormData();
 });
 
-$("#limparHistoricoPercentual").addEventListener("click", () => {
-    localStorage.removeItem(PERCENTAGE_HISTORY_KEY);
-    renderPercentageHistory();
-    showToast("Histórico percentual removido.");
-});
 
 $("#pesquisaHistoricoPercentual").addEventListener(
     "input",

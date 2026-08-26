@@ -283,8 +283,3 @@ $("#limparInscricao").addEventListener("click", () => {
     updateRegistrationField();
 });
 
-$("#limparHistoricoInscricao").addEventListener("click", () => {
-    localStorage.removeItem(REGISTRATION_HISTORY_KEY);
-    renderRegistrationHistory();
-    showToast("Histórico de inscrições removido.");
-});

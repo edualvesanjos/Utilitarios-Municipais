@@ -53,7 +53,7 @@
                 ? ` até ${item.end ? item.end.split("-").reverse().join("/") : "—"}`
                 : ` • ${Number(item.quantity||0)} dia(s)`;
             const resultText = String(item.result || "—");
-            return `<li><span><strong>${op}: ${startText}${parameter}</strong><small>${resultText}</small></span><button type="button" class="secondary mini-button" data-copy-dates-history="${index}">Copiar</button></li>`;
+            return `<li><span class="dates-history-entry"><strong>${op}: ${startText}${parameter}</strong><small class="dates-history-result">${resultText}</small></span><button type="button" class="secondary mini-button" data-copy-dates-history="${index}">Copiar</button></li>`;
         }).join("");
         list.querySelectorAll("[data-copy-dates-history]").forEach(button=>button.addEventListener("click",async()=>{
             const item=rows[Number(button.dataset.copyDatesHistory)];

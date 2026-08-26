@@ -259,7 +259,6 @@
                         <section class="sidebar-card">
                             <div class="section-heading">
                                 <h3>Histórico recente</h3>
-                                <button id="limparHistoricoArquivo" class="text-button">Limpar</button>
                             </div>
 
                             <ul id="arquivoHistorico" class="history-list compact-list">
@@ -362,7 +361,6 @@
                         <section class="sidebar-card">
                             <div class="section-heading">
                                 <h3>Histórico recente</h3>
-                                <button id="limparHistoricoInscricao" class="text-button">Limpar</button>
                             </div>
 
                             <ul id="inscricaoHistorico" class="history-list compact-list">
@@ -435,7 +433,7 @@
                     </section>
                     <aside class="generator-sidebar">
                         <section class="sidebar-card">
-                            <div class="section-heading"><h3>Histórico local</h3><button id="limparHistoricoDocumentoFiscal" class="text-button" type="button">Limpar</button></div>
+                            <div class="section-heading"><h3>Histórico local</h3></div>
                             <ul id="documentoFiscalHistorico" class="history-list compact-list"><li class="empty-state">Nenhum documento normalizado recentemente.</li></ul>
                         </section>
                         <section class="sidebar-card">
@@ -685,7 +683,6 @@
                         <section class="sidebar-card">
                             <div class="section-heading">
                                 <h3>Histórico de operações</h3>
-                                <button id="limparHistoricoUvrm" class="text-button">Limpar</button>
                             </div>
                             <input id="pesquisaHistoricoUvrm" type="search" placeholder="Pesquisar no histórico">
                             <div id="uvrmHistorico" class="uvrm-operation-history">
@@ -801,7 +798,6 @@
                         <section class="sidebar-card">
                             <div class="section-heading">
                                 <h3>Histórico de cálculos</h3>
-                                <button id="limparHistoricoPercentual" class="text-button">Limpar</button>
                             </div>
 
                             <input id="pesquisaHistoricoPercentual" type="search" placeholder="Pesquisar no histórico">
@@ -1055,17 +1051,17 @@
                     <section class="settings-card">
                         <h3>Novidades da <span data-app-version></span></h3>
                         <ul class="about-list">
-                            <li><strong>Lotes:</strong> removido o comando local de limpar histórico, evitando conflito semântico com a sincronização.</li>
-                            <li><strong>UVRM:</strong> valor padrão atualizado para R$ 5,2151.</li>
-                            <li><strong>Datas:</strong> novo Histórico de cálculos visível, com cópia por registro e rolagem vertical.</li>
-                            <li><strong>Sincronização:</strong> histórico de Datas continua integrado ao Histórico Global e passa a atualizar também o painel do módulo.</li>
+                            <li><strong>Históricos sincronizados:</strong> removidos os comandos locais de limpeza de Arquivos, Inscrição, CPF/CNPJ, UVRM e Percentual.</li>
+                            <li><strong>Coerência:</strong> os módulos deixam de oferecer exclusão apenas local para dados que permanecem no Supabase.</li>
+                            <li><strong>Datas:</strong> melhorada a separação visual entre os dados da operação e o resultado no histórico.</li>
+                            <li><strong>Configurações:</strong> ações administrativas globais de limpeza permanecem inalteradas para avaliação específica posterior.</li>
                         </ul>
                     </section>
                 </div>
 
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
-                    <div class="about-timeline"><article><strong>4.4.1.3</strong><p>Ajustes de coerência dos históricos, novo histórico visual de Datas e atualização do valor padrão da UVRM.</p></article><article><strong>4.4.1.2</strong><p>Estabilização da ordem dos históricos e incorporação definitiva das correções de CPF/CNPJ.</p></article>
+                    <div class="about-timeline"><article><strong>4.4.1.4</strong><p>Padronização das ações dos históricos sincronizados e melhoria visual do histórico de Datas.</p></article><article><strong>4.4.1.3</strong><p>Ajustes de coerência dos históricos, novo histórico visual de Datas e atualização do valor padrão da UVRM.</p></article><article><strong>4.4.1.2</strong><p>Estabilização da ordem dos históricos e incorporação definitiva das correções de CPF/CNPJ.</p></article>
                         <article><strong>4.4.1.1</strong><p>Correção do carregamento inicial e atualização visual do histórico local de CPF/CNPJ após sincronização.</p></article>
 
                         <article><strong>4.4.1</strong><p>Confiabilidade da sincronização: fila de pendências, reenvio automático, retomada após offline e proteção contra sincronizações concorrentes.</p></article>

@@ -307,7 +307,6 @@ $("#copiarUvrmCompleto").addEventListener("click", () => { const items=getUvrmCu
 $("#copiarUvrmValor").addEventListener("click", () => { const items=getUvrmCurrentList(); if(!items.length)return showToast("A lista está vazia.","warning"); copyText(formatUvrmCurrency(roundCurrency(items.reduce((s,i)=>s+roundCurrency(i.reais||0),0)))); });
 $("#salvarOperacaoUvrm").addEventListener("click", saveUvrmOperation);
 $("#limparListaUvrm").addEventListener("click", () => { if(!getUvrmCurrentList().length)return; if(confirm("Limpar todos os lançamentos da operação atual?")){ localStorage.removeItem(UVRM_CURRENT_LIST_KEY); renderUvrmCurrentList(); resetUvrmEntryForm(); } });
-$("#limparHistoricoUvrm").addEventListener("click", () => { if(confirm("Limpar todo o histórico UVRM?")){ localStorage.removeItem(UVRM_HISTORY_KEY); renderUvrmHistory(); showToast("Histórico UVRM removido."); } });
 $("#pesquisaHistoricoUvrm").addEventListener("input", renderUvrmHistory);
 
 renderUvrmDescriptionSuggestions();

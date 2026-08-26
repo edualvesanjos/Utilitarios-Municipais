@@ -4,7 +4,7 @@ const $=s=>document.querySelector(s), HISTORY_KEY=`${STORAGE_PREFIX}documentoFis
 const typeFields=[...document.querySelectorAll('input[name="documentoFiscalTipo"]')], input=$("#documentoFiscalEntrada"), autoCopy=$("#documentoFiscalAutoCopy"), noMask=$("#documentoFiscalSemMascara"),
 detected=$("#documentoFiscalTipoDetectado"), status=$("#documentoFiscalStatus"), result=$("#documentoFiscalResultado"),
 feedback=$("#documentoFiscalFeedback"), copyBtn=$("#copiarDocumentoFiscal"), clearBtn=$("#limparDocumentoFiscal"),
-historyList=$("#documentoFiscalHistorico"), clearHistory=$("#limparHistoricoDocumentoFiscal");
+historyList=$("#documentoFiscalHistorico");
 if(!typeFields.length||!input)return;
 let current="", lastAuto="";
 const digits=v=>String(v||"").replace(/\D/g,"");
@@ -40,7 +40,6 @@ autoCopy.addEventListener("change",()=>{lastAuto="";if(autoCopy.checked)update()
 noMask?.addEventListener("change",()=>{lastAuto="";update()});
 copyBtn.addEventListener("click",()=>{if(current)copyText(current)});
 clearBtn.addEventListener("click",clearAll);
-clearHistory.addEventListener("click",async()=>{const ok=typeof confirmAction==="function"?await confirmAction("Deseja limpar o histórico local de CPF/CNPJ?",{title:"Limpar histórico",confirmText:"Limpar"}):confirm("Deseja limpar o histórico local de CPF/CNPJ?");if(!ok)return;localStorage.removeItem(HISTORY_KEY);render();showToast("Histórico de CPF/CNPJ removido.")});
 render();
 window.renderDocumentoFiscalHistory=render;
 })();

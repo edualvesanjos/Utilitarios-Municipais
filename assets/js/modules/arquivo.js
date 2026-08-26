@@ -379,11 +379,6 @@ $("#limparArquivo").addEventListener("click", () => {
     setFeedback($("#arquivoMensagem"));
 });
 
-$("#limparHistoricoArquivo").addEventListener("click", () => {
-    localStorage.removeItem(FILE_HISTORY_KEY);
-    renderFileHistory();
-    showToast("Histórico removido.");
-});
 
 $("#limparModelosArquivo").addEventListener("click", () => {
     localStorage.removeItem(FILE_MODELS_KEY);

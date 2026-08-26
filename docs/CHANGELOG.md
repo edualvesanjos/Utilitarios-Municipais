@@ -1,5 +1,16 @@
 # Changelog
 
+## 4.4.1.4
+
+### Alterado
+- Removidas limpezas locais dos históricos sincronizados dos módulos.
+- Mantidas, por enquanto, as ações administrativas globais de Configurações.
+- Melhorada a separação visual do histórico de Datas.
+
+### Banco de dados
+- Sem alteração de schema ou RLS.
+
+
 ## 4.4.1.3
 
 ### Alterado

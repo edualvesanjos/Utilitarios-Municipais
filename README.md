@@ -76,7 +76,7 @@ Hotfix de precisão do total UVRM e refinamentos de layout.
 
 ### Alteração manual da versão
 
-A versão corrente é controlada por `APP_VERSION` em `assets/js/core/config.js`. Para iniciar manualmente uma nova versão, altere somente essa constante, por exemplo `const APP_VERSION = "4.4.1.3";`. CHANGELOG e arquivos de release permanecem históricos.
+A versão corrente é controlada por `APP_VERSION` em `assets/js/core/config.js`. Para iniciar manualmente uma nova versão, altere somente essa constante, por exemplo `const APP_VERSION = "4.4.1.4";`. CHANGELOG e arquivos de release permanecem históricos.
 
 ### 4.3.6 — CPF / CNPJ
 
@@ -127,3 +127,7 @@ Estabiliza a ordem dos históricos e incorpora as correções definitivas do his
 ### 4.4.1.3 DEV
 
 Remove limpeza local incoerente de Lotes, atualiza UVRM para 5,2151 e adiciona histórico visual ao módulo Datas.
+
+### 4.4.1.4 DEV
+
+Padroniza os históricos sincronizados removendo limpezas apenas locais e melhora a apresentação do histórico de Datas.
