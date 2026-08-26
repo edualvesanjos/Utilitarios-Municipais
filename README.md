@@ -128,6 +128,10 @@ Estabiliza a ordem dos históricos e incorpora as correções definitivas do his
 
 Remove limpeza local incoerente de Lotes, atualiza UVRM para 5,2151 e adiciona histórico visual ao módulo Datas.
 
-### 4.4.1.4 DEV
+### 4.4.1.4
 
 Padroniza os históricos sincronizados removendo limpezas apenas locais e melhora a apresentação do histórico de Datas.
+
+### Produção 4.4.1.4
+
+Fechada com `APP_ENVIRONMENT = "production"` e correção da persistência UVRM em `5,2151`.

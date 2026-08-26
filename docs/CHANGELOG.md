@@ -2,6 +2,9 @@
 
 ## 4.4.1.4
 
+### Corrigido
+- Persistência do valor padrão UVRM mantém `5,2151` após recarregar o site.
+
 ### Alterado
 - Removidas limpezas locais dos históricos sincronizados dos módulos.
 - Mantidas, por enquanto, as ações administrativas globais de Configurações.

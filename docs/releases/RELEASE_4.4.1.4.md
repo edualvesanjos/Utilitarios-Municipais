@@ -1,4 +1,4 @@
-# Utilitários Municipais — v4.4.1.4 DEV
+# Utilitários Municipais — v4.4.1.4
 
 ## Alterado
 - Removidos os botões locais `Limpar` dos históricos de:
@@ -17,3 +17,8 @@
 
 ## Banco de dados
 Nenhuma alteração de schema ou RLS.
+
+## Fechamento de produção
+- Corrigida a persistência do valor padrão da UVRM para manter `5,2151` após abrir ou atualizar o site.
+- Valores antigos armazenados como `5.2151` são normalizados automaticamente.
+- Ambiente ativo: `production`.

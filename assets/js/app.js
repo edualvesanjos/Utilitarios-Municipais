@@ -103,7 +103,7 @@ function initializeApplication() {
 
     const storedUvrmValue = localStorage.getItem(UVRM_VALUE_KEY);
     const restoredUvrmValue = storedUvrmValue && storedUvrmValue.trim()
-        ? storedUvrmValue
+        ? String(storedUvrmValue).replace(".", ",")
         : $("#uvrmValorUnitario").value || "5,2151";
     $("#uvrmValorUnitario").value = restoredUvrmValue;
     localStorage.setItem(UVRM_VALUE_KEY, restoredUvrmValue);
@@ -137,7 +137,11 @@ function refreshPersistedApplicationData() {
 
     const storedUvrmValue = localStorage.getItem(UVRM_VALUE_KEY);
     if (storedUvrmValue !== null && document.activeElement !== $("#uvrmValorUnitario")) {
-        $("#uvrmValorUnitario").value = storedUvrmValue;
+        const normalizedUvrmValue = String(storedUvrmValue).replace(".", ",");
+        $("#uvrmValorUnitario").value = normalizedUvrmValue;
+        if (normalizedUvrmValue !== storedUvrmValue) {
+            localStorage.setItem(UVRM_VALUE_KEY, normalizedUvrmValue);
+        }
     }
 
     const storedDecimals = localStorage.getItem(UVRM_DECIMALS_KEY);

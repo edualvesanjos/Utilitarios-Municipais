@@ -298,7 +298,13 @@ $("#uvrmCasas").addEventListener("change", () => {
     calculateUvrmPreview();
     renderUvrmCurrentList();
 });
-$("#uvrmRestaurarPadrao").addEventListener("click", () => { $("#uvrmValorUnitario").value = formatDecimal(DEFAULT_UVRM_VALUE, 4); localStorage.setItem(UVRM_VALUE_KEY, String(DEFAULT_UVRM_VALUE)); calculateUvrmPreview(); showToast("Valor padrão da UVRM restaurado."); });
+$("#uvrmRestaurarPadrao").addEventListener("click", () => {
+    const formattedValue = formatDecimal(DEFAULT_UVRM_VALUE, 4);
+    $("#uvrmValorUnitario").value = formattedValue;
+    localStorage.setItem(UVRM_VALUE_KEY, formattedValue);
+    calculateUvrmPreview();
+    showToast("Valor padrão da UVRM restaurado.");
+});
 $("#adicionarUvrmLancamento").addEventListener("click", addOrUpdateUvrmEntry);
 $("#cancelarEdicaoUvrm").addEventListener("click", resetUvrmEntryForm);
 $("#limparUvrm").addEventListener("click", resetUvrmEntryForm);
