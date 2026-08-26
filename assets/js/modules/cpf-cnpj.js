@@ -39,4 +39,5 @@ copyBtn.addEventListener("click",()=>{if(current)copyText(current)});
 clearBtn.addEventListener("click",clearAll);
 clearHistory.addEventListener("click",async()=>{const ok=typeof confirmAction==="function"?await confirmAction("Deseja limpar o histórico local de CPF/CNPJ?",{title:"Limpar histórico",confirmText:"Limpar"}):confirm("Deseja limpar o histórico local de CPF/CNPJ?");if(!ok)return;localStorage.removeItem(HISTORY_KEY);render();showToast("Histórico de CPF/CNPJ removido.")});
 render();
+window.renderDocumentoFiscalHistory=render;
 })();

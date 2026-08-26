@@ -1045,11 +1045,10 @@
                     <section class="settings-card">
                         <h3>Novidades da <span data-app-version></span></h3>
                         <ul class="about-list">
-                            <li><strong>Confiabilidade:</strong> sincronizações simultâneas são consolidadas para evitar execuções concorrentes.</li>
-                            <li><strong>Reenvio automático:</strong> falhas mantêm os registros na fila e acionam novas tentativas com intervalo progressivo.</li>
-                            <li><strong>Retomada:</strong> a fila é processada ao recuperar internet, voltar à aba ou reabrir o aplicativo.</li>
-                            <li><strong>Visibilidade:</strong> Histórico Global mostra pendências e horário da última sincronização bem-sucedida.</li>
-                            <li><strong>Escala:</strong> leitura remota paginada suporta até 2.000 registros nesta etapa.</li>
+                            <li><strong>CPF/CNPJ:</strong> o Histórico local passa a carregar automaticamente ao abrir o site/módulo.</li>
+                            <li><strong>Sincronização:</strong> mesclagens remotas atualizam imediatamente o histórico visível de CPF/CNPJ.</li>
+                            <li><strong>Confiabilidade:</strong> mantidas fila de pendências, reenvio automático e retomada após offline.</li>
+                            <li><strong>Banco DEV:</strong> base de testes saneada e sem duplicidades históricas.</li>
                         </ul>
                     </section>
                 </div>
@@ -1057,6 +1056,8 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline">
+                        <article><strong>4.4.1.1</strong><p>Correção do carregamento inicial e atualização visual do histórico local de CPF/CNPJ após sincronização.</p></article>
+
                         <article><strong>4.4.1</strong><p>Confiabilidade da sincronização: fila de pendências, reenvio automático, retomada após offline e proteção contra sincronizações concorrentes.</p></article>
 
                         <article><strong>4.4.0.3</strong><p>Correção defensiva do gerenciamento de abas, removendo estados inválidos como null, e atualização do Histórico de versões.</p></article>

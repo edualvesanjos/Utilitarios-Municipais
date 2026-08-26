@@ -1,5 +1,15 @@
 # Changelog
 
+## 4.4.1.1
+
+### Corrigido
+- Histórico local de CPF/CNPJ carrega automaticamente ao abrir.
+- Mesclagem remota atualiza imediatamente a lista visível de CPF/CNPJ.
+
+### Banco de dados
+- Sem alteração de schema ou RLS.
+
+
 ## 4.4.1
 
 ### Adicionado
