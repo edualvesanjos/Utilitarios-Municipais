@@ -356,7 +356,7 @@
             StorageService.set(cfg.key,sortHistoryStable(items).slice(0,cfg.limit));
         });
         if(added){
-            ["renderFileHistory","renderRegistrationHistory","renderLotHistory","renderUvrmHistory","renderPercentageHistory","renderDocumentoFiscalHistory","renderProductivity33","updateDashboardSummary"].forEach(name=>{
+            ["renderFileHistory","renderRegistrationHistory","renderLotHistory","renderUvrmHistory","renderPercentageHistory","renderDocumentoFiscalHistory","renderDatesHistory","renderProductivity33","updateDashboardSummary"].forEach(name=>{
                 try{if(typeof window[name]==="function")window[name]();}catch{}
             });
         }

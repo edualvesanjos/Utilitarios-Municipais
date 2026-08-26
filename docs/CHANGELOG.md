@@ -1,5 +1,16 @@
 # Changelog
 
+## 4.4.1.3
+
+### Alterado
+- Removido `Limpar` do histórico de Lotes.
+- UVRM padrão atualizado para R$ 5,2151.
+- Adicionado histórico visual ao módulo Datas, com cópia e rolagem vertical.
+
+### Banco de dados
+- Sem alteração de schema ou RLS.
+
+
 ## 4.4.1.2
 
 ### Corrigido

@@ -60,6 +60,7 @@ function renderAllExistingHistories() {
     safeInvoke(renderUvrmHistory);
     safeInvoke(renderPercentageHistory);
     safeInvoke(() => window.renderDocumentoFiscalHistory?.());
+    safeInvoke(() => window.renderDatesHistory?.());
 }
 
 function initializeApplication() {
@@ -103,7 +104,7 @@ function initializeApplication() {
     const storedUvrmValue = localStorage.getItem(UVRM_VALUE_KEY);
     const restoredUvrmValue = storedUvrmValue && storedUvrmValue.trim()
         ? storedUvrmValue
-        : $("#uvrmValorUnitario").value || "39,99";
+        : $("#uvrmValorUnitario").value || "5,2151";
     $("#uvrmValorUnitario").value = restoredUvrmValue;
     localStorage.setItem(UVRM_VALUE_KEY, restoredUvrmValue);
 

@@ -192,8 +192,3 @@ $("#reiniciarSequenciaLotes").addEventListener("click", async () => {
     showToast("Sequência reiniciada.");
 });
 
-$("#limparHistoricoLotes").addEventListener("click", () => {
-    localStorage.removeItem(LOT_HISTORY_KEY);
-    renderLotHistory();
-    showToast("Histórico de lotes removido.");
-});
