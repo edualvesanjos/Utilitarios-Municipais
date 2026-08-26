@@ -8,6 +8,7 @@ historyList=$("#documentoFiscalHistorico"), clearHistory=$("#limparHistoricoDocu
 if(!typeFields.length||!input)return;
 let current="", lastAuto="";
 const digits=v=>String(v||"").replace(/\D/g,"");
+function escapeDocumentHtml(value){return String(value??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");}
 const fmtCpf=v=>digits(v).slice(0,11).replace(/^(\d{3})(\d)/,"$1.$2").replace(/^(\d{3})\.(\d{3})(\d)/,"$1.$2.$3").replace(/\.(\d{3})(\d)/,".$1-$2");
 const fmtCnpj=v=>digits(v).slice(0,14).replace(/^(\d{2})(\d)/,"$1.$2").replace(/^(\d{2})\.(\d{3})(\d)/,"$1.$2.$3").replace(/\.(\d{3})(\d)/,".$1/$2").replace(/(\d{4})(\d)/,"$1-$2");
 const repeated=d=>/^(\d)\1+$/.test(d);
@@ -16,9 +17,11 @@ function validCnpj(d){if(d.length!==14||repeated(d))return false;const calc=(b,w
 const selectedType=()=>typeFields.find(field=>field.checked)?.value||"auto";
 const resolve=d=>selectedType()==="cpf"?"cpf":selectedType()==="cnpj"?"cnpj":d.length<=11?"cpf":"cnpj";
 function msg(m="",t=""){feedback.textContent=m;feedback.className=`feedback-message${t?` ${t}`:""}`}
-function hist(){const v=getJson(HISTORY_KEY,[]);return Array.isArray(v)?v:[]}
+function historyTime(item){const raw=item?.occurred_at||item?.createdAt||item?.copiedAt||item?.timestamp||item?.savedAt||item?.finishedAt||item?.created_at||null;const time=raw?new Date(raw).getTime():0;return Number.isFinite(time)?time:0}
+function stableHistoryId(item){return String(item?.id||item?.client_id||item?.normalized||"")}
+function hist(){const v=getJson(HISTORY_KEY,[]),rows=Array.isArray(v)?v:[];return rows.map((item,index)=>({item,index})).sort((a,b)=>{const d=historyTime(b.item)-historyTime(a.item);if(d)return d;const id=stableHistoryId(a.item).localeCompare(stableHistoryId(b.item));return id||a.index-b.index}).map(x=>x.item)}
 function render(){const h=hist();if(!h.length){historyList.innerHTML='<li class="empty-state">Nenhum documento normalizado recentemente.</li>';return}
-historyList.innerHTML=h.map(x=>`<li><span><strong>${escapeHtml(x.normalized)}</strong><small>${escapeHtml(x.type.toUpperCase())}</small></span><button type="button" class="secondary mini-button" data-copy-document="${escapeHtml(x.normalized)}">Copiar</button></li>`).join("");
+historyList.innerHTML=h.map(x=>`<li><span><strong>${escapeDocumentHtml(x.normalized)}</strong><small>${escapeDocumentHtml(x.type.toUpperCase())}</small></span><button type="button" class="secondary mini-button" data-copy-document="${escapeDocumentHtml(x.normalized)}">Copiar</button></li>`).join("");
 historyList.querySelectorAll("[data-copy-document]").forEach(b=>b.addEventListener("click",()=>copyText(b.dataset.copyDocument)))}
 function save(x){const h=hist().filter(e=>e.normalized!==x.normalized);h.unshift(x);setJson(HISTORY_KEY,h.slice(0,LIMIT));render();window.HistoryService?.notifyLocalChange?.();window.renderProductivity33?.()}
 async function update(){const raw=digits(input.value), type=resolve(raw), max=type==="cpf"?11:14, d=raw.slice(0,max), formatted=type==="cpf"?fmtCpf(d):fmtCnpj(d);input.value=formatted;detected.textContent=type.toUpperCase();

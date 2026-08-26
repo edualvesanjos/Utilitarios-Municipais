@@ -1045,17 +1045,17 @@
                     <section class="settings-card">
                         <h3>Novidades da <span data-app-version></span></h3>
                         <ul class="about-list">
-                            <li><strong>CPF/CNPJ:</strong> o Histórico local passa a carregar automaticamente ao abrir o site/módulo.</li>
-                            <li><strong>Sincronização:</strong> mesclagens remotas atualizam imediatamente o histórico visível de CPF/CNPJ.</li>
-                            <li><strong>Confiabilidade:</strong> mantidas fila de pendências, reenvio automático e retomada após offline.</li>
-                            <li><strong>Banco DEV:</strong> base de testes saneada e sem duplicidades históricas.</li>
+                            <li><strong>Históricos:</strong> ordem determinística por data e identificador estável, sem mudar ao trocar de aba ou sincronizar.</li>
+                            <li><strong>Sincronização:</strong> mesclagem remota segue mesclar → deduplicar → ordenar → salvar.</li>
+                            <li><strong>CPF/CNPJ:</strong> incorporadas definitivamente as correções de carregamento inicial e escape HTML.</li>
+                            <li><strong>Histórico Global:</strong> mesma prioridade de datas e critério estável de desempate.</li>
                         </ul>
                     </section>
                 </div>
 
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
-                    <div class="about-timeline">
+                    <div class="about-timeline"><article><strong>4.4.1.2</strong><p>Estabilização da ordem dos históricos e incorporação definitiva das correções de CPF/CNPJ.</p></article>
                         <article><strong>4.4.1.1</strong><p>Correção do carregamento inicial e atualização visual do histórico local de CPF/CNPJ após sincronização.</p></article>
 
                         <article><strong>4.4.1</strong><p>Confiabilidade da sincronização: fila de pendências, reenvio automático, retomada após offline e proteção contra sincronizações concorrentes.</p></article>

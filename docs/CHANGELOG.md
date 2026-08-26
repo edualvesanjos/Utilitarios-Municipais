@@ -1,5 +1,16 @@
 # Changelog
 
+## 4.4.1.2
+
+### Corrigido
+- Ordem estável dos históricos.
+- Mesclagem remota determinística.
+- Correções definitivas do histórico CPF/CNPJ.
+
+### Banco de dados
+- Sem alteração de schema ou RLS.
+
+
 ## 4.4.1.1
 
 ### Corrigido

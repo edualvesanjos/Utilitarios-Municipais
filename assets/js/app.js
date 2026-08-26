@@ -59,6 +59,7 @@ function renderAllExistingHistories() {
     safeInvoke(renderLotHistory);
     safeInvoke(renderUvrmHistory);
     safeInvoke(renderPercentageHistory);
+    safeInvoke(() => window.renderDocumentoFiscalHistory?.());
 }
 
 function initializeApplication() {

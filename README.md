@@ -76,7 +76,7 @@ Hotfix de precisão do total UVRM e refinamentos de layout.
 
 ### Alteração manual da versão
 
-A versão corrente é controlada por `APP_VERSION` em `assets/js/core/config.js`. Para iniciar manualmente uma nova versão, altere somente essa constante, por exemplo `const APP_VERSION = "4.4.1.1";`. CHANGELOG e arquivos de release permanecem históricos.
+A versão corrente é controlada por `APP_VERSION` em `assets/js/core/config.js`. Para iniciar manualmente uma nova versão, altere somente essa constante, por exemplo `const APP_VERSION = "4.4.1.2";`. CHANGELOG e arquivos de release permanecem históricos.
 
 ### 4.3.6 — CPF / CNPJ
 
@@ -119,3 +119,7 @@ Confiabilidade da sincronização: fila de pendências, reenvio automático, ret
 ### 4.4.1.1 DEV
 
 Corrige o carregamento inicial e a atualização pós-sincronização do histórico local de CPF/CNPJ.
+
+### 4.4.1.2 DEV
+
+Estabiliza a ordem dos históricos e incorpora as correções definitivas do histórico CPF/CNPJ.

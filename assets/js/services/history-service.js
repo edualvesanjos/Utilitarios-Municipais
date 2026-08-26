@@ -1,4 +1,4 @@
-/* Utilitários Municipais v4.4.1 — confiabilidade da sincronização do Histórico Global. */
+/* Utilitários Municipais v4.4.1.2 — ordem determinística dos históricos. */
 (function () {
     "use strict";
 
@@ -320,23 +320,44 @@
         }, 900);
     }
 
+    function historyTimestamp(item) {
+        if (!item || typeof item !== "object") return 0;
+        const raw = item.occurred_at || item.createdAt || item.copiedAt || item.timestamp || item.date || item.savedAt || item.finishedAt || item.created_at || null;
+        const time = raw ? new Date(raw).getTime() : 0;
+        return Number.isFinite(time) ? time : 0;
+    }
+
+    function stableHistoryIdentity(item) {
+        if (!item || typeof item !== "object") return stableStringify(item);
+        return String(item.id || item.client_id || item.clientId || stableStringify(sanitizeForFingerprint(item)));
+    }
+
+    function sortHistoryStable(items) {
+        return (Array.isArray(items) ? items : []).map((item,index)=>({item,index})).sort((a,b)=>{
+            const dateDiff=historyTimestamp(b.item)-historyTimestamp(a.item);
+            if(dateDiff) return dateDiff;
+            const idDiff=stableHistoryIdentity(a.item).localeCompare(stableHistoryIdentity(b.item));
+            return idDiff || a.index-b.index;
+        }).map(({item})=>item);
+    }
+
     function mergeRemoteRows(rows) {
         let added = 0;
-        Object.entries(LOCAL_HISTORY).forEach(([module, cfg]) => {
-            const local = StorageService.get(cfg.key, []);
-            const items = Array.isArray(local) ? local.slice() : [];
-            const seen = new Set(items.map((item) => stableStringify(sanitizeForFingerprint(item))));
-            rows.filter((row) => row.module === module).slice().reverse().forEach((row) => {
-                const value = row.value;
-                if (!value || typeof value !== "object") return;
-                const fingerprint = stableStringify(sanitizeForFingerprint(value));
-                if (!seen.has(fingerprint)) { items.unshift(value); seen.add(fingerprint); added += 1; }
+        Object.entries(LOCAL_HISTORY).forEach(([module,cfg])=>{
+            const local=StorageService.get(cfg.key,[]);
+            const items=Array.isArray(local)?local.slice():[];
+            const seen=new Set(items.map(item=>stableStringify(sanitizeForFingerprint(item))));
+            rows.filter(row=>row.module===module).forEach(row=>{
+                const value=row.value;
+                if(!value || typeof value!=="object") return;
+                const fingerprint=stableStringify(sanitizeForFingerprint(value));
+                if(!seen.has(fingerprint)){items.push(value);seen.add(fingerprint);added+=1;}
             });
-            StorageService.set(cfg.key, items.slice(0, cfg.limit));
+            StorageService.set(cfg.key,sortHistoryStable(items).slice(0,cfg.limit));
         });
-        if (added) {
-            ["renderFileHistory","renderRegistrationHistory","renderLotHistory","renderUvrmHistory","renderPercentageHistory","renderDocumentoFiscalHistory","renderProductivity33","updateDashboardSummary"].forEach((name) => {
-                try { if (typeof window[name] === "function") window[name](); } catch {}
+        if(added){
+            ["renderFileHistory","renderRegistrationHistory","renderLotHistory","renderUvrmHistory","renderPercentageHistory","renderDocumentoFiscalHistory","renderProductivity33","updateDashboardSummary"].forEach(name=>{
+                try{if(typeof window[name]==="function")window[name]();}catch{}
             });
         }
         return added;
@@ -405,6 +426,7 @@
         supportedModules: SUPPORTED_MODULES,
         localHistoryConfig: LOCAL_HISTORY,
         sanitizeForFingerprint,
+        sortHistoryStable,
         createRecord,
         enqueue,
         listPending,
