@@ -76,7 +76,7 @@ Hotfix de precisão do total UVRM e refinamentos de layout.
 
 ### Alteração manual da versão
 
-A versão corrente é controlada por `APP_VERSION` em `assets/js/core/config.js`. Para iniciar manualmente uma nova versão, altere somente essa constante, por exemplo `const APP_VERSION = "4.4.1.4";`. CHANGELOG e arquivos de release permanecem históricos.
+A versão corrente é controlada por `APP_VERSION` em `assets/js/core/config.js`. Para iniciar manualmente uma nova versão, altere somente essa constante, por exemplo `const APP_VERSION = "4.4.2";`. CHANGELOG e arquivos de release permanecem históricos.
 
 ### 4.3.6 — CPF / CNPJ
 
@@ -135,3 +135,7 @@ Padroniza os históricos sincronizados removendo limpezas apenas locais e melhor
 ### Produção 4.4.1.4
 
 Fechada com `APP_ENVIRONMENT = "production"` e correção da persistência UVRM em `5,2151`.
+
+### 4.4.2 DEV
+
+Piloto de exclusão sincronizada no histórico de CPF/CNPJ usando tombstones em `history_entries`.

@@ -1,5 +1,19 @@
 # Changelog
 
+## 4.4.2
+
+### Adicionado
+- Piloto de exclusão sincronizada no histórico de CPF/CNPJ.
+- Tombstones em `history_entries` com `action = delete`.
+- Propagação de exclusões entre navegadores.
+
+### Alterado
+- Mesclagem remota passa a respeitar tombstones antes de reimportar registros.
+
+### Banco de dados
+- Sem alteração de schema ou RLS.
+
+
 ## 4.4.1.4
 
 ### Corrigido

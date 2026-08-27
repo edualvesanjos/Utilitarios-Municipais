@@ -1051,17 +1051,20 @@
                     <section class="settings-card">
                         <h3>Novidades da <span data-app-version></span></h3>
                         <ul class="about-list">
-                            <li><strong>Históricos sincronizados:</strong> removidos os comandos locais de limpeza de Arquivos, Inscrição, CPF/CNPJ, UVRM e Percentual.</li>
-                            <li><strong>Coerência:</strong> os módulos deixam de oferecer exclusão apenas local para dados que permanecem no Supabase.</li>
-                            <li><strong>Datas:</strong> melhorada a separação visual entre os dados da operação e o resultado no histórico.</li>
-                            <li><strong>Configurações:</strong> ações administrativas globais de limpeza permanecem inalteradas para avaliação específica posterior.</li>
+                            <li><strong>Exclusão sincronizada:</strong> iniciada em modo piloto no histórico de CPF/CNPJ.</li>
+                            <li><strong>Tombstones:</strong> exclusões são registradas no Supabase e impedem que registros apagados reapareçam em outros dispositivos.</li>
+                            <li><strong>Teste entre navegadores:</strong> excluir em um navegador, sincronizar e confirmar a remoção no segundo.</li>
+                            <li><strong>Segurança:</strong> nenhum botão global de limpeza foi reativado nesta etapa.</li>
+                            <li><strong>Ambiente:</strong> versão configurada exclusivamente para o Supabase DEV.</li>
                         </ul>
                     </section>
                 </div>
 
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
-                    <div class="about-timeline"><article><strong>4.4.1.4</strong><p>Padronização das ações dos históricos sincronizados e melhoria visual do histórico de Datas.</p></article><article><strong>4.4.1.3</strong><p>Ajustes de coerência dos históricos, novo histórico visual de Datas e atualização do valor padrão da UVRM.</p></article><article><strong>4.4.1.2</strong><p>Estabilização da ordem dos históricos e incorporação definitiva das correções de CPF/CNPJ.</p></article>
+                    <div class="about-timeline">
+                        <article><strong>4.4.2</strong><p>Piloto de exclusão sincronizada no histórico de CPF/CNPJ, com tombstones e propagação entre dispositivos.</p></article>
+<article><strong>4.4.1.4</strong><p>Padronização das ações dos históricos sincronizados e melhoria visual do histórico de Datas.</p></article><article><strong>4.4.1.3</strong><p>Ajustes de coerência dos históricos, novo histórico visual de Datas e atualização do valor padrão da UVRM.</p></article><article><strong>4.4.1.2</strong><p>Estabilização da ordem dos históricos e incorporação definitiva das correções de CPF/CNPJ.</p></article>
                         <article><strong>4.4.1.1</strong><p>Correção do carregamento inicial e atualização visual do histórico local de CPF/CNPJ após sincronização.</p></article>
 
                         <article><strong>4.4.1</strong><p>Confiabilidade da sincronização: fila de pendências, reenvio automático, retomada após offline e proteção contra sincronizações concorrentes.</p></article>

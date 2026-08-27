@@ -1,4 +1,4 @@
-/* Utilitários Municipais v4.4.1.2 — ordem determinística dos históricos. */
+/* Utilitários Municipais v4.4.2 — piloto de exclusão sincronizada de históricos. */
 (function () {
     "use strict";
 
@@ -256,6 +256,37 @@
         return `${hex.slice(0,8)}-${hex.slice(8,12)}-4${hex.slice(13,16)}-a${hex.slice(17,20)}-${hex.slice(20,32)}`;
     }
 
+    function fingerprintValue(value) {
+        return stableStringify(sanitizeForFingerprint(value));
+    }
+
+    function deterministicActionClientId(module, action, value) {
+        return deterministicClientId(`${module}:${action}`, value);
+    }
+
+    function queueDeleteHistory(module, value, options = {}) {
+        if (!SUPPORTED_MODULES.includes(module)) {
+            throw new Error(`Módulo de histórico não suportado: ${module}`);
+        }
+
+        const fingerprint = fingerprintValue(value);
+        const record = enqueue({
+            module,
+            action: "delete",
+            value,
+            timestamp: options.timestamp || nowIso(),
+            clientId: options.clientId || deterministicActionClientId(module, "delete", value),
+            metadata: {
+                tombstone: true,
+                target_fingerprint: fingerprint,
+                source: options.source || "user_delete"
+            }
+        });
+
+        window.setTimeout(() => syncAll({ silent: true }).catch(() => {}), 0);
+        return record;
+    }
+
     function timestampFromValue(value) {
         return value?.createdAt || value?.copiedAt || value?.timestamp || null;
     }
@@ -343,24 +374,66 @@
 
     function mergeRemoteRows(rows) {
         let added = 0;
-        Object.entries(LOCAL_HISTORY).forEach(([module,cfg])=>{
-            const local=StorageService.get(cfg.key,[]);
-            const items=Array.isArray(local)?local.slice():[];
-            const seen=new Set(items.map(item=>stableStringify(sanitizeForFingerprint(item))));
-            rows.filter(row=>row.module===module).forEach(row=>{
-                const value=row.value;
-                if(!value || typeof value!=="object") return;
-                const fingerprint=stableStringify(sanitizeForFingerprint(value));
-                if(!seen.has(fingerprint)){items.push(value);seen.add(fingerprint);added+=1;}
-            });
-            StorageService.set(cfg.key,sortHistoryStable(items).slice(0,cfg.limit));
+        let removed = 0;
+
+        Object.entries(LOCAL_HISTORY).forEach(([module, cfg]) => {
+            const local = StorageService.get(cfg.key, []);
+            let items = Array.isArray(local) ? local.slice() : [];
+            const moduleRows = rows.filter((row) => row.module === module);
+
+            const deletedFingerprints = new Set(
+                moduleRows
+                    .filter((row) => row.action === "delete")
+                    .map((row) => row?.metadata?.target_fingerprint || fingerprintValue(row.value))
+                    .filter(Boolean)
+            );
+
+            if (deletedFingerprints.size) {
+                const before = items.length;
+                items = items.filter((item) => !deletedFingerprints.has(fingerprintValue(item)));
+                removed += Math.max(0, before - items.length);
+            }
+
+            const seen = new Set(items.map((item) => fingerprintValue(item)));
+
+            moduleRows
+                .filter((row) => row.action !== "delete")
+                .forEach((row) => {
+                    const value = row.value;
+                    if (!value || typeof value !== "object") return;
+
+                    const fingerprint = fingerprintValue(value);
+                    if (deletedFingerprints.has(fingerprint)) return;
+
+                    if (!seen.has(fingerprint)) {
+                        items.push(value);
+                        seen.add(fingerprint);
+                        added += 1;
+                    }
+                });
+
+            StorageService.set(cfg.key, sortHistoryStable(items).slice(0, cfg.limit));
         });
-        if(added){
-            ["renderFileHistory","renderRegistrationHistory","renderLotHistory","renderUvrmHistory","renderPercentageHistory","renderDocumentoFiscalHistory","renderDatesHistory","renderProductivity33","updateDashboardSummary"].forEach(name=>{
-                try{if(typeof window[name]==="function")window[name]();}catch{}
+
+        if (added || removed) {
+            [
+                "renderFileHistory",
+                "renderRegistrationHistory",
+                "renderLotHistory",
+                "renderUvrmHistory",
+                "renderPercentageHistory",
+                "renderDocumentoFiscalHistory",
+                "renderDatesHistory",
+                "renderProductivity33",
+                "updateDashboardSummary"
+            ].forEach((name) => {
+                try {
+                    if (typeof window[name] === "function") window[name]();
+                } catch {}
             });
         }
-        return added;
+
+        return { added, removed, changed: added + removed };
     }
 
     async function performSync({ silent = true } = {}) {
@@ -388,8 +461,14 @@
             }
 
             const remote = await listRemote({ limit: 2000 });
-            const downloaded = mergeRemoteRows(remote);
-            const result = { ...uploaded, downloaded };
+            const merged = mergeRemoteRows(remote);
+            const downloaded = Number(merged?.changed || 0);
+            const result = {
+                ...uploaded,
+                downloaded,
+                mergedAdded: Number(merged?.added || 0),
+                mergedRemoved: Number(merged?.removed || 0)
+            };
 
             setSyncState({
                 syncing: false,
@@ -426,6 +505,7 @@
         supportedModules: SUPPORTED_MODULES,
         localHistoryConfig: LOCAL_HISTORY,
         sanitizeForFingerprint,
+        fingerprintValue,
         sortHistoryStable,
         createRecord,
         enqueue,
@@ -437,6 +517,7 @@
         listRemote,
         getDeviceId,
         queueHistory,
+        queueDeleteHistory,
         scanLocalHistories,
         notifyLocalChange,
         scheduleRetry,
