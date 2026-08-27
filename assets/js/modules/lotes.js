@@ -98,6 +98,7 @@ function addLotHistory(lots) {
     const history = getLotHistory().slice(0, 14);
     history.unshift(item);
     setJson(LOT_HISTORY_KEY, history);
+    window.HistoryService?.notifyLocalChange?.();
     window.HistoryService?.queueHistory?.("lote", item, "generated");
     renderLotHistory();
 }
@@ -191,8 +192,3 @@ $("#reiniciarSequenciaLotes").addEventListener("click", async () => {
     showToast("Sequência reiniciada.");
 });
 
-$("#limparHistoricoLotes").addEventListener("click", () => {
-    localStorage.removeItem(LOT_HISTORY_KEY);
-    renderLotHistory();
-    showToast("Histórico de lotes removido.");
-});

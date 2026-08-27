@@ -208,6 +208,7 @@ function addFileHistory(item) {
 
     history.unshift({ value, timestamp: new Date().toISOString() });
     setJson(FILE_HISTORY_KEY, history);
+    window.HistoryService?.notifyLocalChange?.();
     window.HistoryService?.queueHistory?.("arquivo", history[0], "copied");
     renderFileHistory();
     if (typeof renderProductivity33 === "function") renderProductivity33();
@@ -378,11 +379,6 @@ $("#limparArquivo").addEventListener("click", () => {
     setFeedback($("#arquivoMensagem"));
 });
 
-$("#limparHistoricoArquivo").addEventListener("click", () => {
-    localStorage.removeItem(FILE_HISTORY_KEY);
-    renderFileHistory();
-    showToast("Histórico removido.");
-});
 
 $("#limparModelosArquivo").addEventListener("click", () => {
     localStorage.removeItem(FILE_MODELS_KEY);

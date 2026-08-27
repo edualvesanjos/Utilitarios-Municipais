@@ -259,7 +259,6 @@
                         <section class="sidebar-card">
                             <div class="section-heading">
                                 <h3>Histórico recente</h3>
-                                <button id="limparHistoricoArquivo" class="text-button">Limpar</button>
                             </div>
 
                             <ul id="arquivoHistorico" class="history-list compact-list">
@@ -362,7 +361,6 @@
                         <section class="sidebar-card">
                             <div class="section-heading">
                                 <h3>Histórico recente</h3>
-                                <button id="limparHistoricoInscricao" class="text-button">Limpar</button>
                             </div>
 
                             <ul id="inscricaoHistorico" class="history-list compact-list">
@@ -435,7 +433,7 @@
                     </section>
                     <aside class="generator-sidebar">
                         <section class="sidebar-card">
-                            <div class="section-heading"><h3>Histórico local</h3><button id="limparHistoricoDocumentoFiscal" class="text-button" type="button">Limpar</button></div>
+                            <div class="section-heading"><h3>Histórico local</h3></div>
                             <ul id="documentoFiscalHistorico" class="history-list compact-list"><li class="empty-state">Nenhum documento normalizado recentemente.</li></ul>
                         </section>
                         <section class="sidebar-card">
@@ -547,7 +545,6 @@
                         <section class="sidebar-card">
                             <div class="section-heading">
                                 <h3>Histórico de gerações</h3>
-                                <button id="limparHistoricoLotes" class="text-button">Limpar</button>
                             </div>
 
                             <ul id="loteHistorico" class="history-list compact-list">
@@ -589,7 +586,7 @@
                         <div class="grid two-columns">
                             <label>
                                 Valor atual da UVRM (R$)
-                                <input id="uvrmValorUnitario" type="text" inputmode="decimal" autocomplete="off" value="39,99">
+                                <input id="uvrmValorUnitario" type="text" inputmode="decimal" autocomplete="off" value="5,2151">
                             </label>
                             <label>
                                 Casas decimais da UVRM
@@ -686,7 +683,6 @@
                         <section class="sidebar-card">
                             <div class="section-heading">
                                 <h3>Histórico de operações</h3>
-                                <button id="limparHistoricoUvrm" class="text-button">Limpar</button>
                             </div>
                             <input id="pesquisaHistoricoUvrm" type="search" placeholder="Pesquisar no histórico">
                             <div id="uvrmHistorico" class="uvrm-operation-history">
@@ -802,7 +798,6 @@
                         <section class="sidebar-card">
                             <div class="section-heading">
                                 <h3>Histórico de cálculos</h3>
-                                <button id="limparHistoricoPercentual" class="text-button">Limpar</button>
                             </div>
 
                             <input id="pesquisaHistoricoPercentual" type="search" placeholder="Pesquisar no histórico">
@@ -890,6 +885,17 @@
                 <button id="copiarDatasResultado" class="secondary" type="button" disabled>Copiar resultado</button>
             </aside>
         </div>
+        <section class="sidebar-card dates-history-card">
+            <div class="section-heading">
+                <div>
+                    <h3>Histórico de cálculos</h3>
+                    <p class="mini-description">Resultados recentes salvos localmente e sincronizados.</p>
+                </div>
+            </div>
+            <ul id="datasHistorico" class="history-list compact-list">
+                <li class="empty-state">Nenhum cálculo de datas realizado recentemente.</li>
+            </ul>
+        </section>
         <div class="tab-footer-navigation">
             <button class="back-home-button" type="button" data-open-tab="inicio"><span aria-hidden="true">←</span> Voltar para a Página Inicial</button>
         </div>
@@ -1012,10 +1018,10 @@
 
         <section id="historico-global" class="tab-panel productivity-panel">
             <div class="card">
-                <div class="section-heading main-heading"><div><span class="eyebrow">Produtividade</span><h2>Histórico global</h2><p class="section-description">Consulte em um único lugar os registros produzidos pelos módulos.</p></div><div class="actions"><button id="globalHistoryExportCsv" class="secondary-button" type="button">Exportar CSV</button><button id="globalHistoryExportJson" class="secondary-button" type="button">Exportar JSON</button></div></div>
+                <div class="section-heading main-heading"><div><span class="eyebrow">Produtividade</span><h2>Histórico global</h2><p class="section-description">Consulte e sincronize em um único lugar os registros produzidos pelos módulos, mantendo funcionamento local quando estiver offline.</p></div><div class="actions"><button id="globalHistorySync" class="primary-button" type="button">Sincronizar histórico</button><button id="globalHistoryExportCsv" class="secondary-button" type="button">Exportar CSV</button><button id="globalHistoryExportJson" class="secondary-button" type="button">Exportar JSON</button></div></div>
                 <div class="productivity-toolbar"><label class="productivity-search"><span>Pesquisar</span><input id="globalHistorySearch" type="search" placeholder="Conteúdo do registro"></label><label><span>Módulo</span><select id="globalHistoryModule"><option value="todos">Todos os módulos</option></select></label><label><span>Período</span><select id="globalHistoryPeriod"><option value="todos">Todo o período</option><option value="hoje" selected>Hoje</option><option value="7">Últimos 7 dias</option><option value="30">Últimos 30 dias</option></select></label></div>
-                <div class="library-summary"><div><span>Registros encontrados</span><strong id="globalHistoryCount">0</strong></div><div><span>Módulos com dados</span><strong id="globalHistoryModuleCount">0</strong></div><div><span>Último registro</span><strong id="globalHistoryLast">Nenhum</strong></div></div>
-                <div id="globalHistoryList" class="global-history-list"></div>
+                <div class="library-summary"><div><span>Registros encontrados</span><strong id="globalHistoryCount">0</strong></div><div><span>Módulos com dados</span><strong id="globalHistoryModuleCount">0</strong></div><div><span>Pendentes</span><strong id="globalHistoryPending">0</strong></div><div><span>Última sincronização</span><strong id="globalHistoryLastSync">Nunca</strong></div><div><span>Último registro</span><strong id="globalHistoryLast">Nenhum</strong></div></div>
+                <p id="globalHistorySyncStatus" class="help-text" aria-live="polite"></p><div id="globalHistoryList" class="global-history-list"></div>
                 <div class="tab-footer-navigation"><button class="back-home-button" type="button" data-open-tab="inicio"><span aria-hidden="true">←</span>Voltar para a Página Inicial</button></div>
             </div>
         </section>
@@ -1045,20 +1051,31 @@
                     <section class="settings-card">
                         <h3>Novidades da <span data-app-version></span></h3>
                         <ul class="about-list">
-                                <li><strong>Novo módulo Datas:</strong> contador entre datas, soma e subtração de dias corridos, com validações, copiar e limpar.</li>
-                                <li><strong>Calculadora UVRM:</strong> removido o resíduo visual <code>\\n</code> abaixo do campo Descrição.</li>
-                            <li>Históricos dos módulos passam a entrar na fila de sincronização online, preservando o armazenamento local.</li>
-                            <li>Registros pendentes são reenviados com identificador idempotente para evitar duplicidades no Supabase.</li>
-                            <li>Históricos remotos são mesclados ao navegador sem duplicar registros equivalentes.</li>
-                            <li>Históricos locais anteriores são migrados uma única vez para a fila online.</li>
-                            <li>Ajustes visuais em Sobre e Biblioteca removem indicadores redundantes.</li>
+                            <li><strong>Históricos sincronizados:</strong> removidos os comandos locais de limpeza de Arquivos, Inscrição, CPF/CNPJ, UVRM e Percentual.</li>
+                            <li><strong>Coerência:</strong> os módulos deixam de oferecer exclusão apenas local para dados que permanecem no Supabase.</li>
+                            <li><strong>Datas:</strong> melhorada a separação visual entre os dados da operação e o resultado no histórico.</li>
+                            <li><strong>Configurações:</strong> ações administrativas globais de limpeza permanecem inalteradas para avaliação específica posterior.</li>
                         </ul>
                     </section>
                 </div>
 
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
-                    <div class="about-timeline">
+                    <div class="about-timeline"><article><strong>4.4.1.4</strong><p>Padronização das ações dos históricos sincronizados e melhoria visual do histórico de Datas.</p></article><article><strong>4.4.1.3</strong><p>Ajustes de coerência dos históricos, novo histórico visual de Datas e atualização do valor padrão da UVRM.</p></article><article><strong>4.4.1.2</strong><p>Estabilização da ordem dos históricos e incorporação definitiva das correções de CPF/CNPJ.</p></article>
+                        <article><strong>4.4.1.1</strong><p>Correção do carregamento inicial e atualização visual do histórico local de CPF/CNPJ após sincronização.</p></article>
+
+                        <article><strong>4.4.1</strong><p>Confiabilidade da sincronização: fila de pendências, reenvio automático, retomada após offline e proteção contra sincronizações concorrentes.</p></article>
+
+                        <article><strong>4.4.0.3</strong><p>Correção defensiva do gerenciamento de abas, removendo estados inválidos como null, e atualização do Histórico de versões.</p></article>
+                        <article><strong>4.4.0.2</strong><p>Deduplicação aprimorada do Histórico Global e ocultação de UUIDs e demais campos técnicos na apresentação.</p></article>
+                        <article><strong>4.4.0.1</strong><p>Correção das chaves locais da sincronização, restabelecendo envio e recebimento dos históricos entre navegadores.</p></article>
+                        <article><strong>4.4.0</strong><p>Histórico Global sincronizado, integração de Datas e CPF/CNPJ e funcionamento offline-first com Supabase DEV.</p></article>
+                        <article><strong>4.3.6.2</strong><p>Ajuste visual do seletor de tipo do módulo CPF/CNPJ e consolidação do fluxo de desenvolvimento por branches.</p></article>
+                        <article><strong>4.3.6.1</strong><p>Refinamentos de CPF/CNPJ, identificação do ambiente DEV, ajustes de históricos, backup e interface.</p></article>
+                        <article><strong>4.3.6</strong><p>Novo módulo CPF/CNPJ com normalização, detecção automática, histórico local, cópia e opção de cópia automática.</p></article>
+                        <article><strong>4.3.5.4</strong><p>Aplicação controlada de preferências de interface e consolidação das configurações antes da série 4.3.6.</p></article>
+                        <article><strong>4.3.5.3</strong><p>Correção da soma da Calculadora UVRM e ajustes de layout das configurações.</p></article>
+
                         <article><strong>4.3.4</strong><p>Sincronização gradual dos históricos dos módulos, migração local idempotente e prevenção de duplicidades entre dispositivos.</p></article>
                         <article><strong>4.3.1.1</strong><p>Hotfix do módulo Número de lote: recuperação confiável da última sequência e preparação automática da próxima ao reabrir o sistema.</p></article>
                         <article><strong>4.3.1</strong><p>Identificação da conta no cabeçalho e status técnico no rodapé, separando autenticação, conectividade e sincronização.</p></article>

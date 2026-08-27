@@ -76,7 +76,7 @@ Hotfix de precisão do total UVRM e refinamentos de layout.
 
 ### Alteração manual da versão
 
-A versão corrente é controlada por `APP_VERSION` em `assets/js/core/config.js`. Para iniciar manualmente uma nova versão, altere somente essa constante, por exemplo `const APP_VERSION = "4.3.6.2";`. CHANGELOG e arquivos de release permanecem históricos.
+A versão corrente é controlada por `APP_VERSION` em `assets/js/core/config.js`. Para iniciar manualmente uma nova versão, altere somente essa constante, por exemplo `const APP_VERSION = "4.4.1.4";`. CHANGELOG e arquivos de release permanecem históricos.
 
 ### 4.3.6 — CPF / CNPJ
 
@@ -92,10 +92,46 @@ Consulte `docs/AMBIENTES_SUPABASE.md` antes de alterar banco, RLS ou sincroniza�
 
 Hotfix de interface, backup, históricos e identificação visual do ambiente DEV.
 
-### 4.3.6.2
+### 4.3.6.2 DEV
 
 Ajuste visual do seletor de tipo em CPF/CNPJ para seguir o padrão do módulo Inscrição.
 
-### Pacote de produção 4.3.6.2
+### 4.4.0 DEV
 
-Este pacote foi fechado com `APP_ENVIRONMENT = "production"` após validação da versão no branch `develop`.
+Início da série 4.4 com Histórico Global sincronizado, integração de Datas e CPF/CNPJ e sincronização offline-first pelo Supabase DEV.
+
+### 4.4.0.1 DEV
+
+Corrige a leitura/escrita dos históricos pela camada `StorageService`, eliminando o prefixo duplicado e restabelecendo upload/download entre navegadores.
+
+### 4.4.0.2 DEV
+
+Oculta campos técnicos no Histórico Global e fortalece a deduplicação entre navegadores ignorando identificadores técnicos.
+
+### 4.4.0.3 DEV
+
+Corrige restauração de abas inválidas e atualiza o Histórico de versões em Sobre.
+
+### 4.4.1 DEV
+
+Confiabilidade da sincronização: fila de pendências, reenvio automático, retomada após offline e estado visível no Histórico Global.
+
+### 4.4.1.1 DEV
+
+Corrige o carregamento inicial e a atualização pós-sincronização do histórico local de CPF/CNPJ.
+
+### 4.4.1.2 DEV
+
+Estabiliza a ordem dos históricos e incorpora as correções definitivas do histórico CPF/CNPJ.
+
+### 4.4.1.3 DEV
+
+Remove limpeza local incoerente de Lotes, atualiza UVRM para 5,2151 e adiciona histórico visual ao módulo Datas.
+
+### 4.4.1.4
+
+Padroniza os históricos sincronizados removendo limpezas apenas locais e melhora a apresentação do histórico de Datas.
+
+### Produção 4.4.1.4
+
+Fechada com `APP_ENVIRONMENT = "production"` e correção da persistência UVRM em `5,2151`.

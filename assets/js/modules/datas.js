@@ -19,6 +19,59 @@
     if (!operation || !start || !end || !quantity || !result) return;
 
     let copyValue = "";
+    const DATES_HISTORY_LIMIT = 30;
+
+    function datesHistoryTime(item) {
+        const raw = item?.occurred_at || item?.createdAt || item?.timestamp || item?.created_at || null;
+        const time = raw ? new Date(raw).getTime() : 0;
+        return Number.isFinite(time) ? time : 0;
+    }
+
+    function getDatesHistory() {
+        const history = getJson(DATES_HISTORY_KEY, []);
+        const rows = Array.isArray(history) ? history : [];
+        return rows.map((item,index)=>({item,index})).sort((a,b)=>{
+            const diff=datesHistoryTime(b.item)-datesHistoryTime(a.item);
+            if(diff) return diff;
+            const idDiff=String(a.item?.id||"").localeCompare(String(b.item?.id||""));
+            return idDiff || a.index-b.index;
+        }).map(entry=>entry.item);
+    }
+
+    function renderDatesHistory() {
+        const list = $("#datasHistorico");
+        if (!list) return;
+        const rows = getDatesHistory();
+        if (!rows.length) {
+            list.innerHTML = '<li class="empty-state">Nenhum cálculo de datas realizado recentemente.</li>';
+            return;
+        }
+        list.innerHTML = rows.map((item,index)=>{
+            const op = item.operation === "entre" ? "Entre datas" : item.operation === "somar" ? "Somar dias" : "Subtrair dias";
+            const startText = item.start ? item.start.split("-").reverse().join("/") : "—";
+            const parameter = item.operation === "entre"
+                ? ` até ${item.end ? item.end.split("-").reverse().join("/") : "—"}`
+                : ` • ${Number(item.quantity||0)} dia(s)`;
+            const resultText = String(item.result || "—");
+            return `<li><span class="dates-history-entry"><strong>${op}: ${startText}${parameter}</strong><small class="dates-history-result">${resultText}</small></span><button type="button" class="secondary mini-button" data-copy-dates-history="${index}">Copiar</button></li>`;
+        }).join("");
+        list.querySelectorAll("[data-copy-dates-history]").forEach(button=>button.addEventListener("click",async()=>{
+            const item=rows[Number(button.dataset.copyDatesHistory)];
+            if(!item) return;
+            const value=String(item.result||"");
+            if(typeof copyText==="function") await copyText(value);
+            else if(navigator.clipboard) await navigator.clipboard.writeText(value);
+        }));
+    }
+
+    function saveDatesHistory(entry) {
+        const rows = getDatesHistory();
+        rows.unshift(entry);
+        setJson(DATES_HISTORY_KEY, rows.slice(0, DATES_HISTORY_LIMIT));
+        renderDatesHistory();
+        window.HistoryService?.notifyLocalChange?.();
+        window.renderProductivity33?.();
+    }
 
     function parseDate(value) {
         if (!value) return null;
@@ -119,6 +172,16 @@
                 `${weeks} ${weeks === 1 ? "semana" : "semanas"} e ` +
                 `${remainder} ${remainder === 1 ? "dia" : "dias"}.`;
             copyValue = result.textContent;
+            saveDatesHistory({
+                id: typeof createUniqueId === "function" ? createUniqueId() : `${Date.now()}-datas`,
+                operation: "entre",
+                start: start.value,
+                end: end.value,
+                days,
+                result: copyValue,
+                detail: detail.textContent,
+                createdAt: new Date().toISOString()
+            });
         } else {
             const direction = operation.value === "somar" ? 1 : -1;
             const calculated = new Date(values.initial.getTime());
@@ -131,6 +194,15 @@
                 `${formatDate(values.initial)} ${sign} ${values.days} ` +
                 `${values.days === 1 ? "dia" : "dias"}.`;
             copyValue = result.textContent;
+            saveDatesHistory({
+                id: typeof createUniqueId === "function" ? createUniqueId() : `${Date.now()}-datas`,
+                operation: operation.value,
+                start: start.value,
+                quantity: values.days,
+                result: copyValue,
+                detail: detail.textContent,
+                createdAt: new Date().toISOString()
+            });
         }
 
         copyButton.disabled = false;
@@ -167,5 +239,7 @@
         });
     });
 
+    window.renderDatesHistory = renderDatesHistory;
     updateInterface();
+    renderDatesHistory();
 })();

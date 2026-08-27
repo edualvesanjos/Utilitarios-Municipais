@@ -17,6 +17,8 @@ const UVRM_VALUE_KEY = `${STORAGE_PREFIX}uvrmValue`;
 const UVRM_HISTORY_KEY = `${STORAGE_PREFIX}uvrmHistory`;
 const UVRM_DECIMALS_KEY = `${STORAGE_PREFIX}uvrmDecimals`;
 const PERCENTAGE_HISTORY_KEY = `${STORAGE_PREFIX}percentageHistory`;
+const DATES_HISTORY_KEY = `${STORAGE_PREFIX}datesHistory`;
+const DOCUMENT_FISCAL_HISTORY_KEY = `${STORAGE_PREFIX}documentoFiscalHistory`;
 const LAST_BACKUP_KEY = `${STORAGE_PREFIX}lastBackup`;
 const FILE_REMOVE_POINTS_KEY = `${STORAGE_PREFIX}fileRemovePoints`;
 

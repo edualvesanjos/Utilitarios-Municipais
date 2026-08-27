@@ -59,6 +59,8 @@ function renderAllExistingHistories() {
     safeInvoke(renderLotHistory);
     safeInvoke(renderUvrmHistory);
     safeInvoke(renderPercentageHistory);
+    safeInvoke(() => window.renderDocumentoFiscalHistory?.());
+    safeInvoke(() => window.renderDatesHistory?.());
 }
 
 function initializeApplication() {
@@ -101,8 +103,8 @@ function initializeApplication() {
 
     const storedUvrmValue = localStorage.getItem(UVRM_VALUE_KEY);
     const restoredUvrmValue = storedUvrmValue && storedUvrmValue.trim()
-        ? storedUvrmValue
-        : $("#uvrmValorUnitario").value || "39,99";
+        ? String(storedUvrmValue).replace(".", ",")
+        : $("#uvrmValorUnitario").value || "5,2151";
     $("#uvrmValorUnitario").value = restoredUvrmValue;
     localStorage.setItem(UVRM_VALUE_KEY, restoredUvrmValue);
 
@@ -135,7 +137,11 @@ function refreshPersistedApplicationData() {
 
     const storedUvrmValue = localStorage.getItem(UVRM_VALUE_KEY);
     if (storedUvrmValue !== null && document.activeElement !== $("#uvrmValorUnitario")) {
-        $("#uvrmValorUnitario").value = storedUvrmValue;
+        const normalizedUvrmValue = String(storedUvrmValue).replace(".", ",");
+        $("#uvrmValorUnitario").value = normalizedUvrmValue;
+        if (normalizedUvrmValue !== storedUvrmValue) {
+            localStorage.setItem(UVRM_VALUE_KEY, normalizedUvrmValue);
+        }
     }
 
     const storedDecimals = localStorage.getItem(UVRM_DECIMALS_KEY);

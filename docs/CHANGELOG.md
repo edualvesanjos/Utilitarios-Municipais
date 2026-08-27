@@ -1,5 +1,114 @@
 # Changelog
 
+## 4.4.1.4
+
+### Corrigido
+- Persistência do valor padrão UVRM mantém `5,2151` após recarregar o site.
+
+### Alterado
+- Removidas limpezas locais dos históricos sincronizados dos módulos.
+- Mantidas, por enquanto, as ações administrativas globais de Configurações.
+- Melhorada a separação visual do histórico de Datas.
+
+### Banco de dados
+- Sem alteração de schema ou RLS.
+
+
+## 4.4.1.3
+
+### Alterado
+- Removido `Limpar` do histórico de Lotes.
+- UVRM padrão atualizado para R$ 5,2151.
+- Adicionado histórico visual ao módulo Datas, com cópia e rolagem vertical.
+
+### Banco de dados
+- Sem alteração de schema ou RLS.
+
+
+## 4.4.1.2
+
+### Corrigido
+- Ordem estável dos históricos.
+- Mesclagem remota determinística.
+- Correções definitivas do histórico CPF/CNPJ.
+
+### Banco de dados
+- Sem alteração de schema ou RLS.
+
+
+## 4.4.1.1
+
+### Corrigido
+- Histórico local de CPF/CNPJ carrega automaticamente ao abrir.
+- Mesclagem remota atualiza imediatamente a lista visível de CPF/CNPJ.
+
+### Banco de dados
+- Sem alteração de schema ou RLS.
+
+
+## 4.4.1
+
+### Adicionado
+- Reenvio automático progressivo da fila de históricos.
+- Estado de sincronização com pendências e última sincronização.
+- Retomada automática após offline/reabertura.
+- Leitura remota paginada.
+
+### Alterado
+- Sincronizações concorrentes passam a compartilhar a mesma execução.
+
+### Banco de dados
+- Sem alteração de schema ou RLS.
+
+
+## 4.4.0.3
+
+### Corrigido
+- Remoção automática de abas inválidas como `null`.
+- Validação defensiva antes de abrir/restaurar abas.
+- Histórico de versões e Novidades atualizados.
+
+### Banco de dados
+- Sem alteração de schema ou RLS.
+
+
+## 4.4.0.2
+
+### Corrigido
+- UUIDs e campos técnicos deixam de aparecer no Histórico Global.
+- Deduplicação passa a ignorar IDs técnicos.
+- Mesclagem local/remota utiliza fingerprint sanitizado.
+
+### Banco de dados
+- Sem alteração de schema ou RLS.
+
+
+## 4.4.0.1
+
+### Corrigido
+- Chaves locais do HistoryService deixam de receber prefixo duplicado.
+- Varredura local e mesclagem remota do Histórico Global corrigidas.
+- Status de sincronização informa enviados e recebidos.
+
+### Banco de dados
+- Sem alteração de schema ou RLS.
+
+
+## 4.4.0
+
+### Adicionado
+- Histórico Global sincronizado para sete módulos.
+- Datas e CPF/CNPJ integrados aos históricos e à sincronização.
+- Sincronização manual no Histórico Global.
+
+### Alterado
+- Varredura idempotente contínua dos históricos locais.
+- Mesclagem local/remota com deduplicação e operação offline-first.
+
+### Banco de dados
+- Sem alteração de schema; utiliza `history_entries`.
+
+
 ## 4.3.6.2
 
 ### Interface

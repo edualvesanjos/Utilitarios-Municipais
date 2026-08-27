@@ -84,6 +84,7 @@ function addRegistrationHistory(masked, type) {
 
     history.unshift(item);
     setJson(REGISTRATION_HISTORY_KEY, history);
+    window.HistoryService?.notifyLocalChange?.();
     window.HistoryService?.queueHistory?.("inscricao", item, "copied");
     renderRegistrationHistory();
 }
@@ -282,8 +283,3 @@ $("#limparInscricao").addEventListener("click", () => {
     updateRegistrationField();
 });
 
-$("#limparHistoricoInscricao").addEventListener("click", () => {
-    localStorage.removeItem(REGISTRATION_HISTORY_KEY);
-    renderRegistrationHistory();
-    showToast("Histórico de inscrições removido.");
-});

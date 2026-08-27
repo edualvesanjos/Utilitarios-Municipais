@@ -22,8 +22,8 @@ function formatDashboardBackupDate(value) {
 }
 
 function formatDashboardUvrmValue(value) {
-    const text = String(value || "39,99").trim();
-    return `R$ ${text || "39,99"}`;
+    const text = String(value || "5,2151").trim();
+    return `R$ ${text || "5,2151"}`;
 }
 
 function dashboardRecentText(item) {

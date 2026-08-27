@@ -1,14 +1,24 @@
-/* Utilitários Municipais v4.3.4 — sincronização gradual dos históricos operacionais. */
+/* Utilitários Municipais v4.4.1.2 — ordem determinística dos históricos. */
 (function () {
     "use strict";
 
     const OUTBOX_KEY = "history:outbox";
     const DEVICE_KEY = "online:deviceId";
     const HISTORY_SCHEMA_VERSION = 1;
-    const MIGRATION_KEY = "history:migrated:4.3.4";
-    const PREFIX = "utilitariosMunicipais:";
-    const LOCAL_HISTORY = Object.freeze({ arquivo: { key: `${PREFIX}fileHistory`, limit: 15 }, inscricao: { key: `${PREFIX}registrationHistory`, limit: 15 }, lote: { key: `${PREFIX}lotHistory`, limit: 15 }, uvrm: { key: `${PREFIX}uvrmHistory`, limit: 50 }, percentual: { key: `${PREFIX}percentageHistory`, limit: 30 } });
-    const SUPPORTED_MODULES = Object.freeze(["arquivo", "inscricao", "lote", "uvrm", "percentual"]);
+    const MIGRATION_KEY = "history:migrated:4.4.0.1";
+    const SYNC_STATE_KEY = "history:syncState";
+    const RETRY_BASE_MS = 3000;
+    const RETRY_MAX_MS = 60000;
+    const LOCAL_HISTORY = Object.freeze({
+        arquivo: { key: "fileHistory", limit: 15 },
+        inscricao: { key: "registrationHistory", limit: 15 },
+        lote: { key: "lotHistory", limit: 15 },
+        uvrm: { key: "uvrmHistory", limit: 50 },
+        percentual: { key: "percentageHistory", limit: 30 },
+        datas: { key: "datesHistory", limit: 30 },
+        "cpf-cnpj": { key: "documentoFiscalHistory", limit: 20 }
+    });
+    const SUPPORTED_MODULES = Object.freeze(["arquivo", "inscricao", "lote", "uvrm", "percentual", "datas", "cpf-cnpj"]);
 
     function nowIso() {
         return new Date().toISOString();
@@ -62,8 +72,30 @@
             occurred_at: safeTimestamp(timestamp),
             device_id: getDeviceId(),
             schema_version: HISTORY_SCHEMA_VERSION,
-            sync_status: "pending"
+            sync_status: "pending",
+            retry_count: 0,
+            last_attempt_at: null,
+            last_error: null
         };
+    }
+
+    function getSyncState() {
+        const state = StorageService.get(SYNC_STATE_KEY, {});
+        return {
+            syncing: Boolean(state?.syncing),
+            lastSuccessAt: state?.lastSuccessAt || null,
+            lastAttemptAt: state?.lastAttemptAt || null,
+            lastError: state?.lastError || null,
+            uploaded: Number(state?.uploaded || 0),
+            downloaded: Number(state?.downloaded || 0)
+        };
+    }
+
+    function setSyncState(patch = {}) {
+        const next = { ...getSyncState(), ...patch };
+        StorageService.set(SYNC_STATE_KEY, next);
+        window.dispatchEvent(new CustomEvent("history-sync-state", { detail: next }));
+        return next;
     }
 
     function listPending() {
@@ -91,14 +123,34 @@
         StorageService.remove(OUTBOX_KEY);
     }
 
+    function updatePendingAttempt(clientIds, { error = null } = {}) {
+        const ids = new Set(Array.isArray(clientIds) ? clientIds : [clientIds]);
+        const now = nowIso();
+        const rows = listPending().map((row) => {
+            if (!ids.has(row.client_id)) return row;
+            return {
+                ...row,
+                retry_count: Number(row.retry_count || 0) + 1,
+                last_attempt_at: now,
+                last_error: error ? String(error).slice(0, 500) : null
+            };
+        });
+        StorageService.set(OUTBOX_KEY, rows);
+        return rows;
+    }
+
     async function uploadPending() {
         const sync = window.OnlineSyncService;
         const session = sync?.getSession?.();
         const client = window.SupabaseClientService?.getClient?.();
         const rows = listPending();
+
         if (!rows.length) return { uploaded: 0, remaining: 0 };
         if (!client || !session?.user) return { uploaded: 0, remaining: rows.length, reason: "not_authenticated" };
         if (!navigator.onLine) return { uploaded: 0, remaining: rows.length, reason: "offline" };
+
+        const clientIds = rows.map((row) => row.client_id);
+        updatePendingAttempt(clientIds);
 
         const payload = rows.map((row) => ({
             id: row.id,
@@ -113,33 +165,78 @@
             schema_version: row.schema_version || HISTORY_SCHEMA_VERSION
         }));
 
-        const { data, error } = await client
-            .from("history_entries")
-            .upsert(payload, { onConflict: "user_id,client_id", ignoreDuplicates: false })
-            .select("client_id");
-        if (error) throw error;
-        const uploadedIds = (data || []).map((item) => item.client_id);
-        removePending(uploadedIds);
-        return { uploaded: uploadedIds.length, remaining: listPending().length };
+        try {
+            const { data, error } = await client
+                .from("history_entries")
+                .upsert(payload, { onConflict: "user_id,client_id", ignoreDuplicates: false })
+                .select("client_id");
+
+            if (error) throw error;
+
+            const uploadedIds = (data || []).map((item) => item.client_id);
+            removePending(uploadedIds);
+            return { uploaded: uploadedIds.length, remaining: listPending().length };
+        } catch (error) {
+            updatePendingAttempt(clientIds, { error: error?.message || error });
+            throw error;
+        }
     }
 
-    async function listRemote({ module = null, limit = 100 } = {}) {
+    async function listRemote({ module = null, limit = 1000 } = {}) {
         const sync = window.OnlineSyncService;
         const session = sync?.getSession?.();
         const client = window.SupabaseClientService?.getClient?.();
         if (!client || !session?.user) return [];
-        let query = client
-            .from("history_entries")
-            .select("id,client_id,module,action,value,metadata,occurred_at,device_id,schema_version,created_at,updated_at")
-            .eq("user_id", session.user.id)
-            .order("occurred_at", { ascending: false })
-            .limit(Math.max(1, Math.min(Number(limit) || 100, 500)));
-        if (module) query = query.eq("module", module);
-        const { data, error } = await query;
-        if (error) throw error;
-        return data || [];
+
+        const requested = Math.max(1, Math.min(Number(limit) || 1000, 2000));
+        const pageSize = Math.min(250, requested);
+        const rows = [];
+
+        for (let offset = 0; offset < requested; offset += pageSize) {
+            let query = client
+                .from("history_entries")
+                .select("id,client_id,module,action,value,metadata,occurred_at,device_id,schema_version,created_at,updated_at")
+                .eq("user_id", session.user.id)
+                .order("occurred_at", { ascending: false })
+                .range(offset, Math.min(offset + pageSize - 1, requested - 1));
+
+            if (module) query = query.eq("module", module);
+
+            const { data, error } = await query;
+            if (error) throw error;
+
+            const page = data || [];
+            rows.push(...page);
+            if (page.length < pageSize) break;
+        }
+
+        return rows.slice(0, requested);
     }
 
+
+    const TECHNICAL_FIELDS = new Set([
+        "id",
+        "client_id",
+        "clientId",
+        "device_id",
+        "deviceId",
+        "schema_version",
+        "schemaVersion",
+        "sync_status",
+        "created_at",
+        "updated_at"
+    ]);
+
+    function sanitizeForFingerprint(value) {
+        if (Array.isArray(value)) return value.map(sanitizeForFingerprint);
+        if (!value || typeof value !== "object") return value;
+
+        return Object.fromEntries(
+            Object.entries(value)
+                .filter(([key]) => !TECHNICAL_FIELDS.has(key))
+                .map(([key, item]) => [key, sanitizeForFingerprint(item)])
+        );
+    }
 
     function stableStringify(value) {
         if (value === null || typeof value !== "object") return JSON.stringify(value);
@@ -148,7 +245,7 @@
     }
 
     function deterministicClientId(module, value) {
-        const text = `${module}|${stableStringify(value)}`;
+        const text = `${module}|${stableStringify(sanitizeForFingerprint(value))}`;
         const hashes = [2166136261, 2246822519, 3266489917, 668265263];
         for (let j = 0; j < hashes.length; j += 1) {
             let h = hashes[j] >>> 0;
@@ -169,8 +266,7 @@
         return record;
     }
 
-    function migrateLegacyLocalHistories() {
-        if (StorageService.getText(MIGRATION_KEY, "") === "done") return 0;
+    function scanLocalHistories() {
         let queued = 0;
         Object.entries(LOCAL_HISTORY).forEach(([module, cfg]) => {
             const items = StorageService.get(cfg.key, []);
@@ -178,7 +274,14 @@
             items.forEach((value) => {
                 const clientId = deterministicClientId(module, value);
                 const before = listPending().length;
-                enqueue({ module, action: "legacy_import", value, timestamp: timestampFromValue(value), clientId, metadata: { migrated_from_local: true } });
+                enqueue({
+                    module,
+                    action: "record",
+                    value,
+                    timestamp: timestampFromValue(value),
+                    clientId,
+                    metadata: { source: "local_history", deduplicated: true }
+                });
                 if (listPending().length > before) queued += 1;
             });
         });
@@ -186,56 +289,178 @@
         return queued;
     }
 
+    let syncScheduleTimer = null;
+    let retryTimer = null;
+    let syncInFlight = null;
+
+    function retryDelay() {
+        const maxRetry = listPending().reduce((max, row) => Math.max(max, Number(row.retry_count || 0)), 0);
+        return Math.min(RETRY_BASE_MS * Math.max(1, 2 ** Math.min(maxRetry, 4)), RETRY_MAX_MS);
+    }
+
+    function clearRetryTimer() {
+        if (retryTimer) {
+            clearTimeout(retryTimer);
+            retryTimer = null;
+        }
+    }
+
+    function scheduleRetry() {
+        clearRetryTimer();
+        if (!listPending().length || !navigator.onLine) return;
+        retryTimer = window.setTimeout(() => {
+            syncAll({ silent: true }).catch(() => {});
+        }, retryDelay());
+    }
+
+    function notifyLocalChange() {
+        clearTimeout(syncScheduleTimer);
+        syncScheduleTimer = window.setTimeout(() => {
+            syncAll({ silent: true }).catch(() => {});
+        }, 900);
+    }
+
+    function historyTimestamp(item) {
+        if (!item || typeof item !== "object") return 0;
+        const raw = item.occurred_at || item.createdAt || item.copiedAt || item.timestamp || item.date || item.savedAt || item.finishedAt || item.created_at || null;
+        const time = raw ? new Date(raw).getTime() : 0;
+        return Number.isFinite(time) ? time : 0;
+    }
+
+    function stableHistoryIdentity(item) {
+        if (!item || typeof item !== "object") return stableStringify(item);
+        return String(item.id || item.client_id || item.clientId || stableStringify(sanitizeForFingerprint(item)));
+    }
+
+    function sortHistoryStable(items) {
+        return (Array.isArray(items) ? items : []).map((item,index)=>({item,index})).sort((a,b)=>{
+            const dateDiff=historyTimestamp(b.item)-historyTimestamp(a.item);
+            if(dateDiff) return dateDiff;
+            const idDiff=stableHistoryIdentity(a.item).localeCompare(stableHistoryIdentity(b.item));
+            return idDiff || a.index-b.index;
+        }).map(({item})=>item);
+    }
+
     function mergeRemoteRows(rows) {
         let added = 0;
-        Object.entries(LOCAL_HISTORY).forEach(([module, cfg]) => {
-            const local = StorageService.get(cfg.key, []);
-            const items = Array.isArray(local) ? local.slice() : [];
-            const seen = new Set(items.map(stableStringify));
-            rows.filter((row) => row.module === module).slice().reverse().forEach((row) => {
-                const value = row.value;
-                if (!value || typeof value !== "object") return;
-                const fingerprint = stableStringify(value);
-                if (!seen.has(fingerprint)) { items.unshift(value); seen.add(fingerprint); added += 1; }
+        Object.entries(LOCAL_HISTORY).forEach(([module,cfg])=>{
+            const local=StorageService.get(cfg.key,[]);
+            const items=Array.isArray(local)?local.slice():[];
+            const seen=new Set(items.map(item=>stableStringify(sanitizeForFingerprint(item))));
+            rows.filter(row=>row.module===module).forEach(row=>{
+                const value=row.value;
+                if(!value || typeof value!=="object") return;
+                const fingerprint=stableStringify(sanitizeForFingerprint(value));
+                if(!seen.has(fingerprint)){items.push(value);seen.add(fingerprint);added+=1;}
             });
-            StorageService.set(cfg.key, items.slice(0, cfg.limit));
+            StorageService.set(cfg.key,sortHistoryStable(items).slice(0,cfg.limit));
         });
-        if (added) {
-            ["renderFileHistory","renderRegistrationHistory","renderLotHistory","renderUvrmHistory","renderPercentageHistory","renderProductivity33","updateDashboardSummary"].forEach((name) => {
-                try { if (typeof window[name] === "function") window[name](); } catch {}
+        if(added){
+            ["renderFileHistory","renderRegistrationHistory","renderLotHistory","renderUvrmHistory","renderPercentageHistory","renderDocumentoFiscalHistory","renderDatesHistory","renderProductivity33","updateDashboardSummary"].forEach(name=>{
+                try{if(typeof window[name]==="function")window[name]();}catch{}
             });
         }
         return added;
     }
 
-    async function syncAll({ silent = true } = {}) {
-        migrateLegacyLocalHistories();
-        const uploaded = await uploadPending();
-        const sync = window.OnlineSyncService;
-        if (!sync?.getSession?.()?.user || !navigator.onLine) return { ...uploaded, downloaded: 0 };
-        const remote = await listRemote({ limit: 500 });
-        const downloaded = mergeRemoteRows(remote);
-        return { ...uploaded, downloaded };
+    async function performSync({ silent = true } = {}) {
+        scanLocalHistories();
+        setSyncState({
+            syncing: true,
+            lastAttemptAt: nowIso(),
+            lastError: null
+        });
+
+        try {
+            const uploaded = await uploadPending();
+            const sync = window.OnlineSyncService;
+
+            if (!sync?.getSession?.()?.user || !navigator.onLine) {
+                const result = { ...uploaded, downloaded: 0 };
+                setSyncState({
+                    syncing: false,
+                    uploaded: result.uploaded || 0,
+                    downloaded: 0,
+                    lastError: uploaded.reason || null
+                });
+                if (uploaded.remaining) scheduleRetry();
+                return result;
+            }
+
+            const remote = await listRemote({ limit: 2000 });
+            const downloaded = mergeRemoteRows(remote);
+            const result = { ...uploaded, downloaded };
+
+            setSyncState({
+                syncing: false,
+                lastSuccessAt: nowIso(),
+                lastError: null,
+                uploaded: result.uploaded || 0,
+                downloaded
+            });
+
+            if (result.remaining) scheduleRetry();
+            else clearRetryTimer();
+
+            return result;
+        } catch (error) {
+            setSyncState({
+                syncing: false,
+                lastError: String(error?.message || error || "Falha de sincronização")
+            });
+            scheduleRetry();
+            throw error;
+        }
     }
+
+    function syncAll(options = {}) {
+        if (syncInFlight) return syncInFlight;
+        syncInFlight = performSync(options).finally(() => {
+            syncInFlight = null;
+        });
+        return syncInFlight;
+    }
+
     window.HistoryService = Object.freeze({
         schemaVersion: HISTORY_SCHEMA_VERSION,
         supportedModules: SUPPORTED_MODULES,
+        localHistoryConfig: LOCAL_HISTORY,
+        sanitizeForFingerprint,
+        sortHistoryStable,
         createRecord,
         enqueue,
         listPending,
+        getSyncState,
         removePending,
         clearPending,
         uploadPending,
         listRemote,
         getDeviceId,
         queueHistory,
-        migrateLegacyLocalHistories,
+        scanLocalHistories,
+        notifyLocalChange,
+        scheduleRetry,
         mergeRemoteRows,
         syncAll
     });
 
-    window.addEventListener("online", () => window.setTimeout(() => syncAll({ silent: true }).catch(() => {}), 300));
-    document.addEventListener("visibilitychange", () => {
-        if (document.visibilityState === "visible" && navigator.onLine) window.setTimeout(() => syncAll({ silent: true }).catch(() => {}), 300);
+    window.addEventListener("online", () => {
+        clearRetryTimer();
+        window.setTimeout(() => syncAll({ silent: true }).catch(() => {}), 300);
     });
+
+    window.addEventListener("offline", () => {
+        clearRetryTimer();
+        setSyncState({ syncing: false, lastError: "offline" });
+    });
+
+    document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible" && navigator.onLine) {
+            window.setTimeout(() => syncAll({ silent: true }).catch(() => {}), 300);
+        }
+    });
+
+    window.setTimeout(() => {
+        if (listPending().length && navigator.onLine) syncAll({ silent: true }).catch(() => {});
+    }, 1200);
 })();

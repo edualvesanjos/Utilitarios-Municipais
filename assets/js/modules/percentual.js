@@ -76,6 +76,7 @@ function addPercentageHistory(fullText, resultValue) {
 
     history.unshift(item);
     setJson(PERCENTAGE_HISTORY_KEY, history);
+    window.HistoryService?.notifyLocalChange?.();
     window.HistoryService?.queueHistory?.("percentual", item, "calculated");
     renderPercentageHistory();
 }
@@ -330,11 +331,6 @@ $("#limparPercentual").addEventListener("click", () => {
     saveFormData();
 });
 
-$("#limparHistoricoPercentual").addEventListener("click", () => {
-    localStorage.removeItem(PERCENTAGE_HISTORY_KEY);
-    renderPercentageHistory();
-    showToast("Histórico percentual removido.");
-});
 
 $("#pesquisaHistoricoPercentual").addEventListener(
     "input",

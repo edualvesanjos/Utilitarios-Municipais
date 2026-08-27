@@ -1,6 +1,6 @@
 /* Módulo: calculadora UVRM com lista de lançamentos. */
 
-const DEFAULT_UVRM_VALUE = 39.99;
+const DEFAULT_UVRM_VALUE = 5.2151;
 const UVRM_CURRENT_LIST_KEY = `${STORAGE_PREFIX}uvrmCurrentList`;
 const UVRM_DESCRIPTION_HISTORY_KEY = `${STORAGE_PREFIX}uvrmDescriptionHistory`;
 const UVRM_DESCRIPTION_HISTORY_LIMIT = 30;
@@ -232,6 +232,7 @@ function saveUvrmOperation() {
     const history = getUvrmHistory();
     history.unshift(operation);
     setJson(UVRM_HISTORY_KEY, history.slice(0, 50));
+    window.HistoryService?.notifyLocalChange?.();
     window.HistoryService?.queueHistory?.("uvrm", operation, "saved");
     localStorage.removeItem(UVRM_CURRENT_LIST_KEY);
     renderUvrmCurrentList();
@@ -297,7 +298,13 @@ $("#uvrmCasas").addEventListener("change", () => {
     calculateUvrmPreview();
     renderUvrmCurrentList();
 });
-$("#uvrmRestaurarPadrao").addEventListener("click", () => { $("#uvrmValorUnitario").value = formatDecimal(DEFAULT_UVRM_VALUE, 2); localStorage.setItem(UVRM_VALUE_KEY, String(DEFAULT_UVRM_VALUE)); calculateUvrmPreview(); showToast("Valor padrão da UVRM restaurado."); });
+$("#uvrmRestaurarPadrao").addEventListener("click", () => {
+    const formattedValue = formatDecimal(DEFAULT_UVRM_VALUE, 4);
+    $("#uvrmValorUnitario").value = formattedValue;
+    localStorage.setItem(UVRM_VALUE_KEY, formattedValue);
+    calculateUvrmPreview();
+    showToast("Valor padrão da UVRM restaurado.");
+});
 $("#adicionarUvrmLancamento").addEventListener("click", addOrUpdateUvrmEntry);
 $("#cancelarEdicaoUvrm").addEventListener("click", resetUvrmEntryForm);
 $("#limparUvrm").addEventListener("click", resetUvrmEntryForm);
@@ -306,7 +313,6 @@ $("#copiarUvrmCompleto").addEventListener("click", () => { const items=getUvrmCu
 $("#copiarUvrmValor").addEventListener("click", () => { const items=getUvrmCurrentList(); if(!items.length)return showToast("A lista está vazia.","warning"); copyText(formatUvrmCurrency(roundCurrency(items.reduce((s,i)=>s+roundCurrency(i.reais||0),0)))); });
 $("#salvarOperacaoUvrm").addEventListener("click", saveUvrmOperation);
 $("#limparListaUvrm").addEventListener("click", () => { if(!getUvrmCurrentList().length)return; if(confirm("Limpar todos os lançamentos da operação atual?")){ localStorage.removeItem(UVRM_CURRENT_LIST_KEY); renderUvrmCurrentList(); resetUvrmEntryForm(); } });
-$("#limparHistoricoUvrm").addEventListener("click", () => { if(confirm("Limpar todo o histórico UVRM?")){ localStorage.removeItem(UVRM_HISTORY_KEY); renderUvrmHistory(); showToast("Histórico UVRM removido."); } });
 $("#pesquisaHistoricoUvrm").addEventListener("input", renderUvrmHistory);
 
 renderUvrmDescriptionSuggestions();
