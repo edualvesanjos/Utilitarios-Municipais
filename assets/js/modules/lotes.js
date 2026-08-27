@@ -104,7 +104,7 @@ function addLotHistory(lots) {
 }
 
 
-function deleteSyncedHistoryItem(item) {
+function deleteLotHistoryItem(item) {
     if (!window.confirm("Excluir este registro do histórico sincronizado? A exclusão será aplicada aos demais dispositivos após sincronizar.")) return;
     const fingerprint = window.HistoryService?.fingerprintValue?.(item);
     const current = getJson(LOT_HISTORY_KEY, []);
@@ -133,7 +133,7 @@ function renderLotHistory() {
             },
             {
                 label: "Excluir",
-                onClick: (item) => deleteSyncedHistoryItem(item)
+                onClick: (item) => deleteLotHistoryItem(item)
             }
         ]
     });
@@ -209,3 +209,5 @@ $("#reiniciarSequenciaLotes").addEventListener("click", async () => {
     showToast("Sequência reiniciada.");
 });
 
+// Permite atualizar o histórico após sincronização remota.
+window.renderLotHistory = renderLotHistory;

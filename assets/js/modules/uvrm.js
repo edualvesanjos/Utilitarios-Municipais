@@ -323,3 +323,6 @@ $("#limparListaUvrm").addEventListener("click", () => { if(!getUvrmCurrentList()
 $("#pesquisaHistoricoUvrm").addEventListener("input", renderUvrmHistory);
 
 renderUvrmDescriptionSuggestions();
+
+// Permite atualizar o histórico após sincronização remota.
+window.renderUvrmHistory = renderUvrmHistory;

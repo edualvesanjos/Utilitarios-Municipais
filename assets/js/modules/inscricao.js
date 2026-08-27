@@ -90,7 +90,7 @@ function addRegistrationHistory(masked, type) {
 }
 
 
-function deleteSyncedHistoryItem(item) {
+function deleteRegistrationHistoryItem(item) {
     if (!window.confirm("Excluir este registro do histórico sincronizado? A exclusão será aplicada aos demais dispositivos após sincronizar.")) return;
     const fingerprint = window.HistoryService?.fingerprintValue?.(item);
     const current = getJson(REGISTRATION_HISTORY_KEY, []);
@@ -121,7 +121,7 @@ function renderRegistrationHistory() {
             },
             {
                 label: "Excluir",
-                onClick: (item) => deleteSyncedHistoryItem(item)
+                onClick: (item) => deleteRegistrationHistoryItem(item)
             }
         ]
     });
@@ -300,3 +300,5 @@ $("#limparInscricao").addEventListener("click", () => {
     updateRegistrationField();
 });
 
+// Permite atualizar o histórico após sincronização remota.
+window.renderRegistrationHistory = renderRegistrationHistory;

@@ -216,10 +216,10 @@ function addFileHistory(item) {
 
 function deleteFileHistoryItem(item) {
     if (!window.confirm("Excluir este registro do histórico sincronizado? A exclusão será aplicada aos demais dispositivos após sincronizar.")) return;
-    const fp = window.HistoryService?.fingerprintValue?.(item);
-    const next = getFileHistory().filter(entry => fp ? window.HistoryService?.fingerprintValue?.(entry) !== fp : entry !== item);
-    setJson(FILE_HISTORY_KEY, next);
-    window.HistoryService?.queueDeleteHistory?.("arquivo", item, { source: "arquivo_history" });
+    const fp=window.HistoryService?.fingerprintValue?.(item);
+    const next=getFileHistory().filter(entry=>fp ? window.HistoryService?.fingerprintValue?.(entry)!==fp : entry!==item);
+    setJson(FILE_HISTORY_KEY,next);
+    window.HistoryService?.queueDeleteHistory?.("arquivo",item,{source:"arquivo_history"});
     renderFileHistory(); window.renderProductivity33?.(); showToast("Exclusão registrada para sincronização.");
 }
 
@@ -456,3 +456,6 @@ if (arquivoRemoverPontos) {
         updateFilePreview();
     });
 }
+
+// Permite atualizar o histórico após sincronização remota.
+window.renderFileHistory = renderFileHistory;

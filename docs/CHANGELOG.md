@@ -1,5 +1,15 @@
 # Changelog
 
+## 4.4.2.2
+
+### Corrigido
+- Isolados os manipuladores de exclusão de Inscrição, Lotes e Percentual.
+- Corrigida a remoção local e a atualização visual após sincronização remota.
+
+### Banco de dados
+- Sem alteração de schema ou RLS.
+
+
 ## 4.4.2.1
 
 ### Adicionado

@@ -1,4 +1,4 @@
-/* Utilitários Municipais v4.4.2 — piloto de exclusão sincronizada de históricos. */
+/* Utilitários Municipais v4.4.2.2 — exclusão sincronizada com manipuladores isolados por módulo. */
 (function () {
     "use strict";
 
