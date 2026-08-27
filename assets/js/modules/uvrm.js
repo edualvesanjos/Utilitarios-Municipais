@@ -271,7 +271,14 @@ function renderUvrmHistory() {
         const action = button.dataset.historyAction;
         if (action === "copy") await copyText(item.fullText || item.plainValue);
         if (action === "restore" && Array.isArray(item.items)) { saveUvrmCurrentList(item.items); showToast("Operação reaberta."); }
-        if (action === "delete") { setJson(UVRM_HISTORY_KEY, raw.filter(entry => entry.id !== id)); renderUvrmHistory(); }
+        if (action === "delete") {
+            if (!window.confirm("Excluir este registro do histórico sincronizado? A exclusão será aplicada aos demais dispositivos após sincronizar.")) return;
+            setJson(UVRM_HISTORY_KEY, raw.filter(entry => entry.id !== id));
+            window.HistoryService?.queueDeleteHistory?.("uvrm", item, { source: "uvrm_history" });
+            renderUvrmHistory();
+            window.renderProductivity33?.();
+            showToast("Exclusão registrada para sincronização.");
+        }
     }));
 }
 

@@ -89,6 +89,19 @@ function addRegistrationHistory(masked, type) {
     renderRegistrationHistory();
 }
 
+
+function deleteSyncedHistoryItem(item) {
+    if (!window.confirm("Excluir este registro do histórico sincronizado? A exclusão será aplicada aos demais dispositivos após sincronizar.")) return;
+    const fingerprint = window.HistoryService?.fingerprintValue?.(item);
+    const current = getJson(REGISTRATION_HISTORY_KEY, []);
+    const next = (Array.isArray(current) ? current : []).filter((entry) => fingerprint ? window.HistoryService?.fingerprintValue?.(entry) !== fingerprint : entry !== item);
+    setJson(REGISTRATION_HISTORY_KEY, next);
+    window.HistoryService?.queueDeleteHistory?.("inscricao", item, { source: "inscricao_history" });
+    renderRegistrationHistory();
+    window.renderProductivity33?.();
+    showToast("Exclusão registrada para sincronização.");
+}
+
 function renderRegistrationHistory() {
     const history = getRegistrationHistory();
 
@@ -105,6 +118,10 @@ function renderRegistrationHistory() {
             {
                 label: "Números",
                 onClick: (item) => copyText(item.digits)
+            },
+            {
+                label: "Excluir",
+                onClick: (item) => deleteSyncedHistoryItem(item)
             }
         ]
     });

@@ -1,5 +1,15 @@
 # Changelog
 
+## 4.4.2.1
+
+### Adicionado
+- Exclusão sincronizada em todos os históricos dos módulos.
+- Enfileiramento imediato do histórico de Datas.
+
+### Banco de dados
+- Sem alteração de schema ou RLS.
+
+
 ## 4.4.2
 
 ### Adicionado

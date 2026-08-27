@@ -30,12 +30,12 @@
     function getDatesHistory() {
         const history = getJson(DATES_HISTORY_KEY, []);
         const rows = Array.isArray(history) ? history : [];
-        return rows.map((item,index)=>({item,index})).sort((a,b)=>{
-            const diff=datesHistoryTime(b.item)-datesHistoryTime(a.item);
-            if(diff) return diff;
-            const idDiff=String(a.item?.id||"").localeCompare(String(b.item?.id||""));
-            return idDiff || a.index-b.index;
-        }).map(entry=>entry.item);
+        return rows.map((item, index) => ({ item, index })).sort((a, b) => {
+            const diff = datesHistoryTime(b.item) - datesHistoryTime(a.item);
+            if (diff) return diff;
+            const idDiff = String(a.item?.id || "").localeCompare(String(b.item?.id || ""));
+            return idDiff || a.index - b.index;
+        }).map(entry => entry.item);
     }
 
     function renderDatesHistory() {
@@ -46,21 +46,30 @@
             list.innerHTML = '<li class="empty-state">Nenhum cálculo de datas realizado recentemente.</li>';
             return;
         }
-        list.innerHTML = rows.map((item,index)=>{
+        list.innerHTML = rows.map((item, index) => {
             const op = item.operation === "entre" ? "Entre datas" : item.operation === "somar" ? "Somar dias" : "Subtrair dias";
             const startText = item.start ? item.start.split("-").reverse().join("/") : "—";
             const parameter = item.operation === "entre"
                 ? ` até ${item.end ? item.end.split("-").reverse().join("/") : "—"}`
-                : ` • ${Number(item.quantity||0)} dia(s)`;
+                : ` • ${Number(item.quantity || 0)} dia(s)`;
             const resultText = String(item.result || "—");
-            return `<li><span class="dates-history-entry"><strong>${op}: ${startText}${parameter}</strong><small class="dates-history-result">${resultText}</small></span><button type="button" class="secondary mini-button" data-copy-dates-history="${index}">Copiar</button></li>`;
+            return `<li><span class="dates-history-entry"><strong>${op}: ${startText}${parameter}</strong><small class="dates-history-result">${resultText}</small></span><div class="list-actions"><button type="button" class="secondary mini-button" data-copy-dates-history="${index}">Copiar</button><button type="button" class="secondary mini-button" data-delete-dates-history="${index}">Excluir</button></div></li>`;
         }).join("");
-        list.querySelectorAll("[data-copy-dates-history]").forEach(button=>button.addEventListener("click",async()=>{
-            const item=rows[Number(button.dataset.copyDatesHistory)];
-            if(!item) return;
-            const value=String(item.result||"");
-            if(typeof copyText==="function") await copyText(value);
-            else if(navigator.clipboard) await navigator.clipboard.writeText(value);
+        list.querySelectorAll("[data-copy-dates-history]").forEach(button => button.addEventListener("click", async () => {
+            const item = rows[Number(button.dataset.copyDatesHistory)];
+            if (!item) return;
+            const value = String(item.result || "");
+            if (typeof copyText === "function") await copyText(value);
+            else if (navigator.clipboard) await navigator.clipboard.writeText(value);
+        }));
+        list.querySelectorAll("[data-delete-dates-history]").forEach(button => button.addEventListener("click", () => {
+            const item = rows[Number(button.dataset.deleteDatesHistory)];
+            if (!item || !window.confirm("Excluir este registro do histórico sincronizado? A exclusão será aplicada aos demais dispositivos após sincronizar.")) return;
+            const fp = window.HistoryService?.fingerprintValue?.(item);
+            const next = getDatesHistory().filter(entry => fp ? window.HistoryService?.fingerprintValue?.(entry) !== fp : entry !== item);
+            setJson(DATES_HISTORY_KEY, next.slice(0, DATES_HISTORY_LIMIT));
+            window.HistoryService?.queueDeleteHistory?.("datas", item, { source: "datas_history" });
+            renderDatesHistory(); window.renderProductivity33?.(); showToast("Exclusão registrada para sincronização.");
         }));
     }
 
@@ -70,6 +79,7 @@
         setJson(DATES_HISTORY_KEY, rows.slice(0, DATES_HISTORY_LIMIT));
         renderDatesHistory();
         window.HistoryService?.notifyLocalChange?.();
+        window.HistoryService?.queueHistory?.("datas", entry, "calculated");
         window.renderProductivity33?.();
     }
 
