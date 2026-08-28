@@ -1,4 +1,4 @@
-/* Utilitários Municipais v4.4.2.2 — exclusão sincronizada com manipuladores isolados por módulo. */
+/* Utilitários Municipais v4.4.3 — gerenciamento global de históricos sincronizados. */
 (function () {
     "use strict";
 
@@ -416,24 +416,145 @@
         });
 
         if (added || removed) {
-            [
-                "renderFileHistory",
-                "renderRegistrationHistory",
-                "renderLotHistory",
-                "renderUvrmHistory",
-                "renderPercentageHistory",
-                "renderDocumentoFiscalHistory",
-                "renderDatesHistory",
-                "renderProductivity33",
-                "updateDashboardSummary"
-            ].forEach((name) => {
-                try {
-                    if (typeof window[name] === "function") window[name]();
-                } catch {}
-            });
+            refreshHistoryViews();
         }
 
         return { added, removed, changed: added + removed };
+    }
+
+    function refreshHistoryViews() {
+        [
+            "renderFileHistory",
+            "renderRegistrationHistory",
+            "renderLotHistory",
+            "renderUvrmHistory",
+            "renderPercentageHistory",
+            "renderDocumentoFiscalHistory",
+            "renderDatesHistory",
+            "renderProductivity33",
+            "renderGlobalHistory",
+            "updateDashboardSummary"
+        ].forEach((name) => {
+            try {
+                if (typeof window[name] === "function") {
+                    window[name]();
+                }
+            } catch {}
+        });
+    }
+
+    function clearLocalHistories() {
+        Object.values(LOCAL_HISTORY).forEach((cfg) => {
+            StorageService.remove(cfg.key);
+        });
+
+        refreshHistoryViews();
+    }
+
+    async function deleteAllSyncedHistories() {
+        const sync = window.OnlineSyncService;
+        const user = sync?.getSession?.()?.user;
+
+        if (!navigator.onLine) {
+            throw new Error("É necessário estar online para excluir os históricos sincronizados.");
+        }
+
+        if (!user) {
+            throw new Error("É necessário estar conectado para excluir os históricos sincronizados.");
+        }
+
+        /*
+         * Faz uma sincronização inicial para enviar registros pendentes antes
+         * de calcular o conjunto completo que será tombstonado.
+         */
+        await syncAll({ silent: true });
+
+        const remoteRows = await listRemote({ limit: 2000 });
+        const fingerprintsByModule = new Map(
+            SUPPORTED_MODULES.map((module) => [module, new Map()])
+        );
+        const alreadyDeleted = new Map(
+            SUPPORTED_MODULES.map((module) => [module, new Set()])
+        );
+
+        remoteRows.forEach((row) => {
+            if (!SUPPORTED_MODULES.includes(row.module)) {
+                return;
+            }
+
+            const fingerprint =
+                row?.metadata?.target_fingerprint || fingerprintValue(row.value);
+
+            if (!fingerprint) {
+                return;
+            }
+
+            if (row.action === "delete") {
+                alreadyDeleted.get(row.module).add(fingerprint);
+                return;
+            }
+
+            if (row.value && typeof row.value === "object") {
+                fingerprintsByModule.get(row.module).set(fingerprint, row.value);
+            }
+        });
+
+        Object.entries(LOCAL_HISTORY).forEach(([module, cfg]) => {
+            const localItems = StorageService.get(cfg.key, []);
+
+            if (!Array.isArray(localItems)) {
+                return;
+            }
+
+            localItems.forEach((value) => {
+                const fingerprint = fingerprintValue(value);
+                fingerprintsByModule.get(module).set(fingerprint, value);
+            });
+        });
+
+        let queued = 0;
+
+        SUPPORTED_MODULES.forEach((module) => {
+            fingerprintsByModule.get(module).forEach((value, fingerprint) => {
+                if (alreadyDeleted.get(module).has(fingerprint)) {
+                    return;
+                }
+
+                const before = listPending().length;
+
+                enqueue({
+                    module,
+                    action: "delete",
+                    value,
+                    timestamp: nowIso(),
+                    clientId: deterministicActionClientId(module, "delete", value),
+                    metadata: {
+                        tombstone: true,
+                        target_fingerprint: fingerprint,
+                        source: "global_history_delete"
+                    }
+                });
+
+                if (listPending().length > before) {
+                    queued += 1;
+                }
+            });
+        });
+
+        /*
+         * Remove primeiro a cópia local. Assim, a próxima sync não volta a
+         * enfileirar os registros apagados como novas ações "record".
+         */
+        clearLocalHistories();
+
+        const result = await syncAll({ silent: true });
+        refreshHistoryViews();
+
+        return {
+            queued,
+            uploaded: Number(result?.uploaded || 0),
+            remaining: Number(result?.remaining || 0)
+        };
     }
 
     async function performSync({ silent = true } = {}) {
@@ -518,9 +639,12 @@
         getDeviceId,
         queueHistory,
         queueDeleteHistory,
+        clearLocalHistories,
+        deleteAllSyncedHistories,
         scanLocalHistories,
         notifyLocalChange,
         scheduleRetry,
+        refreshHistoryViews,
         mergeRemoteRows,
         syncAll
     });

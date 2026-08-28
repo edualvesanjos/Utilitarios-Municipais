@@ -1,5 +1,22 @@
 # Changelog
 
+## 4.4.3
+
+### Adicionado
+- Separação entre limpeza local e exclusão sincronizada dos históricos.
+- Exclusão global sincronizada com tombstones para todos os módulos.
+- Confirmação dupla para exclusão sincronizada.
+
+### Alterado
+- Removida a opção ambígua "Todos os históricos" da limpeza seletiva.
+- Removido o antigo botão "Resetar históricos".
+- "Apagar todos os dados" agora explicita que a operação é apenas local.
+- `configuracoes.js` reformatado para facilitar manutenção.
+
+### Banco de dados
+- Sem alteração de schema ou RLS.
+
+
 ## 4.4.2.2
 
 ### Corrigido

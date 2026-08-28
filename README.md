@@ -139,3 +139,13 @@ Fechada com `APP_ENVIRONMENT = "production"` e correção da persistência UVRM 
 ### 4.4.2 DEV
 
 Piloto de exclusão sincronizada no histórico de CPF/CNPJ usando tombstones em `history_entries`.
+
+
+## Gerenciamento global de históricos — v4.4.3
+
+A área **Configurações** diferencia duas operações:
+
+- **Limpar históricos deste dispositivo**: remove somente a cópia local; registros do Supabase podem retornar após nova sincronização.
+- **Excluir históricos sincronizados**: cria tombstones para os registros sincronizados da conta e propaga a exclusão aos demais navegadores/dispositivos.
+
+A exclusão sincronizada exige usuário conectado, acesso à internet e confirmação dupla.

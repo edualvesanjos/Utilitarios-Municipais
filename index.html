@@ -918,20 +918,38 @@
                             <h3>Limpeza seletiva</h3><p class="help-text">Remova somente os dados desejados, sem afetar os demais módulos.</p>
                             <div class="settings-checklist">
                                 <label class="checkbox-row"><input id="limparModelosArquivos" type="checkbox">Modelos do gerador de nomes</label>
-                                <label class="checkbox-row"><input id="limparHistoricosGerais" type="checkbox">Todos os históricos</label>
                                 <label class="checkbox-row"><input id="limparPreferenciasCampos" type="checkbox">Valores e preferências dos campos</label>
                                 <label class="checkbox-row"><input id="reiniciarSequenciaNoReset" type="checkbox">Reiniciar sequência de lotes</label>
                             </div>
                             <div class="actions"><button id="executarLimpezaSeletiva" class="danger-outline">Executar limpeza selecionada</button></div>
                         </section>
-<section class="settings-card">
+                        <section class="settings-card">
+                            <h3>Gerenciamento de históricos</h3>
+                            <p class="help-text">
+                                Escolha entre remover somente a cópia deste navegador ou propagar a exclusão
+                                para os históricos sincronizados da conta.
+                            </p>
+                            <div class="actions">
+                                <button id="limparHistoricosDispositivo" class="danger-outline" type="button">
+                                    Limpar históricos deste dispositivo
+                                </button>
+                                <button id="excluirHistoricosSincronizados" class="danger-outline" type="button">
+                                    Excluir históricos sincronizados
+                                </button>
+                            </div>
+                            <p class="help-text">
+                                A limpeza local não remove registros do Supabase e eles poderão retornar após
+                                uma nova sincronização. A exclusão sincronizada exige conexão e confirmação dupla.
+                            </p>
+                        </section>
+
+                        <section class="settings-card">
                             <h3>Exportações e redefinições</h3>
                             <div class="actions">
                                 <button id="exportarEstatisticasCsv" class="secondary" type="button">Estatísticas CSV</button>
                                 <button id="exportarEstatisticasJson" class="secondary" type="button">Estatísticas JSON</button>
                                 <button id="exportarEstatisticasTxt" class="secondary" type="button">Estatísticas TXT</button>
                                 <button id="resetarFavoritos" class="danger-outline" type="button">Resetar favoritos</button>
-                                <button id="resetarHistoricos" class="danger-outline" type="button">Resetar históricos</button>
                             </div>
                         </section>
 
@@ -952,7 +970,18 @@
                                 </table>
                             </div>
                         </section>
-                        <section class="settings-card danger-zone"><h3>Restaurar aplicativo</h3><p class="help-text">Remove todos os dados locais e retorna o aplicativo ao estado inicial.</p><div class="actions"><button id="limparTudo" class="danger-outline">Apagar todos os dados</button></div></section>
+                        <section class="settings-card danger-zone">
+                            <h3>Restaurar aplicativo</h3>
+                            <p class="help-text">
+                                Remove os dados locais deste navegador e retorna o aplicativo ao estado inicial.
+                                Dados sincronizados no Supabase não são excluídos por esta ação.
+                            </p>
+                            <div class="actions">
+                                <button id="limparTudo" class="danger-outline" type="button">
+                                    Apagar todos os dados locais
+                                </button>
+                            </div>
+                        </section>
                     </section>
                     <aside class="generator-sidebar">
                         <section class="sidebar-card"><h3>Informações do aplicativo</h3><div class="format-examples"><div><span>Versão</span><code data-app-version></code></div><div><span>Armazenamento</span><code>Local do navegador</code></div><div><span>Formato do backup</span><code>JSON</code></div></div></section>
@@ -1051,17 +1080,18 @@
                     <section class="settings-card">
                         <h3>Novidades da <span data-app-version></span></h3>
                         <ul class="about-list">
-                            <li><strong>Exclusão sincronizada:</strong> corrigida colisão entre manipuladores dos módulos.</li>
-                            <li><strong>Inscrição e Lotes:</strong> exclusão passa a remover imediatamente o registro correto e propagar a remoção aos demais navegadores.</li>
-                            <li><strong>Percentual:</strong> manipulador de exclusão também foi isolado preventivamente.</li>
-                            <li><strong>Históricos:</strong> atualização visual após mesclagem remota reforçada.</li>
+                            <li><strong>Históricos:</strong> limpeza local e exclusão sincronizada agora são operações distintas.</li>
+                            <li><strong>Exclusão global:</strong> tombstones são gerados para todos os módulos sincronizados.</li>
+                            <li><strong>Segurança:</strong> exclusão sincronizada exige conta conectada, internet e confirmação dupla.</li>
+                            <li><strong>Configurações:</strong> removidas ações antigas e ambíguas de limpeza de históricos.</li>
+                            <li><strong>Manutenção:</strong> código de Configurações reformatado e indentado.</li>
                         </ul>
                     </section>
                 </div>
 
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
-                    <div class="about-timeline"><article><strong>4.4.2.2</strong><p>Correção da colisão dos manipuladores de exclusão sincronizada em Inscrição, Lotes e Percentual.</p></article><article><strong>4.4.2.1</strong><p>Expansão da exclusão sincronizada para todos os históricos dos módulos.</p></article>
+                    <div class="about-timeline"><article><strong>4.4.3</strong><p>Gerenciamento global de históricos com distinção entre limpeza local e exclusão sincronizada.</p></article><article><strong>4.4.2.2</strong><p>Correção da colisão dos manipuladores de exclusão sincronizada em Inscrição, Lotes e Percentual.</p></article><article><strong>4.4.2.1</strong><p>Expansão da exclusão sincronizada para todos os históricos dos módulos.</p></article>
                         <article><strong>4.4.2</strong><p>Piloto de exclusão sincronizada no histórico de CPF/CNPJ, com tombstones e propagação entre dispositivos.</p></article>
 <article><strong>4.4.1.4</strong><p>Padronização das ações dos históricos sincronizados e melhoria visual do histórico de Datas.</p></article><article><strong>4.4.1.3</strong><p>Ajustes de coerência dos históricos, novo histórico visual de Datas e atualização do valor padrão da UVRM.</p></article><article><strong>4.4.1.2</strong><p>Estabilização da ordem dos históricos e incorporação definitiva das correções de CPF/CNPJ.</p></article>
                         <article><strong>4.4.1.1</strong><p>Correção do carregamento inicial e atualização visual do histórico local de CPF/CNPJ após sincronização.</p></article>
