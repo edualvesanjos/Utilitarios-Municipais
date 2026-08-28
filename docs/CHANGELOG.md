@@ -1,5 +1,96 @@
 # Changelog
 
+## 4.4.5
+
+### Produção
+- Testes DEV aprovados e pacote fechado para produção.
+
+### Adicionado
+- Sincronização automática dos históricos ao iniciar/recarregar o aplicativo.
+- Sincronização ao recuperar foco, tornar a aba visível e retornar ao modo online.
+- Controle de intervalo para evitar chamadas automáticas redundantes.
+- Seleção de todo o CPF/CNPJ por duplo clique no campo preenchido.
+
+### Mantido
+- Botão manual "Sincronizar histórico".
+- Retry após falhas e recuperação offline.
+- Deduplicação, ordenação estável e tombstones.
+- Compatibilidade com CPF, CNPJ numérico e CNPJ alfanumérico.
+
+### Banco de dados
+- Sem alteração de schema ou RLS.
+
+
+## 4.4.4
+
+### Adicionado
+- Suporte ao CNPJ alfanumérico.
+- Máscara para 12 posições alfanuméricas e 2 dígitos verificadores numéricos.
+- Validação oficial dos dígitos verificadores por módulo 11.
+
+### Mantido
+- CPF numérico.
+- CNPJ numérico tradicional.
+- Histórico, sincronização, deduplicação e exclusão por tombstones.
+
+### Manutenção
+- `cpf-cnpj.js` reformatado e indentado.
+
+### Banco de dados
+- Sem alteração de schema ou RLS.
+
+
+## 4.4.3
+
+### Adicionado
+- Separação entre limpeza local e exclusão sincronizada dos históricos.
+- Exclusão global sincronizada com tombstones para todos os módulos.
+- Confirmação dupla para exclusão sincronizada.
+
+### Alterado
+- Removida a opção ambígua "Todos os históricos" da limpeza seletiva.
+- Removido o antigo botão "Resetar históricos".
+- "Apagar todos os dados" agora explicita que a operação é apenas local.
+- `configuracoes.js` reformatado para facilitar manutenção.
+
+### Banco de dados
+- Sem alteração de schema ou RLS.
+
+
+## 4.4.2.2
+
+### Corrigido
+- Isolados os manipuladores de exclusão de Inscrição, Lotes e Percentual.
+- Corrigida a remoção local e a atualização visual após sincronização remota.
+
+### Banco de dados
+- Sem alteração de schema ou RLS.
+
+
+## 4.4.2.1
+
+### Adicionado
+- Exclusão sincronizada em todos os históricos dos módulos.
+- Enfileiramento imediato do histórico de Datas.
+
+### Banco de dados
+- Sem alteração de schema ou RLS.
+
+
+## 4.4.2
+
+### Adicionado
+- Piloto de exclusão sincronizada no histórico de CPF/CNPJ.
+- Tombstones em `history_entries` com `action = delete`.
+- Propagação de exclusões entre navegadores.
+
+### Alterado
+- Mesclagem remota passa a respeitar tombstones antes de reimportar registros.
+
+### Banco de dados
+- Sem alteração de schema ou RLS.
+
+
 ## 4.4.1.4
 
 ### Corrigido

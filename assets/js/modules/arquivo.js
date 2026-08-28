@@ -214,6 +214,15 @@ function addFileHistory(item) {
     if (typeof renderProductivity33 === "function") renderProductivity33();
 }
 
+function deleteFileHistoryItem(item) {
+    if (!window.confirm("Excluir este registro do histórico sincronizado? A exclusão será aplicada aos demais dispositivos após sincronizar.")) return;
+    const fp=window.HistoryService?.fingerprintValue?.(item);
+    const next=getFileHistory().filter(entry=>fp ? window.HistoryService?.fingerprintValue?.(entry)!==fp : entry!==item);
+    setJson(FILE_HISTORY_KEY,next);
+    window.HistoryService?.queueDeleteHistory?.("arquivo",item,{source:"arquivo_history"});
+    renderFileHistory(); window.renderProductivity33?.(); showToast("Exclusão registrada para sincronização.");
+}
+
 function renderFileHistory() {
     const list = $("#arquivoHistorico");
     const history = getFileHistory();
@@ -231,7 +240,10 @@ function renderFileHistory() {
         if (!value) return;
         const li = document.createElement("li");
         const text = document.createElement("span");
+        const actions = document.createElement("div");
+        actions.className = "list-actions";
         const button = document.createElement("button");
+        const deleteButton = document.createElement("button");
 
         text.textContent = value;
         button.textContent = "Copiar";
@@ -243,7 +255,11 @@ function renderFileHistory() {
             }
         });
 
-        li.append(text, button);
+        deleteButton.textContent = "Excluir";
+        deleteButton.className = "secondary mini-button";
+        deleteButton.addEventListener("click", () => deleteFileHistoryItem(item));
+        actions.append(button, deleteButton);
+        li.append(text, actions);
         list.appendChild(li);
     });
 }
@@ -440,3 +456,6 @@ if (arquivoRemoverPontos) {
         updateFilePreview();
     });
 }
+
+// Permite atualizar o histórico após sincronização remota.
+window.renderFileHistory = renderFileHistory;

@@ -76,7 +76,7 @@ Hotfix de precisão do total UVRM e refinamentos de layout.
 
 ### Alteração manual da versão
 
-A versão corrente é controlada por `APP_VERSION` em `assets/js/core/config.js`. Para iniciar manualmente uma nova versão, altere somente essa constante, por exemplo `const APP_VERSION = "4.4.1.4";`. CHANGELOG e arquivos de release permanecem históricos.
+A versão corrente é controlada por `APP_VERSION` em `assets/js/core/config.js`. Para iniciar manualmente uma nova versão, altere somente essa constante, por exemplo `const APP_VERSION = "4.4.2";`. CHANGELOG e arquivos de release permanecem históricos.
 
 ### 4.3.6 — CPF / CNPJ
 
@@ -135,3 +135,49 @@ Padroniza os históricos sincronizados removendo limpezas apenas locais e melhor
 ### Produção 4.4.1.4
 
 Fechada com `APP_ENVIRONMENT = "production"` e correção da persistência UVRM em `5,2151`.
+
+### 4.4.2 DEV
+
+Piloto de exclusão sincronizada no histórico de CPF/CNPJ usando tombstones em `history_entries`.
+
+
+## Gerenciamento global de históricos — v4.4.5
+
+A área **Configurações** diferencia duas operações:
+
+- **Limpar históricos deste dispositivo**: remove somente a cópia local; registros do Supabase podem retornar após nova sincronização.
+- **Excluir históricos sincronizados**: cria tombstones para os registros sincronizados da conta e propaga a exclusão aos demais navegadores/dispositivos.
+
+A exclusão sincronizada exige usuário conectado, acesso à internet e confirmação dupla.
+
+
+## CNPJ alfanumérico — v4.4.4
+
+O módulo CPF/CNPJ suporta:
+
+- CPF numérico;
+- CNPJ numérico tradicional;
+- CNPJ alfanumérico com 12 posições alfanuméricas e 2 dígitos verificadores numéricos;
+- detecção automática;
+- máscara, opção sem máscara e cópia automática;
+- histórico local e sincronizado, incluindo deduplicação e tombstones.
+
+A validação do CNPJ alfanumérico utiliza o cálculo oficial por módulo 11,
+convertendo cada caractere alfanumérico pelo valor ASCII menos 48.
+
+
+## Sincronização automática — v4.4.5
+
+O histórico sincronizado passa a executar sincronização silenciosa quando:
+
+- o aplicativo é aberto ou recarregado;
+- a janela recupera o foco;
+- a aba volta ao estado visível;
+- a conexão volta ao estado online.
+
+As chamadas automáticas possuem controle de intervalo para reduzir
+sincronizações redundantes. O botão manual de sincronização continua
+disponível como fallback.
+
+No módulo CPF/CNPJ, o duplo clique em um campo preenchido seleciona todo o
+conteúdo para facilitar a substituição do documento.

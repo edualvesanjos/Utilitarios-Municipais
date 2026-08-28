@@ -81,6 +81,19 @@ function addPercentageHistory(fullText, resultValue) {
     renderPercentageHistory();
 }
 
+
+function deletePercentageHistoryItem(item) {
+    if (!window.confirm("Excluir este registro do histórico sincronizado? A exclusão será aplicada aos demais dispositivos após sincronizar.")) return;
+    const fingerprint = window.HistoryService?.fingerprintValue?.(item);
+    const current = getJson(PERCENTAGE_HISTORY_KEY, []);
+    const next = (Array.isArray(current) ? current : []).filter((entry) => fingerprint ? window.HistoryService?.fingerprintValue?.(entry) !== fingerprint : entry !== item);
+    setJson(PERCENTAGE_HISTORY_KEY, next);
+    window.HistoryService?.queueDeleteHistory?.("percentual", item, { source: "percentual_history" });
+    renderPercentageHistory();
+    window.renderProductivity33?.();
+    showToast("Exclusão registrada para sincronização.");
+}
+
 function renderPercentageHistory() {
     const query = ($("#pesquisaHistoricoPercentual").value || "")
         .trim()
@@ -99,6 +112,10 @@ function renderPercentageHistory() {
             {
                 label: "Copiar",
                 onClick: (item) => copyText(item.fullText)
+            },
+            {
+                label: "Excluir",
+                onClick: (item) => deletePercentageHistoryItem(item)
             }
         ]
     });
@@ -336,3 +353,6 @@ $("#pesquisaHistoricoPercentual").addEventListener(
     "input",
     renderPercentageHistory
 );
+
+// Permite atualizar o histórico após sincronização remota.
+window.renderPercentageHistory = renderPercentageHistory;

@@ -1,4 +1,4 @@
-/* Utilitários Municipais v4.4.1.2 — ordem determinística dos históricos. */
+/* Utilitários Municipais v4.4.5 — sincronização automática de históricos. */
 (function () {
     "use strict";
 
@@ -9,6 +9,8 @@
     const SYNC_STATE_KEY = "history:syncState";
     const RETRY_BASE_MS = 3000;
     const RETRY_MAX_MS = 60000;
+    const AUTO_SYNC_MIN_INTERVAL_MS = 3000;
+    const AUTO_SYNC_STARTUP_RETRIES = 5;
     const LOCAL_HISTORY = Object.freeze({
         arquivo: { key: "fileHistory", limit: 15 },
         inscricao: { key: "registrationHistory", limit: 15 },
@@ -19,6 +21,9 @@
         "cpf-cnpj": { key: "documentoFiscalHistory", limit: 20 }
     });
     const SUPPORTED_MODULES = Object.freeze(["arquivo", "inscricao", "lote", "uvrm", "percentual", "datas", "cpf-cnpj"]);
+
+    let automaticSyncTimer = null;
+    let lastAutomaticSyncAt = 0;
 
     function nowIso() {
         return new Date().toISOString();
@@ -256,6 +261,37 @@
         return `${hex.slice(0,8)}-${hex.slice(8,12)}-4${hex.slice(13,16)}-a${hex.slice(17,20)}-${hex.slice(20,32)}`;
     }
 
+    function fingerprintValue(value) {
+        return stableStringify(sanitizeForFingerprint(value));
+    }
+
+    function deterministicActionClientId(module, action, value) {
+        return deterministicClientId(`${module}:${action}`, value);
+    }
+
+    function queueDeleteHistory(module, value, options = {}) {
+        if (!SUPPORTED_MODULES.includes(module)) {
+            throw new Error(`Módulo de histórico não suportado: ${module}`);
+        }
+
+        const fingerprint = fingerprintValue(value);
+        const record = enqueue({
+            module,
+            action: "delete",
+            value,
+            timestamp: options.timestamp || nowIso(),
+            clientId: options.clientId || deterministicActionClientId(module, "delete", value),
+            metadata: {
+                tombstone: true,
+                target_fingerprint: fingerprint,
+                source: options.source || "user_delete"
+            }
+        });
+
+        window.setTimeout(() => syncAll({ silent: true }).catch(() => {}), 0);
+        return record;
+    }
+
     function timestampFromValue(value) {
         return value?.createdAt || value?.copiedAt || value?.timestamp || null;
     }
@@ -343,24 +379,187 @@
 
     function mergeRemoteRows(rows) {
         let added = 0;
-        Object.entries(LOCAL_HISTORY).forEach(([module,cfg])=>{
-            const local=StorageService.get(cfg.key,[]);
-            const items=Array.isArray(local)?local.slice():[];
-            const seen=new Set(items.map(item=>stableStringify(sanitizeForFingerprint(item))));
-            rows.filter(row=>row.module===module).forEach(row=>{
-                const value=row.value;
-                if(!value || typeof value!=="object") return;
-                const fingerprint=stableStringify(sanitizeForFingerprint(value));
-                if(!seen.has(fingerprint)){items.push(value);seen.add(fingerprint);added+=1;}
-            });
-            StorageService.set(cfg.key,sortHistoryStable(items).slice(0,cfg.limit));
+        let removed = 0;
+
+        Object.entries(LOCAL_HISTORY).forEach(([module, cfg]) => {
+            const local = StorageService.get(cfg.key, []);
+            let items = Array.isArray(local) ? local.slice() : [];
+            const moduleRows = rows.filter((row) => row.module === module);
+
+            const deletedFingerprints = new Set(
+                moduleRows
+                    .filter((row) => row.action === "delete")
+                    .map((row) => row?.metadata?.target_fingerprint || fingerprintValue(row.value))
+                    .filter(Boolean)
+            );
+
+            if (deletedFingerprints.size) {
+                const before = items.length;
+                items = items.filter((item) => !deletedFingerprints.has(fingerprintValue(item)));
+                removed += Math.max(0, before - items.length);
+            }
+
+            const seen = new Set(items.map((item) => fingerprintValue(item)));
+
+            moduleRows
+                .filter((row) => row.action !== "delete")
+                .forEach((row) => {
+                    const value = row.value;
+                    if (!value || typeof value !== "object") return;
+
+                    const fingerprint = fingerprintValue(value);
+                    if (deletedFingerprints.has(fingerprint)) return;
+
+                    if (!seen.has(fingerprint)) {
+                        items.push(value);
+                        seen.add(fingerprint);
+                        added += 1;
+                    }
+                });
+
+            StorageService.set(cfg.key, sortHistoryStable(items).slice(0, cfg.limit));
         });
-        if(added){
-            ["renderFileHistory","renderRegistrationHistory","renderLotHistory","renderUvrmHistory","renderPercentageHistory","renderDocumentoFiscalHistory","renderDatesHistory","renderProductivity33","updateDashboardSummary"].forEach(name=>{
-                try{if(typeof window[name]==="function")window[name]();}catch{}
-            });
+
+        if (added || removed) {
+            refreshHistoryViews();
         }
-        return added;
+
+        return { added, removed, changed: added + removed };
+    }
+
+    function refreshHistoryViews() {
+        [
+            "renderFileHistory",
+            "renderRegistrationHistory",
+            "renderLotHistory",
+            "renderUvrmHistory",
+            "renderPercentageHistory",
+            "renderDocumentoFiscalHistory",
+            "renderDatesHistory",
+            "renderProductivity33",
+            "renderGlobalHistory",
+            "updateDashboardSummary"
+        ].forEach((name) => {
+            try {
+                if (typeof window[name] === "function") {
+                    window[name]();
+                }
+            } catch {}
+        });
+    }
+
+    function clearLocalHistories() {
+        Object.values(LOCAL_HISTORY).forEach((cfg) => {
+            StorageService.remove(cfg.key);
+        });
+
+        refreshHistoryViews();
+    }
+
+    async function deleteAllSyncedHistories() {
+        const sync = window.OnlineSyncService;
+        const user = sync?.getSession?.()?.user;
+
+        if (!navigator.onLine) {
+            throw new Error("É necessário estar online para excluir os históricos sincronizados.");
+        }
+
+        if (!user) {
+            throw new Error("É necessário estar conectado para excluir os históricos sincronizados.");
+        }
+
+        /*
+         * Faz uma sincronização inicial para enviar registros pendentes antes
+         * de calcular o conjunto completo que será tombstonado.
+         */
+        await syncAll({ silent: true });
+
+        const remoteRows = await listRemote({ limit: 2000 });
+        const fingerprintsByModule = new Map(
+            SUPPORTED_MODULES.map((module) => [module, new Map()])
+        );
+        const alreadyDeleted = new Map(
+            SUPPORTED_MODULES.map((module) => [module, new Set()])
+        );
+
+        remoteRows.forEach((row) => {
+            if (!SUPPORTED_MODULES.includes(row.module)) {
+                return;
+            }
+
+            const fingerprint =
+                row?.metadata?.target_fingerprint || fingerprintValue(row.value);
+
+            if (!fingerprint) {
+                return;
+            }
+
+            if (row.action === "delete") {
+                alreadyDeleted.get(row.module).add(fingerprint);
+                return;
+            }
+
+            if (row.value && typeof row.value === "object") {
+                fingerprintsByModule.get(row.module).set(fingerprint, row.value);
+            }
+        });
+
+        Object.entries(LOCAL_HISTORY).forEach(([module, cfg]) => {
+            const localItems = StorageService.get(cfg.key, []);
+
+            if (!Array.isArray(localItems)) {
+                return;
+            }
+
+            localItems.forEach((value) => {
+                const fingerprint = fingerprintValue(value);
+                fingerprintsByModule.get(module).set(fingerprint, value);
+            });
+        });
+
+        let queued = 0;
+
+        SUPPORTED_MODULES.forEach((module) => {
+            fingerprintsByModule.get(module).forEach((value, fingerprint) => {
+                if (alreadyDeleted.get(module).has(fingerprint)) {
+                    return;
+                }
+
+                const before = listPending().length;
+
+                enqueue({
+                    module,
+                    action: "delete",
+                    value,
+                    timestamp: nowIso(),
+                    clientId: deterministicActionClientId(module, "delete", value),
+                    metadata: {
+                        tombstone: true,
+                        target_fingerprint: fingerprint,
+                        source: "global_history_delete"
+                    }
+                });
+
+                if (listPending().length > before) {
+                    queued += 1;
+                }
+            });
+        });
+
+        /*
+         * Remove primeiro a cópia local. Assim, a próxima sync não volta a
+         * enfileirar os registros apagados como novas ações "record".
+         */
+        clearLocalHistories();
+
+        const result = await syncAll({ silent: true });
+        refreshHistoryViews();
+
+        return {
+            queued,
+            uploaded: Number(result?.uploaded || 0),
+            remaining: Number(result?.remaining || 0)
+        };
     }
 
     async function performSync({ silent = true } = {}) {
@@ -388,8 +587,14 @@
             }
 
             const remote = await listRemote({ limit: 2000 });
-            const downloaded = mergeRemoteRows(remote);
-            const result = { ...uploaded, downloaded };
+            const merged = mergeRemoteRows(remote);
+            const downloaded = Number(merged?.changed || 0);
+            const result = {
+                ...uploaded,
+                downloaded,
+                mergedAdded: Number(merged?.added || 0),
+                mergedRemoved: Number(merged?.removed || 0)
+            };
 
             setSyncState({
                 syncing: false,
@@ -426,6 +631,7 @@
         supportedModules: SUPPORTED_MODULES,
         localHistoryConfig: LOCAL_HISTORY,
         sanitizeForFingerprint,
+        fingerprintValue,
         sortHistoryStable,
         createRecord,
         enqueue,
@@ -437,30 +643,105 @@
         listRemote,
         getDeviceId,
         queueHistory,
+        queueDeleteHistory,
+        clearLocalHistories,
+        deleteAllSyncedHistories,
         scanLocalHistories,
         notifyLocalChange,
         scheduleRetry,
+        refreshHistoryViews,
         mergeRemoteRows,
         syncAll
     });
 
+    function canAutomaticallySync() {
+        return Boolean(
+            navigator.onLine &&
+            window.OnlineSyncService?.getSession?.()?.user
+        );
+    }
+
+    function requestAutomaticSync(options = {}) {
+        const {
+            delay = 300,
+            force = false,
+            retryIfSessionMissing = false,
+            retriesRemaining = AUTO_SYNC_STARTUP_RETRIES
+        } = options;
+
+        if (automaticSyncTimer) {
+            window.clearTimeout(automaticSyncTimer);
+            automaticSyncTimer = null;
+        }
+
+        automaticSyncTimer = window.setTimeout(async () => {
+            automaticSyncTimer = null;
+
+            if (!navigator.onLine) {
+                return;
+            }
+
+            if (!window.OnlineSyncService?.getSession?.()?.user) {
+                if (retryIfSessionMissing && retriesRemaining > 0) {
+                    requestAutomaticSync({
+                        delay: 1000,
+                        force,
+                        retryIfSessionMissing: true,
+                        retriesRemaining: retriesRemaining - 1
+                    });
+                }
+                return;
+            }
+
+            const now = Date.now();
+            const elapsed = now - lastAutomaticSyncAt;
+
+            if (!force && elapsed < AUTO_SYNC_MIN_INTERVAL_MS) {
+                requestAutomaticSync({
+                    delay: AUTO_SYNC_MIN_INTERVAL_MS - elapsed,
+                    force: true
+                });
+                return;
+            }
+
+            lastAutomaticSyncAt = now;
+
+            try {
+                await syncAll({ silent: true });
+            } catch {
+                // O próprio syncAll atualiza o estado e agenda retry quando necessário.
+            }
+        }, Math.max(0, Number(delay) || 0));
+    }
+
     window.addEventListener("online", () => {
         clearRetryTimer();
-        window.setTimeout(() => syncAll({ silent: true }).catch(() => {}), 300);
+        requestAutomaticSync({ delay: 300, force: true });
     });
 
     window.addEventListener("offline", () => {
+        if (automaticSyncTimer) {
+            window.clearTimeout(automaticSyncTimer);
+            automaticSyncTimer = null;
+        }
+
         clearRetryTimer();
         setSyncState({ syncing: false, lastError: "offline" });
     });
 
     document.addEventListener("visibilitychange", () => {
-        if (document.visibilityState === "visible" && navigator.onLine) {
-            window.setTimeout(() => syncAll({ silent: true }).catch(() => {}), 300);
+        if (document.visibilityState === "visible") {
+            requestAutomaticSync({ delay: 300 });
         }
     });
 
-    window.setTimeout(() => {
-        if (listPending().length && navigator.onLine) syncAll({ silent: true }).catch(() => {});
-    }, 1200);
+    window.addEventListener("focus", () => {
+        requestAutomaticSync({ delay: 300 });
+    });
+
+    requestAutomaticSync({
+        delay: 1200,
+        force: true,
+        retryIfSessionMissing: true
+    });
 })();

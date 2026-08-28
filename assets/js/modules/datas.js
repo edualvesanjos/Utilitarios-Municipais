@@ -53,7 +53,7 @@
                 ? ` até ${item.end ? item.end.split("-").reverse().join("/") : "—"}`
                 : ` • ${Number(item.quantity||0)} dia(s)`;
             const resultText = String(item.result || "—");
-            return `<li><span class="dates-history-entry"><strong>${op}: ${startText}${parameter}</strong><small class="dates-history-result">${resultText}</small></span><button type="button" class="secondary mini-button" data-copy-dates-history="${index}">Copiar</button></li>`;
+            return `<li><span class="dates-history-entry"><strong>${op}: ${startText}${parameter}</strong><small class="dates-history-result">${resultText}</small></span><div class="list-actions"><button type="button" class="secondary mini-button" data-copy-dates-history="${index}">Copiar</button><button type="button" class="secondary mini-button" data-delete-dates-history="${index}">Excluir</button></div></li>`;
         }).join("");
         list.querySelectorAll("[data-copy-dates-history]").forEach(button=>button.addEventListener("click",async()=>{
             const item=rows[Number(button.dataset.copyDatesHistory)];
@@ -61,6 +61,15 @@
             const value=String(item.result||"");
             if(typeof copyText==="function") await copyText(value);
             else if(navigator.clipboard) await navigator.clipboard.writeText(value);
+        }));
+        list.querySelectorAll("[data-delete-dates-history]").forEach(button=>button.addEventListener("click",()=>{
+            const item=rows[Number(button.dataset.deleteDatesHistory)];
+            if(!item || !window.confirm("Excluir este registro do histórico sincronizado? A exclusão será aplicada aos demais dispositivos após sincronizar.")) return;
+            const fp=window.HistoryService?.fingerprintValue?.(item);
+            const next=getDatesHistory().filter(entry=>fp ? window.HistoryService?.fingerprintValue?.(entry)!==fp : entry!==item);
+            setJson(DATES_HISTORY_KEY,next.slice(0,DATES_HISTORY_LIMIT));
+            window.HistoryService?.queueDeleteHistory?.("datas",item,{source:"datas_history"});
+            renderDatesHistory(); window.renderProductivity33?.(); showToast("Exclusão registrada para sincronização.");
         }));
     }
 
@@ -70,6 +79,7 @@
         setJson(DATES_HISTORY_KEY, rows.slice(0, DATES_HISTORY_LIMIT));
         renderDatesHistory();
         window.HistoryService?.notifyLocalChange?.();
+        window.HistoryService?.queueHistory?.("datas", entry, "calculated");
         window.renderProductivity33?.();
     }
 

@@ -630,3 +630,12 @@ body.compact-mode .dashboard-tool-card {
 /* v4.4.1.4 — separação visual do histórico de Datas */
 .dates-history-entry { display: flex; flex-direction: column; gap: 0.45rem; }
 .dates-history-result { display: block; margin-top: 0.15rem; }
+
+
+/* v4.4.2 — ações por registro do histórico sincronizado */
+.history-item-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+}

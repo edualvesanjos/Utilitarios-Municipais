@@ -103,6 +103,19 @@ function addLotHistory(lots) {
     renderLotHistory();
 }
 
+
+function deleteLotHistoryItem(item) {
+    if (!window.confirm("Excluir este registro do histórico sincronizado? A exclusão será aplicada aos demais dispositivos após sincronizar.")) return;
+    const fingerprint = window.HistoryService?.fingerprintValue?.(item);
+    const current = getJson(LOT_HISTORY_KEY, []);
+    const next = (Array.isArray(current) ? current : []).filter((entry) => fingerprint ? window.HistoryService?.fingerprintValue?.(entry) !== fingerprint : entry !== item);
+    setJson(LOT_HISTORY_KEY, next);
+    window.HistoryService?.queueDeleteHistory?.("lote", item, { source: "lote_history" });
+    renderLotHistory();
+    window.renderProductivity33?.();
+    showToast("Exclusão registrada para sincronização.");
+}
+
 function renderLotHistory() {
     const history = getLotHistory();
 
@@ -117,6 +130,10 @@ function renderLotHistory() {
             {
                 label: "Copiar",
                 onClick: (item) => copyText(item.content)
+            },
+            {
+                label: "Excluir",
+                onClick: (item) => deleteLotHistoryItem(item)
             }
         ]
     });
@@ -192,3 +209,5 @@ $("#reiniciarSequenciaLotes").addEventListener("click", async () => {
     showToast("Sequência reiniciada.");
 });
 
+// Permite atualizar o histórico após sincronização remota.
+window.renderLotHistory = renderLotHistory;
