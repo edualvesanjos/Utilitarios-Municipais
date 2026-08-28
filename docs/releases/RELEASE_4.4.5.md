@@ -1,4 +1,4 @@
-# Utilitários Municipais — v4.4.5 DEV
+# Utilitários Municipais — v4.4.5 PRODUÇÃO
 
 ## Objetivo
 
@@ -33,7 +33,7 @@ incorporar a melhoria de usabilidade solicitada no campo CPF/CNPJ.
 Sem alteração de schema ou RLS.
 
 ## Ambiente
-`APP_ENVIRONMENT = "development"`
+`APP_ENVIRONMENT = "production"`
 
 ## Teste recomendado em dois navegadores
 1. Abrir A e B com a mesma conta DEV.
@@ -42,3 +42,11 @@ Sem alteração de schema ou RLS.
 4. Repetir e recarregar B: o item deve desaparecer sem clicar no botão manual.
 5. Colocar B offline, alterar A, voltar B online: a sincronização deve ocorrer automaticamente.
 6. Confirmar que o botão manual continua funcionando.
+
+
+## Fechamento de produção
+
+- Testes da v4.4.5 DEV aprovados.
+- Pacote gerado a partir da versão DEV aprovada.
+- Ambiente ativo alterado exclusivamente para `production`.
+- Pronto para o fluxo `develop -> main` e publicação no GitHub Pages.

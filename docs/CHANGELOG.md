@@ -2,6 +2,9 @@
 
 ## 4.4.5
 
+### Produção
+- Testes DEV aprovados e pacote fechado para produção.
+
 ### Adicionado
 - Sincronização automática dos históricos ao iniciar/recarregar o aplicativo.
 - Sincronização ao recuperar foco, tornar a aba visível e retornar ao modo online.
