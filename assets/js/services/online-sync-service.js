@@ -223,7 +223,7 @@
     function refreshApplication() {
         const refreshers = [
             "refreshPersistedApplicationData",
-            "applyPrefs",
+            "refreshUxPreferences",
             "renderDashboardFavorites",
             "refreshUsageViews",
             "updateDashboardLastToolHighlight",
@@ -774,6 +774,11 @@
                 resetWatchedSnapshot();
                 scheduleAutoSync(true);
             }
+        });
+        window.addEventListener("um:display-name-changed", () => {
+            renderOnlineStatus();
+            resetWatchedSnapshot();
+            scheduleAutoSync(true);
         });
         startSelectiveLocalWatch();
         window.addEventListener("online", () => {

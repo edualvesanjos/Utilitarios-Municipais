@@ -14,8 +14,37 @@ const HELP={
 };
 const get=(k,f)=>{try{const v=localStorage.getItem(UX_PREFIX+k);return v===null?f:JSON.parse(v)}catch{return f}};
 const set=(k,v)=>localStorage.setItem(UX_PREFIX+k,JSON.stringify(v));
-function normalizeDisplayName(value){const name=String(value||"").replace(/\s+/g," ").trim().slice(0,40);return name||"Usuário"}
-function applyDisplayName(prefs){const name=normalizeDisplayName(prefs?.displayName);const greeting=document.getElementById("dashboardGreeting");if(greeting)greeting.textContent=`Olá, ${name}!`}
+function normalizeDisplayName(value) {
+    const name = String(value || "")
+        .replace(/\s+/g, " ")
+        .trim()
+        .slice(0, 40);
+    return name || "Usuário";
+}
+
+function applyDisplayName(prefs) {
+    const name = normalizeDisplayName(prefs?.displayName);
+    const greeting = document.getElementById("dashboardGreeting");
+    if (greeting) greeting.textContent = `Olá, ${name}!`;
+}
+
+function refreshDisplayNamePreference() {
+    const prefs = get("prefs", {});
+    const input = document.getElementById("uxDisplayName");
+    if (input && document.activeElement !== input) {
+        input.value = String(prefs.displayName || "")
+            .replace(/\s+/g, " ")
+            .trim()
+            .slice(0, 40);
+    }
+    applyDisplayName(prefs);
+}
+
+window.refreshUxPreferences = function refreshUxPreferences() {
+    applyPrefs();
+    refreshDisplayNamePreference();
+};
+
 function applyPrefs(){const p=get("prefs",{theme:"light",compact:false,font:"normal",layout:"grid",displayName:"",widgets:{favorites:true,smart:true,indicators:true,summary:true,recent:true}});applyDisplayName(p);document.body.dataset.theme=p.theme;document.body.classList.toggle("ux-compact",!!p.compact);document.body.classList.toggle("ux-font-large",p.font==="large");document.documentElement.style.setProperty("--ux-accent",p.accent||"#0f4c81");document.documentElement.style.setProperty("--primary-color",p.accent||"#0f4c81");const all=document.getElementById("dashboardAllTools");if(all)all.dataset.layout=p.layout||"grid";const map={favorites:"dashboardFavoritesSection",smart:null,indicators:null,summary:null,recent:null};document.getElementById("dashboardFavoritesSection")?.classList.toggle("ux-hidden-widget",p.widgets?.favorites===false);document.querySelector(".dashboard-smart-grid")?.classList.toggle("ux-hidden-widget",p.widgets?.smart===false);document.querySelector(".dashboard-usage-indicators")?.classList.toggle("ux-hidden-widget",p.widgets?.indicators===false);document.querySelector(".dashboard-summary-grid")?.classList.toggle("ux-hidden-widget",p.widgets?.summary===false);document.querySelector(".dashboard-recent-card")?.classList.toggle("ux-hidden-widget",p.widgets?.recent===false)}
 function createToolbar(){const target=document.querySelector("#inicio .dashboard-hero");if(!target||document.getElementById("uxDashboardToolbar"))return;const wrap=document.createElement("section");wrap.id="uxDashboardToolbar";wrap.className="card";wrap.innerHTML=`<div class="section-heading"><div><span class="eyebrow">Personalização</span><h3>Experiência do Dashboard</h3></div></div><div class="ux-toolbar"><label>Layout <select id="uxLayout"><option value="grid">Grade</option><option value="list">Lista</option><option value="compact">Compacto</option></select></label><button id="uxOpenCommands" type="button" class="secondary">Paleta de comandos</button></div><div class="ux-personalize"><label><input data-ux-widget="favorites" type="checkbox"> Favoritos</label><label><input data-ux-widget="smart" type="checkbox"> Recentes e mais usadas</label><label><input data-ux-widget="indicators" type="checkbox"> Indicadores</label><label><input data-ux-widget="summary" type="checkbox"> Resumo</label><label><input data-ux-widget="recent" type="checkbox"> Atividades recentes</label></div>`;target.after(wrap);const p=get("prefs",{layout:"grid",widgets:{favorites:true,smart:true,indicators:true,summary:true,recent:true}});document.getElementById("uxLayout").value=p.layout||"grid";document.querySelectorAll("[data-ux-widget]").forEach(i=>i.checked=p.widgets?.[i.dataset.uxWidget]!==false);document.getElementById("uxLayout").onchange=e=>{const x=get("prefs",{});x.layout=e.target.value;set("prefs",x);applyPrefs()};document.querySelectorAll("[data-ux-widget]").forEach(i=>i.onchange=()=>{const x=get("prefs",{});x.widgets={...(x.widgets||{}),[i.dataset.uxWidget]:i.checked};set("prefs",x);applyPrefs()});document.getElementById("uxOpenCommands").onclick=openPalette}
 function addSettings(){
@@ -59,7 +88,7 @@ function addSettings(){
                 <label class="ux-setting-field ux-display-name-field">
                     <span>Como gostaria de ser chamado?</span>
                     <input id="uxDisplayName" type="text" maxlength="40" autocomplete="name" placeholder="Usuário">
-                    <small class="help-text">Usado somente na saudação do Painel principal.</small>
+                    <small class="help-text">Usado na saudação e na identificação da conta no cabeçalho.</small>
                 </label>
                 <div class="ux-interface-grid">
                     <label class="ux-setting-field"><span>Tema</span><select id="uxTheme"><option value="light">Claro</option><option value="dark">Escuro</option><option value="contrast">Alto contraste</option></select></label>
@@ -98,7 +127,19 @@ function addSettings(){
         else if(window.NotificationService?.success)window.NotificationService.success("Configurações de interface aplicadas com sucesso!");
     });
     const displayNameInput=document.getElementById("uxDisplayName");
-    const saveDisplayName=()=>{const x=get("prefs",{});x.displayName=String(displayNameInput.value||"").replace(/\s+/g," ").trim().slice(0,40);displayNameInput.value=x.displayName;set("prefs",x);applyPrefs()};
+    const saveDisplayName = () => {
+        const x = get("prefs", {});
+        x.displayName = String(displayNameInput.value || "")
+            .replace(/\s+/g, " ")
+            .trim()
+            .slice(0, 40);
+        displayNameInput.value = x.displayName;
+        set("prefs", x);
+        applyPrefs();
+        window.dispatchEvent(new CustomEvent("um:display-name-changed", {
+            detail: { displayName: normalizeDisplayName(x.displayName) }
+        }));
+    };
     displayNameInput.addEventListener("change",saveDisplayName);
     displayNameInput.addEventListener("blur",saveDisplayName);
     displayNameInput.addEventListener("keydown",event=>{if(event.key==="Enter"){event.preventDefault();saveDisplayName();displayNameInput.blur()}});

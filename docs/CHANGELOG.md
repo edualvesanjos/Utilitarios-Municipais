@@ -1,5 +1,21 @@
 # Changelog
 
+## 4.4.6
+
+### Interface
+- Histórico de versões com rolagem vertical e sem rolagem horizontal.
+- Nome de exibição unificado entre Configurações, saudação e cabeçalho.
+- Cabeçalho atualizado imediatamente após alteração do nome.
+- Campo de Configurações atualizado após recebimento de preferências sincronizadas.
+
+### Documentação
+- README consolidado para descrever somente o estado atual.
+- Histórico detalhado mantido no CHANGELOG e em `docs/releases/`.
+
+### Banco de dados
+- Sem alteração de schema ou RLS.
+
+
 ## 4.4.5
 
 ### Produção
