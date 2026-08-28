@@ -1,4 +1,4 @@
-/* Módulo CPF / CNPJ — v4.4.4 */
+/* Módulo CPF / CNPJ — v4.4.5 */
 (function () {
     const $ = (selector) => document.querySelector(selector);
     const HISTORY_KEY = `${STORAGE_PREFIX}documentoFiscalHistory`;
@@ -476,6 +476,12 @@
     input.addEventListener("input", update);
     input.addEventListener("paste", () => {
         window.setTimeout(update, 0);
+    });
+
+    input.addEventListener("dblclick", () => {
+        if (input.value) {
+            input.select();
+        }
     });
 
     autoCopy.addEventListener("change", () => {

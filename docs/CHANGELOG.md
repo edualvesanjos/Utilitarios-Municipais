@@ -1,5 +1,23 @@
 # Changelog
 
+## 4.4.5
+
+### Adicionado
+- Sincronização automática dos históricos ao iniciar/recarregar o aplicativo.
+- Sincronização ao recuperar foco, tornar a aba visível e retornar ao modo online.
+- Controle de intervalo para evitar chamadas automáticas redundantes.
+- Seleção de todo o CPF/CNPJ por duplo clique no campo preenchido.
+
+### Mantido
+- Botão manual "Sincronizar histórico".
+- Retry após falhas e recuperação offline.
+- Deduplicação, ordenação estável e tombstones.
+- Compatibilidade com CPF, CNPJ numérico e CNPJ alfanumérico.
+
+### Banco de dados
+- Sem alteração de schema ou RLS.
+
+
 ## 4.4.4
 
 ### Adicionado

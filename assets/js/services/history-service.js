@@ -1,4 +1,4 @@
-/* Utilitários Municipais v4.4.3 — gerenciamento global de históricos sincronizados. */
+/* Utilitários Municipais v4.4.5 — sincronização automática de históricos. */
 (function () {
     "use strict";
 
@@ -9,6 +9,8 @@
     const SYNC_STATE_KEY = "history:syncState";
     const RETRY_BASE_MS = 3000;
     const RETRY_MAX_MS = 60000;
+    const AUTO_SYNC_MIN_INTERVAL_MS = 3000;
+    const AUTO_SYNC_STARTUP_RETRIES = 5;
     const LOCAL_HISTORY = Object.freeze({
         arquivo: { key: "fileHistory", limit: 15 },
         inscricao: { key: "registrationHistory", limit: 15 },
@@ -19,6 +21,9 @@
         "cpf-cnpj": { key: "documentoFiscalHistory", limit: 20 }
     });
     const SUPPORTED_MODULES = Object.freeze(["arquivo", "inscricao", "lote", "uvrm", "percentual", "datas", "cpf-cnpj"]);
+
+    let automaticSyncTimer = null;
+    let lastAutomaticSyncAt = 0;
 
     function nowIso() {
         return new Date().toISOString();
@@ -649,23 +654,94 @@
         syncAll
     });
 
+    function canAutomaticallySync() {
+        return Boolean(
+            navigator.onLine &&
+            window.OnlineSyncService?.getSession?.()?.user
+        );
+    }
+
+    function requestAutomaticSync(options = {}) {
+        const {
+            delay = 300,
+            force = false,
+            retryIfSessionMissing = false,
+            retriesRemaining = AUTO_SYNC_STARTUP_RETRIES
+        } = options;
+
+        if (automaticSyncTimer) {
+            window.clearTimeout(automaticSyncTimer);
+            automaticSyncTimer = null;
+        }
+
+        automaticSyncTimer = window.setTimeout(async () => {
+            automaticSyncTimer = null;
+
+            if (!navigator.onLine) {
+                return;
+            }
+
+            if (!window.OnlineSyncService?.getSession?.()?.user) {
+                if (retryIfSessionMissing && retriesRemaining > 0) {
+                    requestAutomaticSync({
+                        delay: 1000,
+                        force,
+                        retryIfSessionMissing: true,
+                        retriesRemaining: retriesRemaining - 1
+                    });
+                }
+                return;
+            }
+
+            const now = Date.now();
+            const elapsed = now - lastAutomaticSyncAt;
+
+            if (!force && elapsed < AUTO_SYNC_MIN_INTERVAL_MS) {
+                requestAutomaticSync({
+                    delay: AUTO_SYNC_MIN_INTERVAL_MS - elapsed,
+                    force: true
+                });
+                return;
+            }
+
+            lastAutomaticSyncAt = now;
+
+            try {
+                await syncAll({ silent: true });
+            } catch {
+                // O próprio syncAll atualiza o estado e agenda retry quando necessário.
+            }
+        }, Math.max(0, Number(delay) || 0));
+    }
+
     window.addEventListener("online", () => {
         clearRetryTimer();
-        window.setTimeout(() => syncAll({ silent: true }).catch(() => {}), 300);
+        requestAutomaticSync({ delay: 300, force: true });
     });
 
     window.addEventListener("offline", () => {
+        if (automaticSyncTimer) {
+            window.clearTimeout(automaticSyncTimer);
+            automaticSyncTimer = null;
+        }
+
         clearRetryTimer();
         setSyncState({ syncing: false, lastError: "offline" });
     });
 
     document.addEventListener("visibilitychange", () => {
-        if (document.visibilityState === "visible" && navigator.onLine) {
-            window.setTimeout(() => syncAll({ silent: true }).catch(() => {}), 300);
+        if (document.visibilityState === "visible") {
+            requestAutomaticSync({ delay: 300 });
         }
     });
 
-    window.setTimeout(() => {
-        if (listPending().length && navigator.onLine) syncAll({ silent: true }).catch(() => {});
-    }, 1200);
+    window.addEventListener("focus", () => {
+        requestAutomaticSync({ delay: 300 });
+    });
+
+    requestAutomaticSync({
+        delay: 1200,
+        force: true,
+        retryIfSessionMissing: true
+    });
 })();
