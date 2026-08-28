@@ -141,7 +141,7 @@ Fechada com `APP_ENVIRONMENT = "production"` e correção da persistência UVRM 
 Piloto de exclusão sincronizada no histórico de CPF/CNPJ usando tombstones em `history_entries`.
 
 
-## Gerenciamento global de históricos — v4.4.3
+## Gerenciamento global de históricos — v4.4.4
 
 A área **Configurações** diferencia duas operações:
 
@@ -149,3 +149,18 @@ A área **Configurações** diferencia duas operações:
 - **Excluir históricos sincronizados**: cria tombstones para os registros sincronizados da conta e propaga a exclusão aos demais navegadores/dispositivos.
 
 A exclusão sincronizada exige usuário conectado, acesso à internet e confirmação dupla.
+
+
+## CNPJ alfanumérico — v4.4.4
+
+O módulo CPF/CNPJ suporta:
+
+- CPF numérico;
+- CNPJ numérico tradicional;
+- CNPJ alfanumérico com 12 posições alfanuméricas e 2 dígitos verificadores numéricos;
+- detecção automática;
+- máscara, opção sem máscara e cópia automática;
+- histórico local e sincronizado, incluindo deduplicação e tombstones.
+
+A validação do CNPJ alfanumérico utiliza o cálculo oficial por módulo 11,
+convertendo cada caractere alfanumérico pelo valor ASCII menos 48.

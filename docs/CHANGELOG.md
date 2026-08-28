@@ -1,5 +1,24 @@
 # Changelog
 
+## 4.4.4
+
+### Adicionado
+- Suporte ao CNPJ alfanumérico.
+- Máscara para 12 posições alfanuméricas e 2 dígitos verificadores numéricos.
+- Validação oficial dos dígitos verificadores por módulo 11.
+
+### Mantido
+- CPF numérico.
+- CNPJ numérico tradicional.
+- Histórico, sincronização, deduplicação e exclusão por tombstones.
+
+### Manutenção
+- `cpf-cnpj.js` reformatado e indentado.
+
+### Banco de dados
+- Sem alteração de schema ou RLS.
+
+
 ## 4.4.3
 
 ### Adicionado

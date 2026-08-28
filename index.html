@@ -394,7 +394,7 @@
                 <div class="section-heading main-heading">
                     <div>
                         <h2>CPF / CNPJ</h2>
-                        <p class="section-description">Normalize, valide e copie documentos fiscais com máscaras automáticas.</p>
+                        <p class="section-description">Normalize, valide e copie CPF, CNPJ numérico e CNPJ alfanumérico com máscaras automáticas.</p>
                     </div>
                 </div>
                 <div class="generator-grid">
@@ -414,7 +414,7 @@
                             </label>
                         </div>
                         <label>CPF ou CNPJ
-                            <input id="documentoFiscalEntrada" type="text" inputmode="numeric" autocomplete="off" maxlength="18" placeholder="Digite ou cole o número">
+                            <input id="documentoFiscalEntrada" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="18" placeholder="Digite ou cole o CPF/CNPJ">
                         </label>
                         <div class="document-copy-options">
                             <label class="checkbox-row"><input id="documentoFiscalAutoCopy" type="checkbox"> Copiar automaticamente</label>
@@ -438,7 +438,11 @@
                         </section>
                         <section class="sidebar-card">
                             <h3>Formatos</h3>
-                            <div class="format-examples"><div><span>CPF</span><code>000.000.000-00</code></div><div><span>CNPJ</span><code>00.000.000/0000-00</code></div></div>
+                            <div class="format-examples">
+                                <div><span>CPF</span><code>000.000.000-00</code></div>
+                                <div><span>CNPJ numérico</span><code>00.000.000/0000-00</code></div>
+                                <div><span>CNPJ alfanumérico</span><code>AA.AAA.AAA/AAAA-00</code></div>
+                            </div>
                         </section>
                     </aside>
                 </div>
@@ -1080,18 +1084,18 @@
                     <section class="settings-card">
                         <h3>Novidades da <span data-app-version></span></h3>
                         <ul class="about-list">
-                            <li><strong>Históricos:</strong> limpeza local e exclusão sincronizada agora são operações distintas.</li>
-                            <li><strong>Exclusão global:</strong> tombstones são gerados para todos os módulos sincronizados.</li>
-                            <li><strong>Segurança:</strong> exclusão sincronizada exige conta conectada, internet e confirmação dupla.</li>
-                            <li><strong>Configurações:</strong> removidas ações antigas e ambíguas de limpeza de históricos.</li>
-                            <li><strong>Manutenção:</strong> código de Configurações reformatado e indentado.</li>
+                            <li><strong>CNPJ alfanumérico:</strong> suporte às 12 posições alfanuméricas e aos 2 dígitos verificadores numéricos.</li>
+                            <li><strong>Validação:</strong> cálculo dos dígitos verificadores atualizado para o padrão oficial da Receita Federal.</li>
+                            <li><strong>Compatibilidade:</strong> CPF e CNPJ numérico tradicionais continuam suportados.</li>
+                            <li><strong>Históricos:</strong> CNPJs alfanuméricos participam normalmente da sincronização, deduplicação e exclusão por tombstones.</li>
+                            <li><strong>Manutenção:</strong> módulo CPF/CNPJ integralmente reformatado e indentado.</li>
                         </ul>
                     </section>
                 </div>
 
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
-                    <div class="about-timeline"><article><strong>4.4.3</strong><p>Gerenciamento global de históricos com distinção entre limpeza local e exclusão sincronizada.</p></article><article><strong>4.4.2.2</strong><p>Correção da colisão dos manipuladores de exclusão sincronizada em Inscrição, Lotes e Percentual.</p></article><article><strong>4.4.2.1</strong><p>Expansão da exclusão sincronizada para todos os históricos dos módulos.</p></article>
+                    <div class="about-timeline"><article><strong>4.4.4</strong><p>Suporte ao CNPJ alfanumérico com validação oficial e retrocompatibilidade com documentos numéricos.</p></article><article><strong>4.4.3</strong><p>Gerenciamento global de históricos com distinção entre limpeza local e exclusão sincronizada.</p></article><article><strong>4.4.2.2</strong><p>Correção da colisão dos manipuladores de exclusão sincronizada em Inscrição, Lotes e Percentual.</p></article><article><strong>4.4.2.1</strong><p>Expansão da exclusão sincronizada para todos os históricos dos módulos.</p></article>
                         <article><strong>4.4.2</strong><p>Piloto de exclusão sincronizada no histórico de CPF/CNPJ, com tombstones e propagação entre dispositivos.</p></article>
 <article><strong>4.4.1.4</strong><p>Padronização das ações dos históricos sincronizados e melhoria visual do histórico de Datas.</p></article><article><strong>4.4.1.3</strong><p>Ajustes de coerência dos históricos, novo histórico visual de Datas e atualização do valor padrão da UVRM.</p></article><article><strong>4.4.1.2</strong><p>Estabilização da ordem dos históricos e incorporação definitiva das correções de CPF/CNPJ.</p></article>
                         <article><strong>4.4.1.1</strong><p>Correção do carregamento inicial e atualização visual do histórico local de CPF/CNPJ após sincronização.</p></article>
