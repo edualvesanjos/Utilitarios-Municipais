@@ -1,5 +1,20 @@
 # Changelog
 
+## 4.5.0.2
+
+### Etapa 2 — Sidebar e conta
+- Sidebar recolhível no desktop, com preferência persistida localmente.
+- Modo recolhido exibe navegação compacta por ícones.
+- Em telas menores, a sidebar funciona como menu lateral deslizante com backdrop.
+- Conta e sincronização removidas do cabeçalho.
+- Novo ícone compacto de perfil na base da sidebar.
+- Cor do indicador de perfil acompanha o estado real: local, sincronizado, pendente, sincronizando, offline ou conflito/erro.
+- Menu de perfil mantém nome, e-mail, estado e ações de conta/sincronização.
+- Corrigido o acesso “Conta e sincronização” para a nova estrutura aninhada da sidebar.
+- Supabase Realtime não foi incluído.
+- Sem alteração de schema ou RLS.
+
+
 ## 4.5.0.1
 
 ### Correção da Etapa 1

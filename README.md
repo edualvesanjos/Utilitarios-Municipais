@@ -8,7 +8,7 @@ Aplicação web modular para rotinas administrativas municipais, com foco em pro
 
 A navegação principal utiliza uma barra lateral organizada por grupos:
 Documentos, Cadastros, Cálculos, Produtividade e Sistema.
-A pesquisa global e os atalhos de aparência ficam integrados à sidebar.
+A pesquisa global e os atalhos de aparência ficam integrados à sidebar. No desktop, a barra pode ser recolhida; em telas menores, funciona como menu deslizante. O acesso à conta fica na base, por um ícone de perfil com indicação visual do estado de sincronização.
 
 
 Módulos disponíveis: Montador de Nome de Arquivo, Inscrição Imobiliária, Número de Lote, Calculadora UVRM, Percentual, Datas, CPF/CNPJ e Central de Documentos.

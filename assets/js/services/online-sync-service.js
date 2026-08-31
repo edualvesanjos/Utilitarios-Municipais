@@ -497,7 +497,7 @@
         document.getElementById("headerSignOut")?.addEventListener("click", () => { closeHeaderAccountMenu(); client?.auth.signOut(); });
         document.getElementById("headerAccountSettings")?.addEventListener("click", () => {
             closeHeaderAccountMenu();
-            document.querySelector('.ux-main-navigation > [data-tab="configuracoes"]')?.click();
+            document.querySelector('.ux-main-navigation [data-tab="configuracoes"]')?.click();
             window.setTimeout(() => document.getElementById("onlineSettingsPanel")?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
         });
     }
@@ -564,13 +564,20 @@
         const accountDot = document.getElementById("headerAccountDot");
         const menuDot = document.getElementById("headerMenuStatusDot");
         const menuStatusText = document.getElementById("headerMenuStatusText");
-        const accountVisualState = session?.user ? (navigator.onLine ? "online" : "offline") : "local";
+        const accountVisualState = session?.user ? state : "local";
+        const accountVisualText = session?.user ? text : "Somente local";
+
         if (accountName) accountName.textContent = session?.user ? displayName : "Entrar";
-        if (accountStateEl) accountStateEl.textContent = accountState;
+        if (accountStateEl) accountStateEl.textContent = accountVisualText;
         if (accountMenuName) accountMenuName.textContent = session?.user ? displayName : "Não conectado";
         if (accountEmail) accountEmail.textContent = email || "Use o armazenamento local ou entre em uma conta.";
-        [accountDot, menuDot].filter(Boolean).forEach((dot) => { dot.dataset.state = accountVisualState; });
-        if (menuStatusText) menuStatusText.textContent = accountState;
+
+        [accountDot, menuDot].filter(Boolean).forEach((dot) => {
+            dot.dataset.state = accountVisualState;
+            dot.title = accountVisualText;
+        });
+
+        if (menuStatusText) menuStatusText.textContent = accountVisualText;
 
         const footerDot = document.getElementById("footerSyncDot");
         const footerText = document.getElementById("footerSyncText");
