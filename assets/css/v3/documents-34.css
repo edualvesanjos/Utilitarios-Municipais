@@ -302,3 +302,9 @@
         flex: 1 1 auto;
     }
 }
+
+
+/* v4.4.6.1 — respeita o estado hidden do painel vazio da Central de Documentos. */
+.document-editor-empty[hidden] {
+    display: none;
+}

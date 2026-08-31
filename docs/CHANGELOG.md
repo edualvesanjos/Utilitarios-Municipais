@@ -1,5 +1,16 @@
 # Changelog
 
+## 4.4.6.1
+
+### Correção
+- Central de Documentos: removido o grande espaço em branco exibido após selecionar um modelo.
+- O painel de estado vazio passa a respeitar corretamente o atributo `hidden`.
+- Nenhuma alteração na estrutura persistida dos modelos.
+
+### Banco de dados
+- Sem alteração de schema ou RLS.
+
+
 ## 4.4.6
 
 ### Interface

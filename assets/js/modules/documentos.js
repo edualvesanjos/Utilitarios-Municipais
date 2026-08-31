@@ -1,4 +1,4 @@
-/* Versão 4.4.6: Central de Documentos simplificada, sem modelos internos protegidos. */
+/* Versão 4.4.6.1: Central de Documentos com correção do estado vazio ao selecionar um modelo. */
 (() => {
     "use strict";
 

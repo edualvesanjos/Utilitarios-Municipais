@@ -1177,20 +1177,16 @@
                     <section class="settings-card">
                         <h3>Novidades da <span data-app-version></span></h3>
                         <ul class="about-list">
-                            <li><strong>README:</strong> consolidado para refletir apenas o estado atual do projeto.</li>
-                            <li><strong>Histórico de versões:</strong> painel com altura limitada e rolagem somente vertical.</li>
-                            <li><strong>Nome de exibição:</strong> Configurações, saudação e cabeçalho passam a refletir a mesma preferência.</li>
-                            <li><strong>Sincronização:</strong> o campo “Como gostaria de ser chamado?” também é atualizado ao receber preferências remotas.</li>
-                            <li><strong>Central de Documentos:</strong> interface reorganizada em Modelos e Documento, com filtros compactos, estado inicial simplificado e ações com melhor hierarquia.</li>
-                            <li><strong>Modelos:</strong> removido o modelo interno criado pela aplicação; todos os modelos existentes passam a ser criados pelo usuário e podem ser editados ou excluídos.</li>
-                            <li><strong>Manutenção:</strong> histórico detalhado permanece no CHANGELOG e nos arquivos de release.</li>
+                            <li><strong>Central de Documentos:</strong> corrigido o espaço em branco exibido acima do documento após a seleção de um modelo.</li>
+                            <li><strong>Interface:</strong> o estado “Selecione um modelo” agora é ocultado corretamente quando o editor é aberto.</li>
+                            <li><strong>Compatibilidade:</strong> mantidas as melhorias da v4.4.6, sem alteração de dados, schema ou RLS.</li>
                         </ul>
                     </section>
                 </div>
 
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
-                    <div class="about-timeline"><article><strong>4.4.6</strong><p>Consolidação da documentação, rolagem do histórico e unificação do nome de exibição.</p></article><article><strong>4.4.5</strong><p>Sincronização automática de históricos por eventos da aplicação e seleção total do CPF/CNPJ por duplo clique.</p></article><article><strong>4.4.4</strong><p>Suporte ao CNPJ alfanumérico com validação oficial e retrocompatibilidade com documentos numéricos.</p></article><article><strong>4.4.3</strong><p>Gerenciamento global de históricos com distinção entre limpeza local e exclusão sincronizada.</p></article><article><strong>4.4.2.2</strong><p>Correção da colisão dos manipuladores de exclusão sincronizada em Inscrição, Lotes e Percentual.</p></article><article><strong>4.4.2.1</strong><p>Expansão da exclusão sincronizada para todos os históricos dos módulos.</p></article>
+                    <div class="about-timeline"><article><strong>4.4.6.1</strong><p>Correção visual da Central de Documentos para ocultar corretamente o estado vazio após selecionar um modelo.</p></article><article><strong>4.4.6</strong><p>Consolidação da documentação, rolagem do histórico e unificação do nome de exibição.</p></article><article><strong>4.4.5</strong><p>Sincronização automática de históricos por eventos da aplicação e seleção total do CPF/CNPJ por duplo clique.</p></article><article><strong>4.4.4</strong><p>Suporte ao CNPJ alfanumérico com validação oficial e retrocompatibilidade com documentos numéricos.</p></article><article><strong>4.4.3</strong><p>Gerenciamento global de históricos com distinção entre limpeza local e exclusão sincronizada.</p></article><article><strong>4.4.2.2</strong><p>Correção da colisão dos manipuladores de exclusão sincronizada em Inscrição, Lotes e Percentual.</p></article><article><strong>4.4.2.1</strong><p>Expansão da exclusão sincronizada para todos os históricos dos módulos.</p></article>
                         <article><strong>4.4.2</strong><p>Piloto de exclusão sincronizada no histórico de CPF/CNPJ, com tombstones e propagação entre dispositivos.</p></article>
 <article><strong>4.4.1.4</strong><p>Padronização das ações dos históricos sincronizados e melhoria visual do histórico de Datas.</p></article><article><strong>4.4.1.3</strong><p>Ajustes de coerência dos históricos, novo histórico visual de Datas e atualização do valor padrão da UVRM.</p></article><article><strong>4.4.1.2</strong><p>Estabilização da ordem dos históricos e incorporação definitiva das correções de CPF/CNPJ.</p></article>
                         <article><strong>4.4.1.1</strong><p>Correção do carregamento inicial e atualização visual do histórico local de CPF/CNPJ após sincronização.</p></article>
