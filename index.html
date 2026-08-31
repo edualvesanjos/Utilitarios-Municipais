@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="assets/css/v3/productivity-33.css">
     <link rel="stylesheet" href="assets/css/v3/documents-34.css">
     <link rel="stylesheet" href="assets/css/v4/online-41.css">
+    <link rel="stylesheet" href="assets/css/v4/sidebar-45.css">
 </head>
 <body>
     <header class="app-header app-header-v32">
@@ -62,22 +63,100 @@
     </header>
 
     <main class="app-container">
-        <nav class="tabs ux-main-navigation v32-main-navigation" aria-label="Navegação principal">
-            <button class="tab-button ux-nav-primary active" type="button" data-tab="inicio"><span class="nav-svg-icon" data-static-icon="home" aria-hidden="true"></span> Início</button>
-            <div class="ux-tools-menu">
-                <button id="uxToolsMenuButton" class="ux-nav-primary ux-tools-menu-button" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="uxToolsMenuDropdown"><span class="nav-svg-icon" data-static-icon="tools" aria-hidden="true"></span> Ferramentas <span aria-hidden="true">⌄</span></button>
-                <div id="uxToolsMenuDropdown" class="ux-tools-dropdown v32-tools-dropdown" role="menu" hidden>
-                    <section class="ux-tools-group"><strong>Documentos</strong><button class="tab-button" type="button" data-tab="central-documentos" role="menuitem"><span class="menu-tool-icon" data-tool-icon="documents"></span> Central de documentos</button><button class="tab-button" type="button" data-tab="arquivo" role="menuitem"><span class="menu-tool-icon" data-tool-icon="file"></span> Nome de arquivo</button></section>
-                    <section class="ux-tools-group"><strong>Cadastros</strong><button class="tab-button" type="button" data-tab="inscricao" role="menuitem"><span class="menu-tool-icon" data-tool-icon="building"></span> Inscrição imobiliária</button><button class="tab-button" type="button" data-tab="cpf-cnpj" role="menuitem"><span class="menu-tool-icon" data-tool-icon="idcard"></span> CPF / CNPJ</button><button class="tab-button" type="button" data-tab="lote" role="menuitem"><span class="menu-tool-icon" data-tool-icon="grid"></span> Número de lote</button></section>
-                    <section class="ux-tools-group"><strong>Cálculos</strong><button class="tab-button" type="button" data-tab="uvrm" role="menuitem"><span class="menu-tool-icon" data-tool-icon="coins"></span> Calculadora UVRM</button><button class="tab-button" type="button" data-tab="percentual" role="menuitem"><span class="menu-tool-icon" data-tool-icon="percent"></span> Percentual</button><button class="tab-button" type="button" data-tab="datas" role="menuitem"><span class="menu-tool-icon" data-tool-icon="calendar"></span> Datas</button></section>
-                    <section class="ux-tools-group"><strong>Produtividade</strong><button class="tab-button" type="button" data-tab="biblioteca" role="menuitem"><span class="menu-tool-icon" data-tool-icon="library"></span> Biblioteca de ferramentas</button><button class="tab-button" type="button" data-tab="historico-global" role="menuitem"><span class="menu-tool-icon" data-tool-icon="history"></span> Histórico global</button></section>
-                    <section class="ux-tools-group"><strong>Sistema</strong><button class="tab-button" type="button" data-tab="configuracoes" role="menuitem"><span class="menu-tool-icon" data-tool-icon="settings"></span> Configurações</button><button class="tab-button" type="button" data-tab="sobre" role="menuitem"><span class="menu-tool-icon" data-tool-icon="info"></span> Sobre</button></section>
+
+        <nav class="tabs ux-main-navigation v45-sidebar" aria-label="Navegação principal">
+            <div class="v45-sidebar-search">
+                <label class="v32-top-search">
+                    <span class="nav-svg-icon" data-static-icon="search" aria-hidden="true"></span>
+                    <input id="dashboardToolSearch" type="search" autocomplete="off" placeholder="Pesquisar ferramentas...">
+                    <kbd>Ctrl + K</kbd>
+                    <div id="dashboardSearchResults" class="dashboard-search-results" aria-live="polite"></div>
+                </label>
+            </div>
+
+            <div class="v45-sidebar-scroll">
+                <section class="v45-nav-section">
+                    <button class="tab-button ux-nav-primary active" type="button" data-tab="inicio">
+                        <span class="menu-tool-icon" data-tool-icon="home"></span>
+                        <span>Início</span>
+                    </button>
+                </section>
+
+                <section class="v45-nav-section">
+                    <strong class="v45-nav-heading">Documentos</strong>
+                    <button class="tab-button ux-nav-primary" type="button" data-tab="central-documentos">
+                        <span class="menu-tool-icon" data-tool-icon="documents"></span>
+                        <span>Central de documentos</span>
+                    </button>
+                    <button class="tab-button ux-nav-primary" type="button" data-tab="arquivo">
+                        <span class="menu-tool-icon" data-tool-icon="file"></span>
+                        <span>Nome de arquivo</span>
+                    </button>
+                </section>
+
+                <section class="v45-nav-section">
+                    <strong class="v45-nav-heading">Cadastros</strong>
+                    <button class="tab-button ux-nav-primary" type="button" data-tab="inscricao">
+                        <span class="menu-tool-icon" data-tool-icon="building"></span>
+                        <span>Inscrição imobiliária</span>
+                    </button>
+                    <button class="tab-button ux-nav-primary" type="button" data-tab="cpf-cnpj">
+                        <span class="menu-tool-icon" data-tool-icon="idcard"></span>
+                        <span>CPF / CNPJ</span>
+                    </button>
+                    <button class="tab-button ux-nav-primary" type="button" data-tab="lote">
+                        <span class="menu-tool-icon" data-tool-icon="grid"></span>
+                        <span>Número de lote</span>
+                    </button>
+                </section>
+
+                <section class="v45-nav-section">
+                    <strong class="v45-nav-heading">Cálculos</strong>
+                    <button class="tab-button ux-nav-primary" type="button" data-tab="uvrm">
+                        <span class="menu-tool-icon" data-tool-icon="coins"></span>
+                        <span>Calculadora UVRM</span>
+                    </button>
+                    <button class="tab-button ux-nav-primary" type="button" data-tab="percentual">
+                        <span class="menu-tool-icon" data-tool-icon="percent"></span>
+                        <span>Percentual</span>
+                    </button>
+                    <button class="tab-button ux-nav-primary" type="button" data-tab="datas">
+                        <span class="menu-tool-icon" data-tool-icon="calendar"></span>
+                        <span>Datas</span>
+                    </button>
+                </section>
+
+                <section class="v45-nav-section">
+                    <strong class="v45-nav-heading">Produtividade</strong>
+                    <button class="tab-button ux-nav-primary" type="button" data-tab="biblioteca">
+                        <span class="menu-tool-icon" data-tool-icon="library"></span>
+                        <span>Biblioteca</span>
+                    </button>
+                    <button class="tab-button ux-nav-primary" type="button" data-tab="historico-global">
+                        <span class="menu-tool-icon" data-tool-icon="history"></span>
+                        <span>Histórico global</span>
+                    </button>
+                </section>
+
+                <section class="v45-nav-section">
+                    <strong class="v45-nav-heading">Sistema</strong>
+                    <button class="tab-button ux-nav-primary" type="button" data-tab="configuracoes">
+                        <span class="menu-tool-icon" data-tool-icon="settings"></span>
+                        <span>Configurações</span>
+                    </button>
+                    <button class="tab-button ux-nav-primary" type="button" data-tab="sobre">
+                        <span class="menu-tool-icon" data-tool-icon="info"></span>
+                        <span>Sobre</span>
+                    </button>
+                </section>
+            </div>
+
+            <div class="v45-sidebar-footer">
+                <div class="v32-header-actions" aria-label="Ações de aparência">
+                    <button id="v32ThemeToggle" type="button" title="Alternar tema">◐ <span>Tema</span></button>
+                    <button id="v32FontToggle" type="button" title="Alternar tamanho da fonte">Aᴬ <span>Fonte</span></button>
                 </div>
             </div>
-            <button class="tab-button ux-nav-primary" type="button" data-tab="configuracoes"><span class="nav-svg-icon" data-static-icon="settings" aria-hidden="true"></span> Configurações</button>
-            <button class="tab-button ux-nav-primary" type="button" data-tab="sobre"><span class="nav-svg-icon" data-static-icon="info" aria-hidden="true"></span> Sobre</button>
-            <label class="v32-top-search"><span class="nav-svg-icon" data-static-icon="search" aria-hidden="true"></span><input id="dashboardToolSearch" type="search" autocomplete="off" placeholder="Pesquisar ferramentas, comandos, cálculos..."><kbd>Ctrl + K</kbd><div id="dashboardSearchResults" class="dashboard-search-results" aria-live="polite"></div></label>
-            <div class="v32-header-actions"><button id="v32ThemeToggle" type="button" title="Alternar tema">◐</button><button id="v32FontToggle" type="button" title="Alternar tamanho da fonte">Aᴬ</button></div>
         </nav>
 
 
@@ -1177,16 +1256,18 @@
                     <section class="settings-card">
                         <h3>Novidades da <span data-app-version></span></h3>
                         <ul class="about-list">
-                            <li><strong>Central de Documentos:</strong> corrigido o espaço em branco exibido acima do documento após a seleção de um modelo.</li>
-                            <li><strong>Interface:</strong> o estado “Selecione um modelo” agora é ocultado corretamente quando o editor é aberto.</li>
-                            <li><strong>Compatibilidade:</strong> mantidas as melhorias da v4.4.6, sem alteração de dados, schema ou RLS.</li>
+                            <li><strong>Navegação lateral:</strong> o menu principal foi transferido do topo para uma sidebar organizada por grupos.</li>
+                            <li><strong>Organização:</strong> Documentos, Cadastros, Cálculos, Produtividade e Sistema ficam visíveis diretamente na lateral.</li>
+                            <li><strong>Pesquisa:</strong> a busca global foi integrada ao topo da sidebar.</li>
+                            <li><strong>Aparência:</strong> atalhos de tema e tamanho da fonte foram movidos para a base da navegação lateral.</li>
+                            <li><strong>Compatibilidade:</strong> módulos, históricos e sincronização existentes foram preservados sem alteração de schema ou RLS.</li>
                         </ul>
                     </section>
                 </div>
 
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
-                    <div class="about-timeline"><article><strong>4.4.6.1</strong><p>Correção visual da Central de Documentos para ocultar corretamente o estado vazio após selecionar um modelo.</p></article><article><strong>4.4.6</strong><p>Consolidação da documentação, rolagem do histórico e unificação do nome de exibição.</p></article><article><strong>4.4.5</strong><p>Sincronização automática de históricos por eventos da aplicação e seleção total do CPF/CNPJ por duplo clique.</p></article><article><strong>4.4.4</strong><p>Suporte ao CNPJ alfanumérico com validação oficial e retrocompatibilidade com documentos numéricos.</p></article><article><strong>4.4.3</strong><p>Gerenciamento global de históricos com distinção entre limpeza local e exclusão sincronizada.</p></article><article><strong>4.4.2.2</strong><p>Correção da colisão dos manipuladores de exclusão sincronizada em Inscrição, Lotes e Percentual.</p></article><article><strong>4.4.2.1</strong><p>Expansão da exclusão sincronizada para todos os históricos dos módulos.</p></article>
+                    <div class="about-timeline"><article><strong>4.5.0</strong><p>Etapa 1 da nova interface: navegação principal transferida para uma sidebar lateral organizada por grupos.</p></article><article><strong>4.4.6.1</strong><p>Correção visual da Central de Documentos para ocultar corretamente o estado vazio após selecionar um modelo.</p></article><article><strong>4.4.6</strong><p>Consolidação da documentação, rolagem do histórico e unificação do nome de exibição.</p></article><article><strong>4.4.5</strong><p>Sincronização automática de históricos por eventos da aplicação e seleção total do CPF/CNPJ por duplo clique.</p></article><article><strong>4.4.4</strong><p>Suporte ao CNPJ alfanumérico com validação oficial e retrocompatibilidade com documentos numéricos.</p></article><article><strong>4.4.3</strong><p>Gerenciamento global de históricos com distinção entre limpeza local e exclusão sincronizada.</p></article><article><strong>4.4.2.2</strong><p>Correção da colisão dos manipuladores de exclusão sincronizada em Inscrição, Lotes e Percentual.</p></article><article><strong>4.4.2.1</strong><p>Expansão da exclusão sincronizada para todos os históricos dos módulos.</p></article>
                         <article><strong>4.4.2</strong><p>Piloto de exclusão sincronizada no histórico de CPF/CNPJ, com tombstones e propagação entre dispositivos.</p></article>
 <article><strong>4.4.1.4</strong><p>Padronização das ações dos históricos sincronizados e melhoria visual do histórico de Datas.</p></article><article><strong>4.4.1.3</strong><p>Ajustes de coerência dos históricos, novo histórico visual de Datas e atualização do valor padrão da UVRM.</p></article><article><strong>4.4.1.2</strong><p>Estabilização da ordem dos históricos e incorporação definitiva das correções de CPF/CNPJ.</p></article>
                         <article><strong>4.4.1.1</strong><p>Correção do carregamento inicial e atualização visual do histórico local de CPF/CNPJ após sincronização.</p></article>

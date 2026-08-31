@@ -1,5 +1,22 @@
 # Changelog
 
+## 4.5.0
+
+### Etapa 1 — Navegação
+- Menu principal transferido do topo para uma sidebar lateral.
+- Ferramentas organizadas em Documentos, Cadastros, Cálculos, Produtividade e Sistema.
+- Pesquisa global movida para a sidebar.
+- Atalhos de tema e tamanho de fonte movidos para a base da sidebar.
+- Destaque do módulo ativo adaptado para navegação lateral.
+- Layout responsivo básico preservado para a etapa inicial.
+
+### Compatibilidade
+- Nenhuma alteração funcional nos módulos.
+- Nenhuma alteração no modelo de sincronização existente.
+- Supabase Realtime permanece fora do escopo.
+- Sem alteração de schema ou RLS.
+
+
 ## 4.4.6.1
 
 - Versão promovida para produção após aprovação dos testes.

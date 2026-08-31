@@ -152,16 +152,16 @@ function closeToolsMenu(){
     dropdown.hidden=true;
     button.setAttribute("aria-expanded","false");
 }
-function updatePrimaryNavigation(activeId){
-    const toolsButton=document.getElementById("uxToolsMenuButton");
-    const toolIds=new Set(["arquivo","inscricao","lote","uvrm","percentual"]);
-    toolsButton?.classList.toggle("active",toolIds.has(activeId));
-    document.querySelectorAll(".ux-nav-primary.tab-button").forEach(button=>button.classList.toggle("active",button.dataset.tab===activeId));
+function updatePrimaryNavigation(activeId) {
+    document.querySelectorAll(".ux-nav-primary.tab-button").forEach((button) => {
+        button.classList.toggle("active", button.dataset.tab === activeId);
+    });
 }
-function installToolsMenu(){
-    const button=document.getElementById("uxToolsMenuButton");
-    const dropdown=document.getElementById("uxToolsMenuDropdown");
-    if(!button||!dropdown)return;
+function installToolsMenu() {
+    const button = document.getElementById("uxToolsMenuButton");
+    const dropdown = document.getElementById("uxToolsMenuDropdown");
+
+    if (!button || !dropdown) return;
     button.addEventListener("click",event=>{
         event.stopPropagation();
         const willOpen=dropdown.hidden;

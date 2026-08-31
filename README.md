@@ -4,6 +4,13 @@ Aplicação web modular para rotinas administrativas municipais, com foco em pro
 
 ## Estado atual
 
+## Interface e navegação
+
+A navegação principal utiliza uma barra lateral organizada por grupos:
+Documentos, Cadastros, Cálculos, Produtividade e Sistema.
+A pesquisa global e os atalhos de aparência ficam integrados à sidebar.
+
+
 Módulos disponíveis: Montador de Nome de Arquivo, Inscrição Imobiliária, Número de Lote, Calculadora UVRM, Percentual, Datas, CPF/CNPJ e Central de Documentos.
 
 O módulo CPF/CNPJ aceita CPF, CNPJ numérico tradicional e CNPJ alfanumérico, com validação, máscara, opção sem máscara, cópia e histórico.
