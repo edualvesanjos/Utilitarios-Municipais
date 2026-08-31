@@ -4,9 +4,11 @@ Aplicação web modular para rotinas administrativas municipais, com foco em pro
 
 ## Estado atual
 
-Módulos disponíveis: Montador de Nome de Arquivo, Inscrição Imobiliária, Número de Lote, Calculadora UVRM, Percentual, Datas e CPF/CNPJ.
+Módulos disponíveis: Montador de Nome de Arquivo, Inscrição Imobiliária, Número de Lote, Calculadora UVRM, Percentual, Datas, CPF/CNPJ e Central de Documentos.
 
 O módulo CPF/CNPJ aceita CPF, CNPJ numérico tradicional e CNPJ alfanumérico, com validação, máscara, opção sem máscara, cópia e histórico.
+
+A Central de Documentos permite criar, editar, pesquisar, ordenar, utilizar e excluir modelos próprios. Não existem modelos internos protegidos contra edição ou exclusão.
 
 ## Sincronização
 

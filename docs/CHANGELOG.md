@@ -7,6 +7,13 @@
 - Nome de exibição unificado entre Configurações, saudação e cabeçalho.
 - Cabeçalho atualizado imediatamente após alteração do nome.
 - Campo de Configurações atualizado após recebimento de preferências sincronizadas.
+- Central de Documentos reorganizada em duas áreas: Modelos e Documento.
+- Pesquisa, categoria e ordenação agrupadas em um bloco compacto.
+- Lista de modelos simplificada e com rolagem vertical.
+- Estado inicial da área de edição simplificado.
+- Ações principais e secundárias reorganizadas.
+- Removido o modelo interno/protegido criado pela aplicação.
+- Todos os modelos da Central passam a ser editáveis e excluíveis.
 
 ### Documentação
 - README consolidado para descrever somente o estado atual.

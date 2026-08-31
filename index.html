@@ -1003,38 +1003,131 @@
         <section id="central-documentos" class="tab-panel documents-panel">
             <div class="card documents-shell">
                 <div class="section-heading main-heading">
-                    <div><span class="eyebrow">Versão <span data-app-version></span></span><h2>Central de documentos</h2><p class="section-description">Crie textos administrativos a partir de modelos, preencha variáveis e salve modelos próprios.</p></div>
+                    <div>
+                        <span class="eyebrow">Versão <span data-app-version></span></span>
+                        <h2>Central de documentos</h2>
+                        <p class="section-description">Crie, edite e reutilize seus próprios modelos de documentos.</p>
+                    </div>
                     <button id="documentNewModel" class="secondary-button" type="button">Novo modelo</button>
                 </div>
+
                 <div class="documents-layout">
-                    <aside class="documents-sidebar">
-                        <label>Pesquisar modelos<input id="documentSearch" type="search" placeholder="Ex.: despacho, WhatsApp, certidão"></label>
-                        <label>Categoria<select id="documentCategory"><option value="todos">Todas</option><option>Despachos</option><option>Certidões</option><option>Ofícios</option><option>WhatsApp</option><option>Declarações</option><option>Personalizados</option></select></label>
-                        <label>Ordem<select id="documentOrder"><option value="titulo">Título</option><option value="categoria">Categoria</option></select></label>
+                    <aside class="documents-sidebar" aria-label="Modelos de documentos">
+                        <div class="documents-sidebar-heading">
+                            <h3>Modelos</h3>
+                            <p class="mini-description">Localize ou selecione um modelo para editar e utilizar.</p>
+                        </div>
+
+                        <div class="document-filter-group">
+                            <label class="document-search-field">
+                                <span>Pesquisar</span>
+                                <input id="documentSearch" type="search" placeholder="Título, categoria ou conteúdo">
+                            </label>
+
+                            <div class="document-filter-row">
+                                <label>
+                                    <span>Categoria</span>
+                                    <select id="documentCategory">
+                                        <option value="todos">Todas</option>
+                                        <option>Despachos</option>
+                                        <option>Certidões</option>
+                                        <option>Ofícios</option>
+                                        <option>WhatsApp</option>
+                                        <option>Declarações</option>
+                                        <option>Personalizados</option>
+                                    </select>
+                                </label>
+                                <label>
+                                    <span>Ordem</span>
+                                    <select id="documentOrder">
+                                        <option value="titulo">Título</option>
+                                        <option value="categoria">Categoria</option>
+                                    </select>
+                                </label>
+                            </div>
+                        </div>
+
                         <div id="documentTemplateList" class="document-template-list"></div>
                     </aside>
+
                     <main class="documents-editor">
-                        <div class="grid two-columns">
-                            <label>Título do modelo<input id="documentTitle" placeholder="Título"></label>
-                            <label>Categoria<select id="documentEditorCategory"><option>Despachos</option><option>Certidões</option><option>Ofícios</option><option>WhatsApp</option><option>Declarações</option><option>Personalizados</option></select></label>
+                        <div id="documentEmptyState" class="document-editor-empty">
+                            <strong>Selecione um modelo</strong>
+                            <p>Escolha um modelo na lista ao lado ou clique em “Novo modelo” para começar.</p>
                         </div>
-                        <label>Modelo com variáveis<textarea id="documentTemplate" rows="10" placeholder="Use variáveis como {nome}, {processo}, {cnae}, {zoneamento}, {endereco} e {data}."></textarea></label>
-                        <section class="document-variables-card">
-                            <div class="section-heading"><div><h3>Variáveis do documento</h3><p class="mini-description">Os campos são identificados automaticamente no modelo.</p></div></div>
-                            <div id="documentVariables" class="document-variables-grid"></div>
-                        </section>
-                        <label>Pré-visualização<textarea id="documentPreview" rows="12" readonly></textarea></label>
-                        <div class="button-row documents-actions">
-                            <button id="documentCopy" type="button">Copiar texto</button>
-                            <button id="documentSave" class="secondary-button" type="button">Salvar modelo</button>
-                            <button id="documentExportTxt" class="secondary-button" type="button">Exportar TXT</button>
-                            <button id="documentDelete" class="danger-button" type="button">Excluir modelo</button>
-                            <button id="documentClear" class="secondary-button" type="button">Limpar campos</button>
+
+                        <div id="documentEditorContent" class="document-editor-content" hidden>
+                            <div class="documents-editor-heading">
+                                <div>
+                                    <span class="eyebrow">Documento</span>
+                                    <h3 id="documentEditorHeading">Novo modelo</h3>
+                                </div>
+                            </div>
+
+                            <section class="document-edit-section">
+                                <div class="grid two-columns">
+                                    <label>
+                                        <span>Título do modelo</span>
+                                        <input id="documentTitle" placeholder="Título">
+                                    </label>
+                                    <label>
+                                        <span>Categoria</span>
+                                        <select id="documentEditorCategory">
+                                            <option>Despachos</option>
+                                            <option>Certidões</option>
+                                            <option>Ofícios</option>
+                                            <option>WhatsApp</option>
+                                            <option>Declarações</option>
+                                            <option>Personalizados</option>
+                                        </select>
+                                    </label>
+                                </div>
+
+                                <label>
+                                    <span>Modelo com variáveis</span>
+                                    <textarea id="documentTemplate" rows="9" placeholder="Use variáveis como {nome}, {processo}, {cnae}, {zoneamento}, {endereco} e {data}."></textarea>
+                                </label>
+                            </section>
+
+                            <section class="document-variables-card">
+                                <div class="section-heading">
+                                    <div>
+                                        <h3>Variáveis do documento</h3>
+                                        <p class="mini-description">Os campos abaixo são identificados automaticamente no texto do modelo.</p>
+                                    </div>
+                                </div>
+                                <div id="documentVariables" class="document-variables-grid"></div>
+                            </section>
+
+                            <section class="document-preview-section">
+                                <label>
+                                    <span>Pré-visualização</span>
+                                    <textarea id="documentPreview" rows="11" readonly></textarea>
+                                </label>
+                            </section>
+
+                            <div class="documents-action-bar">
+                                <div class="documents-primary-actions">
+                                    <button id="documentCopy" type="button">Copiar texto</button>
+                                    <button id="documentSave" class="secondary-button" type="button">Salvar modelo</button>
+                                    <button id="documentClear" class="secondary-button" type="button">Limpar campos</button>
+                                </div>
+                                <div class="documents-secondary-actions">
+                                    <button id="documentExportTxt" class="text-button" type="button">Exportar TXT</button>
+                                    <button id="documentDelete" class="danger-button" type="button">Excluir modelo</button>
+                                </div>
+                            </div>
+
+                            <p id="documentFeedback" class="feedback-message" aria-live="polite"></p>
                         </div>
-                        <p id="documentFeedback" class="feedback-message" aria-live="polite"></p>
                     </main>
                 </div>
-                <div class="tab-footer-navigation"><button class="back-home-button" type="button" data-open-tab="inicio"><span aria-hidden="true">←</span>Voltar para a Página Inicial</button></div>
+
+                <div class="tab-footer-navigation">
+                    <button class="back-home-button" type="button" data-open-tab="inicio">
+                        <span aria-hidden="true">←</span>Voltar para a Página Inicial
+                    </button>
+                </div>
             </div>
         </section>
 
@@ -1088,6 +1181,8 @@
                             <li><strong>Histórico de versões:</strong> painel com altura limitada e rolagem somente vertical.</li>
                             <li><strong>Nome de exibição:</strong> Configurações, saudação e cabeçalho passam a refletir a mesma preferência.</li>
                             <li><strong>Sincronização:</strong> o campo “Como gostaria de ser chamado?” também é atualizado ao receber preferências remotas.</li>
+                            <li><strong>Central de Documentos:</strong> interface reorganizada em Modelos e Documento, com filtros compactos, estado inicial simplificado e ações com melhor hierarquia.</li>
+                            <li><strong>Modelos:</strong> removido o modelo interno criado pela aplicação; todos os modelos existentes passam a ser criados pelo usuário e podem ser editados ou excluídos.</li>
                             <li><strong>Manutenção:</strong> histórico detalhado permanece no CHANGELOG e nos arquivos de release.</li>
                         </ul>
                     </section>
