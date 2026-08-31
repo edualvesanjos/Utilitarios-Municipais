@@ -1,5 +1,41 @@
 # Changelog
 
+## 4.4.6.1
+
+- Versão promovida para produção após aprovação dos testes.
+
+### Correção
+- Central de Documentos: removido o grande espaço em branco exibido após selecionar um modelo.
+- O painel de estado vazio passa a respeitar corretamente o atributo `hidden`.
+- Nenhuma alteração na estrutura persistida dos modelos.
+
+### Banco de dados
+- Sem alteração de schema ou RLS.
+
+
+## 4.4.6
+
+### Interface
+- Histórico de versões com rolagem vertical e sem rolagem horizontal.
+- Nome de exibição unificado entre Configurações, saudação e cabeçalho.
+- Cabeçalho atualizado imediatamente após alteração do nome.
+- Campo de Configurações atualizado após recebimento de preferências sincronizadas.
+- Central de Documentos reorganizada em duas áreas: Modelos e Documento.
+- Pesquisa, categoria e ordenação agrupadas em um bloco compacto.
+- Lista de modelos simplificada e com rolagem vertical.
+- Estado inicial da área de edição simplificado.
+- Ações principais e secundárias reorganizadas.
+- Removido o modelo interno/protegido criado pela aplicação.
+- Todos os modelos da Central passam a ser editáveis e excluíveis.
+
+### Documentação
+- README consolidado para descrever somente o estado atual.
+- Histórico detalhado mantido no CHANGELOG e em `docs/releases/`.
+
+### Banco de dados
+- Sem alteração de schema ou RLS.
+
+
 ## 4.4.5
 
 ### Produção

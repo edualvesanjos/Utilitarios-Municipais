@@ -85,3 +85,17 @@
         grid-template-columns: 1fr
     }
 }
+
+/* v4.4.6 — histórico de versões: somente rolagem vertical. */
+#sobre .about-timeline {
+    max-height: 28rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 0.5rem;
+    scrollbar-gutter: stable;
+}
+
+#sobre .about-timeline article {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
