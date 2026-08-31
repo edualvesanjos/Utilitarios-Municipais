@@ -1,5 +1,16 @@
 # Changelog
 
+## 4.5.0.1
+
+### Correção da Etapa 1
+- Corrigido o comportamento do Dashboard em larguras intermediárias.
+- O painel lateral de Indicadores/Atalhos/Dica rápida passa para uma linha própria quando necessário.
+- Cards de ferramentas passam a usar duas ou uma coluna conforme o espaço disponível.
+- Evitada sobreposição entre sidebar, conteúdo principal e painel do Dashboard.
+- Reforçada a prevenção de rolagem horizontal.
+- Sem alterações na sincronização, schema ou RLS.
+
+
 ## 4.5.0
 
 ### Etapa 1 — Navegação

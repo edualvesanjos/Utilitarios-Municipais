@@ -249,3 +249,62 @@ body[data-theme="dark"] .v45-sidebar .v32-top-search {
         grid-template-columns: 1fr 1fr;
     }
 }
+
+
+/* v4.5.0.1 DEV — correção da largura intermediária.
+   Com a sidebar fixa, o dashboard precisa reorganizar-se antes do breakpoint móvel. */
+@media (max-width: 1280px) and (min-width: 821px) {
+    :root {
+        --v45-sidebar-width: 210px;
+        --v45-sidebar-gap: 12px;
+    }
+
+    .v32-dashboard-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .v32-dashboard-side {
+        position: static;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .v32-dashboard-main,
+    .v32-dashboard-side,
+    .v32-section,
+    .card,
+    .dashboard-tools,
+    .dashboard-tool-card {
+        min-width: 0;
+    }
+
+    .dashboard-tools,
+    .dashboard-favorite-tools,
+    .v32-all-tools {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .dashboard-tool-card,
+    .dashboard-tool-card * {
+        overflow-wrap: anywhere;
+    }
+}
+
+@media (max-width: 980px) and (min-width: 821px) {
+    .v32-dashboard-side {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .dashboard-tools,
+    .dashboard-favorite-tools,
+    .v32-all-tools {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+html,
+body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
