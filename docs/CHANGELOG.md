@@ -1,5 +1,18 @@
 # Changelog
 
+## 4.5.0.3
+
+### Correções da Etapa 2
+- Redesenhado o botão Recolher/Expandir da sidebar.
+- Botão passa a usar ícone próprio, rótulo no modo expandido e rotação visual no modo recolhido.
+- Conta e sincronização retornam ao cabeçalho.
+- Botão da conta fica permanentemente compacto, sem nome ou texto visível.
+- Indicador colorido do estado de sincronização permanece sobre o ícone de pessoa.
+- Menu detalhado da conta continua disponível ao clicar no perfil.
+- Sidebar recolhível e menu móvel preservados.
+- Sem Supabase Realtime, alteração de schema ou RLS.
+
+
 ## 4.5.0.2
 
 ### Etapa 2 — Sidebar e conta

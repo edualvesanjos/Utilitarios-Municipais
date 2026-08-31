@@ -35,8 +35,8 @@
         button.setAttribute("aria-label", collapsed ? "Expandir menu" : "Recolher menu");
         button.title = collapsed ? "Expandir menu" : "Recolher menu";
 
-        const icon = button.querySelector("[aria-hidden='true']");
-        if (icon) icon.textContent = collapsed ? "›" : "‹";
+        const label = button.querySelector(".v45-collapse-label");
+        if (label) label.textContent = collapsed ? "Expandir" : "Recolher";
     }
 
     function setMobileOpen(open) {
