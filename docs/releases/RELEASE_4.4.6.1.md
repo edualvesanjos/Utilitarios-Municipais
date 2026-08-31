@@ -1,4 +1,4 @@
-# Utilitários Municipais — v4.4.6.1 DEV
+# Utilitários Municipais — v4.4.6.1 PRODUÇÃO
 
 ## Objetivo
 
@@ -36,7 +36,7 @@ Sem alteração de schema ou RLS.
 
 ## Ambiente
 
-`APP_ENVIRONMENT = "development"`
+`APP_ENVIRONMENT = "production"`
 
 ## Testes recomendados
 
@@ -46,3 +46,17 @@ Sem alteração de schema ou RLS.
 4. Confirmar que a mensagem desaparece e o editor começa no topo, sem grande espaço vazio.
 5. Clicar em “Novo modelo” e confirmar o mesmo comportamento.
 6. Voltar/recarregar e repetir os testes.
+
+## Fechamento de produção
+
+Versão promovida para produção após aprovação dos testes da v4.4.6.1 DEV.
+
+O fechamento preserva:
+- Central de Documentos reorganizada;
+- modelos exclusivamente editáveis/excluíveis pelo usuário;
+- correção do espaço em branco ao abrir um modelo;
+- nome de exibição unificado entre Configurações, saudação e cabeçalho;
+- README consolidado como documentação do estado atual;
+- histórico de versões com rolagem vertical e sem rolagem horizontal.
+
+Não houve alteração de schema ou RLS no fechamento.

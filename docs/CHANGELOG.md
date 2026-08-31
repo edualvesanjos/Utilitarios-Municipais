@@ -2,6 +2,8 @@
 
 ## 4.4.6.1
 
+- Versão promovida para produção após aprovação dos testes.
+
 ### Correção
 - Central de Documentos: removido o grande espaço em branco exibido após selecionar um modelo.
 - O painel de estado vazio passa a respeitar corretamente o atributo `hidden`.
