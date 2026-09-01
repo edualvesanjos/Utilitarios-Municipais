@@ -1,5 +1,17 @@
 # Changelog
 
+## 4.5.0.4
+
+### Etapa 3 — Histórico de versões interativo
+- Sobre → Histórico de versões passa a usar cartões expansíveis.
+- Cada versão exibe resumo no estado recolhido.
+- Ao expandir, os detalhes são apresentados por categorias quando disponíveis.
+- Apenas uma versão permanece aberta por vez.
+- Interação compatível com teclado e atributos ARIA.
+- Histórico continua com rolagem vertical e sem rolagem horizontal.
+- Sem alterações em Supabase, schema, RLS ou arquitetura de sincronização.
+
+
 ## 4.5.0.3
 
 ### Correções da Etapa 2

@@ -1292,56 +1292,188 @@
                     <section class="settings-card">
                         <h3>Novidades da <span data-app-version></span></h3>
                         <ul class="about-list">
-                            <li><strong>Botão Recolher:</strong> redesenhado com ícone próprio, melhor área de clique e acabamento visual.</li>
-                            <li><strong>Conta:</strong> o acesso voltou ao cabeçalho em formato compacto, somente com o ícone de pessoa.</li>
-                            <li><strong>Status:</strong> o indicador colorido de sincronização permanece integrado ao ícone de perfil.</li>
-                            <li><strong>Menu da conta:</strong> nome, e-mail, estado e ações continuam disponíveis somente após clicar no perfil.</li>
-                            <li><strong>Compatibilidade:</strong> sidebar recolhível, menu móvel e sincronização atual foram preservados.</li>
+                            <li><strong>Histórico interativo:</strong> as versões em Sobre agora podem ser abertas para consultar detalhes.</li>
+                            <li><strong>Leitura organizada:</strong> cada versão apresenta resumo e detalhes categorizados quando disponíveis.</li>
+                            <li><strong>Comportamento compacto:</strong> somente uma versão permanece expandida por vez.</li>
+                            <li><strong>Acessibilidade:</strong> expansão por botão, foco de teclado e atributos ARIA.</li>
+                            <li><strong>Compatibilidade:</strong> sidebar, conta no cabeçalho, responsividade e sincronização atual foram preservadas.</li>
                         </ul>
                     </section>
                 </div>
 
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
-                    <div class="about-timeline"><article><strong>4.5.0.3</strong><p>Correções da Etapa 2: novo visual do botão Recolher e retorno do perfil compacto ao cabeçalho.</p></article><article><strong>4.5.0.2</strong><p>Etapa 2 da nova interface: sidebar recolhível, menu móvel e perfil compacto com estado visual de sincronização.</p></article><article><strong>4.5.0.1</strong><p>Correção responsiva da Etapa 1 para larguras intermediárias, evitando compressão e sobreposição no Dashboard.</p></article><article><strong>4.5.0</strong><p>Etapa 1 da nova interface: navegação principal transferida para uma sidebar lateral organizada por grupos.</p></article><article><strong>4.4.6.1</strong><p>Correção visual da Central de Documentos para ocultar corretamente o estado vazio após selecionar um modelo.</p></article><article><strong>4.4.6</strong><p>Consolidação da documentação, rolagem do histórico e unificação do nome de exibição.</p></article><article><strong>4.4.5</strong><p>Sincronização automática de históricos por eventos da aplicação e seleção total do CPF/CNPJ por duplo clique.</p></article><article><strong>4.4.4</strong><p>Suporte ao CNPJ alfanumérico com validação oficial e retrocompatibilidade com documentos numéricos.</p></article><article><strong>4.4.3</strong><p>Gerenciamento global de históricos com distinção entre limpeza local e exclusão sincronizada.</p></article><article><strong>4.4.2.2</strong><p>Correção da colisão dos manipuladores de exclusão sincronizada em Inscrição, Lotes e Percentual.</p></article><article><strong>4.4.2.1</strong><p>Expansão da exclusão sincronizada para todos os históricos dos módulos.</p></article>
-                        <article><strong>4.4.2</strong><p>Piloto de exclusão sincronizada no histórico de CPF/CNPJ, com tombstones e propagação entre dispositivos.</p></article>
-<article><strong>4.4.1.4</strong><p>Padronização das ações dos históricos sincronizados e melhoria visual do histórico de Datas.</p></article><article><strong>4.4.1.3</strong><p>Ajustes de coerência dos históricos, novo histórico visual de Datas e atualização do valor padrão da UVRM.</p></article><article><strong>4.4.1.2</strong><p>Estabilização da ordem dos históricos e incorporação definitiva das correções de CPF/CNPJ.</p></article>
-                        <article><strong>4.4.1.1</strong><p>Correção do carregamento inicial e atualização visual do histórico local de CPF/CNPJ após sincronização.</p></article>
-
-                        <article><strong>4.4.1</strong><p>Confiabilidade da sincronização: fila de pendências, reenvio automático, retomada após offline e proteção contra sincronizações concorrentes.</p></article>
-
-                        <article><strong>4.4.0.3</strong><p>Correção defensiva do gerenciamento de abas, removendo estados inválidos como null, e atualização do Histórico de versões.</p></article>
-                        <article><strong>4.4.0.2</strong><p>Deduplicação aprimorada do Histórico Global e ocultação de UUIDs e demais campos técnicos na apresentação.</p></article>
-                        <article><strong>4.4.0.1</strong><p>Correção das chaves locais da sincronização, restabelecendo envio e recebimento dos históricos entre navegadores.</p></article>
-                        <article><strong>4.4.0</strong><p>Histórico Global sincronizado, integração de Datas e CPF/CNPJ e funcionamento offline-first com Supabase DEV.</p></article>
-                        <article><strong>4.3.6.2</strong><p>Ajuste visual do seletor de tipo do módulo CPF/CNPJ e consolidação do fluxo de desenvolvimento por branches.</p></article>
-                        <article><strong>4.3.6.1</strong><p>Refinamentos de CPF/CNPJ, identificação do ambiente DEV, ajustes de históricos, backup e interface.</p></article>
-                        <article><strong>4.3.6</strong><p>Novo módulo CPF/CNPJ com normalização, detecção automática, histórico local, cópia e opção de cópia automática.</p></article>
-                        <article><strong>4.3.5.4</strong><p>Aplicação controlada de preferências de interface e consolidação das configurações antes da série 4.3.6.</p></article>
-                        <article><strong>4.3.5.3</strong><p>Correção da soma da Calculadora UVRM e ajustes de layout das configurações.</p></article>
-
-                        <article><strong>4.3.4</strong><p>Sincronização gradual dos históricos dos módulos, migração local idempotente e prevenção de duplicidades entre dispositivos.</p></article>
-                        <article><strong>4.3.1.1</strong><p>Hotfix do módulo Número de lote: recuperação confiável da última sequência e preparação automática da próxima ao reabrir o sistema.</p></article>
-                        <article><strong>4.3.1</strong><p>Identificação da conta no cabeçalho e status técnico no rodapé, separando autenticação, conectividade e sincronização.</p></article>
-                        <article><strong>4.3.0</strong><p>Fundação do histórico online: nova tabela protegida por RLS, registros idempotentes por dispositivo e serviço local preparado para sincronização gradual.</p></article>
-                        <article><strong>4.2.7</strong><p>Ordenação persistente na Central de Documentos, revisão dos modelos padrão e correção do histórico do Montador de Nome de Arquivo.</p></article>
-                        <article><strong>4.2.6</strong><p>Sincronização online dos modelos personalizados da Central de Documentos para validação da capacidade de sincronização entre dispositivos.</p></article>
-                        <article><strong>4.2.5</strong><p>Correção do layout de Configurações para melhor aproveitamento horizontal e responsividade.</p></article>
-                        <article><strong>4.2.3</strong><p>Correção dos falsos conflitos, comparação de conteúdo e rastreamento seletivo das alterações sincronizadas.</p></article>
-                        <article><strong>4.2.2</strong><p>Gerenciamento da sincronização: estado visual, sincronização bidirecional, retomada automática e resolução de conflitos.</p></article>
-                        <article><strong>4.2.1</strong><p>Primeira sincronização seletiva: preferências, personalização, favoritos e continuidade do Dashboard, com pendências offline.</p></article>
-                        <article><strong>4.2.0</strong><p>Infraestrutura centralizada para armazenamento, Supabase, logs, tratamento de erros e versionamento, preservando as funcionalidades existentes.</p></article>
-                        <article><strong>4.1.2</strong><p>Remoção do módulo Fluxos de trabalho, limpeza de dados legados e revisão das referências internas.</p></article>
-                        <article><strong>4.1.1</strong><p>Revisão de consistência, correção da inicialização e configuração do ambiente Vite/StackBlitz.</p></article>
-                        <article><strong>4.1.0</strong><p>Login, sincronização online e funcionamento híbrido com Supabase.</p></article>
-                        <article><strong>4.0.0</strong><p>Fluxos integrados, contexto compartilhado e encaminhamento entre módulos.</p></article>
-                        <article><strong>3.4.2</strong><p>Nome de exibição configurável e ícones SVG coloridos incorporados ao sistema.</p></article>
-                        <article><strong>3.4.1</strong><p>Refatoração conservadora: remoção de resíduos do template e arquivos vazios, sem alteração funcional.</p></article>
-                        <article><strong>3.4.0</strong><p>Central de Documentos, modelos administrativos e correção do botão Limpar campos.</p></article>
-                        <article><strong>3.3.0</strong><p>Biblioteca de ferramentas, modelos rápidos e histórico global aprimorado.</p></article>
-                        <article><strong>3.2.2</strong><p>Dashboard profissional com cartões e ícones vetoriais.</p></article>
-                        <article><strong>3.0.1</strong><p>Limpeza visual dos módulos e criação da área Sobre.</p></article>
-                        <article><strong>3.0.0</strong><p>Nova arquitetura modular, registro central de ferramentas, persistência unificada e componentes reutilizáveis.</p></article>
+                    <div class="about-timeline" id="aboutVersionHistory">
+                        <article class="about-version-item is-open">
+                            <button class="about-version-toggle" type="button" aria-expanded="true">
+                                <span class="about-version-heading"><strong>4.5.0.4</strong><span>Histórico de versões interativo</span></span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details"><div class="about-version-detail-grid">
+<section><h4>Implementações</h4><ul><li>Versões clicáveis e expansíveis.</li><li>Apenas uma versão aberta por vez.</li><li>Navegação acessível por teclado.</li></ul></section>
+<section><h4>Aspectos técnicos</h4><ul><li>Sem alterações em banco, RLS ou sincronização.</li></ul></section>
+</div></div></article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading"><strong>4.5.0.3</strong><span>Correções visuais da Etapa 2</span></span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden><div class="about-version-detail-grid">
+<section><h4>Correções</h4><ul><li>Botão Recolher/Expandir redesenhado.</li><li>Conta retornou ao cabeçalho em formato compacto.</li></ul></section>
+<section><h4>Preservado</h4><ul><li>Indicador de sincronização integrado ao perfil.</li><li>Sidebar recolhível e menu móvel.</li></ul></section>
+</div></div></article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading"><strong>4.5.0.2</strong><span>Evolução da sidebar e perfil</span></span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden><div class="about-version-detail-grid">
+<section><h4>Implementações</h4><ul><li>Sidebar recolhível com persistência.</li><li>Drawer móvel com backdrop e fechamento por Escape.</li><li>Perfil com estados visuais de sincronização.</li></ul></section>
+</div></div></article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading"><strong>4.5.0.1</strong><span>Correção de responsividade intermediária</span></span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden><div class="about-version-detail-grid">
+<section><h4>Correções</h4><ul><li>Dashboard reorganizado para meia tela Full HD.</li><li>Prevenção de sobreposição e rolagem horizontal.</li></ul></section>
+</div></div></article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading"><strong>4.5.0</strong><span>Nova navegação lateral</span></span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden><div class="about-version-detail-grid">
+<section><h4>Implementações</h4><ul><li>Menu superior substituído por sidebar organizada por grupos.</li><li>Pesquisa e controles de aparência integrados à navegação.</li></ul></section>
+</div></div></article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading"><strong>4.4.6.1</strong><span>Correção do layout de Documentos</span></span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden><div class="about-version-detail-grid">
+<section><h4>Correções</h4><ul><li>Estado vazio deixou de ocupar espaço ao abrir um modelo.</li><li>Central de Documentos permaneceu com modelos editáveis e excluíveis.</li></ul></section>
+</div></div></article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading"><strong>4.4.6</strong><span>Central de Documentos e preferências</span></span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden><div class="about-version-detail-grid">
+<section><h4>Alterações</h4><ul><li>Central de Documentos reorganizada em Modelos e Documento.</li><li>Nome de exibição unificado entre preferências e interface.</li><li>README consolidado para refletir o estado atual.</li></ul></section>
+</div></div></article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading"><strong>4.4.5</strong><span>Sincronização automática e refinamentos</span></span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden><div class="about-version-detail-grid">
+<section><h4>Implementações</h4><ul><li>Sincronização automática ao iniciar, focar, retornar à aba e recuperar conexão.</li><li>Duplo clique seleciona todo o CPF/CNPJ.</li></ul></section>
+</div></div></article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading"><strong>4.4.4</strong><span>Suporte a CNPJ alfanumérico</span></span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden><div class="about-version-detail-grid">
+<section><h4>Implementações</h4><ul><li>Validação e máscara compatíveis com CNPJ alfanumérico.</li><li>CNPJ numérico tradicional preservado.</li></ul></section>
+</div></div></article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading"><strong>4.4.3</strong><span>Gestão global dos históricos sincronizados</span></span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden><div class="about-version-detail-grid">
+<section><h4>Implementações</h4><ul><li>Limpeza local diferenciada da exclusão sincronizada.</li><li>Tombstones utilizados para propagação das exclusões.</li></ul></section>
+</div></div></article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading"><strong>4.4.2.2</strong><span>Correção das exclusões sincronizadas</span></span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden><div class="about-version-detail-grid">
+<section><h4>Correções</h4><ul><li>Removidas colisões entre funções globais de exclusão.</li><li>Renderização local atualizada após merge remoto.</li></ul></section>
+</div></div></article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading"><strong>4.4.2</strong><span>Exclusão sincronizada por registro</span></span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden><div class="about-version-detail-grid">
+<section><h4>Implementações</h4><ul><li>Modelo de tombstones iniciado no histórico de CPF/CNPJ.</li></ul></section>
+</div></div></article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading"><strong>4.4.1.4</strong><span>Padronização de históricos e UVRM</span></span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden><div class="about-version-detail-grid">
+<section><h4>Correções</h4><ul><li>Valor padrão da UVRM preservado no formato 5,2151.</li><li>Botões locais de limpar histórico removidos dos módulos.</li></ul></section>
+</div></div></article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading"><strong>4.4.1.3</strong><span>Histórico de Datas e ajustes</span></span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden><div class="about-version-detail-grid">
+<section><h4>Alterações</h4><ul><li>Histórico local visível adicionado ao módulo Datas.</li><li>Valor padrão de UVRM ajustado para 5,2151.</li></ul></section>
+</div></div></article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading"><strong>4.4.1.2</strong><span>Ordenação estável dos históricos</span></span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden><div class="about-version-detail-grid">
+<section><h4>Correções</h4><ul><li>Ordenação estável aplicada aos históricos locais e sincronizados.</li><li>Correções definitivas no histórico CPF/CNPJ.</li></ul></section>
+</div></div></article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading"><strong>4.4.1</strong><span>Confiabilidade da sincronização</span></span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden><div class="about-version-detail-grid">
+<section><h4>Implementações</h4><ul><li>Fila de repetição e recuperação após perda de conexão.</li></ul></section>
+</div></div></article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading"><strong>4.4.0</strong><span>Histórico global sincronizado</span></span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden><div class="about-version-detail-grid">
+<section><h4>Implementações</h4><ul><li>Histórico global integrado ao fluxo de sincronização.</li></ul></section>
+</div></div></article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading"><strong>4.3.6</strong><span>Novo módulo CPF/CNPJ</span></span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden><div class="about-version-detail-grid">
+<section><h4>Implementações</h4><ul><li>Módulo independente para CPF e CNPJ, com normalização, máscara e histórico local.</li></ul></section>
+</div></div></article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading"><strong>4.3.5</strong><span>Novo módulo Datas</span></span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden><div class="about-version-detail-grid">
+<section><h4>Implementações</h4><ul><li>Contagem, soma e subtração de dias em módulo próprio.</li></ul></section>
+</div></div></article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading"><strong>4.3.4</strong><span>Reorganização da documentação</span></span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden><div class="about-version-detail-grid">
+<section><h4>Alterações</h4><ul><li>Documentação centralizada em docs/, releases em docs/releases/ e SQL em sql/.</li></ul></section>
+</div></div></article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading"><strong>4.3.0</strong><span>Base dos históricos online</span></span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden><div class="about-version-detail-grid">
+<section><h4>Implementações</h4><ul><li>Fundação da tabela history_entries, RLS e serviço de históricos.</li></ul></section>
+</div></div></article>
                     </div>
                 </section>
 
@@ -1377,6 +1509,7 @@
     <script src="assets/js/services/history-service.js"></script>
     <script src="assets/js/services/online-sync-service.js"></script>
     <script src="assets/js/core/sidebar-45.js"></script>
+    <script src="assets/js/core/about-history-45.js"></script>
     <script src="assets/js/core/storage.js"></script>
     <script src="assets/js/core/utils.js"></script>
     <script src="assets/js/components/notifications.js"></script>

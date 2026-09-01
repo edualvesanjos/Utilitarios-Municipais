@@ -60,3 +60,5 @@ O histórico detalhado não é acumulado neste README.
 - não versionar `node_modules/`;
 - manter o `package-lock.json` raiz versionado;
 - validar JavaScript, JSON, IDs HTML e ZIP antes de cada fechamento.
+
+- **Sobre:** Novidades da versão atual e Histórico de versões interativo com detalhes expansíveis.

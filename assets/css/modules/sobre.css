@@ -99,3 +99,25 @@
     min-width: 0;
     overflow-wrap: anywhere;
 }
+
+
+/* v4.5.0.4 DEV — Histórico de versões interativo */
+#sobre .about-timeline { display: grid; gap: 10px; }
+#sobre .about-version-item { min-width: 0; margin: 0; border: 1px solid var(--ux-border, #dbe5ee); border-radius: 12px; background: var(--ux-surface, #fff); overflow: hidden; }
+#sobre .about-version-toggle { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; border: 0; background: transparent; color: inherit; text-align: left; cursor: pointer; }
+#sobre .about-version-toggle:hover { background: color-mix(in srgb, var(--primary-color, #0f4c81) 6%, transparent); }
+#sobre .about-version-toggle:focus-visible { outline: 2px solid var(--primary-color, #0f4c81); outline-offset: -2px; }
+#sobre .about-version-heading { min-width: 0; display: grid; gap: 2px; }
+#sobre .about-version-heading strong { font-size: .95rem; }
+#sobre .about-version-heading span { color: var(--ux-muted, #5d6b78); font-size: .84rem; overflow-wrap: anywhere; }
+#sobre .about-version-chevron { flex: 0 0 auto; width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; background: color-mix(in srgb, var(--primary-color, #0f4c81) 8%, transparent); transition: transform 160ms ease; }
+#sobre .about-version-item.is-open .about-version-chevron { transform: rotate(180deg); }
+#sobre .about-version-details { border-top: 1px solid var(--ux-border, #dbe5ee); padding: 12px 14px 14px; }
+#sobre .about-version-details[hidden] { display: none; }
+#sobre .about-version-detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+#sobre .about-version-detail-grid section { min-width: 0; padding: 10px 12px; border-radius: 10px; background: color-mix(in srgb, var(--primary-color, #0f4c81) 4%, var(--ux-surface, #fff)); }
+#sobre .about-version-detail-grid h4 { margin: 0 0 6px; font-size: .86rem; }
+#sobre .about-version-detail-grid ul { margin: 0; padding-left: 18px; }
+#sobre .about-version-detail-grid li { margin: 3px 0; line-height: 1.4; overflow-wrap: anywhere; }
+@media (max-width: 720px) { #sobre .about-version-detail-grid { grid-template-columns: minmax(0, 1fr); } }
+@media (prefers-reduced-motion: reduce) { #sobre .about-version-chevron { transition: none; } }
