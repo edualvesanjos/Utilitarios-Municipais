@@ -1,5 +1,17 @@
 # Changelog
 
+## 4.5.0.5
+
+### Correção visual do Histórico de versões
+- Corrigida a verticalização do número e do título das versões.
+- Neutralizado o CSS legado de `.about-timeline article`, que ainda aplicava uma grade de `70px 1fr`.
+- Cartões interativos passam a ocupar toda a largura disponível.
+- Cabeçalho da versão mantém número, descrição e seta corretamente alinhados.
+- Detalhes continuam em duas colunas no desktop e uma coluna em telas menores.
+- Rolagem vertical interna preservada e rolagem horizontal bloqueada.
+- Sem alterações em Supabase, schema, RLS ou sincronização.
+
+
 ## 4.5.0.4
 
 ### Etapa 3 — Histórico de versões interativo

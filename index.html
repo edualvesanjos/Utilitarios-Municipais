@@ -1292,11 +1292,11 @@
                     <section class="settings-card">
                         <h3>Novidades da <span data-app-version></span></h3>
                         <ul class="about-list">
-                            <li><strong>Histórico interativo:</strong> as versões em Sobre agora podem ser abertas para consultar detalhes.</li>
-                            <li><strong>Leitura organizada:</strong> cada versão apresenta resumo e detalhes categorizados quando disponíveis.</li>
-                            <li><strong>Comportamento compacto:</strong> somente uma versão permanece expandida por vez.</li>
-                            <li><strong>Acessibilidade:</strong> expansão por botão, foco de teclado e atributos ARIA.</li>
-                            <li><strong>Compatibilidade:</strong> sidebar, conta no cabeçalho, responsividade e sincronização atual foram preservadas.</li>
+                            <li><strong>Histórico de versões:</strong> corrigido o layout que verticalizava o número e o texto da versão.</li>
+                            <li><strong>Compatibilidade visual:</strong> estilos antigos da linha do tempo deixaram de interferir nos cartões interativos.</li>
+                            <li><strong>Layout:</strong> cabeçalho da versão, seta e descrição voltaram a ocupar corretamente toda a largura do cartão.</li>
+                            <li><strong>Responsividade:</strong> detalhes permanecem em duas colunas quando houver espaço e passam para uma coluna em telas menores.</li>
+                            <li><strong>Preservado:</strong> comportamento expansível, rolagem vertical e abertura de uma versão por vez.</li>
                         </ul>
                     </section>
                 </div>
@@ -1306,10 +1306,39 @@
                     <div class="about-timeline" id="aboutVersionHistory">
                         <article class="about-version-item is-open">
                             <button class="about-version-toggle" type="button" aria-expanded="true">
+                                <span class="about-version-heading">
+                                    <strong>4.5.0.5</strong>
+                                    <span>Correção visual do Histórico de versões</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details">
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Correções</h4>
+                                        <ul>
+                                            <li>Eliminada a verticalização do número e do título da versão.</li>
+                                            <li>Removida a interferência do layout legado de 70 px nos cartões interativos.</li>
+                                            <li>Restabelecido o alinhamento horizontal do cabeçalho e da seta.</li>
+                                        </ul>
+                                    </section>
+                                    <section>
+                                        <h4>Aspectos técnicos</h4>
+                                        <ul>
+                                            <li>Correção restrita ao CSS da tela Sobre.</li>
+                                            <li>Sem alterações em banco, RLS ou sincronização.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
                                 <span class="about-version-heading"><strong>4.5.0.4</strong><span>Histórico de versões interativo</span></span>
                                 <span class="about-version-chevron" aria-hidden="true">⌄</span>
                             </button>
-                            <div class="about-version-details"><div class="about-version-detail-grid">
+                            <div class="about-version-details" hidden><div class="about-version-detail-grid">
 <section><h4>Implementações</h4><ul><li>Versões clicáveis e expansíveis.</li><li>Apenas uma versão aberta por vez.</li><li>Navegação acessível por teclado.</li></ul></section>
 <section><h4>Aspectos técnicos</h4><ul><li>Sem alterações em banco, RLS ou sincronização.</li></ul></section>
 </div></div></article>
