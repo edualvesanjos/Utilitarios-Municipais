@@ -62,3 +62,5 @@ O histórico detalhado não é acumulado neste README.
 - validar JavaScript, JSON, IDs HTML e ZIP antes de cada fechamento.
 
 - **Sobre:** Novidades da versão atual e Histórico de versões interativo com detalhes expansíveis.
+
+- **Navegação lateral:** sidebar recolhível e compacta verticalmente, com rolagem apenas quando a altura disponível exigir.

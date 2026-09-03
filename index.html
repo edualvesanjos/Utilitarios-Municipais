@@ -1292,11 +1292,11 @@
                     <section class="settings-card">
                         <h3>Novidades da <span data-app-version></span></h3>
                         <ul class="about-list">
-                            <li><strong>Histórico de versões:</strong> corrigido o layout que verticalizava o número e o texto da versão.</li>
-                            <li><strong>Compatibilidade visual:</strong> estilos antigos da linha do tempo deixaram de interferir nos cartões interativos.</li>
-                            <li><strong>Layout:</strong> cabeçalho da versão, seta e descrição voltaram a ocupar corretamente toda a largura do cartão.</li>
-                            <li><strong>Responsividade:</strong> detalhes permanecem em duas colunas quando houver espaço e passam para uma coluna em telas menores.</li>
-                            <li><strong>Preservado:</strong> comportamento expansível, rolagem vertical e abertura de uma versão por vez.</li>
+                            <li><strong>Sidebar:</strong> compactação vertical para reduzir a necessidade de rolagem em alturas usuais.</li>
+                            <li><strong>Espaçamentos:</strong> pesquisa, grupos, cabeçalhos, botões e rodapé foram ajustados sem ocultar conteúdo.</li>
+                            <li><strong>Fallback:</strong> a rolagem vertical continua disponível somente quando a altura da tela realmente exigir.</li>
+                            <li><strong>Responsividade:</strong> telas de altura intermediária recebem compactação adicional automática.</li>
+                            <li><strong>Preservado:</strong> sidebar recolhível, menu móvel, conta no cabeçalho e Histórico de versões interativo.</li>
                         </ul>
                     </section>
                 </div>
@@ -1307,12 +1307,41 @@
                         <article class="about-version-item is-open">
                             <button class="about-version-toggle" type="button" aria-expanded="true">
                                 <span class="about-version-heading">
+                                    <strong>4.5.0.6</strong>
+                                    <span>Compactação vertical da sidebar</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details">
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Alterações</h4>
+                                        <ul>
+                                            <li>Redução controlada de alturas, margens e espaçamentos da navegação lateral.</li>
+                                            <li>Compactação adicional automática em telas com menor altura útil.</li>
+                                        </ul>
+                                    </section>
+                                    <section>
+                                        <h4>Aspectos técnicos</h4>
+                                        <ul>
+                                            <li><code>overflow-y: auto</code> foi mantido como fallback.</li>
+                                            <li>Nenhuma scrollbar foi ocultada artificialmente.</li>
+                                            <li>Sem alterações em Supabase, schema, RLS ou sincronização.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
                                     <strong>4.5.0.5</strong>
                                     <span>Correção visual do Histórico de versões</span>
                                 </span>
                                 <span class="about-version-chevron" aria-hidden="true">⌄</span>
                             </button>
-                            <div class="about-version-details">
+                            <div class="about-version-details" hidden>
                                 <div class="about-version-detail-grid">
                                     <section>
                                         <h4>Correções</h4>

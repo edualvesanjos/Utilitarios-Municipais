@@ -1,5 +1,18 @@
 # Changelog
 
+## 4.5.0.6
+
+### Compactação vertical da sidebar
+- Reduzidos os espaçamentos verticais da sidebar em desktop.
+- Ajustadas alturas do botão Recolher, pesquisa, itens de navegação e controles do rodapé.
+- Reduzidos espaços entre grupos e cabeçalhos.
+- Adicionada compactação adicional automática para alturas de até 820 px.
+- `overflow-y: auto` foi preservado como fallback para telas realmente baixas.
+- Nenhuma scrollbar foi ocultada artificialmente.
+- Layout mobile preservado.
+- Sem alterações em Supabase, schema, RLS ou sincronização.
+
+
 ## 4.5.0.5
 
 ### Correção visual do Histórico de versões
