@@ -1,4 +1,4 @@
-# Utilitários Municipais — v4.5.1.1 DEV
+# Utilitários Municipais — v4.5.1.1 PRODUÇÃO
 
 ## Objetivo
 
@@ -40,7 +40,7 @@ Também foram removidos o código e os estilos que existiam apenas para a barra 
 
 ## Ambiente
 
-`APP_ENVIRONMENT = "development"`
+`APP_ENVIRONMENT = "production"`
 
 ## Testes prioritários
 
@@ -54,3 +54,20 @@ Também foram removidos o código e os estilos que existiam apenas para a barra 
 8. Confirmar que a antiga barra horizontal de módulos não é mais exibida.
 9. Confirmar o botão Conta/Sincronização no cabeçalho.
 10. Testar sidebar expandida, recolhida, meia tela e mobile.
+
+
+## Fechamento de produção
+
+Versão encerrada para produção a partir da v4.5.1.1 DEV aprovada.
+
+Validações executadas no pacote de produção:
+- ambiente ativo em `production`;
+- versão interna 4.5.1.1 preservada;
+- sintaxe JavaScript validada;
+- arquivos JSON validados;
+- IDs HTML duplicados verificados;
+- `.gitignore` validado;
+- ausência de `node_modules` confirmada;
+- integridade do ZIP validada.
+
+A correção futura de alinhamento vertical do painel principal com a sidebar permanece fora deste fechamento e deve entrar na próxima versão.

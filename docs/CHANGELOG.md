@@ -2,6 +2,8 @@
 
 ## 4.5.1.1
 
+- **Fechamento para produção:** versão aprovada e publicada com `APP_ENVIRONMENT = "production"`.
+
 ### Central de Documentos
 - Corrigido o botão **Limpar filtros**.
 - Ao limpar, Pesquisa/Categoria/Grupo/Ordem retornam aos padrões.
