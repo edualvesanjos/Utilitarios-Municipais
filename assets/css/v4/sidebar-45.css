@@ -167,14 +167,9 @@
     font-size: 0.82rem;
 }
 
-.v45-sidebar ~ .tab-panel,
-.v45-sidebar ~ .ux-tabs-bar {
+.v45-sidebar ~ .tab-panel {
     grid-column: 2;
     min-width: 0;
-}
-
-.v45-sidebar ~ .ux-tabs-bar {
-    margin-top: 0;
 }
 
 body[data-theme="dark"] .v45-sidebar {

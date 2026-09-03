@@ -1345,11 +1345,9 @@
                     <section class="settings-card">
                         <h3>Novidades da <span data-app-version></span></h3>
                         <ul class="about-list">
-                            <li><strong>Central de Documentos:</strong> painel de modelos movido para o topo da página.</li>
-                            <li><strong>Filtros:</strong> Pesquisar, Categoria, Grupo e Ordem agora ficam na mesma linha.</li>
-                            <li><strong>Grupos:</strong> inclusão de cadastro, renomeação, exclusão e filtro por grupo.</li>
-                            <li><strong>Modelos:</strong> a lista lateral foi substituída por uma combobox larga para exibir melhor os nomes completos.</li>
-                            <li><strong>Compatibilidade:</strong> modelos antigos continuam válidos e são tratados automaticamente como “Sem grupo”.</li>
+                            <li><strong>Navegação:</strong> removida a barra superior de módulos/abas abertas, mantendo a sidebar como navegação principal.</li>
+                            <li><strong>Central de Documentos:</strong> “Limpar filtros” agora desmarca o modelo e retorna o painel Documento ao estado inicial.</li>
+                            <li><strong>Interface:</strong> o cabeçalho permanece reservado à identidade do sistema e aos controles globais de conta/sincronização.</li>
                         </ul>
                     </section>
                 </div>
@@ -1360,12 +1358,42 @@
                         <article class="about-version-item is-open">
                             <button class="about-version-toggle" type="button" aria-expanded="true">
                                 <span class="about-version-heading">
+                                    <strong>4.5.1.1</strong>
+                                    <span>Limpeza de filtros e consolidação da navegação lateral</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details">
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Correções</h4>
+                                        <ul>
+                                            <li>“Limpar filtros” desmarca o modelo selecionado.</li>
+                                            <li>A combobox retorna para “Selecione um modelo de documento...”.</li>
+                                            <li>O painel Documento retorna ao aviso inicial de seleção.</li>
+                                        </ul>
+                                    </section>
+                                    <section>
+                                        <h4>Alterações</h4>
+                                        <ul>
+                                            <li>Removida a barra superior de módulos/abas abertas.</li>
+                                            <li>A sidebar passa a ser a única navegação principal entre módulos.</li>
+                                            <li>Conta e sincronização permanecem no cabeçalho superior.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
                                     <strong>4.5.1</strong>
                                     <span>Nova organização da Central de Documentos</span>
                                 </span>
                                 <span class="about-version-chevron" aria-hidden="true">⌄</span>
                             </button>
-                            <div class="about-version-details">
+                            <div class="about-version-details" hidden>
                                 <div class="about-version-detail-grid">
                                     <section>
                                         <h4>Implementações</h4>

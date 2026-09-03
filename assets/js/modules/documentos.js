@@ -518,7 +518,16 @@
         $("#documentGroupFilter").value = "todos";
         $("#documentOrder").value = "titulo";
         setSortOrder("titulo");
+
+        selectedId = null;
+        variableValues = {};
+
+        const modelSelect = $("#documentModelSelect");
+        if (modelSelect) modelSelect.value = "";
+
+        setEditorVisible(false);
         renderModelSelect();
+        setFeedback();
     }
 
     function renderGroupList() {

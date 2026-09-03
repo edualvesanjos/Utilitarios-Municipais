@@ -1,5 +1,23 @@
 # Changelog
 
+## 4.5.1.1
+
+### Central de Documentos
+- Corrigido o botão **Limpar filtros**.
+- Ao limpar, Pesquisa/Categoria/Grupo/Ordem retornam aos padrões.
+- O modelo selecionado é desmarcado.
+- A combobox volta para “Selecione um modelo de documento...”.
+- O painel Documento retorna ao estado vazio “Selecione um modelo”.
+- Nenhum modelo salvo é excluído ou alterado pela limpeza.
+
+### Navegação
+- Removida a barra superior de módulos/abas abertas.
+- A sidebar passa a ser a única navegação principal entre módulos.
+- O cabeçalho superior continua reservado à identidade do sistema e aos controles globais, incluindo Conta/Sincronização.
+- Removidos o código e os estilos legados específicos da barra de abas abertas.
+- Sem alterações de schema, RLS, Realtime ou arquitetura de sincronização.
+
+
 ## 4.5.1
 
 ### Central de Documentos
