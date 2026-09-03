@@ -1,5 +1,143 @@
 # Changelog
 
+## 4.5.1.2
+
+### Interface
+- Corrigido o alinhamento vertical entre a sidebar e o painel principal.
+- Aplicado `margin-top: -4px` à área principal através de `.v45-sidebar ~ .tab-panel`.
+- Removido o espaço superior residual após a retirada da barra superior de módulos.
+- Sem alterações funcionais, de schema, RLS, Realtime ou sincronização.
+
+
+## 4.5.1.1
+
+- **Fechamento para produção:** versão aprovada e publicada com `APP_ENVIRONMENT = "production"`.
+
+### Central de Documentos
+- Corrigido o botão **Limpar filtros**.
+- Ao limpar, Pesquisa/Categoria/Grupo/Ordem retornam aos padrões.
+- O modelo selecionado é desmarcado.
+- A combobox volta para “Selecione um modelo de documento...”.
+- O painel Documento retorna ao estado vazio “Selecione um modelo”.
+- Nenhum modelo salvo é excluído ou alterado pela limpeza.
+
+### Navegação
+- Removida a barra superior de módulos/abas abertas.
+- A sidebar passa a ser a única navegação principal entre módulos.
+- O cabeçalho superior continua reservado à identidade do sistema e aos controles globais, incluindo Conta/Sincronização.
+- Removidos o código e os estilos legados específicos da barra de abas abertas.
+- Sem alterações de schema, RLS, Realtime ou arquitetura de sincronização.
+
+
+## 4.5.1
+
+### Central de Documentos
+- Painel Modelos movido para o topo da Central.
+- Pesquisar, Categoria, Grupo e Ordem ficam na mesma linha em telas amplas.
+- Adicionada classificação e filtragem por Grupo.
+- Adicionado Gerenciador de grupos para criar, renomear e excluir grupos.
+- Ao excluir um grupo, os modelos são preservados e movidos para “Sem grupo”.
+- Lista lateral de modelos substituída por combobox larga.
+- Combobox mostra título completo, categoria e grupo.
+- Editor passa a ter campos Título, Categoria e Grupo.
+- Modelos antigos sem `group` permanecem compatíveis e são tratados como “Sem grupo”.
+- Formato de `documentTemplates` foi ampliado sem migração destrutiva.
+- Sem alterações de schema/RLS ou da arquitetura de sincronização.
+
+
+## 4.5.0.6
+
+### Compactação vertical da sidebar
+- Reduzidos os espaçamentos verticais da sidebar em desktop.
+- Ajustadas alturas do botão Recolher, pesquisa, itens de navegação e controles do rodapé.
+- Reduzidos espaços entre grupos e cabeçalhos.
+- Adicionada compactação adicional automática para alturas de até 820 px.
+- `overflow-y: auto` foi preservado como fallback para telas realmente baixas.
+- Nenhuma scrollbar foi ocultada artificialmente.
+- Layout mobile preservado.
+- Sem alterações em Supabase, schema, RLS ou sincronização.
+
+
+## 4.5.0.5
+
+### Correção visual do Histórico de versões
+- Corrigida a verticalização do número e do título das versões.
+- Neutralizado o CSS legado de `.about-timeline article`, que ainda aplicava uma grade de `70px 1fr`.
+- Cartões interativos passam a ocupar toda a largura disponível.
+- Cabeçalho da versão mantém número, descrição e seta corretamente alinhados.
+- Detalhes continuam em duas colunas no desktop e uma coluna em telas menores.
+- Rolagem vertical interna preservada e rolagem horizontal bloqueada.
+- Sem alterações em Supabase, schema, RLS ou sincronização.
+
+
+## 4.5.0.4
+
+### Etapa 3 — Histórico de versões interativo
+- Sobre → Histórico de versões passa a usar cartões expansíveis.
+- Cada versão exibe resumo no estado recolhido.
+- Ao expandir, os detalhes são apresentados por categorias quando disponíveis.
+- Apenas uma versão permanece aberta por vez.
+- Interação compatível com teclado e atributos ARIA.
+- Histórico continua com rolagem vertical e sem rolagem horizontal.
+- Sem alterações em Supabase, schema, RLS ou arquitetura de sincronização.
+
+
+## 4.5.0.3
+
+### Correções da Etapa 2
+- Redesenhado o botão Recolher/Expandir da sidebar.
+- Botão passa a usar ícone próprio, rótulo no modo expandido e rotação visual no modo recolhido.
+- Conta e sincronização retornam ao cabeçalho.
+- Botão da conta fica permanentemente compacto, sem nome ou texto visível.
+- Indicador colorido do estado de sincronização permanece sobre o ícone de pessoa.
+- Menu detalhado da conta continua disponível ao clicar no perfil.
+- Sidebar recolhível e menu móvel preservados.
+- Sem Supabase Realtime, alteração de schema ou RLS.
+
+
+## 4.5.0.2
+
+### Etapa 2 — Sidebar e conta
+- Sidebar recolhível no desktop, com preferência persistida localmente.
+- Modo recolhido exibe navegação compacta por ícones.
+- Em telas menores, a sidebar funciona como menu lateral deslizante com backdrop.
+- Conta e sincronização removidas do cabeçalho.
+- Novo ícone compacto de perfil na base da sidebar.
+- Cor do indicador de perfil acompanha o estado real: local, sincronizado, pendente, sincronizando, offline ou conflito/erro.
+- Menu de perfil mantém nome, e-mail, estado e ações de conta/sincronização.
+- Corrigido o acesso “Conta e sincronização” para a nova estrutura aninhada da sidebar.
+- Supabase Realtime não foi incluído.
+- Sem alteração de schema ou RLS.
+
+
+## 4.5.0.1
+
+### Correção da Etapa 1
+- Corrigido o comportamento do Dashboard em larguras intermediárias.
+- O painel lateral de Indicadores/Atalhos/Dica rápida passa para uma linha própria quando necessário.
+- Cards de ferramentas passam a usar duas ou uma coluna conforme o espaço disponível.
+- Evitada sobreposição entre sidebar, conteúdo principal e painel do Dashboard.
+- Reforçada a prevenção de rolagem horizontal.
+- Sem alterações na sincronização, schema ou RLS.
+
+
+## 4.5.0
+
+### Etapa 1 — Navegação
+- Menu principal transferido do topo para uma sidebar lateral.
+- Ferramentas organizadas em Documentos, Cadastros, Cálculos, Produtividade e Sistema.
+- Pesquisa global movida para a sidebar.
+- Atalhos de tema e tamanho de fonte movidos para a base da sidebar.
+- Destaque do módulo ativo adaptado para navegação lateral.
+- Layout responsivo básico preservado para a etapa inicial.
+
+### Compatibilidade
+- Nenhuma alteração funcional nos módulos.
+- Nenhuma alteração no modelo de sincronização existente.
+- Supabase Realtime permanece fora do escopo.
+- Sem alteração de schema ou RLS.
+
+
 ## 4.4.6.1
 
 - Versão promovida para produção após aprovação dos testes.

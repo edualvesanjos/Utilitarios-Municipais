@@ -90,37 +90,6 @@ body.ux-font-large {
     font-size: 18px
 }
 
-.ux-tabs-bar {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    overflow: auto;
-    padding: 7px 4px;
-    margin: -8px 0 16px;
-    border-bottom: 1px solid var(--ux-border)
-}
-
-.ux-open-tab {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    padding: 7px 10px;
-    border: 1px solid var(--ux-border);
-    border-radius: 8px;
-    background: var(--ux-surface);
-    color: var(--ux-text);
-    white-space: nowrap
-}
-
-.ux-open-tab.active {
-    outline: 2px solid var(--ux-accent)
-}
-
-.ux-open-tab-close {
-    font-size: 18px;
-    line-height: 1;
-    opacity: .65
-}
 
 .ux-command-overlay {
     position: fixed;
