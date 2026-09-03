@@ -1,5 +1,14 @@
 # Changelog
 
+## 4.5.1.2
+
+### Interface
+- Corrigido o alinhamento vertical entre a sidebar e o painel principal.
+- Aplicado `margin-top: -4px` à área principal através de `.v45-sidebar ~ .tab-panel`.
+- Removido o espaço superior residual após a retirada da barra superior de módulos.
+- Sem alterações funcionais, de schema, RLS, Realtime ou sincronização.
+
+
 ## 4.5.1.1
 
 - **Fechamento para produção:** versão aprovada e publicada com `APP_ENVIRONMENT = "production"`.
