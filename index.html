@@ -1121,29 +1121,94 @@
                     <div>
                         <span class="eyebrow">Versão <span data-app-version></span></span>
                         <h2>Central de documentos</h2>
-                        <p class="section-description">Crie, edite e reutilize seus próprios modelos de documentos.</p>
+                        <p class="section-description">Crie, organize, edite e reutilize seus próprios modelos de documentos.</p>
                     </div>
                     <button id="documentNewModel" class="secondary-button" type="button">Novo modelo</button>
                 </div>
 
-                <div class="documents-layout">
-                    <aside class="documents-sidebar" aria-label="Modelos de documentos">
-                        <div class="documents-sidebar-heading">
-                            <h3>Modelos</h3>
-                            <p class="mini-description">Localize ou selecione um modelo para editar e utilizar.</p>
+                <section class="documents-models-panel" aria-label="Modelos de documentos">
+                    <div class="documents-models-heading">
+                        <div>
+                            <h3>Modelos de documento</h3>
+                            <p class="mini-description">Filtre e selecione o modelo que será carregado no documento.</p>
+                        </div>
+                        <button id="documentManageGroups" class="secondary-button document-manage-groups" type="button">
+                            Gerenciar grupos
+                        </button>
+                    </div>
+
+                    <div class="document-filter-toolbar">
+                        <label class="document-search-field">
+                            <span>Pesquisar</span>
+                            <input id="documentSearch" type="search" placeholder="Título, categoria, grupo ou conteúdo">
+                        </label>
+
+                        <label>
+                            <span>Categoria</span>
+                            <select id="documentCategory">
+                                <option value="todos">Todas as categorias</option>
+                                <option>Despachos</option>
+                                <option>Certidões</option>
+                                <option>Ofícios</option>
+                                <option>WhatsApp</option>
+                                <option>Declarações</option>
+                                <option>Personalizados</option>
+                            </select>
+                        </label>
+
+                        <label>
+                            <span>Grupo</span>
+                            <select id="documentGroupFilter">
+                                <option value="todos">Todos os grupos</option>
+                            </select>
+                        </label>
+
+                        <label>
+                            <span>Ordem</span>
+                            <select id="documentOrder">
+                                <option value="titulo">Título</option>
+                                <option value="categoria">Categoria</option>
+                                <option value="grupo">Grupo</option>
+                            </select>
+                        </label>
+
+                        <button id="documentClearFilters" class="text-button document-clear-filters" type="button">
+                            Limpar filtros
+                        </button>
+                    </div>
+
+                    <label class="document-model-select-field">
+                        <span>Modelo</span>
+                        <select id="documentModelSelect">
+                            <option value="">Selecione um modelo de documento...</option>
+                        </select>
+                    </label>
+                </section>
+
+                <main class="documents-editor">
+                    <div id="documentEmptyState" class="document-editor-empty">
+                        <strong>Selecione um modelo</strong>
+                        <p>Escolha um modelo acima ou clique em “Novo modelo” para começar.</p>
+                    </div>
+
+                    <div id="documentEditorContent" class="document-editor-content" hidden>
+                        <div class="documents-editor-heading">
+                            <div>
+                                <span class="eyebrow">Documento</span>
+                                <h3 id="documentEditorHeading">Novo modelo</h3>
+                            </div>
                         </div>
 
-                        <div class="document-filter-group">
-                            <label class="document-search-field">
-                                <span>Pesquisar</span>
-                                <input id="documentSearch" type="search" placeholder="Título, categoria ou conteúdo">
-                            </label>
+                        <section class="document-edit-section">
+                            <div class="document-model-meta-grid">
+                                <label>
+                                    <span>Título do modelo</span>
+                                    <input id="documentTitle" placeholder="Título completo do modelo">
+                                </label>
 
-                            <div class="document-filter-row">
                                 <label>
                                     <span>Categoria</span>
-                                    <select id="documentCategory">
-                                        <option value="todos">Todas</option>
+                                    <select id="documentEditorCategory">
                                         <option>Despachos</option>
                                         <option>Certidões</option>
                                         <option>Ofícios</option>
@@ -1152,91 +1217,79 @@
                                         <option>Personalizados</option>
                                     </select>
                                 </label>
+
                                 <label>
-                                    <span>Ordem</span>
-                                    <select id="documentOrder">
-                                        <option value="titulo">Título</option>
-                                        <option value="categoria">Categoria</option>
+                                    <span>Grupo</span>
+                                    <select id="documentEditorGroup">
+                                        <option value="">Sem grupo</option>
                                     </select>
                                 </label>
                             </div>
-                        </div>
 
-                        <div id="documentTemplateList" class="document-template-list"></div>
-                    </aside>
+                            <label>
+                                <span>Modelo com variáveis</span>
+                                <textarea id="documentTemplate" rows="9" placeholder="Use variáveis como {nome}, {processo}, {cnae}, {zoneamento}, {endereco} e {data}."></textarea>
+                            </label>
+                        </section>
 
-                    <main class="documents-editor">
-                        <div id="documentEmptyState" class="document-editor-empty">
-                            <strong>Selecione um modelo</strong>
-                            <p>Escolha um modelo na lista ao lado ou clique em “Novo modelo” para começar.</p>
-                        </div>
-
-                        <div id="documentEditorContent" class="document-editor-content" hidden>
-                            <div class="documents-editor-heading">
+                        <section class="document-variables-card">
+                            <div class="section-heading">
                                 <div>
-                                    <span class="eyebrow">Documento</span>
-                                    <h3 id="documentEditorHeading">Novo modelo</h3>
+                                    <h3>Variáveis do documento</h3>
+                                    <p class="mini-description">Os campos abaixo são identificados automaticamente no texto do modelo.</p>
                                 </div>
                             </div>
+                            <div id="documentVariables" class="document-variables-grid"></div>
+                        </section>
 
-                            <section class="document-edit-section">
-                                <div class="grid two-columns">
-                                    <label>
-                                        <span>Título do modelo</span>
-                                        <input id="documentTitle" placeholder="Título">
-                                    </label>
-                                    <label>
-                                        <span>Categoria</span>
-                                        <select id="documentEditorCategory">
-                                            <option>Despachos</option>
-                                            <option>Certidões</option>
-                                            <option>Ofícios</option>
-                                            <option>WhatsApp</option>
-                                            <option>Declarações</option>
-                                            <option>Personalizados</option>
-                                        </select>
-                                    </label>
-                                </div>
+                        <section class="document-preview-section">
+                            <label>
+                                <span>Pré-visualização</span>
+                                <textarea id="documentPreview" rows="11" readonly></textarea>
+                            </label>
+                        </section>
 
-                                <label>
-                                    <span>Modelo com variáveis</span>
-                                    <textarea id="documentTemplate" rows="9" placeholder="Use variáveis como {nome}, {processo}, {cnae}, {zoneamento}, {endereco} e {data}."></textarea>
-                                </label>
-                            </section>
-
-                            <section class="document-variables-card">
-                                <div class="section-heading">
-                                    <div>
-                                        <h3>Variáveis do documento</h3>
-                                        <p class="mini-description">Os campos abaixo são identificados automaticamente no texto do modelo.</p>
-                                    </div>
-                                </div>
-                                <div id="documentVariables" class="document-variables-grid"></div>
-                            </section>
-
-                            <section class="document-preview-section">
-                                <label>
-                                    <span>Pré-visualização</span>
-                                    <textarea id="documentPreview" rows="11" readonly></textarea>
-                                </label>
-                            </section>
-
-                            <div class="documents-action-bar">
-                                <div class="documents-primary-actions">
-                                    <button id="documentCopy" type="button">Copiar texto</button>
-                                    <button id="documentSave" class="secondary-button" type="button">Salvar modelo</button>
-                                    <button id="documentClear" class="secondary-button" type="button">Limpar campos</button>
-                                </div>
-                                <div class="documents-secondary-actions">
-                                    <button id="documentExportTxt" class="text-button" type="button">Exportar TXT</button>
-                                    <button id="documentDelete" class="danger-button" type="button">Excluir modelo</button>
-                                </div>
+                        <div class="documents-action-bar">
+                            <div class="documents-primary-actions">
+                                <button id="documentCopy" type="button">Copiar texto</button>
+                                <button id="documentSave" class="secondary-button" type="button">Salvar modelo</button>
+                                <button id="documentClear" class="secondary-button" type="button">Limpar campos</button>
                             </div>
 
-                            <p id="documentFeedback" class="feedback-message" aria-live="polite"></p>
+                            <div class="documents-secondary-actions">
+                                <button id="documentExportTxt" class="text-button" type="button">Exportar TXT</button>
+                                <button id="documentDelete" class="danger-button" type="button">Excluir modelo</button>
+                            </div>
                         </div>
-                    </main>
-                </div>
+
+                        <p id="documentFeedback" class="feedback-message" aria-live="polite"></p>
+                    </div>
+                </main>
+
+                <dialog id="documentGroupDialog" class="document-group-dialog">
+                    <form method="dialog" class="document-group-dialog-card">
+                        <div class="document-group-dialog-heading">
+                            <div>
+                                <span class="eyebrow">Organização</span>
+                                <h3>Gerenciar grupos</h3>
+                                <p class="mini-description">Crie, renomeie ou exclua grupos usados para organizar os modelos.</p>
+                            </div>
+                            <button class="text-button document-group-dialog-close" value="cancel" aria-label="Fechar">✕</button>
+                        </div>
+
+                        <div class="document-group-create-row">
+                            <label>
+                                <span>Novo grupo</span>
+                                <input id="documentNewGroupName" maxlength="60" placeholder="Ex.: Licenciamento, Atendimento, Fiscalização">
+                            </label>
+                            <button id="documentAddGroup" class="primary-button" type="button">Adicionar</button>
+                        </div>
+
+                        <div id="documentGroupList" class="document-group-list"></div>
+
+                        <p id="documentGroupFeedback" class="feedback-message" aria-live="polite"></p>
+                    </form>
+                </dialog>
 
                 <div class="tab-footer-navigation">
                     <button class="back-home-button" type="button" data-open-tab="inicio">
@@ -1292,11 +1345,11 @@
                     <section class="settings-card">
                         <h3>Novidades da <span data-app-version></span></h3>
                         <ul class="about-list">
-                            <li><strong>Sidebar:</strong> compactação vertical para reduzir a necessidade de rolagem em alturas usuais.</li>
-                            <li><strong>Espaçamentos:</strong> pesquisa, grupos, cabeçalhos, botões e rodapé foram ajustados sem ocultar conteúdo.</li>
-                            <li><strong>Fallback:</strong> a rolagem vertical continua disponível somente quando a altura da tela realmente exigir.</li>
-                            <li><strong>Responsividade:</strong> telas de altura intermediária recebem compactação adicional automática.</li>
-                            <li><strong>Preservado:</strong> sidebar recolhível, menu móvel, conta no cabeçalho e Histórico de versões interativo.</li>
+                            <li><strong>Central de Documentos:</strong> painel de modelos movido para o topo da página.</li>
+                            <li><strong>Filtros:</strong> Pesquisar, Categoria, Grupo e Ordem agora ficam na mesma linha.</li>
+                            <li><strong>Grupos:</strong> inclusão de cadastro, renomeação, exclusão e filtro por grupo.</li>
+                            <li><strong>Modelos:</strong> a lista lateral foi substituída por uma combobox larga para exibir melhor os nomes completos.</li>
+                            <li><strong>Compatibilidade:</strong> modelos antigos continuam válidos e são tratados automaticamente como “Sem grupo”.</li>
                         </ul>
                     </section>
                 </div>
@@ -1307,12 +1360,43 @@
                         <article class="about-version-item is-open">
                             <button class="about-version-toggle" type="button" aria-expanded="true">
                                 <span class="about-version-heading">
+                                    <strong>4.5.1</strong>
+                                    <span>Nova organização da Central de Documentos</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details">
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Implementações</h4>
+                                        <ul>
+                                            <li>Modelos e filtros movidos para o topo.</li>
+                                            <li>Nova classificação por grupos.</li>
+                                            <li>Gerenciamento de grupos com criação, renomeação e exclusão.</li>
+                                            <li>Seleção de modelo por combobox larga.</li>
+                                        </ul>
+                                    </section>
+                                    <section>
+                                        <h4>Aspectos técnicos</h4>
+                                        <ul>
+                                            <li>Modelos antigos sem campo <code>group</code> são compatíveis.</li>
+                                            <li>Sem alteração da arquitetura de sincronização.</li>
+                                            <li>Sem mudanças em schema ou RLS.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
                                     <strong>4.5.0.6</strong>
                                     <span>Compactação vertical da sidebar</span>
                                 </span>
                                 <span class="about-version-chevron" aria-hidden="true">⌄</span>
                             </button>
-                            <div class="about-version-details">
+                            <div class="about-version-details" hidden>
                                 <div class="about-version-detail-grid">
                                     <section>
                                         <h4>Alterações</h4>

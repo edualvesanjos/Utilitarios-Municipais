@@ -64,3 +64,5 @@ O histórico detalhado não é acumulado neste README.
 - **Sobre:** Novidades da versão atual e Histórico de versões interativo com detalhes expansíveis.
 
 - **Navegação lateral:** sidebar recolhível e compacta verticalmente, com rolagem apenas quando a altura disponível exigir.
+
+- **Central de Documentos:** filtros superiores, organização por Categoria/Grupo, seleção por combobox e editor de modelos em largura total.

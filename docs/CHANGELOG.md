@@ -1,5 +1,21 @@
 # Changelog
 
+## 4.5.1
+
+### Central de Documentos
+- Painel Modelos movido para o topo da Central.
+- Pesquisar, Categoria, Grupo e Ordem ficam na mesma linha em telas amplas.
+- Adicionada classificação e filtragem por Grupo.
+- Adicionado Gerenciador de grupos para criar, renomear e excluir grupos.
+- Ao excluir um grupo, os modelos são preservados e movidos para “Sem grupo”.
+- Lista lateral de modelos substituída por combobox larga.
+- Combobox mostra título completo, categoria e grupo.
+- Editor passa a ter campos Título, Categoria e Grupo.
+- Modelos antigos sem `group` permanecem compatíveis e são tratados como “Sem grupo”.
+- Formato de `documentTemplates` foi ampliado sem migração destrutiva.
+- Sem alterações de schema/RLS ou da arquitetura de sincronização.
+
+
 ## 4.5.0.6
 
 ### Compactação vertical da sidebar
