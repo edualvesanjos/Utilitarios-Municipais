@@ -1,4 +1,4 @@
-# Utilitários Municipais — v4.5.1.3 DEV
+# Utilitários Municipais — v4.5.1.3 PRODUÇÃO
 
 ## Objetivo
 
@@ -31,4 +31,12 @@ O valor `0px` substitui o ajuste provisório anterior de `-4px`.
 
 ## Ambiente
 
-`APP_ENVIRONMENT = "development"`
+`APP_ENVIRONMENT = "production"`
+
+
+## Fechamento de produção
+
+- Versão DEV validada com sucesso.
+- Pacote de produção gerado a partir da v4.5.1.3 DEV aprovada.
+- Correção de alinhamento mantida com `margin-top: 0px`.
+- Validações finais de JavaScript, JSON, IDs HTML, `.gitignore` e integridade do ZIP concluídas.

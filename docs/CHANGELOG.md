@@ -8,6 +8,7 @@
 - Valor `0px` incorporado após validação visual.
 - Revisão de regressão do layout sem alterações funcionais.
 - Sem alterações de schema, RLS, Realtime ou arquitetura de sincronização.
+- Fechamento de produção realizado após validação da versão DEV.
 
 
 ## 4.5.1.2
