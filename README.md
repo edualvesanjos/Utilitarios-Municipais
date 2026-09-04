@@ -68,3 +68,5 @@ O histórico detalhado não é acumulado neste README.
 - **Central de Documentos:** filtros superiores, organização por Categoria/Grupo, seleção por combobox e editor de modelos em largura total.
 
 - **Navegação:** sidebar como navegação principal entre módulos; cabeçalho reservado à identidade do sistema e Conta/Sincronização.
+
+- **Layout:** sidebar e painel principal alinhados verticalmente, com navegação lateral consolidada.

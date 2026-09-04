@@ -1,5 +1,15 @@
 # Changelog
 
+## 4.5.1.3
+
+### Interface
+- Consolidado o alinhamento vertical do painel principal com a sidebar.
+- Substituído `margin-top: -4px` por `margin-top: 0px` em `.v45-sidebar ~ .tab-panel`.
+- Valor `0px` incorporado após validação visual.
+- Revisão de regressão do layout sem alterações funcionais.
+- Sem alterações de schema, RLS, Realtime ou arquitetura de sincronização.
+
+
 ## 4.5.1.2
 
 ### Interface

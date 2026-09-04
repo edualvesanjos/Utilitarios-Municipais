@@ -1,4 +1,4 @@
-const APP_VERSION = "4.5.1.2";
+const APP_VERSION = "4.5.1.3";
 window.APP_VERSION = APP_VERSION;
 
 /*
@@ -14,7 +14,7 @@ window.APP_VERSION = APP_VERSION;
  * - Nunca coloque sb_secret_... ou service_role neste arquivo.
  * - Somente a Publishable key (sb_publishable_...) pode ficar no navegador.
  */
-const APP_ENVIRONMENT = "production";
+const APP_ENVIRONMENT = "development";
 window.APP_ENVIRONMENT = APP_ENVIRONMENT;
 
 const SUPABASE_ENVIRONMENTS = Object.freeze({
