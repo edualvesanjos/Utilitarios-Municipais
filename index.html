@@ -1345,9 +1345,9 @@
                     <section class="settings-card">
                         <h3>Novidades da <span data-app-version></span></h3>
                         <ul class="about-list">
-                            <li><strong>Interface:</strong> consolidado o alinhamento vertical do painel principal com a sidebar.</li>
-                            <li><strong>Layout:</strong> o painel central passa a usar <code>margin-top: 0px</code>, valor validado visualmente.</li>
-                            <li><strong>Estabilidade:</strong> revisão de regressão sem alterações na arquitetura de sincronização.</li>
+                            <li><strong>Desenvolvimento:</strong> iniciada a linha 4.5.2 DEV a partir da versão 4.5.1.3 de produção.</li>
+                            <li><strong>Central de Documentos:</strong> versão preparada para a próxima etapa de evolução funcional do módulo.</li>
+                            <li><strong>Estabilidade:</strong> mantida a arquitetura atual de sincronização, sem Supabase Realtime.</li>
                         </ul>
                     </section>
                 </div>
@@ -1358,12 +1358,40 @@
                         <article class="about-version-item is-open">
                             <button class="about-version-toggle" type="button" aria-expanded="true">
                                 <span class="about-version-heading">
+                                    <strong>4.5.2</strong>
+                                    <span>Início da próxima etapa da Central de Documentos</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details">
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Implementações</h4>
+                                        <ul>
+                                            <li>Iniciada a versão 4.5.2 DEV sobre a base estável 4.5.1.3.</li>
+                                            <li>Estrutura preparada para a próxima evolução funcional da Central de Documentos.</li>
+                                        </ul>
+                                    </section>
+                                    <section>
+                                        <h4>Aspectos técnicos</h4>
+                                        <ul>
+                                            <li>Ambiente alterado para desenvolvimento.</li>
+                                            <li>Sem mudanças de schema, RLS, Realtime ou sincronização nesta abertura de versão.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
                                     <strong>4.5.1.3</strong>
                                     <span>Consolidação visual e alinhamento do painel principal</span>
                                 </span>
                                 <span class="about-version-chevron" aria-hidden="true">⌄</span>
                             </button>
-                            <div class="about-version-details">
+                            <div class="about-version-details" hidden>
                                 <div class="about-version-detail-grid">
                                     <section>
                                         <h4>Correções</h4>

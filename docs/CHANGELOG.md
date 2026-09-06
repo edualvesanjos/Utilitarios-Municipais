@@ -1,5 +1,14 @@
 # Changelog
 
+## 4.5.2
+
+### Desenvolvimento
+- Iniciada a versão 4.5.2 DEV a partir da v4.5.1.3 PRODUÇÃO.
+- Preparada a base para a próxima etapa funcional da Central de Documentos.
+- Mantido `APP_ENVIRONMENT = "development"`.
+- Sem mudanças de schema, RLS, Realtime ou arquitetura de sincronização nesta abertura de versão.
+
+
 ## 4.5.1.3
 
 ### Interface
