@@ -65,7 +65,7 @@ O histórico detalhado não é acumulado neste README.
 
 - **Navegação lateral:** sidebar recolhível e compacta verticalmente, com rolagem apenas quando a altura disponível exigir.
 
-- **Central de Documentos:** modelos editáveis organizados por categorias e grupos gerenciáveis, com duplicação, exportação/importação JSON e integração ao fluxo de persistência/sincronização existente.
+- **Central de Documentos:** modelos editáveis organizados por categorias e grupos gerenciáveis, com duplicação, exportação/importação JSON e sincronização online de modelos, grupos e categorias.
 
 - **Navegação:** sidebar como navegação principal entre módulos; cabeçalho reservado à identidade do sistema e Conta/Sincronização.
 

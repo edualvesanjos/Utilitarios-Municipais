@@ -1388,10 +1388,10 @@
                     <section class="settings-card">
                         <h3>Novidades da <span data-app-version></span></h3>
                         <ul class="about-list">
-                            <li><strong>Central de Documentos:</strong> preparada para sincronização consistente de modelos, grupos e categorias.</li>
-                            <li><strong>Atualização da interface:</strong> criado um ponto único para recarregar a Central após hidratação dos dados.</li>
-                            <li><strong>Persistência:</strong> alterações locais em modelos, grupos e categorias passam a emitir um evento interno.</li>
-                            <li><strong>Arquitetura:</strong> sem novo schema, sem alteração de RLS e sem Supabase Realtime.</li>
+                            <li><strong>Central de Documentos:</strong> modelos, grupos e categorias passam a integrar efetivamente o mesmo grupo de sincronização online.</li>
+                            <li><strong>Compatibilidade:</strong> registros remotos antigos são completados com grupos e categorias sem sobrescrever os modelos já armazenados online.</li>
+                            <li><strong>Sincronização automática:</strong> alterações na Central acionam diretamente o fluxo de sincronização existente.</li>
+                            <li><strong>Arquitetura:</strong> sem novas tabelas, sem alteração de RLS e sem Supabase Realtime.</li>
                         </ul>
                     </section>
                 </div>
@@ -1402,12 +1402,42 @@
                         <article class="about-version-item is-open">
                             <button class="about-version-toggle" type="button" aria-expanded="true">
                                 <span class="about-version-heading">
+                                    <strong>4.5.2.4</strong>
+                                    <span>Sincronização efetiva da Central de Documentos</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details">
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Implementações</h4>
+                                        <ul>
+                                            <li>Modelos, grupos e categorias passam a ser sincronizados no grupo documents.</li>
+                                            <li>Alterações da Central acionam diretamente a sincronização automática.</li>
+                                            <li>Refresh centralizado após aplicação dos dados online.</li>
+                                        </ul>
+                                    </section>
+                                    <section>
+                                        <h4>Compatibilidade</h4>
+                                        <ul>
+                                            <li>Registros remotos antigos recebem as novas chaves sem sobrescrever templates remotos existentes.</li>
+                                            <li>Nova migração local prepara dados criados nas versões 4.5.2.1–4.5.2.3.</li>
+                                            <li>Sem novo schema de banco, sem alteração de RLS e sem Realtime.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
                                     <strong>4.5.2.3</strong>
                                     <span>Persistência e sincronização da Central de Documentos</span>
                                 </span>
                                 <span class="about-version-chevron" aria-hidden="true">⌄</span>
                             </button>
-                            <div class="about-version-details">
+                            <div class="about-version-details" hidden>
                                 <div class="about-version-detail-grid">
                                     <section>
                                         <h4>Implementações</h4>

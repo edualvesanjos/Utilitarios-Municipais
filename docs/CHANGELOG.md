@@ -1,5 +1,17 @@
 # Changelog
 
+## 4.5.2.4
+
+### Central de Documentos
+- `documents` passa a sincronizar `documentTemplates`, `documentGroups` e `documentCategories`.
+- Alterações em modelos, grupos e categorias disparam diretamente o fluxo automático por `um:documents-changed`.
+- Registros remotos legados são migrados de forma conservadora: grupos e categorias ausentes são adicionados sem substituir templates já existentes no Supabase.
+- Adicionada migração local `online:documents4524` para incorporar dados já criados nas versões 4.5.2.1–4.5.2.3.
+- `refreshDocumentCentral` passa a ser utilizado após aplicação dos dados remotos.
+- `SYNC_SCHEMA_VERSION` atualizado para 6.
+- Sem novas tabelas, sem alteração de RLS e sem Supabase Realtime.
+
+
 ## 4.5.2.3
 
 ### Central de Documentos
