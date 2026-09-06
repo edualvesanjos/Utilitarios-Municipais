@@ -1,5 +1,15 @@
 # Changelog
 
+## 4.5.2.3
+
+### Central de Documentos
+- Preparada a persistência/sincronização de modelos, grupos e categorias usando a infraestrutura existente.
+- Adicionado `refreshDocumentCentral` para atualização da interface após hidratação.
+- Alterações locais em modelos, grupos e categorias emitem `um:documents-changed`.
+- A estrutura atual de sincronização foi preservada; a Central recebeu pontos de integração sem nova arquitetura.
+- Sem novo schema, alteração de RLS ou Supabase Realtime.
+
+
 ## 4.5.2.2
 
 ### Central de Documentos

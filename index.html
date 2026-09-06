@@ -1388,10 +1388,10 @@
                     <section class="settings-card">
                         <h3>Novidades da <span data-app-version></span></h3>
                         <ul class="about-list">
-                            <li><strong>Central de Documentos:</strong> categorias agora podem ser criadas, renomeadas e excluídas.</li>
-                            <li><strong>Preservação de modelos:</strong> ao excluir uma categoria, seus modelos são mantidos em “Sem categoria”.</li>
-                            <li><strong>Portabilidade:</strong> exportação e importação JSON passam a incluir também as categorias cadastradas.</li>
-                            <li><strong>Sincronização:</strong> esta etapa permanece local, preparando o modelo de dados antes da sincronização online.</li>
+                            <li><strong>Central de Documentos:</strong> preparada para sincronização consistente de modelos, grupos e categorias.</li>
+                            <li><strong>Atualização da interface:</strong> criado um ponto único para recarregar a Central após hidratação dos dados.</li>
+                            <li><strong>Persistência:</strong> alterações locais em modelos, grupos e categorias passam a emitir um evento interno.</li>
+                            <li><strong>Arquitetura:</strong> sem novo schema, sem alteração de RLS e sem Supabase Realtime.</li>
                         </ul>
                     </section>
                 </div>
@@ -1402,12 +1402,42 @@
                         <article class="about-version-item is-open">
                             <button class="about-version-toggle" type="button" aria-expanded="true">
                                 <span class="about-version-heading">
+                                    <strong>4.5.2.3</strong>
+                                    <span>Persistência e sincronização da Central de Documentos</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details">
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Implementações</h4>
+                                        <ul>
+                                            <li>Preparação de modelos, grupos e categorias para o fluxo de sincronização existente.</li>
+                                            <li>Ponto único de atualização da Central após hidratação.</li>
+                                            <li>Eventos internos para alterações dos dados da Central.</li>
+                                        </ul>
+                                    </section>
+                                    <section>
+                                        <h4>Aspectos técnicos</h4>
+                                        <ul>
+                                            <li>Compatibilidade com os dados locais das versões anteriores.</li>
+                                            <li>Sem novo schema ou alteração de RLS.</li>
+                                            <li>Realtime permanece fora do escopo.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
                                     <strong>4.5.2.2</strong>
                                     <span>Gerenciamento de categorias na Central de Documentos</span>
                                 </span>
                                 <span class="about-version-chevron" aria-hidden="true">⌄</span>
                             </button>
-                            <div class="about-version-details">
+                            <div class="about-version-details" hidden>
                                 <div class="about-version-detail-grid">
                                     <section>
                                         <h4>Implementações</h4>

@@ -22,6 +22,13 @@
     let selectedId = null;
     let variableValues = {};
 
+
+    function notifyDocumentStorageChanged(kind) {
+        window.dispatchEvent(new CustomEvent("um:documents-changed", {
+            detail: { kind }
+        }));
+    }
+
     function normalizeGroup(value) {
         return String(value ?? "").trim();
     }
@@ -54,6 +61,7 @@
             CUSTOM_KEY,
             JSON.stringify(templates.map(normalizeTemplate))
         );
+        notifyDocumentStorageChanged("templates");
     }
 
     function loadSavedGroups() {
@@ -78,6 +86,7 @@
         }).compare(a, b));
 
         localStorage.setItem(GROUPS_KEY, JSON.stringify(unique));
+        notifyDocumentStorageChanged("groups");
     }
 
     function allGroups() {
@@ -121,6 +130,7 @@
         }).compare(a, b));
 
         localStorage.setItem(CATEGORIES_KEY, JSON.stringify(unique));
+        notifyDocumentStorageChanged("categories");
     }
 
     function allCategories() {
@@ -1398,6 +1408,7 @@
     }
 
     window.refreshDocumentTemplates = refreshFromStorage;
+    window.refreshDocumentCentral = refreshFromStorage;
     window.DocumentosModule = Object.freeze({
         refresh: refreshFromStorage
     });
