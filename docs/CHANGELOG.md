@@ -1,5 +1,18 @@
 # Changelog
 
+## 4.5.2.1
+
+### Central de Documentos
+- Adicionada ação `Duplicar modelo`, criando uma cópia independente e editável.
+- Adicionada exportação de todos os modelos e grupos para JSON.
+- Adicionada importação de modelos e grupos por JSON.
+- Modelos exatamente iguais aos já existentes são ignorados na importação.
+- Colisões de IDs são resolvidas por novos identificadores locais.
+- Categorias inválidas importadas são normalizadas para `Personalizados`.
+- Grupos importados são mesclados aos grupos locais sem excluir dados existentes.
+- Sem alterações de schema, RLS, Realtime ou arquitetura de sincronização.
+
+
 ## 4.5.2
 
 ### Desenvolvimento

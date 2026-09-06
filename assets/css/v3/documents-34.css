@@ -50,6 +50,19 @@
     white-space: nowrap;
 }
 
+.document-model-actions {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.document-model-actions button {
+    white-space: nowrap;
+}
+
 .document-filter-toolbar {
     display: grid;
     grid-template-columns:
@@ -317,6 +330,17 @@
     padding: 24px 10px;
     text-align: center;
     color: var(--muted-color, #607080);
+}
+
+@media (max-width: 760px) {
+    .documents-models-heading {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .document-model-actions {
+        justify-content: flex-start;
+    }
 }
 
 @media (max-width: 1080px) {

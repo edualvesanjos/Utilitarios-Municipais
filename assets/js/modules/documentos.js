@@ -423,6 +423,322 @@
         }
     }
 
+    function createUniqueTemplateId(preferredId, usedIds) {
+        const preferred = String(preferredId || "").trim();
+
+        if (preferred && !usedIds.has(preferred)) {
+            usedIds.add(preferred);
+            return preferred;
+        }
+
+        let attempt = 0;
+        let candidate;
+
+        do {
+            attempt += 1;
+            candidate = `custom-${Date.now()}-${attempt}`;
+        } while (usedIds.has(candidate));
+
+        usedIds.add(candidate);
+        return candidate;
+    }
+
+    function duplicateModel() {
+        if (!selectedId) {
+            setFeedback("Selecione um modelo para duplicar.", "error");
+            return;
+        }
+
+        const source = allTemplates().find((item) => item.id === selectedId);
+
+        if (!source) {
+            setFeedback("Modelo não encontrado.", "error");
+            return;
+        }
+
+        const list = loadTemplates();
+        const usedIds = new Set(list.map((item) => item.id));
+        const copy = {
+            id: createUniqueTemplateId("", usedIds),
+            title: `${source.title} (cópia)`,
+            category: source.category,
+            group: normalizeGroup(source.group),
+            content: source.content
+        };
+
+        list.unshift(copy);
+        saveTemplates(list);
+
+        selectedId = copy.id;
+        variableValues = {};
+
+        renderFiltersAndModels();
+        selectTemplate(copy.id);
+        setFeedback(
+            "Modelo duplicado. Edite a cópia e salve as alterações.",
+            "success"
+        );
+
+        if (typeof showToast === "function") {
+            showToast("Modelo duplicado.");
+        }
+    }
+
+    function buildModelsExportPayload() {
+        return {
+            app: "Utilitários Municipais",
+            type: "document-templates",
+            schema_version: 1,
+            app_version: typeof APP_VERSION !== "undefined"
+                ? APP_VERSION
+                : null,
+            exported_at: new Date().toISOString(),
+            groups: allGroups(),
+            templates: allTemplates().map((template) => ({
+                id: template.id,
+                title: template.title,
+                category: template.category,
+                group: normalizeGroup(template.group),
+                content: template.content
+            }))
+        };
+    }
+
+    function exportModels() {
+        const templates = allTemplates();
+
+        if (!templates.length) {
+            setFeedback("Não há modelos para exportar.", "error");
+            return;
+        }
+
+        const blob = new Blob(
+            [JSON.stringify(buildModelsExportPayload(), null, 2)],
+            { type: "application/json;charset=utf-8" }
+        );
+        const link = document.createElement("a");
+        const date = new Date()
+            .toISOString()
+            .slice(0, 19)
+            .replace(/[-:T]/g, "");
+
+        link.href = URL.createObjectURL(blob);
+        link.download = `utilitarios-municipais-modelos-${date}.json`;
+        link.click();
+        URL.revokeObjectURL(link.href);
+
+        setFeedback(
+            `${templates.length} ${
+                templates.length === 1
+                    ? "modelo exportado"
+                    : "modelos exportados"
+            }.`,
+            "success"
+        );
+    }
+
+    function normalizeImportedTemplate(raw, index) {
+        if (!raw || typeof raw !== "object") {
+            throw new Error(`Modelo ${index + 1}: estrutura inválida.`);
+        }
+
+        const title = String(raw.title || "").trim();
+        const content = String(raw.content || "").trim();
+
+        if (!title || !content) {
+            throw new Error(
+                `Modelo ${index + 1}: título e conteúdo são obrigatórios.`
+            );
+        }
+
+        const validCategories = [
+            "Despachos",
+            "Certidões",
+            "Ofícios",
+            "WhatsApp",
+            "Declarações",
+            "Personalizados"
+        ];
+
+        return {
+            id: String(raw.id || "").trim(),
+            title,
+            category: validCategories.includes(raw.category)
+                ? raw.category
+                : "Personalizados",
+            group: normalizeGroup(raw.group),
+            content
+        };
+    }
+
+    function importedPayload(fileContent) {
+        const parsed = JSON.parse(fileContent);
+
+        if (Array.isArray(parsed)) {
+            return {
+                groups: [],
+                templates: parsed
+            };
+        }
+
+        if (!parsed || typeof parsed !== "object") {
+            throw new Error("Arquivo de modelos inválido.");
+        }
+
+        if (parsed.type && parsed.type !== "document-templates") {
+            throw new Error(
+                "O arquivo selecionado não é um pacote de modelos."
+            );
+        }
+
+        if (!Array.isArray(parsed.templates)) {
+            throw new Error(
+                "O arquivo não contém uma lista válida de modelos."
+            );
+        }
+
+        return {
+            groups: Array.isArray(parsed.groups)
+                ? parsed.groups
+                : [],
+            templates: parsed.templates
+        };
+    }
+
+    async function importModels(event) {
+        const input = event.currentTarget;
+        const file = input?.files?.[0];
+
+        if (!file) return;
+
+        try {
+            const payload = importedPayload(await file.text());
+
+            if (!payload.templates.length) {
+                setFeedback(
+                    "O arquivo não contém modelos para importar.",
+                    "error"
+                );
+                return;
+            }
+
+            const imported = payload.templates.map(normalizeImportedTemplate);
+            const current = loadTemplates();
+            const usedIds = new Set(current.map((item) => item.id));
+            const exactFingerprints = new Set(
+                current.map((item) => JSON.stringify([
+                    item.title,
+                    item.category,
+                    normalizeGroup(item.group),
+                    item.content
+                ]))
+            );
+
+            let added = 0;
+            let skipped = 0;
+            let adjustedIds = 0;
+            const additions = [];
+
+            imported.forEach((template) => {
+                const fingerprint = JSON.stringify([
+                    template.title,
+                    template.category,
+                    normalizeGroup(template.group),
+                    template.content
+                ]);
+
+                if (exactFingerprints.has(fingerprint)) {
+                    skipped += 1;
+                    return;
+                }
+
+                const originalId = template.id;
+                const id = createUniqueTemplateId(originalId, usedIds);
+
+                if (originalId && id !== originalId) {
+                    adjustedIds += 1;
+                }
+
+                additions.push({
+                    ...template,
+                    id
+                });
+
+                exactFingerprints.add(fingerprint);
+                added += 1;
+            });
+
+            const importedGroups = payload.groups
+                .map(normalizeGroup)
+                .filter(Boolean);
+
+            const templateGroups = additions
+                .map((template) => normalizeGroup(template.group))
+                .filter(Boolean);
+
+            saveGroups([
+                ...allGroups(),
+                ...importedGroups,
+                ...templateGroups
+            ]);
+
+            if (additions.length) {
+                saveTemplates([
+                    ...additions,
+                    ...current
+                ]);
+            }
+
+            selectedId = null;
+            variableValues = {};
+            setEditorVisible(false);
+            renderFiltersAndModels();
+
+            const details = [
+                `${added} ${
+                    added === 1
+                        ? "modelo importado"
+                        : "modelos importados"
+                }`
+            ];
+
+            if (skipped) {
+                details.push(
+                    `${skipped} ${
+                        skipped === 1
+                            ? "duplicado ignorado"
+                            : "duplicados ignorados"
+                    }`
+                );
+            }
+
+            if (adjustedIds) {
+                details.push(
+                    `${adjustedIds} ${
+                        adjustedIds === 1
+                            ? "ID ajustado"
+                            : "IDs ajustados"
+                    }`
+                );
+            }
+
+            setFeedback(`${details.join("; ")}.`, "success");
+
+            if (typeof showToast === "function" && added) {
+                showToast("Importação de modelos concluída.");
+            }
+        } catch (error) {
+            setFeedback(
+                error instanceof SyntaxError
+                    ? "Não foi possível ler o arquivo JSON."
+                    : error.message || "Não foi possível importar os modelos.",
+                "error"
+            );
+        } finally {
+            input.value = "";
+        }
+    }
+
     function deleteModel() {
         if (!selectedId) {
             setFeedback("Selecione um modelo para excluir.", "error");
@@ -776,9 +1092,18 @@
 
         $("#documentClear").addEventListener("click", clearVariables);
         $("#documentSave").addEventListener("click", saveModel);
+        $("#documentDuplicate").addEventListener("click", duplicateModel);
         $("#documentDelete").addEventListener("click", deleteModel);
         $("#documentCopy").addEventListener("click", copyPreview);
         $("#documentExportTxt").addEventListener("click", exportTxt);
+        $("#documentExportModels").addEventListener("click", exportModels);
+        $("#documentImportModels").addEventListener("click", () => {
+            $("#documentImportModelsInput").click();
+        });
+        $("#documentImportModelsInput").addEventListener(
+            "change",
+            importModels
+        );
 
         renderFiltersAndModels();
         setEditorVisible(false);

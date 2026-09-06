@@ -1132,9 +1132,23 @@
                             <h3>Modelos de documento</h3>
                             <p class="mini-description">Filtre e selecione o modelo que será carregado no documento.</p>
                         </div>
-                        <button id="documentManageGroups" class="secondary-button document-manage-groups" type="button">
-                            Gerenciar grupos
-                        </button>
+                        <div class="document-model-actions">
+                            <button id="documentManageGroups" class="secondary-button document-manage-groups" type="button">
+                                Gerenciar grupos
+                            </button>
+                            <button id="documentExportModels" class="text-button" type="button">
+                                Exportar modelos
+                            </button>
+                            <button id="documentImportModels" class="text-button" type="button">
+                                Importar modelos
+                            </button>
+                            <input
+                                id="documentImportModelsInput"
+                                type="file"
+                                accept=".json,application/json"
+                                hidden
+                            >
+                        </div>
                     </div>
 
                     <div class="document-filter-toolbar">
@@ -1257,6 +1271,7 @@
                             </div>
 
                             <div class="documents-secondary-actions">
+                                <button id="documentDuplicate" class="text-button" type="button">Duplicar modelo</button>
                                 <button id="documentExportTxt" class="text-button" type="button">Exportar TXT</button>
                                 <button id="documentDelete" class="danger-button" type="button">Excluir modelo</button>
                             </div>
@@ -1345,9 +1360,10 @@
                     <section class="settings-card">
                         <h3>Novidades da <span data-app-version></span></h3>
                         <ul class="about-list">
-                            <li><strong>Desenvolvimento:</strong> iniciada a linha 4.5.2 DEV a partir da versão 4.5.1.3 de produção.</li>
-                            <li><strong>Central de Documentos:</strong> versão preparada para a próxima etapa de evolução funcional do módulo.</li>
-                            <li><strong>Estabilidade:</strong> mantida a arquitetura atual de sincronização, sem Supabase Realtime.</li>
+                            <li><strong>Central de Documentos:</strong> adicionada a opção de duplicar modelos existentes.</li>
+                            <li><strong>Backup de modelos:</strong> novos recursos para exportar e importar modelos e grupos em arquivo JSON.</li>
+                            <li><strong>Importação segura:</strong> modelos idênticos são ignorados e colisões de ID recebem novos identificadores.</li>
+                            <li><strong>Sincronização:</strong> a etapa permanece local, sem alterações em Supabase ou Realtime.</li>
                         </ul>
                     </section>
                 </div>
@@ -1358,12 +1374,42 @@
                         <article class="about-version-item is-open">
                             <button class="about-version-toggle" type="button" aria-expanded="true">
                                 <span class="about-version-heading">
+                                    <strong>4.5.2.1</strong>
+                                    <span>Gerenciamento e portabilidade dos modelos de documentos</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details">
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Implementações</h4>
+                                        <ul>
+                                            <li>Duplicação de modelos com criação de cópia independente e editável.</li>
+                                            <li>Exportação de modelos e grupos em arquivo JSON.</li>
+                                            <li>Importação de pacotes JSON com validação de conteúdo.</li>
+                                        </ul>
+                                    </section>
+                                    <section>
+                                        <h4>Aspectos técnicos</h4>
+                                        <ul>
+                                            <li>Importações idênticas são ignoradas para evitar duplicação exata.</li>
+                                            <li>Colisões de identificadores são resolvidas com novos IDs locais.</li>
+                                            <li>Sem alterações de schema, RLS, Realtime ou sincronização.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
                                     <strong>4.5.2</strong>
                                     <span>Início da próxima etapa da Central de Documentos</span>
                                 </span>
                                 <span class="about-version-chevron" aria-hidden="true">⌄</span>
                             </button>
-                            <div class="about-version-details">
+                            <div class="about-version-details" hidden>
                                 <div class="about-version-detail-grid">
                                     <section>
                                         <h4>Implementações</h4>
