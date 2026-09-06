@@ -1,5 +1,18 @@
 # Changelog
 
+## 4.5.2.2
+
+### Central de Documentos
+- Adicionado gerenciamento de categorias: criar, renomear e excluir.
+- Categorias passam a ser persistidas em `utilitariosMunicipais:documentCategories`.
+- Filtro e editor de categoria passam a ser preenchidos dinamicamente.
+- Ao excluir uma categoria, os modelos são preservados e movidos para `Sem categoria`.
+- Exportação JSON atualizada para incluir `categories` e `schema_version: 2`.
+- Importação JSON permanece compatível com pacotes anteriores sem `categories`.
+- Categorias presentes nos modelos importados são incorporadas automaticamente.
+- Sem alterações de schema, RLS, Realtime ou arquitetura de sincronização online.
+
+
 ## 4.5.2.1
 
 ### Central de Documentos

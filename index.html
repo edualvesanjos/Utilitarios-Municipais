@@ -1133,6 +1133,9 @@
                             <p class="mini-description">Filtre e selecione o modelo que será carregado no documento.</p>
                         </div>
                         <div class="document-model-actions">
+                            <button id="documentManageCategories" class="secondary-button document-manage-groups" type="button">
+                                Gerenciar categorias
+                            </button>
                             <button id="documentManageGroups" class="secondary-button document-manage-groups" type="button">
                                 Gerenciar grupos
                             </button>
@@ -1281,6 +1284,31 @@
                     </div>
                 </main>
 
+                <dialog id="documentCategoryDialog" class="document-group-dialog">
+                    <form method="dialog" class="document-group-dialog-card">
+                        <div class="document-group-dialog-heading">
+                            <div>
+                                <span class="eyebrow">Organização</span>
+                                <h3>Gerenciar categorias</h3>
+                                <p class="mini-description">Crie, renomeie ou exclua categorias usadas para classificar os modelos.</p>
+                            </div>
+                            <button class="text-button document-group-dialog-close" value="cancel" aria-label="Fechar">✕</button>
+                        </div>
+
+                        <div class="document-group-create-row">
+                            <label>
+                                <span>Nova categoria</span>
+                                <input id="documentNewCategoryName" maxlength="60" placeholder="Ex.: Licenciamento, Fiscalização, Atendimento">
+                            </label>
+                            <button id="documentAddCategory" class="primary-button" type="button">Adicionar</button>
+                        </div>
+
+                        <div id="documentCategoryList" class="document-group-list"></div>
+
+                        <p id="documentCategoryFeedback" class="feedback-message" aria-live="polite"></p>
+                    </form>
+                </dialog>
+
                 <dialog id="documentGroupDialog" class="document-group-dialog">
                     <form method="dialog" class="document-group-dialog-card">
                         <div class="document-group-dialog-heading">
@@ -1360,10 +1388,10 @@
                     <section class="settings-card">
                         <h3>Novidades da <span data-app-version></span></h3>
                         <ul class="about-list">
-                            <li><strong>Central de Documentos:</strong> adicionada a opção de duplicar modelos existentes.</li>
-                            <li><strong>Backup de modelos:</strong> novos recursos para exportar e importar modelos e grupos em arquivo JSON.</li>
-                            <li><strong>Importação segura:</strong> modelos idênticos são ignorados e colisões de ID recebem novos identificadores.</li>
-                            <li><strong>Sincronização:</strong> a etapa permanece local, sem alterações em Supabase ou Realtime.</li>
+                            <li><strong>Central de Documentos:</strong> categorias agora podem ser criadas, renomeadas e excluídas.</li>
+                            <li><strong>Preservação de modelos:</strong> ao excluir uma categoria, seus modelos são mantidos em “Sem categoria”.</li>
+                            <li><strong>Portabilidade:</strong> exportação e importação JSON passam a incluir também as categorias cadastradas.</li>
+                            <li><strong>Sincronização:</strong> esta etapa permanece local, preparando o modelo de dados antes da sincronização online.</li>
                         </ul>
                     </section>
                 </div>
@@ -1374,12 +1402,42 @@
                         <article class="about-version-item is-open">
                             <button class="about-version-toggle" type="button" aria-expanded="true">
                                 <span class="about-version-heading">
+                                    <strong>4.5.2.2</strong>
+                                    <span>Gerenciamento de categorias na Central de Documentos</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details">
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Implementações</h4>
+                                        <ul>
+                                            <li>Criação, renomeação e exclusão de categorias personalizadas.</li>
+                                            <li>Filtros e editor passam a carregar categorias dinamicamente.</li>
+                                            <li>Exportação e importação JSON incluem as categorias.</li>
+                                        </ul>
+                                    </section>
+                                    <section>
+                                        <h4>Correções e segurança</h4>
+                                        <ul>
+                                            <li>Excluir categoria não exclui modelos; eles passam para “Sem categoria”.</li>
+                                            <li>Compatibilidade mantida com modelos e grupos existentes.</li>
+                                            <li>Sem mudanças de schema, RLS, Realtime ou sincronização online.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
                                     <strong>4.5.2.1</strong>
                                     <span>Gerenciamento e portabilidade dos modelos de documentos</span>
                                 </span>
                                 <span class="about-version-chevron" aria-hidden="true">⌄</span>
                             </button>
-                            <div class="about-version-details">
+                            <div class="about-version-details" hidden>
                                 <div class="about-version-detail-grid">
                                     <section>
                                         <h4>Implementações</h4>

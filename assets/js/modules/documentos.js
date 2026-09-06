@@ -1,4 +1,4 @@
-/* Versão 4.5.1: Central de Documentos com filtros superiores, grupos e seleção por combobox. */
+/* Versão 4.5.2.2: Central de Documentos com categorias e grupos gerenciáveis. */
 (() => {
     "use strict";
 
@@ -7,7 +7,17 @@
     const CUSTOM_KEY = "utilitariosMunicipais:documentTemplates";
     const SORT_KEY = "utilitariosMunicipais:documentSort";
     const GROUPS_KEY = "utilitariosMunicipais:documentGroups";
+    const CATEGORIES_KEY = "utilitariosMunicipais:documentCategories";
     const NO_GROUP = "";
+    const NO_CATEGORY = "";
+    const DEFAULT_CATEGORIES = [
+        "Despachos",
+        "Certidões",
+        "Ofícios",
+        "WhatsApp",
+        "Declarações",
+        "Personalizados"
+    ];
 
     let selectedId = null;
     let variableValues = {};
@@ -16,11 +26,15 @@
         return String(value ?? "").trim();
     }
 
+    function normalizeCategory(value) {
+        return String(value ?? "").trim();
+    }
+
     function normalizeTemplate(template) {
         return {
             id: String(template?.id || `custom-${Date.now()}`),
             title: String(template?.title || ""),
-            category: String(template?.category || "Personalizados"),
+            category: normalizeCategory(template?.category),
             group: normalizeGroup(template?.group),
             content: String(template?.content || "")
         };
@@ -78,6 +92,53 @@
         }).compare(a, b));
     }
 
+    function loadSavedCategories() {
+        try {
+            const raw = localStorage.getItem(CATEGORIES_KEY);
+
+            if (raw === null) {
+                saveCategories(DEFAULT_CATEGORIES);
+                return [...DEFAULT_CATEGORIES];
+            }
+
+            const stored = JSON.parse(raw);
+            return Array.isArray(stored)
+                ? stored.map(normalizeCategory).filter(Boolean)
+                : [];
+        } catch {
+            return [...DEFAULT_CATEGORIES];
+        }
+    }
+
+    function saveCategories(categories) {
+        const unique = [...new Set(
+            categories.map(normalizeCategory).filter(Boolean)
+        )];
+
+        unique.sort((a, b) => new Intl.Collator("pt-BR", {
+            sensitivity: "base",
+            numeric: true
+        }).compare(a, b));
+
+        localStorage.setItem(CATEGORIES_KEY, JSON.stringify(unique));
+    }
+
+    function allCategories() {
+        const categories = [
+            ...loadSavedCategories(),
+            ...loadTemplates().map((template) =>
+                normalizeCategory(template.category)
+            )
+        ].filter(Boolean);
+
+        return [...new Set(categories)].sort((a, b) =>
+            new Intl.Collator("pt-BR", {
+                sensitivity: "base",
+                numeric: true
+            }).compare(a, b)
+        );
+    }
+
     function allTemplates() {
         return loadTemplates();
     }
@@ -101,6 +162,14 @@
 
     function setGroupFeedback(message, type = "") {
         const element = $("#documentGroupFeedback");
+        if (!element) return;
+
+        element.textContent = message || "";
+        element.className = `feedback-message ${type}`;
+    }
+
+    function setCategoryFeedback(message, type = "") {
+        const element = $("#documentCategoryFeedback");
         if (!element) return;
 
         element.textContent = message || "";
@@ -137,6 +206,41 @@
 
         const title = $("#documentTitle")?.value.trim();
         heading.textContent = title || (selectedId ? "Editar modelo" : "Novo modelo");
+    }
+
+    function refreshCategoryControls() {
+        const categories = allCategories();
+        const filter = $("#documentCategory");
+        const editor = $("#documentEditorCategory");
+
+        if (filter) {
+            const current = filter.value || "todos";
+            filter.innerHTML = [
+                '<option value="todos">Todas as categorias</option>',
+                '<option value="sem-categoria">Sem categoria</option>',
+                ...categories.map((category) =>
+                    `<option value="${escapeHtml(category)}">${escapeHtml(category)}</option>`
+                )
+            ].join("");
+
+            filter.value = [
+                "todos",
+                "sem-categoria",
+                ...categories
+            ].includes(current) ? current : "todos";
+        }
+
+        if (editor) {
+            const current = editor.value;
+            editor.innerHTML = [
+                '<option value="">Sem categoria</option>',
+                ...categories.map((category) =>
+                    `<option value="${escapeHtml(category)}">${escapeHtml(category)}</option>`
+                )
+            ].join("");
+
+            editor.value = categories.includes(current) ? current : "";
+        }
     }
 
     function refreshGroupControls() {
@@ -190,8 +294,11 @@
         return allTemplates()
             .filter((template) => {
                 const templateGroup = normalizeGroup(template.group);
+                const templateCategory = normalizeCategory(template.category);
                 const matchesCategory =
-                    category === "todos" || template.category === category;
+                    category === "todos"
+                    || (category === "sem-categoria" && !templateCategory)
+                    || templateCategory === category;
 
                 const matchesGroup =
                     group === "todos"
@@ -247,9 +354,9 @@
             ...items.map((template) => {
                 const group = normalizeGroup(template.group);
                 const suffix = [
-                    template.category,
+                    normalizeCategory(template.category) || "Sem categoria",
                     group || "Sem grupo"
-                ].filter(Boolean).join(" · ");
+                ].join(" · ");
 
                 return `
                     <option value="${escapeHtml(template.id)}">
@@ -263,6 +370,7 @@
     }
 
     function renderFiltersAndModels() {
+        refreshCategoryControls();
         refreshGroupControls();
         renderModelSelect();
     }
@@ -277,7 +385,9 @@
         variableValues = {};
 
         $("#documentTitle").value = template.title;
-        $("#documentEditorCategory").value = template.category;
+
+        refreshCategoryControls();
+        $("#documentEditorCategory").value = normalizeCategory(template.category);
 
         refreshGroupControls();
         $("#documentEditorGroup").value = normalizeGroup(template.group);
@@ -361,7 +471,11 @@
         variableValues = {};
 
         $("#documentTitle").value = "";
-        $("#documentEditorCategory").value = "Personalizados";
+
+        refreshCategoryControls();
+        $("#documentEditorCategory").value = allCategories().includes("Personalizados")
+            ? "Personalizados"
+            : NO_CATEGORY;
 
         refreshGroupControls();
         $("#documentEditorGroup").value = NO_GROUP;
@@ -380,12 +494,18 @@
     function saveModel() {
         const title = $("#documentTitle").value.trim();
         const content = $("#documentTemplate").value.trim();
-        const category = $("#documentEditorCategory").value;
+        const category = normalizeCategory(
+            $("#documentEditorCategory").value
+        );
         const group = normalizeGroup($("#documentEditorGroup").value);
 
         if (!title || !content) {
             setFeedback("Informe o título e o conteúdo do modelo.", "error");
             return;
+        }
+
+        if (category) {
+            saveCategories([...allCategories(), category]);
         }
 
         if (group) {
@@ -488,11 +608,12 @@
         return {
             app: "Utilitários Municipais",
             type: "document-templates",
-            schema_version: 1,
+            schema_version: 2,
             app_version: typeof APP_VERSION !== "undefined"
                 ? APP_VERSION
                 : null,
             exported_at: new Date().toISOString(),
+            categories: allCategories(),
             groups: allGroups(),
             templates: allTemplates().map((template) => ({
                 id: template.id,
@@ -551,21 +672,10 @@
             );
         }
 
-        const validCategories = [
-            "Despachos",
-            "Certidões",
-            "Ofícios",
-            "WhatsApp",
-            "Declarações",
-            "Personalizados"
-        ];
-
         return {
             id: String(raw.id || "").trim(),
             title,
-            category: validCategories.includes(raw.category)
-                ? raw.category
-                : "Personalizados",
+            category: normalizeCategory(raw.category),
             group: normalizeGroup(raw.group),
             content
         };
@@ -576,6 +686,7 @@
 
         if (Array.isArray(parsed)) {
             return {
+                categories: [],
                 groups: [],
                 templates: parsed
             };
@@ -598,6 +709,9 @@
         }
 
         return {
+            categories: Array.isArray(parsed.categories)
+                ? parsed.categories
+                : [],
             groups: Array.isArray(parsed.groups)
                 ? parsed.groups
                 : [],
@@ -667,6 +781,20 @@
                 exactFingerprints.add(fingerprint);
                 added += 1;
             });
+
+            const importedCategories = payload.categories
+                .map(normalizeCategory)
+                .filter(Boolean);
+
+            const templateCategories = additions
+                .map((template) => normalizeCategory(template.category))
+                .filter(Boolean);
+
+            saveCategories([
+                ...allCategories(),
+                ...importedCategories,
+                ...templateCategories
+            ]);
 
             const importedGroups = payload.groups
                 .map(normalizeGroup)
@@ -765,7 +893,7 @@
         variableValues = {};
 
         $("#documentTitle").value = "";
-        $("#documentEditorCategory").value = "Personalizados";
+        $("#documentEditorCategory").value = NO_CATEGORY;
         $("#documentEditorGroup").value = "";
         $("#documentTemplate").value = "";
         $("#documentPreview").value = "";
@@ -844,6 +972,223 @@
         setEditorVisible(false);
         renderModelSelect();
         setFeedback();
+    }
+
+    function renderCategoryList() {
+        const host = $("#documentCategoryList");
+        if (!host) return;
+
+        const categories = allCategories();
+
+        host.innerHTML = categories.length
+            ? categories.map((category) => {
+                const count = allTemplates().filter(
+                    (template) =>
+                        normalizeCategory(template.category) === category
+                ).length;
+
+                return `
+                    <div class="document-group-item" data-document-category="${escapeHtml(category)}">
+                        <div class="document-group-item-name">
+                            <strong>${escapeHtml(category)}</strong>
+                            <span>${count} ${count === 1 ? "modelo" : "modelos"}</span>
+                        </div>
+                        <div class="document-group-item-actions">
+                            <button
+                                class="text-button"
+                                type="button"
+                                data-category-action="rename"
+                                data-category-name="${escapeHtml(category)}"
+                            >Renomear</button>
+                            <button
+                                class="danger-button"
+                                type="button"
+                                data-category-action="delete"
+                                data-category-name="${escapeHtml(category)}"
+                            >Excluir</button>
+                        </div>
+                    </div>
+                `;
+            }).join("")
+            : `
+                <div class="document-group-empty">
+                    <strong>Nenhuma categoria cadastrada.</strong>
+                    <span>Crie a primeira categoria usando o campo acima.</span>
+                </div>
+            `;
+
+        host.querySelectorAll("[data-category-action]").forEach((button) => {
+            button.addEventListener("click", () => {
+                const category = button.dataset.categoryName;
+
+                if (button.dataset.categoryAction === "rename") {
+                    renameCategory(category);
+                } else {
+                    deleteCategory(category);
+                }
+            });
+        });
+    }
+
+    function openCategoryManager() {
+        const dialog = $("#documentCategoryDialog");
+        if (!dialog) return;
+
+        setCategoryFeedback();
+        renderCategoryList();
+
+        if (typeof dialog.showModal === "function") {
+            dialog.showModal();
+        } else {
+            dialog.setAttribute("open", "");
+        }
+
+        window.setTimeout(
+            () => $("#documentNewCategoryName")?.focus(),
+            0
+        );
+    }
+
+    function addCategory() {
+        const input = $("#documentNewCategoryName");
+        const name = normalizeCategory(input?.value);
+
+        if (!name) {
+            setCategoryFeedback(
+                "Informe um nome para a categoria.",
+                "error"
+            );
+            return;
+        }
+
+        const exists = allCategories().some(
+            (category) =>
+                category.toLocaleLowerCase("pt-BR")
+                === name.toLocaleLowerCase("pt-BR")
+        );
+
+        if (exists) {
+            setCategoryFeedback(
+                "Já existe uma categoria com esse nome.",
+                "error"
+            );
+            return;
+        }
+
+        saveCategories([...allCategories(), name]);
+        input.value = "";
+
+        refreshCategoryControls();
+        renderCategoryList();
+        renderModelSelect();
+        setCategoryFeedback("Categoria adicionada.", "success");
+    }
+
+    function renameCategory(oldName) {
+        const nextName = normalizeCategory(
+            window.prompt("Novo nome da categoria:", oldName)
+        );
+
+        if (!nextName || nextName === oldName) return;
+
+        const duplicate = allCategories().some(
+            (category) =>
+                category !== oldName
+                && category.toLocaleLowerCase("pt-BR")
+                    === nextName.toLocaleLowerCase("pt-BR")
+        );
+
+        if (duplicate) {
+            setCategoryFeedback(
+                "Já existe uma categoria com esse nome.",
+                "error"
+            );
+            return;
+        }
+
+        const templates = loadTemplates().map((template) => ({
+            ...template,
+            category:
+                normalizeCategory(template.category) === oldName
+                    ? nextName
+                    : normalizeCategory(template.category)
+        }));
+
+        const categories = allCategories()
+            .filter((category) => category !== oldName)
+            .concat(nextName);
+
+        saveTemplates(templates);
+        saveCategories(categories);
+
+        refreshCategoryControls();
+        renderCategoryList();
+        renderModelSelect();
+
+        if (selectedId) {
+            const selected = templates.find(
+                (template) => template.id === selectedId
+            );
+
+            if (selected) {
+                $("#documentEditorCategory").value =
+                    normalizeCategory(selected.category);
+            }
+        }
+
+        setCategoryFeedback("Categoria renomeada.", "success");
+    }
+
+    function deleteCategory(categoryName) {
+        const affected = loadTemplates().filter(
+            (template) =>
+                normalizeCategory(template.category) === categoryName
+        ).length;
+
+        const message = affected
+            ? `Excluir a categoria “${categoryName}”? ${affected} ${
+                affected === 1
+                    ? "modelo será movido"
+                    : "modelos serão movidos"
+            } para “Sem categoria”.`
+            : `Excluir a categoria “${categoryName}”?`;
+
+        if (!window.confirm(message)) return;
+
+        const templates = loadTemplates().map((template) => ({
+            ...template,
+            category:
+                normalizeCategory(template.category) === categoryName
+                    ? NO_CATEGORY
+                    : normalizeCategory(template.category)
+        }));
+
+        saveTemplates(templates);
+        saveCategories(
+            allCategories().filter(
+                (category) => category !== categoryName
+            )
+        );
+
+        refreshCategoryControls();
+        renderCategoryList();
+        renderModelSelect();
+
+        if (selectedId) {
+            const selected = templates.find(
+                (template) => template.id === selectedId
+            );
+
+            if (selected) {
+                $("#documentEditorCategory").value =
+                    normalizeCategory(selected.category);
+            }
+        }
+
+        setCategoryFeedback(
+            "Categoria excluída. Os modelos foram preservados.",
+            "success"
+        );
     }
 
     function renderGroupList() {
@@ -1032,7 +1377,11 @@
 
         if (selected) {
             $("#documentTitle").value = selected.title;
-            $("#documentEditorCategory").value = selected.category;
+
+            refreshCategoryControls();
+            $("#documentEditorCategory").value =
+                normalizeCategory(selected.category);
+
             $("#documentEditorGroup").value = normalizeGroup(selected.group);
             $("#documentTemplate").value = selected.content;
 
@@ -1081,6 +1430,21 @@
         $("#documentTitle").addEventListener("input", updateEditorHeading);
         $("#documentNewModel").addEventListener("click", newModel);
         $("#documentClearFilters").addEventListener("click", clearFilters);
+        $("#documentManageCategories").addEventListener(
+            "click",
+            openCategoryManager
+        );
+        $("#documentAddCategory").addEventListener("click", addCategory);
+        $("#documentNewCategoryName").addEventListener(
+            "keydown",
+            (event) => {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    addCategory();
+                }
+            }
+        );
+
         $("#documentManageGroups").addEventListener("click", openGroupManager);
         $("#documentAddGroup").addEventListener("click", addGroup);
         $("#documentNewGroupName").addEventListener("keydown", (event) => {
