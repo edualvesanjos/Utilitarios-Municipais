@@ -1,5 +1,16 @@
 # Changelog
 
+## 4.5.3.5
+
+### Correção mobile estrutural
+- Identificada a causa raiz no iOS/WebKit: o backdrop estava dentro da sidebar transformada, fazendo `position: fixed` ficar limitado ao containing block do menu.
+- `v45SidebarBackdrop` movido para fora de `<nav id="v45Sidebar">`, como elemento irmão da sidebar.
+- Removidos hacks CSS acumulados das correções 4.5.3.2–4.5.3.4 e aplicada regra móvel limpa.
+- Backdrop ocupa toda a viewport e fica entre conteúdo e sidebar.
+- Sidebar permanece opaca e interativa.
+- Comportamento desktop preservado.
+
+
 ## 4.5.3.4
 
 ### Correção mobile

@@ -192,9 +192,9 @@
                 </div>
             </div>
 
-            <div id="v45SidebarBackdrop" class="v45-sidebar-backdrop" hidden></div>
         </nav>
 
+        <div id="v45SidebarBackdrop" class="v45-sidebar-backdrop" hidden></div>
 
         <section id="inicio" class="tab-panel active v32-dashboard">
             <div class="v32-dashboard-grid">
@@ -1388,9 +1388,10 @@
                     <section class="settings-card">
                         <h3>Novidades da <span data-app-version></span></h3>
                         <ul class="about-list">
-                            <li><strong>Mobile:</strong> corrigido o backdrop da sidebar para cobrir e bloquear o conteúdo externo ao menu.</li>
-                            <li><strong>Sidebar:</strong> menu permanece opaco e acima da camada de escurecimento.</li>
-                            <li><strong>Desktop:</strong> comportamento já homologado permanece preservado.</li>
+                            <li><strong>Mobile:</strong> corrigida estruturalmente a camada de escurecimento da sidebar.</li>
+                            <li><strong>WebKit/iOS:</strong> o backdrop foi movido para fora do elemento transformado da sidebar.</li>
+                            <li><strong>Interação:</strong> o conteúdo externo passa a ser bloqueado e escurecido, enquanto o menu permanece totalmente interativo.</li>
+                            <li><strong>Desktop:</strong> comportamento já validado permanece inalterado.</li>
                         </ul>
                     </section>
                 </div>
