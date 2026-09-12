@@ -1,5 +1,17 @@
 # Changelog
 
+## 4.5.2 — Produção
+
+### Central de Documentos
+- Consolidação das etapas DEV 4.5.2.1 a 4.5.2.4.
+- Gerenciamento de modelos, categorias e grupos.
+- Duplicação, importação e exportação JSON.
+- Sincronização online de modelos, grupos e categorias entre navegadores/dispositivos.
+- Migração conservadora de dados locais e remotos.
+- `SYNC_SCHEMA_VERSION = 6`.
+- Sem novas tabelas, alteração de RLS ou Supabase Realtime.
+
+
 ## 4.5.2.4
 
 ### Central de Documentos

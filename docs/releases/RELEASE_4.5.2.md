@@ -1,22 +1,19 @@
-# Utilitários Municipais — v4.5.2 DEV
+# Utilitários Municipais — v4.5.2 PRODUÇÃO
 
-## Objetivo
+## Status
+Versão de produção consolidada após validação das etapas DEV 4.5.2.1 a 4.5.2.4.
 
-Abrir a próxima versão de desenvolvimento sobre a base estável v4.5.1.3 PRODUÇÃO.
+## Central de Documentos
+- gerenciamento de modelos, categorias e grupos;
+- duplicação de modelos;
+- importação e exportação JSON;
+- preservação dos modelos na exclusão de categorias/grupos;
+- sincronização online de modelos, grupos e categorias.
 
-## Escopo inicial
-
-A linha 4.5.2 será utilizada para a próxima etapa funcional da Central de Documentos.
-
-Esta abertura de versão altera somente os metadados e o ambiente de execução; nenhuma funcionalidade nova foi aplicada ainda.
-
-## Estado técnico
-
+## Configuração
 - `APP_VERSION = "4.5.2"`
-- `APP_ENVIRONMENT = "development"`
-- base: v4.5.1.3 PRODUÇÃO
-- sem mudanças no Supabase
-- sem mudanças de schema
-- sem mudanças de RLS
-- sem Supabase Realtime
-- sem alterações na arquitetura de sincronização
+- `APP_ENVIRONMENT = "production"`
+- `SYNC_SCHEMA_VERSION = 6`
+- sem novas tabelas Supabase;
+- sem alteração de RLS;
+- sem Supabase Realtime.
