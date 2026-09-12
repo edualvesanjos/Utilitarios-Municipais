@@ -1,5 +1,16 @@
 # Changelog
 
+## 4.5.3.7
+
+### Correção mobile consolidada
+- Removido o override da v4.5.3.6 que aplicava `display:flex`, `order` e larguras forçadas à estrutura interna da sidebar.
+- Restaurado o fluxo original dos elementos da navegação.
+- Pesquisa permanece no topo sem deslocar os menus.
+- Normalizado apenas o containing box, overflow e limites horizontais da navegação.
+- Preservada a correção estrutural do backdrop da v4.5.3.5.
+- Comportamento desktop preservado.
+
+
 ## 4.5.3.6
 
 ### Correção mobile
