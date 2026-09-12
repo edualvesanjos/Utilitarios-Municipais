@@ -1388,10 +1388,10 @@
                     <section class="settings-card">
                         <h3>Novidades da <span data-app-version></span></h3>
                         <ul class="about-list">
-                            <li><strong>Mobile:</strong> removida a regra regressiva da v4.5.3.6 que deslocava os menus para a direita.</li>
-                            <li><strong>Sidebar:</strong> restaurado o fluxo estrutural original dos menus, mantendo a pesquisa no topo.</li>
-                            <li><strong>iOS:</strong> preservada a correção estrutural do backdrop introduzida na v4.5.3.5.</li>
-                            <li><strong>Desktop:</strong> comportamento previamente validado permanece inalterado.</li>
+                            <li><strong>Mobile:</strong> sidebar refatorada para eliminar regras responsivas concorrentes acumuladas.</li>
+                            <li><strong>Layout:</strong> pesquisa, menus e rodapé passam a seguir uma única grade vertical no mobile.</li>
+                            <li><strong>iOS/Android:</strong> regras consolidadas para WebKit e Chromium, sem CSS separado por navegador.</li>
+                            <li><strong>Backdrop:</strong> preservada a camada externa corrigida na v4.5.3.5.</li>
                         </ul>
                     </section>
                 </div>
