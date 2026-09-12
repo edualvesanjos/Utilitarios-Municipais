@@ -1,5 +1,14 @@
 # Changelog
 
+## 4.5.3.4
+
+### Correção mobile
+- Backdrop da sidebar passa a ocupar toda a viewport em iOS/WebKit.
+- Conteúdo externo ao menu fica escurecido e bloqueado.
+- Sidebar permanece opaca e acima do backdrop.
+- Comportamento desktop homologado preservado.
+
+
 ## 4.5.3.3
 
 ### Correção mobile
