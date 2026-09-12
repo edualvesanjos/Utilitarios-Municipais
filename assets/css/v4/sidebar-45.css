@@ -979,71 +979,52 @@ body[data-theme="dark"] .v45-sidebar-collapse {
     }
 }
 
-/* v4.5.3.6 DEV — ajuste final do layout interno da sidebar móvel.
-   Pesquisa e navegação permanecem na mesma coluna e dentro da largura do menu. */
+/* v4.5.3.7 DEV — correção consolidada da sidebar móvel.
+   Mantém o fluxo estrutural original; não usa flex/order para reposicionar menus. */
 @media (max-width: 820px) {
     .v45-sidebar {
-        display: flex;
-        flex-direction: column;
         box-sizing: border-box;
         overflow: hidden;
-    }
-
-    .v45-sidebar-top,
-    .v45-sidebar-search,
-    .v45-sidebar-scroll,
-    .v45-sidebar-footer {
-        width: 100%;
-        min-width: 0;
-        max-width: 100%;
-        box-sizing: border-box;
     }
 
     .v45-sidebar-search {
-        flex: 0 0 auto;
-        order: 1;
-        padding-left: 0;
-        padding-right: 0;
+        box-sizing: border-box;
+        width: auto;
+        max-width: none;
     }
 
     .v45-sidebar-scroll {
-        display: block;
-        flex: 1 1 auto;
-        order: 2;
-        min-height: 0;
+        box-sizing: border-box;
+        width: auto;
+        max-width: none;
+        min-width: 0;
         overflow-y: auto;
         overflow-x: hidden;
-        width: 100%;
-        max-width: 100%;
+        -webkit-overflow-scrolling: touch;
     }
 
-    .v45-sidebar-scroll > *,
-    .v45-nav-section,
-    .v45-sidebar .tab-button,
-    .v45-sidebar .ux-nav-primary {
-        width: 100%;
+    .v45-sidebar-scroll .v45-nav-section,
+    .v45-sidebar-scroll .v45-nav-items,
+    .v45-sidebar-scroll .tab-button,
+    .v45-sidebar-scroll .ux-nav-primary {
+        box-sizing: border-box;
         max-width: 100%;
         min-width: 0;
-        box-sizing: border-box;
     }
 
-    .v45-sidebar .tab-button,
-    .v45-sidebar .ux-nav-primary {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+    .v45-sidebar-scroll .tab-button,
+    .v45-sidebar-scroll .ux-nav-primary {
+        margin-left: 0;
+        margin-right: 0;
     }
 
-    .v45-sidebar-footer {
-        flex: 0 0 auto;
-        order: 3;
+    .v45-sidebar-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 2050;
     }
 
-    .v45-sidebar .v32-top-search,
-    .v45-sidebar .v32-top-search input {
-        width: 100%;
-        max-width: 100%;
-        min-width: 0;
-        box-sizing: border-box;
+    .v45-sidebar {
+        z-index: 2100;
     }
 }
