@@ -1,5 +1,15 @@
 # Changelog
 
+## 4.5.3.3
+
+### Correção mobile
+- Corrigido empilhamento entre backdrop e sidebar em iOS/WebKit.
+- Definida ordem explícita: conteúdo < backdrop < sidebar.
+- Sidebar móvel permanece opaca e interativa acima da camada de escurecimento.
+- Reforçados pointer events e touch action dos controles do menu.
+- Comportamento desktop validado na v4.5.3.2 preservado.
+
+
 ## 4.5.3.2
 
 ### Correções

@@ -929,3 +929,53 @@ body[data-theme="dark"] .v45-sidebar-collapse {
         pointer-events: none;
     }
 }
+
+/* v4.5.3.3 DEV — correção definitiva de empilhamento da sidebar móvel. */
+@media (max-width: 820px) {
+    .v45-sidebar-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 1090;
+        background: rgba(15, 23, 42, 0.38);
+        opacity: 1;
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+    }
+
+    .v45-sidebar {
+        position: fixed;
+        z-index: 1100;
+        background: var(--ux-surface, #fff);
+        opacity: 1;
+        isolation: isolate;
+        pointer-events: auto;
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+    }
+
+    body.v45-sidebar-mobile-open .v45-sidebar {
+        z-index: 1100;
+        visibility: visible;
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    body.v45-sidebar-mobile-open .v45-sidebar-backdrop {
+        z-index: 1090;
+        pointer-events: auto;
+    }
+
+    .v45-sidebar-scroll,
+    .v45-sidebar-nav,
+    .v45-sidebar .tab-button,
+    .v45-sidebar .ux-nav-primary,
+    .v45-sidebar button,
+    .v45-sidebar a {
+        position: relative;
+        z-index: 1;
+        pointer-events: auto;
+        touch-action: manipulation;
+    }
+}
