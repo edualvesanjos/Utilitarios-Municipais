@@ -1,5 +1,17 @@
 # Changelog
 
+## 4.5.3.8
+
+### Refatoração da sidebar mobile
+- Removidas regras mobile antigas e concorrentes relacionadas à sidebar em breakpoints de até 820px.
+- Criado um único bloco responsivo responsável por pesquisa, navegação, rodapé, backdrop e botão mobile.
+- Sidebar usa uma grade vertical explícita: topo, pesquisa, navegação rolável e rodapé.
+- Eliminadas combinações conflitantes de `grid`, `block`, `flex`, `order` e larguras herdadas.
+- Backdrop permanece como elemento irmão da sidebar.
+- Compatibilidade direcionada a iOS/WebKit e Android/Chromium com o mesmo CSS.
+- Foram encontrados 7 blocos mobile antigos relacionados à sidebar antes da consolidação.
+
+
 ## 4.5.3.7
 
 ### Correção mobile consolidada
