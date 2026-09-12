@@ -1,5 +1,16 @@
 # Changelog
 
+## 4.5.3.1
+
+### Correção crítica
+- Corrigida regressão no ícone de logon/logoff.
+- Corrigido login que permanecia em `Entrando...` sem concluir a autenticação.
+- Removido trecho experimental inserido no início de `renderOnlineStatus()` que interferia no fluxo original de autenticação/conta.
+- Mantidas as melhorias seguras de mensagens de conflito e pendência.
+- Mantida a sincronização de modelos, grupos e categorias.
+- Sem Supabase Realtime.
+
+
 ## 4.5.3
 
 ### Sincronização e proteção de dados

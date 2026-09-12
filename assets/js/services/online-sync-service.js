@@ -1,4 +1,4 @@
-/* Versão 4.5.3 — robustez da sincronização e proteção de dados. */
+/* Versão 4.5.3.1 — correção da autenticação e controles de conta. */
 (function () {
     "use strict";
 
@@ -538,18 +538,6 @@
         syncTimer = setTimeout(() => synchronize({ silent: true }), 1800);
     }
 
-    function syncStateLabel(status) {
-        const labels = {
-            idle: "Sincronizado",
-            syncing: "Sincronizando",
-            pending: "Pendente",
-            offline: "Offline",
-            error: "Erro de sincronização",
-            conflict: "Conflito pendente"
-        };
-        return labels[status] || "Sincronização";
-    }
-
     function formatDate(value) {
         if (!value) return "Nunca";
         const date = new Date(value);
@@ -599,10 +587,6 @@
     }
 
     function renderOnlineStatus() {
-        const currentStatus = onlineState?.status || (hasPendingChanges() ? "pending" : "idle");
-        document.querySelectorAll("[data-online-state-text]").forEach((el) => {
-            el.textContent = syncStateLabel(currentStatus);
-        });
 
         const email = session?.user?.email || "";
         const displayName = getDisplayName();
