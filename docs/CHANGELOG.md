@@ -1,5 +1,16 @@
 # Changelog
 
+## 4.5.3
+
+### Sincronização e proteção de dados
+- Iniciada a etapa de robustez da sincronização.
+- Estados explícitos: sincronizado, sincronizando, pendente, offline, erro e conflito.
+- Mensagens de conflito reforçam que nenhuma versão é descartada automaticamente.
+- Mantida a sincronização de modelos, grupos e categorias da Central de Documentos.
+- `SYNC_SCHEMA_VERSION = 7`.
+- Sem novas tabelas, alteração de RLS ou Supabase Realtime.
+
+
 ## 4.5.2 — Produção
 
 ### Central de Documentos

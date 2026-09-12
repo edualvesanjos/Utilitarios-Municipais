@@ -1388,11 +1388,10 @@
                     <section class="settings-card">
                         <h3>Novidades da <span data-app-version></span></h3>
                         <ul class="about-list">
-                            <li><strong>Central de Documentos:</strong> gerenciamento consolidado de modelos, categorias e grupos.</li>
-                            <li><strong>Modelos:</strong> duplicação e importação/exportação em JSON.</li>
-                            <li><strong>Categorias e grupos:</strong> criação, renomeação e exclusão com preservação dos modelos vinculados.</li>
-                            <li><strong>Sincronização:</strong> modelos, grupos e categorias sincronizados entre navegadores/dispositivos pela infraestrutura online existente.</li>
-                            <li><strong>Compatibilidade:</strong> migração conservadora preserva dados locais e remotos anteriores.</li>
+                            <li><strong>Sincronização:</strong> estados mais explícitos para sincronizado, sincronizando, pendente, offline, erro e conflito.</li>
+                            <li><strong>Proteção de dados:</strong> conflitos deixam claro que nenhuma versão é descartada automaticamente.</li>
+                            <li><strong>Central de Documentos:</strong> preservada a sincronização validada de modelos, grupos e categorias.</li>
+                            <li><strong>Arquitetura:</strong> Supabase Realtime continua fora do escopo.</li>
                         </ul>
                     </section>
                 </div>
@@ -1402,13 +1401,24 @@
                     <div class="about-timeline" id="aboutVersionHistory">
                         <article class="about-version-item is-open">
                             <button class="about-version-toggle" type="button" aria-expanded="true">
+                                <span class="about-version-heading"><strong>4.5.3</strong><span>Robustez da sincronização e proteção dos dados</span></span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details"><div class="about-version-detail-grid">
+                                <section><h4>Implementações</h4><ul><li>Estados de sincronização mais explícitos.</li><li>Mensagens aprimoradas para pendência, offline e conflito.</li><li>Proteção visual contra resolução acidental de conflitos.</li></ul></section>
+                                <section><h4>Escopo</h4><ul><li>Mantida a sincronização da Central de Documentos.</li><li>Sem alteração de tabelas ou RLS.</li><li>Supabase Realtime permanece fora do escopo.</li></ul></section>
+                            </div></div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
                                 <span class="about-version-heading">
                                     <strong>4.5.2</strong>
                                     <span>Central de Documentos — versão de produção consolidada</span>
                                 </span>
                                 <span class="about-version-chevron" aria-hidden="true">⌄</span>
                             </button>
-                            <div class="about-version-details">
+                            <div class="about-version-details" hidden>
                                 <div class="about-version-detail-grid">
                                     <section><h4>Implementações</h4><ul>
                                         <li>Gerenciamento de modelos, categorias e grupos.</li>

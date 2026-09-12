@@ -1,4 +1,4 @@
-/* Versão 4.5.2.4 — sincronização de modelos, grupos e categorias da Central de Documentos. */
+/* Versão 4.5.3 — robustez da sincronização e proteção de dados. */
 (function () {
     "use strict";
 
@@ -34,7 +34,7 @@
     const DOCUMENTS_MIGRATION_KEY = `${APP_CONFIG.storagePrefix}online:documents426`;
     const DOCUMENTS_STRUCTURE_MIGRATION_KEY =
         `${APP_CONFIG.storagePrefix}online:documents4524`;
-    const SYNC_SCHEMA_VERSION = 6;
+    const SYNC_SCHEMA_VERSION = 7;
     const CONFLICT_TOLERANCE_MS = 2500;
 
     let client = null;
@@ -382,7 +382,7 @@
         }
         if (!navigator.onLine) {
             setPending(true);
-            setOnlineState({ status: "offline", message: "Sincronização pendente" });
+            setOnlineState({ status: "offline", message: "Alterações pendentes. A sincronização será retomada quando houver conexão." });
             if (!silent) notify("Sem conexão. As alterações permanecem salvas localmente.", "warning");
             return false;
         }
@@ -469,7 +469,7 @@
             }
             if (!force && detectConflict(rows)) {
                 setConflict(true, { rows });
-                setOnlineState({ status: "conflict", message: "Alterações locais e online foram encontradas." });
+                setOnlineState({ status: "conflict", message: "Conflito pendente: existem alterações locais e online posteriores à última sincronização." });
                 await writeSyncLog("conflict", rows.length, { direction: "compare" });
                 if (!silent) notify("Conflito detectado. Escolha quais dados devem prevalecer.", "warning");
                 openConflictModal();
@@ -538,6 +538,18 @@
         syncTimer = setTimeout(() => synchronize({ silent: true }), 1800);
     }
 
+    function syncStateLabel(status) {
+        const labels = {
+            idle: "Sincronizado",
+            syncing: "Sincronizando",
+            pending: "Pendente",
+            offline: "Offline",
+            error: "Erro de sincronização",
+            conflict: "Conflito pendente"
+        };
+        return labels[status] || "Sincronização";
+    }
+
     function formatDate(value) {
         if (!value) return "Nunca";
         const date = new Date(value);
@@ -587,6 +599,11 @@
     }
 
     function renderOnlineStatus() {
+        const currentStatus = onlineState?.status || (hasPendingChanges() ? "pending" : "idle");
+        document.querySelectorAll("[data-online-state-text]").forEach((el) => {
+            el.textContent = syncStateLabel(currentStatus);
+        });
+
         const email = session?.user?.email || "";
         const displayName = getDisplayName();
         const lastSync = safeGet(LAST_SYNC_KEY, "");
@@ -686,6 +703,7 @@
                 <h2 id="onlineConflictTitle">Conflito de dados</h2>
                 <p>Foram encontradas alterações neste navegador e também no Supabase após a última sincronização.</p>
                 <p class="help-text">Nenhum dado será substituído até você escolher uma opção.</p>
+                <p class="mini-description">Nenhum lado será descartado automaticamente. Escolha qual versão deve prevalecer.</p>
                 <div class="online-conflict-options">
                     <button id="onlineKeepLocal" class="primary" type="button"><strong>Manter dados locais</strong><span>Envia este navegador para o Supabase.</span></button>
                     <button id="onlineUseRemote" class="secondary" type="button"><strong>Usar dados online</strong><span>Substitui as preferências locais pelas armazenadas no Supabase.</span></button>
