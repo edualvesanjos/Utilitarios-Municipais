@@ -1,5 +1,14 @@
 # Changelog
 
+## 4.5.3.2
+
+### Correções
+- Montador: copiar repetidamente o mesmo nome sem alteração não cria novo registro no histórico nem nova fila no Histórico Global.
+- Sidebar mobile: corrigida transparência/desfoque e interação dos itens em iOS/WebKit.
+- Ajustados plano de fundo, stacking context, pointer events, touch action e altura dinâmica da sidebar móvel.
+- Mantida a correção de autenticação da v4.5.3.1.
+
+
 ## 4.5.3.1
 
 ### Correção crítica

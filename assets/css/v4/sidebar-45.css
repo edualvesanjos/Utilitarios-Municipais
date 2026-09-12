@@ -887,3 +887,45 @@ body[data-theme="dark"] .v45-sidebar-collapse {
         min-height: 30px;
     }
 }
+
+/* v4.5.3.2 DEV — correção da sidebar móvel em iOS/WebKit. */
+@media (max-width: 820px) {
+    .v45-sidebar {
+        height: 100vh;
+        height: 100dvh;
+        max-height: 100dvh;
+        background: var(--ux-surface, #fff);
+        opacity: 1;
+        isolation: isolate;
+        pointer-events: auto;
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+        overflow: hidden;
+    }
+
+    body.v45-sidebar-mobile-open .v45-sidebar {
+        visibility: visible;
+        pointer-events: auto;
+    }
+
+    .v45-sidebar-scroll,
+    .v45-sidebar .tab-button,
+    .v45-sidebar .ux-nav-primary {
+        pointer-events: auto;
+        touch-action: manipulation;
+    }
+
+    .v45-sidebar-scroll {
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .v45-sidebar-backdrop {
+        pointer-events: auto;
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+    }
+
+    .v45-sidebar-backdrop[hidden] {
+        pointer-events: none;
+    }
+}
