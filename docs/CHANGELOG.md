@@ -1,5 +1,17 @@
 # Changelog
 
+## 4.5.3.6
+
+### Correção mobile
+- Ajustado o layout interno da sidebar para uma única coluna no mobile.
+- Campo `Pesquisar ferramenta` permanece no topo do menu.
+- Área de navegação permanece abaixo da pesquisa e dentro da largura da sidebar.
+- Corrigido overflow horizontal dos itens de menu.
+- Somente a área central da navegação possui rolagem vertical quando necessária.
+- Correção estrutural do backdrop da v4.5.3.5 preservada.
+- Comportamento desktop preservado.
+
+
 ## 4.5.3.5
 
 ### Correção mobile estrutural
