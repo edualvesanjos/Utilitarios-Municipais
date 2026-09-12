@@ -1,5 +1,74 @@
 # Changelog
 
+## 4.5.2 — Produção
+
+### Central de Documentos
+- Consolidação das etapas DEV 4.5.2.1 a 4.5.2.4.
+- Gerenciamento de modelos, categorias e grupos.
+- Duplicação, importação e exportação JSON.
+- Sincronização online de modelos, grupos e categorias entre navegadores/dispositivos.
+- Migração conservadora de dados locais e remotos.
+- `SYNC_SCHEMA_VERSION = 6`.
+- Sem novas tabelas, alteração de RLS ou Supabase Realtime.
+
+
+## 4.5.2.4
+
+### Central de Documentos
+- `documents` passa a sincronizar `documentTemplates`, `documentGroups` e `documentCategories`.
+- Alterações em modelos, grupos e categorias disparam diretamente o fluxo automático por `um:documents-changed`.
+- Registros remotos legados são migrados de forma conservadora: grupos e categorias ausentes são adicionados sem substituir templates já existentes no Supabase.
+- Adicionada migração local `online:documents4524` para incorporar dados já criados nas versões 4.5.2.1–4.5.2.3.
+- `refreshDocumentCentral` passa a ser utilizado após aplicação dos dados remotos.
+- `SYNC_SCHEMA_VERSION` atualizado para 6.
+- Sem novas tabelas, sem alteração de RLS e sem Supabase Realtime.
+
+
+## 4.5.2.3
+
+### Central de Documentos
+- Preparada a persistência/sincronização de modelos, grupos e categorias usando a infraestrutura existente.
+- Adicionado `refreshDocumentCentral` para atualização da interface após hidratação.
+- Alterações locais em modelos, grupos e categorias emitem `um:documents-changed`.
+- A estrutura atual de sincronização foi preservada; a Central recebeu pontos de integração sem nova arquitetura.
+- Sem novo schema, alteração de RLS ou Supabase Realtime.
+
+
+## 4.5.2.2
+
+### Central de Documentos
+- Adicionado gerenciamento de categorias: criar, renomear e excluir.
+- Categorias passam a ser persistidas em `utilitariosMunicipais:documentCategories`.
+- Filtro e editor de categoria passam a ser preenchidos dinamicamente.
+- Ao excluir uma categoria, os modelos são preservados e movidos para `Sem categoria`.
+- Exportação JSON atualizada para incluir `categories` e `schema_version: 2`.
+- Importação JSON permanece compatível com pacotes anteriores sem `categories`.
+- Categorias presentes nos modelos importados são incorporadas automaticamente.
+- Sem alterações de schema, RLS, Realtime ou arquitetura de sincronização online.
+
+
+## 4.5.2.1
+
+### Central de Documentos
+- Adicionada ação `Duplicar modelo`, criando uma cópia independente e editável.
+- Adicionada exportação de todos os modelos e grupos para JSON.
+- Adicionada importação de modelos e grupos por JSON.
+- Modelos exatamente iguais aos já existentes são ignorados na importação.
+- Colisões de IDs são resolvidas por novos identificadores locais.
+- Categorias inválidas importadas são normalizadas para `Personalizados`.
+- Grupos importados são mesclados aos grupos locais sem excluir dados existentes.
+- Sem alterações de schema, RLS, Realtime ou arquitetura de sincronização.
+
+
+## 4.5.2
+
+### Desenvolvimento
+- Iniciada a versão 4.5.2 DEV a partir da v4.5.1.3 PRODUÇÃO.
+- Preparada a base para a próxima etapa funcional da Central de Documentos.
+- Mantido `APP_ENVIRONMENT = "development"`.
+- Sem mudanças de schema, RLS, Realtime ou arquitetura de sincronização nesta abertura de versão.
+
+
 ## 4.5.1.3
 
 ### Interface

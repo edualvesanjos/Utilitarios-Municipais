@@ -1132,9 +1132,26 @@
                             <h3>Modelos de documento</h3>
                             <p class="mini-description">Filtre e selecione o modelo que será carregado no documento.</p>
                         </div>
-                        <button id="documentManageGroups" class="secondary-button document-manage-groups" type="button">
-                            Gerenciar grupos
-                        </button>
+                        <div class="document-model-actions">
+                            <button id="documentManageCategories" class="secondary-button document-manage-groups" type="button">
+                                Gerenciar categorias
+                            </button>
+                            <button id="documentManageGroups" class="secondary-button document-manage-groups" type="button">
+                                Gerenciar grupos
+                            </button>
+                            <button id="documentExportModels" class="text-button" type="button">
+                                Exportar modelos
+                            </button>
+                            <button id="documentImportModels" class="text-button" type="button">
+                                Importar modelos
+                            </button>
+                            <input
+                                id="documentImportModelsInput"
+                                type="file"
+                                accept=".json,application/json"
+                                hidden
+                            >
+                        </div>
                     </div>
 
                     <div class="document-filter-toolbar">
@@ -1257,6 +1274,7 @@
                             </div>
 
                             <div class="documents-secondary-actions">
+                                <button id="documentDuplicate" class="text-button" type="button">Duplicar modelo</button>
                                 <button id="documentExportTxt" class="text-button" type="button">Exportar TXT</button>
                                 <button id="documentDelete" class="danger-button" type="button">Excluir modelo</button>
                             </div>
@@ -1265,6 +1283,31 @@
                         <p id="documentFeedback" class="feedback-message" aria-live="polite"></p>
                     </div>
                 </main>
+
+                <dialog id="documentCategoryDialog" class="document-group-dialog">
+                    <form method="dialog" class="document-group-dialog-card">
+                        <div class="document-group-dialog-heading">
+                            <div>
+                                <span class="eyebrow">Organização</span>
+                                <h3>Gerenciar categorias</h3>
+                                <p class="mini-description">Crie, renomeie ou exclua categorias usadas para classificar os modelos.</p>
+                            </div>
+                            <button class="text-button document-group-dialog-close" value="cancel" aria-label="Fechar">✕</button>
+                        </div>
+
+                        <div class="document-group-create-row">
+                            <label>
+                                <span>Nova categoria</span>
+                                <input id="documentNewCategoryName" maxlength="60" placeholder="Ex.: Licenciamento, Fiscalização, Atendimento">
+                            </label>
+                            <button id="documentAddCategory" class="primary-button" type="button">Adicionar</button>
+                        </div>
+
+                        <div id="documentCategoryList" class="document-group-list"></div>
+
+                        <p id="documentCategoryFeedback" class="feedback-message" aria-live="polite"></p>
+                    </form>
+                </dialog>
 
                 <dialog id="documentGroupDialog" class="document-group-dialog">
                     <form method="dialog" class="document-group-dialog-card">
@@ -1345,9 +1388,11 @@
                     <section class="settings-card">
                         <h3>Novidades da <span data-app-version></span></h3>
                         <ul class="about-list">
-                            <li><strong>Interface:</strong> consolidado o alinhamento vertical do painel principal com a sidebar.</li>
-                            <li><strong>Layout:</strong> o painel central passa a usar <code>margin-top: 0px</code>, valor validado visualmente.</li>
-                            <li><strong>Estabilidade:</strong> revisão de regressão sem alterações na arquitetura de sincronização.</li>
+                            <li><strong>Central de Documentos:</strong> gerenciamento consolidado de modelos, categorias e grupos.</li>
+                            <li><strong>Modelos:</strong> duplicação e importação/exportação em JSON.</li>
+                            <li><strong>Categorias e grupos:</strong> criação, renomeação e exclusão com preservação dos modelos vinculados.</li>
+                            <li><strong>Sincronização:</strong> modelos, grupos e categorias sincronizados entre navegadores/dispositivos pela infraestrutura online existente.</li>
+                            <li><strong>Compatibilidade:</strong> migração conservadora preserva dados locais e remotos anteriores.</li>
                         </ul>
                     </section>
                 </div>
@@ -1358,12 +1403,184 @@
                         <article class="about-version-item is-open">
                             <button class="about-version-toggle" type="button" aria-expanded="true">
                                 <span class="about-version-heading">
+                                    <strong>4.5.2</strong>
+                                    <span>Central de Documentos — versão de produção consolidada</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details">
+                                <div class="about-version-detail-grid">
+                                    <section><h4>Implementações</h4><ul>
+                                        <li>Gerenciamento de modelos, categorias e grupos.</li>
+                                        <li>Duplicação, importação e exportação de modelos.</li>
+                                        <li>Sincronização online de modelos, grupos e categorias.</li>
+                                    </ul></section>
+                                    <section><h4>Consolidação</h4><ul>
+                                        <li>Incorpora as etapas DEV 4.5.2.1 a 4.5.2.4 validadas.</li>
+                                        <li>Migração conservadora preserva dados existentes.</li>
+                                        <li>Supabase Realtime permanece fora do escopo.</li>
+                                    </ul></section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.5.2.4</strong>
+                                    <span>Sincronização efetiva da Central de Documentos</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Implementações</h4>
+                                        <ul>
+                                            <li>Modelos, grupos e categorias passam a ser sincronizados no grupo documents.</li>
+                                            <li>Alterações da Central acionam diretamente a sincronização automática.</li>
+                                            <li>Refresh centralizado após aplicação dos dados online.</li>
+                                        </ul>
+                                    </section>
+                                    <section>
+                                        <h4>Compatibilidade</h4>
+                                        <ul>
+                                            <li>Registros remotos antigos recebem as novas chaves sem sobrescrever templates remotos existentes.</li>
+                                            <li>Nova migração local prepara dados criados nas versões 4.5.2.1–4.5.2.3.</li>
+                                            <li>Sem novo schema de banco, sem alteração de RLS e sem Realtime.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.5.2.3</strong>
+                                    <span>Persistência e sincronização da Central de Documentos</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Implementações</h4>
+                                        <ul>
+                                            <li>Preparação de modelos, grupos e categorias para o fluxo de sincronização existente.</li>
+                                            <li>Ponto único de atualização da Central após hidratação.</li>
+                                            <li>Eventos internos para alterações dos dados da Central.</li>
+                                        </ul>
+                                    </section>
+                                    <section>
+                                        <h4>Aspectos técnicos</h4>
+                                        <ul>
+                                            <li>Compatibilidade com os dados locais das versões anteriores.</li>
+                                            <li>Sem novo schema ou alteração de RLS.</li>
+                                            <li>Realtime permanece fora do escopo.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.5.2.2</strong>
+                                    <span>Gerenciamento de categorias na Central de Documentos</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Implementações</h4>
+                                        <ul>
+                                            <li>Criação, renomeação e exclusão de categorias personalizadas.</li>
+                                            <li>Filtros e editor passam a carregar categorias dinamicamente.</li>
+                                            <li>Exportação e importação JSON incluem as categorias.</li>
+                                        </ul>
+                                    </section>
+                                    <section>
+                                        <h4>Correções e segurança</h4>
+                                        <ul>
+                                            <li>Excluir categoria não exclui modelos; eles passam para “Sem categoria”.</li>
+                                            <li>Compatibilidade mantida com modelos e grupos existentes.</li>
+                                            <li>Sem mudanças de schema, RLS, Realtime ou sincronização online.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.5.2.1</strong>
+                                    <span>Gerenciamento e portabilidade dos modelos de documentos</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Implementações</h4>
+                                        <ul>
+                                            <li>Duplicação de modelos com criação de cópia independente e editável.</li>
+                                            <li>Exportação de modelos e grupos em arquivo JSON.</li>
+                                            <li>Importação de pacotes JSON com validação de conteúdo.</li>
+                                        </ul>
+                                    </section>
+                                    <section>
+                                        <h4>Aspectos técnicos</h4>
+                                        <ul>
+                                            <li>Importações idênticas são ignoradas para evitar duplicação exata.</li>
+                                            <li>Colisões de identificadores são resolvidas com novos IDs locais.</li>
+                                            <li>Sem alterações de schema, RLS, Realtime ou sincronização.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.5.2</strong>
+                                    <span>Início da próxima etapa da Central de Documentos</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Implementações</h4>
+                                        <ul>
+                                            <li>Iniciada a versão 4.5.2 DEV sobre a base estável 4.5.1.3.</li>
+                                            <li>Estrutura preparada para a próxima evolução funcional da Central de Documentos.</li>
+                                        </ul>
+                                    </section>
+                                    <section>
+                                        <h4>Aspectos técnicos</h4>
+                                        <ul>
+                                            <li>Ambiente alterado para desenvolvimento.</li>
+                                            <li>Sem mudanças de schema, RLS, Realtime ou sincronização nesta abertura de versão.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
                                     <strong>4.5.1.3</strong>
                                     <span>Consolidação visual e alinhamento do painel principal</span>
                                 </span>
                                 <span class="about-version-chevron" aria-hidden="true">⌄</span>
                             </button>
-                            <div class="about-version-details">
+                            <div class="about-version-details" hidden>
                                 <div class="about-version-detail-grid">
                                     <section>
                                         <h4>Correções</h4>

@@ -1,4 +1,4 @@
-/* Versão 4.3.1 — conta no cabeçalho e estado técnico de sincronização no rodapé. */
+/* Versão 4.5.2.4 — sincronização de modelos, grupos e categorias da Central de Documentos. */
 (function () {
     "use strict";
 
@@ -14,7 +14,11 @@
             `${APP_CONFIG.storagePrefix}lastToolTab`,
             `${APP_CONFIG.storagePrefix}recentTools`
         ]),
-        documents: Object.freeze([`${APP_CONFIG.storagePrefix}documentTemplates`])
+        documents: Object.freeze([
+            `${APP_CONFIG.storagePrefix}documentTemplates`,
+            `${APP_CONFIG.storagePrefix}documentGroups`,
+            `${APP_CONFIG.storagePrefix}documentCategories`
+        ])
     });
 
     const STATE_KEY = `${APP_CONFIG.storagePrefix}online:state`;
@@ -28,7 +32,9 @@
     const CONFLICT_KEY = `${APP_CONFIG.storagePrefix}online:conflict`;
     const MIGRATION_KEY = `${APP_CONFIG.storagePrefix}online:conflictFix423`;
     const DOCUMENTS_MIGRATION_KEY = `${APP_CONFIG.storagePrefix}online:documents426`;
-    const SYNC_SCHEMA_VERSION = 5;
+    const DOCUMENTS_STRUCTURE_MIGRATION_KEY =
+        `${APP_CONFIG.storagePrefix}online:documents4524`;
+    const SYNC_SCHEMA_VERSION = 6;
     const CONFLICT_TOLERANCE_MS = 2500;
 
     let client = null;
@@ -173,18 +179,96 @@
         }
     }
 
-    async function uploadMissingDocumentGroup(rows) {
-        if (!session?.user || rows.some((row) => row.data_type === "documents")) return rows;
+    function documentCollectionCount(keyName, content = collectGroup(SYNC_GROUPS.documents)) {
+        const key = `${APP_CONFIG.storagePrefix}${keyName}`;
+        const raw = content?.[key];
+
+        if (raw == null) return 0;
+
+        try {
+            const parsed = typeof raw === "string"
+                ? JSON.parse(raw)
+                : raw;
+
+            return Array.isArray(parsed) ? parsed.length : 0;
+        } catch {
+            return 0;
+        }
+    }
+
+    function hasLocalDocumentStructure() {
         const content = collectGroup(SYNC_GROUPS.documents);
-        if (!documentTemplatesCount(content)) return rows;
+
+        return documentTemplatesCount(content) > 0
+            || documentCollectionCount("documentGroups", content) > 0
+            || documentCollectionCount("documentCategories", content) > 0;
+    }
+
+    async function ensureDocumentGroupStructure(rows) {
+        if (!session?.user) return rows;
+
+        const documentRow = rows.find(
+            (row) => row.data_type === "documents"
+        );
+        const localContent = collectGroup(SYNC_GROUPS.documents);
+
+        if (!documentRow) {
+            if (!hasLocalDocumentStructure()) return rows;
+
+            const { error } = await client.from("user_data").upsert({
+                user_id: session.user.id,
+                data_type: "documents",
+                content: localContent,
+                version: SYNC_SCHEMA_VERSION
+            }, { onConflict: "user_id,data_type" });
+
+            if (error) throw error;
+
+            await writeSyncLog("success", 1, {
+                direction: "upload",
+                groups: ["documents"],
+                migration: "4.5.2.4-create"
+            });
+
+            return fetchRemoteRows();
+        }
+
+        const remoteContent = documentRow.content || {};
+        const groupKey = `${APP_CONFIG.storagePrefix}documentGroups`;
+        const categoryKey = `${APP_CONFIG.storagePrefix}documentCategories`;
+
+        const missingKeys = [groupKey, categoryKey].filter(
+            (key) =>
+                !Object.prototype.hasOwnProperty.call(remoteContent, key)
+                && Object.prototype.hasOwnProperty.call(localContent, key)
+        );
+
+        if (!missingKeys.length) return rows;
+
+        const mergedContent = { ...remoteContent };
+
+        missingKeys.forEach((key) => {
+            mergedContent[key] = localContent[key];
+        });
+
         const { error } = await client.from("user_data").upsert({
             user_id: session.user.id,
             data_type: "documents",
-            content,
+            content: mergedContent,
             version: SYNC_SCHEMA_VERSION
         }, { onConflict: "user_id,data_type" });
+
         if (error) throw error;
-        await writeSyncLog("success", 1, { direction: "upload", groups: ["documents"], migration: "4.2.6" });
+
+        await writeSyncLog("success", 1, {
+            direction: "upload",
+            groups: ["documents"],
+            migration: "4.5.2.4-structure",
+            added_keys: missingKeys.map(
+                (key) => key.replace(APP_CONFIG.storagePrefix, "")
+            )
+        });
+
         return fetchRemoteRows();
     }
 
@@ -227,7 +311,7 @@
             "renderDashboardFavorites",
             "refreshUsageViews",
             "updateDashboardLastToolHighlight",
-            "refreshDocumentTemplates"
+            "refreshDocumentCentral"
         ];
         refreshers.forEach((name) => {
             if (typeof window[name] === "function") {
@@ -378,7 +462,7 @@
         setOnlineState({ status: "syncing", direction: "download" });
         try {
             let rows = await fetchRemoteRows();
-            rows = await uploadMissingDocumentGroup(rows);
+            rows = await ensureDocumentGroupStructure(rows);
             if (!rows.length) {
                 syncInProgress = false;
                 return pushLocalData({ silent, force: true });
@@ -419,7 +503,7 @@
 
         try {
             let rows = await fetchRemoteRows();
-            rows = await uploadMissingDocumentGroup(rows);
+            rows = await ensureDocumentGroupStructure(rows);
             if (rows.length && snapshotsEqual(rows)) {
                 const remoteAt = latestRemoteTimestamp(rows);
                 const syncedAt = remoteAt ? new Date(remoteAt).toISOString() : nowIso();
@@ -642,7 +726,7 @@
                 <button class="online-modal-close" type="button" aria-label="Fechar">×</button>
                 <span class="eyebrow">Supabase</span>
                 <h2 id="onlineAuthTitle">Acesso online</h2>
-                <p class="help-text">Entre para sincronizar preferências, personalização, favoritos, continuidade do Dashboard e seus modelos personalizados da Central de Documentos.</p>
+                <p class="help-text">Entre para sincronizar preferências, personalização, favoritos, continuidade do Dashboard e seus modelos, grupos e categorias da Central de Documentos.</p>
                 <label>E-mail<input id="onlineEmail" type="email" autocomplete="email" required></label>
                 <label>Senha<input id="onlinePassword" type="password" autocomplete="current-password" minlength="6" required></label>
                 <div class="actions"><button id="onlineSignIn" class="primary" type="button">Entrar</button><button id="onlineSignUp" class="secondary" type="button">Criar conta</button></div>
@@ -693,7 +777,7 @@
         panel.className = "settings-card online-settings-card";
         panel.innerHTML = `
             <div class="section-heading">
-                <div><span class="eyebrow">Versão 4.3.1</span><h3>Conta e gerenciamento da sincronização</h3><p class="help-text">O armazenamento local continua ativo. A sincronização online mantém preferências, favoritos e modelos personalizados da Central de Documentos disponíveis em outros computadores.</p></div>
+                <div><span class="eyebrow">Versão 4.3.1</span><h3>Conta e gerenciamento da sincronização</h3><p class="help-text">O armazenamento local continua ativo. A sincronização online mantém preferências, favoritos e modelos, grupos e categorias da Central de Documentos disponíveis em outros computadores.</p></div>
                 <span id="onlineStatusBadge" class="online-status-badge">Local</span>
             </div>
             <p id="onlineStatusDetail" class="online-status-detail">Dados armazenados neste navegador.</p>
@@ -711,7 +795,7 @@
                 <button id="onlineSignOut" class="danger-outline" type="button" data-online-authenticated hidden>Sair</button>
             </div>
             <label class="checkbox-row"><input id="onlineAutoSync" type="checkbox">Sincronizar automaticamente quando houver alterações</label>
-            <p class="help-text">Sincronizados: preferências, nome de exibição, aparência, favoritos, última ferramenta, continuidade do Dashboard e modelos personalizados da Central de Documentos. Históricos dos módulos, estatísticas e valores da UVRM permanecem somente neste navegador.</p>`;
+            <p class="help-text">Sincronizados: preferências, nome de exibição, aparência, favoritos, última ferramenta, continuidade do Dashboard e modelos, grupos e categorias da Central de Documentos. Históricos dos módulos, estatísticas e valores da UVRM permanecem somente neste navegador.</p>`;
         root.prepend(panel);
         panel.querySelector("#onlineOpenAuth").addEventListener("click", openAuthModal);
         panel.querySelector("#onlineSyncNow").addEventListener("click", () => synchronize());
@@ -756,6 +840,15 @@
             if (documentTemplatesCount() > 0) setPending(true, true);
             safeSet(DOCUMENTS_MIGRATION_KEY, "true");
         }
+
+        if (safeGet(DOCUMENTS_STRUCTURE_MIGRATION_KEY, "false") !== "true") {
+            if (hasLocalDocumentStructure()) {
+                setPending(true, true);
+            }
+
+            safeSet(DOCUMENTS_STRUCTURE_MIGRATION_KEY, "true");
+        }
+
         renderOnlineStatus();
 
         client.auth.onAuthStateChange(async (event, nextSession) => {
@@ -787,6 +880,12 @@
             resetWatchedSnapshot();
             scheduleAutoSync(true);
         });
+
+        window.addEventListener("um:documents-changed", () => {
+            resetWatchedSnapshot();
+            scheduleAutoSync(true);
+        });
+
         startSelectiveLocalWatch();
         window.addEventListener("online", () => {
             renderOnlineStatus();
