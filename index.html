@@ -192,9 +192,9 @@
                 </div>
             </div>
 
-            <div id="v45SidebarBackdrop" class="v45-sidebar-backdrop" hidden></div>
         </nav>
 
+        <div id="v45SidebarBackdrop" class="v45-sidebar-backdrop" hidden></div>
 
         <section id="inicio" class="tab-panel active v32-dashboard">
             <div class="v32-dashboard-grid">
@@ -1388,11 +1388,10 @@
                     <section class="settings-card">
                         <h3>Novidades da <span data-app-version></span></h3>
                         <ul class="about-list">
-                            <li><strong>Central de Documentos:</strong> gerenciamento consolidado de modelos, categorias e grupos.</li>
-                            <li><strong>Modelos:</strong> duplicação e importação/exportação em JSON.</li>
-                            <li><strong>Categorias e grupos:</strong> criação, renomeação e exclusão com preservação dos modelos vinculados.</li>
-                            <li><strong>Sincronização:</strong> modelos, grupos e categorias sincronizados entre navegadores/dispositivos pela infraestrutura online existente.</li>
-                            <li><strong>Compatibilidade:</strong> migração conservadora preserva dados locais e remotos anteriores.</li>
+                            <li><strong>Mobile:</strong> sidebar refatorada para eliminar regras responsivas concorrentes acumuladas.</li>
+                            <li><strong>Layout:</strong> pesquisa, menus e rodapé passam a seguir uma única grade vertical no mobile.</li>
+                            <li><strong>iOS/Android:</strong> regras consolidadas para WebKit e Chromium, sem CSS separado por navegador.</li>
+                            <li><strong>Backdrop:</strong> preservada a camada externa corrigida na v4.5.3.5.</li>
                         </ul>
                     </section>
                 </div>
@@ -1403,12 +1402,53 @@
                         <article class="about-version-item is-open">
                             <button class="about-version-toggle" type="button" aria-expanded="true">
                                 <span class="about-version-heading">
+                                    <strong>4.5.3.1</strong>
+                                    <span>Correção de autenticação e controles da conta</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details">
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Correções</h4>
+                                        <ul>
+                                            <li>Restaurado o funcionamento do ícone de logon/logoff.</li>
+                                            <li>Corrigido login que permanecia indefinidamente em “Entrando...”.</li>
+                                            <li>Restaurado o fluxo original de atualização do estado da conta.</li>
+                                        </ul>
+                                    </section>
+                                    <section>
+                                        <h4>Preservado</h4>
+                                        <ul>
+                                            <li>Sincronização da Central de Documentos.</li>
+                                            <li>Mensagens aprimoradas de conflito e pendência.</li>
+                                            <li>Supabase Realtime continua fora do escopo.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading"><strong>4.5.3</strong><span>Robustez da sincronização e proteção dos dados</span></span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden><div class="about-version-detail-grid">
+                                <section><h4>Implementações</h4><ul><li>Estados de sincronização mais explícitos.</li><li>Mensagens aprimoradas para pendência, offline e conflito.</li><li>Proteção visual contra resolução acidental de conflitos.</li></ul></section>
+                                <section><h4>Escopo</h4><ul><li>Mantida a sincronização da Central de Documentos.</li><li>Sem alteração de tabelas ou RLS.</li><li>Supabase Realtime permanece fora do escopo.</li></ul></section>
+                            </div></div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
                                     <strong>4.5.2</strong>
                                     <span>Central de Documentos — versão de produção consolidada</span>
                                 </span>
                                 <span class="about-version-chevron" aria-hidden="true">⌄</span>
                             </button>
-                            <div class="about-version-details">
+                            <div class="about-version-details" hidden>
                                 <div class="about-version-detail-grid">
                                     <section><h4>Implementações</h4><ul>
                                         <li>Gerenciamento de modelos, categorias e grupos.</li>

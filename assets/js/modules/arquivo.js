@@ -202,7 +202,12 @@ function addFileHistory(item) {
     const value = String(item || "").trim();
     if (!value) return;
 
-    const history = getFileHistory()
+    const currentHistory = getFileHistory();
+    if (fileHistoryValue(currentHistory[0]) === value) {
+        return;
+    }
+
+    const history = currentHistory
         .filter((entry) => fileHistoryValue(entry) !== value)
         .slice(0, 14);
 

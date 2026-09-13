@@ -1,5 +1,101 @@
 # Changelog
 
+## 4.5.3.8
+
+### Refatoração da sidebar mobile
+- Removidas regras mobile antigas e concorrentes relacionadas à sidebar em breakpoints de até 820px.
+- Criado um único bloco responsivo responsável por pesquisa, navegação, rodapé, backdrop e botão mobile.
+- Sidebar usa uma grade vertical explícita: topo, pesquisa, navegação rolável e rodapé.
+- Eliminadas combinações conflitantes de `grid`, `block`, `flex`, `order` e larguras herdadas.
+- Backdrop permanece como elemento irmão da sidebar.
+- Compatibilidade direcionada a iOS/WebKit e Android/Chromium com o mesmo CSS.
+- Foram encontrados 7 blocos mobile antigos relacionados à sidebar antes da consolidação.
+
+
+## 4.5.3.7
+
+### Correção mobile consolidada
+- Removido o override da v4.5.3.6 que aplicava `display:flex`, `order` e larguras forçadas à estrutura interna da sidebar.
+- Restaurado o fluxo original dos elementos da navegação.
+- Pesquisa permanece no topo sem deslocar os menus.
+- Normalizado apenas o containing box, overflow e limites horizontais da navegação.
+- Preservada a correção estrutural do backdrop da v4.5.3.5.
+- Comportamento desktop preservado.
+
+
+## 4.5.3.6
+
+### Correção mobile
+- Ajustado o layout interno da sidebar para uma única coluna no mobile.
+- Campo `Pesquisar ferramenta` permanece no topo do menu.
+- Área de navegação permanece abaixo da pesquisa e dentro da largura da sidebar.
+- Corrigido overflow horizontal dos itens de menu.
+- Somente a área central da navegação possui rolagem vertical quando necessária.
+- Correção estrutural do backdrop da v4.5.3.5 preservada.
+- Comportamento desktop preservado.
+
+
+## 4.5.3.5
+
+### Correção mobile estrutural
+- Identificada a causa raiz no iOS/WebKit: o backdrop estava dentro da sidebar transformada, fazendo `position: fixed` ficar limitado ao containing block do menu.
+- `v45SidebarBackdrop` movido para fora de `<nav id="v45Sidebar">`, como elemento irmão da sidebar.
+- Removidos hacks CSS acumulados das correções 4.5.3.2–4.5.3.4 e aplicada regra móvel limpa.
+- Backdrop ocupa toda a viewport e fica entre conteúdo e sidebar.
+- Sidebar permanece opaca e interativa.
+- Comportamento desktop preservado.
+
+
+## 4.5.3.4
+
+### Correção mobile
+- Backdrop da sidebar passa a ocupar toda a viewport em iOS/WebKit.
+- Conteúdo externo ao menu fica escurecido e bloqueado.
+- Sidebar permanece opaca e acima do backdrop.
+- Comportamento desktop homologado preservado.
+
+
+## 4.5.3.3
+
+### Correção mobile
+- Corrigido empilhamento entre backdrop e sidebar em iOS/WebKit.
+- Definida ordem explícita: conteúdo < backdrop < sidebar.
+- Sidebar móvel permanece opaca e interativa acima da camada de escurecimento.
+- Reforçados pointer events e touch action dos controles do menu.
+- Comportamento desktop validado na v4.5.3.2 preservado.
+
+
+## 4.5.3.2
+
+### Correções
+- Montador: copiar repetidamente o mesmo nome sem alteração não cria novo registro no histórico nem nova fila no Histórico Global.
+- Sidebar mobile: corrigida transparência/desfoque e interação dos itens em iOS/WebKit.
+- Ajustados plano de fundo, stacking context, pointer events, touch action e altura dinâmica da sidebar móvel.
+- Mantida a correção de autenticação da v4.5.3.1.
+
+
+## 4.5.3.1
+
+### Correção crítica
+- Corrigida regressão no ícone de logon/logoff.
+- Corrigido login que permanecia em `Entrando...` sem concluir a autenticação.
+- Removido trecho experimental inserido no início de `renderOnlineStatus()` que interferia no fluxo original de autenticação/conta.
+- Mantidas as melhorias seguras de mensagens de conflito e pendência.
+- Mantida a sincronização de modelos, grupos e categorias.
+- Sem Supabase Realtime.
+
+
+## 4.5.3
+
+### Sincronização e proteção de dados
+- Iniciada a etapa de robustez da sincronização.
+- Estados explícitos: sincronizado, sincronizando, pendente, offline, erro e conflito.
+- Mensagens de conflito reforçam que nenhuma versão é descartada automaticamente.
+- Mantida a sincronização de modelos, grupos e categorias da Central de Documentos.
+- `SYNC_SCHEMA_VERSION = 7`.
+- Sem novas tabelas, alteração de RLS ou Supabase Realtime.
+
+
 ## 4.5.2 — Produção
 
 ### Central de Documentos
