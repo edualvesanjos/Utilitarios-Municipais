@@ -55,10 +55,10 @@ Copie `.env.example` para `.env` e informe a mesma Anon Key usada no laboratóri
 - `Última atualização remota` continua baseada no timestamp retornado pelo backend.
 
 
-### v4.6.0 DEV — Etapa 3 (correção 3)
+### v4.6.0 DEV — Etapa 3 (correção 4)
 
-- Corrige o formulário de login após tentativa com usuário ou senha incorretos.
-- Erros retornados ou lançados pelo SuperDB passam a ser tratados sem travar o formulário.
-- Os campos e botões são sempre reabilitados após a tentativa.
-- A senha incorreta é limpa e o usuário pode informar outra conta imediatamente.
-- Ao reabrir o modal, feedback e estado residual da tentativa anterior são limpos.
+- Parte da Correção 2, descartando a regressão introduzida pela Correção 3.
+- Corrige a retentativa de login após e-mail ou senha inválidos.
+- Cada tentativa obtém novamente o cliente ativo pelo `BackendClientService`.
+- A rotina não chama mais `client.auth` a partir de uma referência potencialmente nula.
+- Em erro de credenciais, somente a senha é limpa; o formulário permanece utilizável.

@@ -802,80 +802,67 @@
         const emailInput = modal.querySelector("#onlineEmail");
         const passwordInput = modal.querySelector("#onlinePassword");
         const signInButton = modal.querySelector("#onlineSignIn");
-        const signUpButton = modal.querySelector("#onlineSignUp");
         const credentials = () => ({
             email: emailInput.value.trim(),
             password: passwordInput.value
         });
 
-        const setAuthBusy = (busy) => {
-            signInButton.disabled = busy;
-            signUpButton.disabled = busy;
-            emailInput.disabled = busy;
-            passwordInput.disabled = busy;
-        };
-
-        const resetAuthAttempt = () => {
+        const clearLoginFeedback = () => {
             feedback.textContent = "";
-            feedback.classList.remove("error", "success");
         };
 
-        emailInput.addEventListener("input", resetAuthAttempt);
-        passwordInput.addEventListener("input", resetAuthAttempt);
+        emailInput.addEventListener("input", clearLoginFeedback);
+        passwordInput.addEventListener("input", clearLoginFeedback);
 
         signInButton.addEventListener("click", async () => {
             const { email, password } = credentials();
 
             if (!email || !password) {
                 feedback.textContent = "Informe o e-mail e a senha.";
-                feedback.classList.add("error");
                 return;
             }
 
-            setAuthBusy(true);
-            feedback.classList.remove("error", "success");
+            signInButton.disabled = true;
             feedback.textContent = "Entrando...";
 
             try {
-                const result = await client.auth.signInWithPassword({ email, password });
-                const data = result?.data;
-                const error = result?.error;
+                // Não reutiliza uma referência de cliente potencialmente nula.
+                // Cada tentativa obtém o cliente ativo diretamente do adapter.
+                const activeClient = window.BackendClientService?.getClient?.();
+                if (!activeClient?.auth?.signInWithPassword) {
+                    throw new Error("Cliente de autenticação indisponível. Recarregue a aplicação e tente novamente.");
+                }
+
+                const { data, error } = await activeClient.auth.signInWithPassword({ email, password });
 
                 if (error) {
                     feedback.textContent = error.message || "E-mail ou senha inválidos.";
-                    feedback.classList.add("error");
                     passwordInput.value = "";
+                    passwordInput.focus();
                     return;
                 }
 
                 if (!data?.session?.user) {
                     feedback.textContent = "Não foi possível iniciar a sessão. Tente novamente.";
-                    feedback.classList.add("error");
                     passwordInput.value = "";
+                    passwordInput.focus();
                     return;
                 }
 
+                // Reassocia explicitamente o cliente válido ao serviço após o login.
+                client = activeClient;
                 session = data.session;
                 feedback.textContent = "Login realizado.";
-                feedback.classList.add("success");
                 renderOnlineStatus();
                 await ensureProfile(session.user);
-                setTimeout(close, 350);
+                setTimeout(close, 500);
             } catch (error) {
                 feedback.textContent = error?.message || "Falha ao realizar o login. Tente novamente.";
-                feedback.classList.add("error");
                 passwordInput.value = "";
-                window.Logger?.warn("Falha de autenticação no SuperDB.", error);
+                passwordInput.focus();
+                window.Logger?.warn?.("Falha ao realizar login.", error);
             } finally {
-                setAuthBusy(false);
-                if (!session?.user) {
-                    emailInput.disabled = false;
-                    passwordInput.disabled = false;
-                    signInButton.disabled = false;
-                    signUpButton.disabled = false;
-                    emailInput.focus();
-                    emailInput.select();
-                }
+                signInButton.disabled = false;
             }
         });
         modal.querySelector("#onlineSignUp").addEventListener("click", async () => {
@@ -906,27 +893,8 @@
         createAuthModal();
         const modal = document.getElementById("onlineAuthModal");
         if (!modal) return;
-
-        const feedback = modal.querySelector("#onlineAuthFeedback");
-        const emailInput = modal.querySelector("#onlineEmail");
-        const passwordInput = modal.querySelector("#onlinePassword");
-        const signInButton = modal.querySelector("#onlineSignIn");
-        const signUpButton = modal.querySelector("#onlineSignUp");
-
-        if (feedback) {
-            feedback.textContent = "";
-            feedback.classList.remove("error", "success");
-        }
-        if (passwordInput) {
-            passwordInput.value = "";
-            passwordInput.disabled = false;
-        }
-        if (emailInput) emailInput.disabled = false;
-        if (signInButton) signInButton.disabled = false;
-        if (signUpButton) signUpButton.disabled = false;
-
         modal.hidden = false;
-        emailInput?.focus();
+        document.getElementById("onlineEmail")?.focus();
     }
 
     function addSettingsPanel() {
