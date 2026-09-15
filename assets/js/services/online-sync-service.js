@@ -799,17 +799,83 @@
         modal.querySelector(".online-modal-close").addEventListener("click", close);
         modal.addEventListener("click", (event) => { if (event.target === modal) close(); });
         const feedback = modal.querySelector("#onlineAuthFeedback");
-        const credentials = () => ({ email: modal.querySelector("#onlineEmail").value.trim(), password: modal.querySelector("#onlinePassword").value });
-        modal.querySelector("#onlineSignIn").addEventListener("click", async () => {
+        const emailInput = modal.querySelector("#onlineEmail");
+        const passwordInput = modal.querySelector("#onlinePassword");
+        const signInButton = modal.querySelector("#onlineSignIn");
+        const signUpButton = modal.querySelector("#onlineSignUp");
+        const credentials = () => ({
+            email: emailInput.value.trim(),
+            password: passwordInput.value
+        });
+
+        const setAuthBusy = (busy) => {
+            signInButton.disabled = busy;
+            signUpButton.disabled = busy;
+            emailInput.disabled = busy;
+            passwordInput.disabled = busy;
+        };
+
+        const resetAuthAttempt = () => {
+            feedback.textContent = "";
+            feedback.classList.remove("error", "success");
+        };
+
+        emailInput.addEventListener("input", resetAuthAttempt);
+        passwordInput.addEventListener("input", resetAuthAttempt);
+
+        signInButton.addEventListener("click", async () => {
             const { email, password } = credentials();
+
+            if (!email || !password) {
+                feedback.textContent = "Informe o e-mail e a senha.";
+                feedback.classList.add("error");
+                return;
+            }
+
+            setAuthBusy(true);
+            feedback.classList.remove("error", "success");
             feedback.textContent = "Entrando...";
-            const { data, error } = await client.auth.signInWithPassword({ email, password });
-            feedback.textContent = error ? error.message : "Login realizado.";
-            if (!error) {
-                session = data?.session || session;
+
+            try {
+                const result = await client.auth.signInWithPassword({ email, password });
+                const data = result?.data;
+                const error = result?.error;
+
+                if (error) {
+                    feedback.textContent = error.message || "E-mail ou senha inválidos.";
+                    feedback.classList.add("error");
+                    passwordInput.value = "";
+                    return;
+                }
+
+                if (!data?.session?.user) {
+                    feedback.textContent = "Não foi possível iniciar a sessão. Tente novamente.";
+                    feedback.classList.add("error");
+                    passwordInput.value = "";
+                    return;
+                }
+
+                session = data.session;
+                feedback.textContent = "Login realizado.";
+                feedback.classList.add("success");
                 renderOnlineStatus();
-                if (session?.user) await ensureProfile(session.user);
-                setTimeout(close, 500);
+                await ensureProfile(session.user);
+                setTimeout(close, 350);
+            } catch (error) {
+                feedback.textContent = error?.message || "Falha ao realizar o login. Tente novamente.";
+                feedback.classList.add("error");
+                passwordInput.value = "";
+                window.Logger?.warn("Falha de autenticação no SuperDB.", error);
+            } finally {
+                setAuthBusy(false);
+                if (!session?.user) {
+                    emailInput.disabled = false;
+                    passwordInput.disabled = false;
+                    signInButton.disabled = false;
+                    signUpButton.disabled = false;
+                    emailInput.focus();
+                    emailInput.select();
+                }
             }
         });
         modal.querySelector("#onlineSignUp").addEventListener("click", async () => {
@@ -840,8 +906,27 @@
         createAuthModal();
         const modal = document.getElementById("onlineAuthModal");
         if (!modal) return;
+
+        const feedback = modal.querySelector("#onlineAuthFeedback");
+        const emailInput = modal.querySelector("#onlineEmail");
+        const passwordInput = modal.querySelector("#onlinePassword");
+        const signInButton = modal.querySelector("#onlineSignIn");
+        const signUpButton = modal.querySelector("#onlineSignUp");
+
+        if (feedback) {
+            feedback.textContent = "";
+            feedback.classList.remove("error", "success");
+        }
+        if (passwordInput) {
+            passwordInput.value = "";
+            passwordInput.disabled = false;
+        }
+        if (emailInput) emailInput.disabled = false;
+        if (signInButton) signInButton.disabled = false;
+        if (signUpButton) signUpButton.disabled = false;
+
         modal.hidden = false;
-        document.getElementById("onlineEmail")?.focus();
+        emailInput?.focus();
     }
 
     function addSettingsPanel() {

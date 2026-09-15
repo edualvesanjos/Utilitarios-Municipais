@@ -53,3 +53,12 @@ Copie `.env.example` para `.env` e informe a mesma Anon Key usada no laboratóri
 - `documents` também passa a enviar `updated_at`.
 - `Última sincronização` passa a registrar o instante real em que o upload foi concluído com sucesso.
 - `Última atualização remota` continua baseada no timestamp retornado pelo backend.
+
+
+### v4.6.0 DEV — Etapa 3 (correção 3)
+
+- Corrige o formulário de login após tentativa com usuário ou senha incorretos.
+- Erros retornados ou lançados pelo SuperDB passam a ser tratados sem travar o formulário.
+- Os campos e botões são sempre reabilitados após a tentativa.
+- A senha incorreta é limpa e o usuário pode informar outra conta imediatamente.
+- Ao reabrir o modal, feedback e estado residual da tentativa anterior são limpos.
