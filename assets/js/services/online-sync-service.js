@@ -215,14 +215,12 @@
         if (!documentRow) {
             if (!hasLocalDocumentStructure()) return rows;
 
-            const { error } = await client.from("user_data").upsert({
+            await saveUserDataRows([{
                 user_id: session.user.id,
                 data_type: "documents",
                 content: localContent,
                 version: SYNC_SCHEMA_VERSION
-            }, { onConflict: "user_id,data_type" });
-
-            if (error) throw error;
+            }]);
 
             await writeSyncLog("success", 1, {
                 direction: "upload",
@@ -251,14 +249,12 @@
             mergedContent[key] = localContent[key];
         });
 
-        const { error } = await client.from("user_data").upsert({
+        await saveUserDataRows([{
             user_id: session.user.id,
             data_type: "documents",
             content: mergedContent,
             version: SYNC_SCHEMA_VERSION
-        }, { onConflict: "user_id,data_type" });
-
-        if (error) throw error;
+        }]);
 
         await writeSyncLog("success", 1, {
             direction: "upload",
@@ -344,8 +340,56 @@
         if (error) throw error;
     }
 
+    async function superdbRestUpsertUserData(rows) {
+        const tokenResult = await client.auth.getDataPlaneToken();
+        if (tokenResult?.error) throw tokenResult.error;
+        const token = typeof tokenResult === "string" ? tokenResult
+            : tokenResult?.data?.token ?? tokenResult?.data?.data_plane_token
+                ?? tokenResult?.token ?? tokenResult?.data_plane_token ?? null;
+        if (!token) throw new Error("Não foi possível obter o data_plane_token do SuperDB.");
+
+        const cfg = window.SuperDBClientService?.getConfiguration?.() || {};
+        if (!cfg.project || !cfg.key) throw new Error("Configuração SuperDB incompleta para REST upsert.");
+
+        const response = await fetch("https://api.superdb.com.br/user_data?on_conflict=user_id,data_type", {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                apikey: cfg.key,
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "Accept-Profile": `proj_${cfg.project}`,
+                "Content-Profile": `proj_${cfg.project}`,
+                Prefer: "resolution=merge-duplicates,return=representation"
+            },
+            body: JSON.stringify(rows)
+        });
+        const raw = await response.text();
+        let body = raw;
+        try { body = raw ? JSON.parse(raw) : []; } catch {}
+        if (!response.ok) {
+            const error = new Error(`SuperDB REST ${response.status}: ${response.statusText}`);
+            error.status = response.status;
+            error.details = body;
+            throw error;
+        }
+        return Array.isArray(body) ? body : (body ? [body] : []);
+    }
+
+    async function saveUserDataRows(rows) {
+        if (window.BackendClientService?.getActiveProvider?.() === "superdb") {
+            return superdbRestUpsertUserData(rows);
+        }
+        const { data, error } = await client.from("user_data")
+            .upsert(rows, { onConflict: "user_id,data_type" })
+            .select("data_type,content,updated_at,version");
+        if (error) throw error;
+        return data || [];
+    }
+
     async function writeSyncLog(status, syncedItems, details = {}) {
         if (!session?.user) return;
+        if (window.BACKEND_MIGRATION?.stage === "user-data") return;
         try {
             await client.from("sync_log").insert({
                 user_id: session.user.id,
@@ -410,11 +454,7 @@
                 content: item.content,
                 version: SYNC_SCHEMA_VERSION
             }));
-            const { data: savedRows, error } = await client
-                .from("user_data")
-                .upsert(rows, { onConflict: "user_id,data_type" })
-                .select("data_type,content,updated_at,version");
-            if (error) throw error;
+            const savedRows = await saveUserDataRows(rows);
 
             const remoteAt = latestRemoteTimestamp(savedRows || []);
             const syncedAt = remoteAt ? new Date(remoteAt).toISOString() : nowIso();
@@ -432,7 +472,7 @@
             setPending(true);
             setOnlineState({ status: "error", message: error.message });
             await writeSyncLog("error", 0, { direction: "upload", error: error.message });
-            window.ErrorHandler?.report(error, "Envio ao Supabase", { silent: true });
+            window.ErrorHandler?.report(error, "Envio ao backend", { silent: true });
             if (!silent) notify(`Falha ao sincronizar: ${error.message}`, "error");
             return false;
         } finally {
@@ -460,7 +500,7 @@
     }
 
     async function pullRemoteData({ silent = false, force = false } = {}) {
-        if (window.BACKEND_MIGRATION?.stage === "auth-profile") {
+        if (window.BACKEND_MIGRATION?.stage === "auth-profile-disabled") {
             notify("Etapa 2: somente autenticação, sessão e profile estão habilitados no SuperDB.");
             return { skipped: true, stage: "auth-profile" };
         }
@@ -492,7 +532,7 @@
         } catch (error) {
             setOnlineState({ status: "error", message: error.message });
             await writeSyncLog("error", 0, { direction: "download", error: error.message });
-            window.ErrorHandler?.report(error, "Download do Supabase", { silent: true });
+            window.ErrorHandler?.report(error, "Download do backend", { silent: true });
             if (!silent) notify(`Falha ao baixar dados: ${error.message}`, "error");
             return false;
         } finally {
@@ -502,7 +542,7 @@
     }
 
     async function synchronize({ silent = false } = {}) {
-        if (window.BACKEND_MIGRATION?.stage === "auth-profile") {
+        if (window.BACKEND_MIGRATION?.stage === "auth-profile-disabled") {
             if (!silent) notify("Etapa 2: somente autenticação, sessão e profile estão habilitados no SuperDB.");
             return { skipped: true, stage: "auth-profile" };
         }
@@ -884,7 +924,7 @@
 
         renderOnlineStatus();
 
-        const authProfileStage = window.BACKEND_MIGRATION?.stage === "auth-profile";
+        const authProfileStage = window.BACKEND_MIGRATION?.stage === "auth-profile-disabled";
         if (typeof client.auth.onAuthStateChange === "function") {
             client.auth.onAuthStateChange(async (event, nextSession) => {
                 session = nextSession;

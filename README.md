@@ -30,3 +30,10 @@ Copie `.env.example` para `.env` e informe a mesma Anon Key usada no laboratóri
 - Corrige a persistência de **Como gostaria de ser chamado?** em `profiles.display_name`.
 - O evento `um:display-name-changed` agora chama `ensureProfile()` diretamente quando existe sessão autenticada.
 - A sincronização geral de `user_data`, `sync_log` e `history_entries` permanece fora do escopo desta etapa.
+
+
+## v4.6.0 DEV — Etapa 3
+- `user_data` ativo no SuperDB.
+- SELECT pelo SDK; upsert via REST homologado.
+- `sync_log` ainda não é gravado.
+- `history_entries` permanece para etapa posterior.

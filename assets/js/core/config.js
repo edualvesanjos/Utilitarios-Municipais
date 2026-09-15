@@ -63,7 +63,7 @@ window.getSupabaseEnvironmentConfig = getSupabaseEnvironmentConfig;
 const BACKEND_MIGRATION = Object.freeze({
     activeProvider: "superdb",
     targetProvider: "superdb",
-    stage: "auth-profile",
+    stage: "user-data",
     superdb: Object.freeze({
         authUrl: "https://auth.superdb.com.br",
         project: "utilitariosmunicipais_teste",
