@@ -622,6 +622,32 @@
         if (button) button.setAttribute("aria-expanded", "false");
     }
 
+    async function signOutAndRefreshUi() {
+        const authClient = client || window.BackendClientService?.getClient?.() || null;
+        if (!authClient?.auth?.signOut) {
+            notify("Não foi possível encerrar a sessão: cliente de autenticação indisponível.");
+            return;
+        }
+
+        try {
+            const result = await authClient.auth.signOut();
+            if (result?.error) throw result.error;
+
+            // Não depende exclusivamente de onAuthStateChange: o SDK pode
+            // concluir o signOut sem emitir o evento imediatamente.
+            session = null;
+            resetWatchedSnapshot();
+            setConflict(false);
+            setOnlineState({ status: "local" });
+            renderOnlineStatus();
+            closeHeaderAccountMenu();
+            notify("Sessão encerrada. O armazenamento local permanece disponível.");
+        } catch (error) {
+            window.ErrorHandler?.report?.(error, "Logout do backend", { silent: true });
+            notify(error?.message || "Não foi possível encerrar a sessão.");
+        }
+    }
+
     function setupHeaderAccountControls() {
         const button = document.getElementById("headerAccountButton");
         const menu = document.getElementById("headerAccountMenu");
@@ -637,7 +663,7 @@
         document.addEventListener("keydown", (event) => { if (event.key === "Escape") closeHeaderAccountMenu(); });
         document.getElementById("headerSignIn")?.addEventListener("click", () => { closeHeaderAccountMenu(); openAuthModal(); });
         document.getElementById("headerSyncNow")?.addEventListener("click", () => { closeHeaderAccountMenu(); synchronize(); });
-        document.getElementById("headerSignOut")?.addEventListener("click", () => { closeHeaderAccountMenu(); client?.auth.signOut(); });
+        document.getElementById("headerSignOut")?.addEventListener("click", () => { closeHeaderAccountMenu(); signOutAndRefreshUi(); });
         document.getElementById("headerAccountSettings")?.addEventListener("click", () => {
             closeHeaderAccountMenu();
             document.querySelector('.ux-main-navigation [data-tab="configuracoes"]')?.click();
@@ -917,7 +943,7 @@
         panel.querySelector("#onlineSyncNow").addEventListener("click", () => synchronize());
         panel.querySelector("#onlineRestore").addEventListener("click", () => pullRemoteData());
         panel.querySelector("#onlineResolveConflict").addEventListener("click", openConflictModal);
-        panel.querySelector("#onlineSignOut").addEventListener("click", () => client?.auth.signOut());
+        panel.querySelector("#onlineSignOut").addEventListener("click", () => signOutAndRefreshUi());
         const auto = panel.querySelector("#onlineAutoSync");
         auto.checked = isAutoSyncEnabled();
         auto.addEventListener("change", () => {
@@ -981,9 +1007,11 @@
                     }
                 }
                 if (event === "SIGNED_OUT") {
+                    session = null;
+                    resetWatchedSnapshot();
                     setConflict(false);
                     setOnlineState({ status: "local" });
-                    notify("Sessão encerrada. O armazenamento local permanece disponível.");
+                    renderOnlineStatus();
                 }
             });
         }

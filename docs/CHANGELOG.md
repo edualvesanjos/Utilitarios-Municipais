@@ -1,3 +1,10 @@
+## 4.6.0.6 DEV — Etapa 3
+
+- Corrige o logout no SuperDB DEV: após `signOut()` bem-sucedido, a sessão local é zerada e a interface é renderizada imediatamente, sem exigir F5.
+- Centraliza o logout de cabeçalho e Configurações em `signOutAndRefreshUi()`.
+- Mantém os dados locais disponíveis após sair da conta.
+- Preserva os diagnósticos de retentativa de login e as correções de `user_data` da Etapa 3.
+
 # Changelog
 
 ## 4.6.0 DEV — Etapa 1

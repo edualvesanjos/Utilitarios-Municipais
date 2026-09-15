@@ -59,3 +59,10 @@ Copie `.env.example` para `.env` e informe a mesma Anon Key usada no laboratóri
 - Parte da Correção 2; Correções 3 e 4 descartadas.
 - Preserva a instância do cliente após erro 401 e adiciona diagnóstico DEV do ciclo de autenticação.
 - Permite nova tentativa sem reload após credenciais inválidas.
+
+
+## v4.6.0.6 DEV — Etapa 3
+
+- Corrige atualização imediata da UI após logout no SuperDB.
+- Mantém armazenamento local após encerramento da sessão.
+- Mantém a migração DEV via Backend Adapter; produção/main continua fora desta etapa.

@@ -1380,7 +1380,7 @@
                             <div><dt>Aplicativo</dt><dd data-app-name>Utilitários Municipais</dd></div>
                             <div><dt>Versão</dt><dd data-app-version></dd></div>
                             <div><dt>Arquitetura</dt><dd>Modular — Série 4</dd></div>
-                            <div><dt>Armazenamento</dt><dd>Local + Supabase</dd></div>
+                            <div><dt>Armazenamento</dt><dd>Local + Backend Adapter</dd></div>
                             <div><dt>Ambiente BD</dt><dd id="aboutDatabaseEnvironment">—</dd></div>
                         </dl>
                     </section>
@@ -1388,10 +1388,10 @@
                     <section class="settings-card">
                         <h3>Novidades da <span data-app-version></span></h3>
                         <ul class="about-list">
-                            <li><strong>Mobile:</strong> sidebar refatorada para eliminar regras responsivas concorrentes acumuladas.</li>
-                            <li><strong>Layout:</strong> pesquisa, menus e rodapé passam a seguir uma única grade vertical no mobile.</li>
-                            <li><strong>iOS/Android:</strong> regras consolidadas para WebKit e Chromium, sem CSS separado por navegador.</li>
-                            <li><strong>Backdrop:</strong> preservada a camada externa corrigida na v4.5.3.5.</li>
+                            <li><strong>SuperDB DEV:</strong> autenticação, sessão, profiles e user_data em validação pelo Backend Adapter.</li>
+                            <li><strong>Login:</strong> retentativa após credenciais inválidas preserva o cliente autenticador.</li>
+                            <li><strong>Logout:</strong> a interface passa a refletir imediatamente a sessão encerrada, sem exigir F5.</li>
+                            <li><strong>Sincronização:</strong> REST upsert de user_data mantém conteúdo e updated_at no SuperDB.</li>
                         </ul>
                     </section>
                 </div>
@@ -1399,6 +1399,27 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline" id="aboutVersionHistory">
+                        <article class="about-version-item is-open">
+                            <button class="about-version-toggle" type="button" aria-expanded="true">
+                                <span class="about-version-heading">
+                                    <strong>4.6.0.6 DEV</strong>
+                                    <span>Etapa 3 — migração SuperDB e correção do logout</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details">
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Alterações</h4>
+                                        <ul>
+                                            <li>Atualização imediata da interface após encerrar a sessão.</li>
+                                            <li>Preservação dos dados locais durante o logout.</li>
+                                            <li>Continuidade da validação de user_data no SuperDB DEV.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
                         <article class="about-version-item is-open">
                             <button class="about-version-toggle" type="button" aria-expanded="true">
                                 <span class="about-version-heading">
