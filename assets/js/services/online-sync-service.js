@@ -802,67 +802,55 @@
         const emailInput = modal.querySelector("#onlineEmail");
         const passwordInput = modal.querySelector("#onlinePassword");
         const signInButton = modal.querySelector("#onlineSignIn");
-        const credentials = () => ({
-            email: emailInput.value.trim(),
-            password: passwordInput.value
-        });
+        const credentials = () => ({ email: emailInput.value.trim(), password: passwordInput.value });
 
-        const clearLoginFeedback = () => {
-            feedback.textContent = "";
+        const logAuthDiagnostic = (stage, extra = {}) => {
+            if (window.APP_ENVIRONMENT !== "development") return;
+            const adapterClient = window.BackendClientService?.getClient?.() || null;
+            window.Logger?.info?.(`[Auth DEV] ${stage}`, {
+                service_client: Boolean(client), adapter_client: Boolean(adapterClient),
+                service_auth: Boolean(client?.auth), adapter_auth: Boolean(adapterClient?.auth), ...extra
+            });
         };
 
-        emailInput.addEventListener("input", clearLoginFeedback);
-        passwordInput.addEventListener("input", clearLoginFeedback);
+        emailInput.addEventListener("input", () => { if (feedback.textContent !== "Entrando...") feedback.textContent = ""; });
+        passwordInput.addEventListener("input", () => { if (feedback.textContent !== "Entrando...") feedback.textContent = ""; });
 
         signInButton.addEventListener("click", async () => {
             const { email, password } = credentials();
-
-            if (!email || !password) {
-                feedback.textContent = "Informe o e-mail e a senha.";
-                return;
-            }
-
+            if (!email || !password) { feedback.textContent = "Informe o e-mail e a senha."; return; }
             signInButton.disabled = true;
             feedback.textContent = "Entrando...";
-
+            logAuthDiagnostic("antes da tentativa");
             try {
-                // Não reutiliza uma referência de cliente potencialmente nula.
-                // Cada tentativa obtém o cliente ativo diretamente do adapter.
-                const activeClient = window.BackendClientService?.getClient?.();
-                if (!activeClient?.auth?.signInWithPassword) {
-                    throw new Error("Cliente de autenticação indisponível. Recarregue a aplicação e tente novamente.");
-                }
-
-                const { data, error } = await activeClient.auth.signInWithPassword({ email, password });
-
+                let authClient = client;
+                if (!authClient?.auth?.signInWithPassword) authClient = window.BackendClientService?.getClient?.() || null;
+                if (!authClient?.auth?.signInWithPassword) throw new Error("Cliente de autenticação não inicializado.");
+                client = authClient;
+                const { data, error } = await authClient.auth.signInWithPassword({ email, password });
                 if (error) {
+                    logAuthDiagnostic("tentativa rejeitada", { status: error.status ?? null, code: error.code ?? null });
                     feedback.textContent = error.message || "E-mail ou senha inválidos.";
-                    passwordInput.value = "";
-                    passwordInput.focus();
-                    return;
+                    passwordInput.value = ""; passwordInput.focus(); return;
                 }
-
                 if (!data?.session?.user) {
+                    logAuthDiagnostic("resposta sem sessão");
                     feedback.textContent = "Não foi possível iniciar a sessão. Tente novamente.";
-                    passwordInput.value = "";
-                    passwordInput.focus();
-                    return;
+                    passwordInput.value = ""; passwordInput.focus(); return;
                 }
-
-                // Reassocia explicitamente o cliente válido ao serviço após o login.
-                client = activeClient;
                 session = data.session;
+                logAuthDiagnostic("login aceito", { user_id: session.user.id });
                 feedback.textContent = "Login realizado.";
                 renderOnlineStatus();
                 await ensureProfile(session.user);
                 setTimeout(close, 500);
             } catch (error) {
+                logAuthDiagnostic("exceção", { message: error?.message || String(error) });
                 feedback.textContent = error?.message || "Falha ao realizar o login. Tente novamente.";
-                passwordInput.value = "";
-                passwordInput.focus();
-                window.Logger?.warn?.("Falha ao realizar login.", error);
+                passwordInput.value = ""; passwordInput.focus();
             } finally {
                 signInButton.disabled = false;
+                logAuthDiagnostic("fim da tentativa");
             }
         });
         modal.querySelector("#onlineSignUp").addEventListener("click", async () => {

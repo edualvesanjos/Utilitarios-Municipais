@@ -55,10 +55,7 @@ Copie `.env.example` para `.env` e informe a mesma Anon Key usada no laboratóri
 - `Última atualização remota` continua baseada no timestamp retornado pelo backend.
 
 
-### v4.6.0 DEV — Etapa 3 (correção 4)
-
-- Parte da Correção 2, descartando a regressão introduzida pela Correção 3.
-- Corrige a retentativa de login após e-mail ou senha inválidos.
-- Cada tentativa obtém novamente o cliente ativo pelo `BackendClientService`.
-- A rotina não chama mais `client.auth` a partir de uma referência potencialmente nula.
-- Em erro de credenciais, somente a senha é limpa; o formulário permanece utilizável.
+### v4.6.0 DEV — Etapa 3 (correção 5)
+- Parte da Correção 2; Correções 3 e 4 descartadas.
+- Preserva a instância do cliente após erro 401 e adiciona diagnóstico DEV do ciclo de autenticação.
+- Permite nova tentativa sem reload após credenciais inválidas.
