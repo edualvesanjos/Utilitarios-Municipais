@@ -1,4 +1,4 @@
-/* Utilitários Municipais v4.6.0 DEV — Backend Adapter, Etapa 1. */
+/* Utilitários Municipais v4.6.0 DEV — Backend Adapter, Etapa 2. */
 (function () {
     "use strict";
 
@@ -15,10 +15,9 @@
     function getClient() {
         try {
             const provider = getActiveProvider();
-            if (provider === "supabase") {
-                return window.SupabaseClientService?.getClient?.() || null;
-            }
-            throw new Error(`Provider ainda não ativado nesta etapa: ${provider}`);
+            if (provider === "supabase") return window.SupabaseClientService?.getClient?.() || null;
+            if (provider === "superdb") return window.SuperDBClientService?.getClient?.() || null;
+            throw new Error(`Provider de backend inválido: ${provider}`);
         } catch (error) {
             initializationError = error;
             window.ErrorHandler?.report(error, "Backend Adapter", { silent: true });
@@ -27,9 +26,8 @@
     }
 
     function isConfigured() {
-        if (getActiveProvider() === "supabase") {
-            return Boolean(window.SupabaseClientService?.isConfigured?.());
-        }
+        if (getActiveProvider() === "supabase") return Boolean(window.SupabaseClientService?.isConfigured?.());
+        if (getActiveProvider() === "superdb") return Boolean(window.SuperDBClientService?.isConfigured?.());
         return false;
     }
 
@@ -49,6 +47,6 @@
         getEnvironment,
         getActiveProvider,
         getTargetProvider,
-        getError: () => initializationError || window.SupabaseClientService?.getError?.() || null
+        getError: () => initializationError || (getActiveProvider() === "superdb" ? window.SuperDBClientService?.getError?.() : window.SupabaseClientService?.getError?.()) || null
     });
 })();

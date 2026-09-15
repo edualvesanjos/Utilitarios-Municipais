@@ -328,6 +328,15 @@
             const prefs = JSON.parse(safeGet(prefsKey, "{}"));
             displayName = String(prefs.displayName || "Usuário").trim().slice(0, 40) || "Usuário";
         } catch {}
+        if (window.BackendClientService?.getActiveProvider?.() === "superdb") {
+            const existing = await client.from("profiles").select("*").eq("id", user.id);
+            if (existing.error) throw existing.error;
+            const result = existing.data?.length
+                ? await client.from("profiles").update({ display_name: displayName, updated_at: new Date().toISOString() }).eq("id", user.id).select()
+                : await client.from("profiles").insert({ id: user.id, display_name: displayName }).select();
+            if (result.error) throw result.error;
+            return;
+        }
         const { error } = await client.from("profiles").upsert(
             { id: user.id, display_name: displayName },
             { onConflict: "id" }
@@ -451,6 +460,10 @@
     }
 
     async function pullRemoteData({ silent = false, force = false } = {}) {
+        if (window.BACKEND_MIGRATION?.stage === "auth-profile") {
+            notify("Etapa 2: somente autenticação, sessão e profile estão habilitados no SuperDB.");
+            return { skipped: true, stage: "auth-profile" };
+        }
         if (syncInProgress || !client || !session?.user) return false;
         if (!navigator.onLine) {
             if (!silent) notify("Sem conexão. Não foi possível baixar os dados online.", "warning");
@@ -489,6 +502,10 @@
     }
 
     async function synchronize({ silent = false } = {}) {
+        if (window.BACKEND_MIGRATION?.stage === "auth-profile") {
+            if (!silent) notify("Etapa 2: somente autenticação, sessão e profile estão habilitados no SuperDB.");
+            return { skipped: true, stage: "auth-profile" };
+        }
         if (!client || !session?.user) {
             if (!silent) notify("Faça login para sincronizar.", "warning");
             return false;
@@ -726,7 +743,7 @@
         modal.innerHTML = `
             <div class="online-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="onlineAuthTitle">
                 <button class="online-modal-close" type="button" aria-label="Fechar">×</button>
-                <span class="eyebrow">Supabase</span>
+                <span class="eyebrow">SuperDB DEV</span>
                 <h2 id="onlineAuthTitle">Acesso online</h2>
                 <p class="help-text">Entre para sincronizar preferências, personalização, favoritos, continuidade do Dashboard e seus modelos, grupos e categorias da Central de Documentos.</p>
                 <label>E-mail<input id="onlineEmail" type="email" autocomplete="email" required></label>
@@ -744,20 +761,34 @@
         modal.querySelector("#onlineSignIn").addEventListener("click", async () => {
             const { email, password } = credentials();
             feedback.textContent = "Entrando...";
-            const { error } = await client.auth.signInWithPassword({ email, password });
+            const { data, error } = await client.auth.signInWithPassword({ email, password });
             feedback.textContent = error ? error.message : "Login realizado.";
-            if (!error) setTimeout(close, 500);
+            if (!error) {
+                session = data?.session || session;
+                renderOnlineStatus();
+                if (session?.user) await ensureProfile(session.user);
+                setTimeout(close, 500);
+            }
         });
         modal.querySelector("#onlineSignUp").addEventListener("click", async () => {
             const { email, password } = credentials();
             feedback.textContent = "Criando conta...";
             const { data, error } = await client.auth.signUp({ email, password, options: { emailRedirectTo: location.href.split("#")[0] } });
-            feedback.textContent = error ? error.message : (data.session ? "Conta criada e login realizado." : "Conta criada. Confira seu e-mail para confirmar o cadastro.");
-            if (!error && data.session) setTimeout(close, 700);
+            feedback.textContent = error ? error.message : (data?.session ? "Conta criada e login realizado." : "Conta criada. Confira seu e-mail para confirmar o cadastro.");
+            if (!error && data?.session) {
+                session = data.session;
+                renderOnlineStatus();
+                if (session?.user) await ensureProfile(session.user);
+                setTimeout(close, 700);
+            }
         });
         modal.querySelector("#onlineResetPassword").addEventListener("click", async () => {
             const email = modal.querySelector("#onlineEmail").value.trim();
             if (!email) { feedback.textContent = "Informe o e-mail."; return; }
+            if (typeof client.auth.resetPasswordForEmail !== "function") {
+                feedback.textContent = "Recuperação de senha será validada em etapa posterior da migração.";
+                return;
+            }
             const { error } = await client.auth.resetPasswordForEmail(email, { redirectTo: location.href.split("#")[0] });
             feedback.textContent = error ? error.message : "E-mail de recuperação enviado.";
         });
@@ -853,23 +884,31 @@
 
         renderOnlineStatus();
 
-        client.auth.onAuthStateChange(async (event, nextSession) => {
-            session = nextSession;
-            resetWatchedSnapshot();
-            renderOnlineStatus();
-            if (event === "SIGNED_IN" && session?.user) {
-                await ensureProfile(session.user);
-                await synchronize({ silent: true });
-                await window.HistoryService?.syncAll?.({ silent: true });
-            }
-            if (event === "SIGNED_OUT") {
-                setConflict(false);
-                setOnlineState({ status: "local" });
-                notify("Sessão encerrada. O armazenamento local permanece disponível.");
-            }
-        });
+        const authProfileStage = window.BACKEND_MIGRATION?.stage === "auth-profile";
+        if (typeof client.auth.onAuthStateChange === "function") {
+            client.auth.onAuthStateChange(async (event, nextSession) => {
+                session = nextSession;
+                resetWatchedSnapshot();
+                renderOnlineStatus();
+                if (event === "SIGNED_IN" && session?.user) {
+                    await ensureProfile(session.user);
+                    if (!authProfileStage) {
+                        await synchronize({ silent: true });
+                        await window.HistoryService?.syncAll?.({ silent: true });
+                    }
+                }
+                if (event === "SIGNED_OUT") {
+                    setConflict(false);
+                    setOnlineState({ status: "local" });
+                    notify("Sessão encerrada. O armazenamento local permanece disponível.");
+                }
+            });
+        }
 
-        if (session?.user && navigator.onLine) await synchronize({ silent: true });
+        if (session?.user && navigator.onLine) {
+            await ensureProfile(session.user);
+            if (!authProfileStage) await synchronize({ silent: true });
+        }
 
         window.addEventListener("storage", (event) => {
             if (event.key && Object.values(SYNC_GROUPS).some((keys) => keys.includes(event.key))) {

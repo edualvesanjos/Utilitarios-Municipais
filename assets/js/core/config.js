@@ -61,9 +61,9 @@ window.getSupabaseEnvironmentConfig = getSupabaseEnvironmentConfig;
  * homologado como destino da migração. Nenhuma chave privada deve ser incluída.
  */
 const BACKEND_MIGRATION = Object.freeze({
-    activeProvider: "supabase",
+    activeProvider: "superdb",
     targetProvider: "superdb",
-    stage: "adapter",
+    stage: "auth-profile",
     superdb: Object.freeze({
         authUrl: "https://auth.superdb.com.br",
         project: "utilitariosmunicipais_teste",
