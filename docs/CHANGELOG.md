@@ -1,3 +1,11 @@
+## 4.6.0.7 DEV — Etapa 4
+
+- Ativa a gravação de `sync_log` no SuperDB DEV.
+- Mantém `user_data`, autenticação, sessão e `profiles` já homologados.
+- Registra `backend` e `migration_stage` no campo `details` do log.
+- A falha de gravação do log permanece não bloqueante para a sincronização principal.
+- `history_entries` permanece para etapa posterior.
+
 ## 4.6.0.6 DEV — Etapa 3
 
 - Corrige o logout no SuperDB DEV: após `signOut()` bem-sucedido, a sessão local é zerada e a interface é renderizada imediatamente, sem exigir F5.

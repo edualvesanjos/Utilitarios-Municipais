@@ -393,14 +393,20 @@
         if (!session?.user) return;
         if (window.BACKEND_MIGRATION?.stage === "user-data") return;
         try {
-            await client.from("sync_log").insert({
+            const { error } = await client.from("sync_log").insert({
                 user_id: session.user.id,
                 status,
                 app_version: APP_CONFIG.version,
                 device_id: getDeviceId(),
                 synced_items: syncedItems,
-                details: { sync_schema: SYNC_SCHEMA_VERSION, ...details }
+                details: {
+                    sync_schema: SYNC_SCHEMA_VERSION,
+                    backend: window.BackendClientService?.getActiveProvider?.() || "unknown",
+                    migration_stage: window.BACKEND_MIGRATION?.stage || "legacy",
+                    ...details
+                }
             });
+            if (error) throw error;
         } catch (error) {
             window.Logger?.warn("Não foi possível gravar o log de sincronização.", error);
         }

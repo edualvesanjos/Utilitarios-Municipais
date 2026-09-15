@@ -66,3 +66,9 @@ Copie `.env.example` para `.env` e informe a mesma Anon Key usada no laboratóri
 - Corrige atualização imediata da UI após logout no SuperDB.
 - Mantém armazenamento local após encerramento da sessão.
 - Mantém a migração DEV via Backend Adapter; produção/main continua fora desta etapa.
+
+
+## v4.6.0.7 DEV — Etapa 4
+
+- Ativa `sync_log` no SuperDB DEV.
+- Mantém `history_entries` fora da migração nesta etapa.

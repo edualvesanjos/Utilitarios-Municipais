@@ -1,4 +1,4 @@
-/* Utilitários Municipais v4.6.0 DEV — SuperDB Client, Etapa 3. */
+/* Utilitários Municipais v4.6.0 DEV — SuperDB Client, Etapa 4. */
 import { createClient } from "https://esm.unpkg.com/@superdb/client@0.2.2";
 
 let instance = null;
