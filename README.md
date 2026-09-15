@@ -37,3 +37,10 @@ Copie `.env.example` para `.env` e informe a mesma Anon Key usada no laboratóri
 - SELECT pelo SDK; upsert via REST homologado.
 - `sync_log` ainda não é gravado.
 - `history_entries` permanece para etapa posterior.
+
+
+### v4.6.0 DEV — Etapa 3 (correção)
+- Corrige a leitura de `user_data` no SuperDB.
+- O SDK `@superdb/client@0.2.2` não oferece o modificador `.in()` usado pelo fluxo legado do Supabase.
+- `fetchRemoteRows()` agora faz SELECT autenticado por `user_id` e filtra os `data_type` conhecidos na aplicação.
+- O REST upsert permanece como estratégia de gravação.

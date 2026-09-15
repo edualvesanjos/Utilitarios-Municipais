@@ -405,13 +405,18 @@
     }
 
     async function fetchRemoteRows() {
-        const { data, error } = await client
+        let query = client
             .from("user_data")
             .select("data_type,content,updated_at,version")
-            .eq("user_id", session.user.id)
-            .in("data_type", Object.keys(SYNC_GROUPS));
+            .eq("user_id", session.user.id);
+
+        // O SDK SuperDB 0.2.2 não implementa todos os modificadores do
+        // Supabase. Filtramos os grupos conhecidos localmente para manter
+        // esta rotina compatível com ambos os providers.
+        const { data, error } = await query;
         if (error) throw error;
-        return data || [];
+        const permittedTypes = new Set(Object.keys(SYNC_GROUPS));
+        return (data || []).filter((row) => permittedTypes.has(row.data_type));
     }
 
     function latestRemoteTimestamp(rows) {
@@ -500,10 +505,6 @@
     }
 
     async function pullRemoteData({ silent = false, force = false } = {}) {
-        if (window.BACKEND_MIGRATION?.stage === "auth-profile-disabled") {
-            notify("Etapa 2: somente autenticação, sessão e profile estão habilitados no SuperDB.");
-            return { skipped: true, stage: "auth-profile" };
-        }
         if (syncInProgress || !client || !session?.user) return false;
         if (!navigator.onLine) {
             if (!silent) notify("Sem conexão. Não foi possível baixar os dados online.", "warning");
@@ -542,10 +543,6 @@
     }
 
     async function synchronize({ silent = false } = {}) {
-        if (window.BACKEND_MIGRATION?.stage === "auth-profile-disabled") {
-            if (!silent) notify("Etapa 2: somente autenticação, sessão e profile estão habilitados no SuperDB.");
-            return { skipped: true, stage: "auth-profile" };
-        }
         if (!client || !session?.user) {
             if (!silent) notify("Faça login para sincronizar.", "warning");
             return false;
