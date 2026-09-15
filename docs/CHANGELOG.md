@@ -1,5 +1,16 @@
 # Changelog
 
+## 4.6.0 DEV — Etapa 1
+
+### Backend Adapter / preparação da migração SuperDB
+- Criada a camada `BackendClientService` entre os serviços da aplicação e o provedor de backend.
+- `online-sync-service.js` e `history-service.js` deixam de acessar diretamente `SupabaseClientService`.
+- Supabase permanece operacional nesta etapa para evitar alteração funcional prematura.
+- SuperDB `utilitariosmunicipais_teste` registrado como destino homologado da migração.
+- Ambiente da aplicação alterado para `development`.
+- `.env.example` atualizado com as variáveis públicas necessárias ao futuro cliente SuperDB.
+- Nenhuma alteração no modelo local, módulos funcionais ou banco de produção.
+
 ## 4.5.3.8
 
 ### Refatoração da sidebar mobile

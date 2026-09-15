@@ -819,9 +819,9 @@
         createAuthModal();
         createConflictModal();
         setupHeaderAccountControls();
-        client = window.SupabaseClientService?.getClient() || null;
+        client = window.BackendClientService?.getClient() || null;
         if (!client) {
-            const message = window.SupabaseClientService?.getError()?.message || "Cliente Supabase indisponível.";
+            const message = window.BackendClientService?.getError()?.message || "Backend online indisponível.";
             setOnlineState({ status: "unavailable", message });
             window.Logger?.warn(message);
             return;
@@ -831,7 +831,7 @@
             if (error) throw error;
             session = data.session;
         } catch (error) {
-            window.ErrorHandler?.report(error, "Sessão Supabase", { silent: true });
+            window.ErrorHandler?.report(error, "Sessão do backend", { silent: true });
             session = null;
         }
         if (safeGet(MIGRATION_KEY, "false") !== "true") {

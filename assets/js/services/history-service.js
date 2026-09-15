@@ -147,7 +147,7 @@
     async function uploadPending() {
         const sync = window.OnlineSyncService;
         const session = sync?.getSession?.();
-        const client = window.SupabaseClientService?.getClient?.();
+        const client = window.BackendClientService?.getClient?.();
         const rows = listPending();
 
         if (!rows.length) return { uploaded: 0, remaining: 0 };
@@ -190,7 +190,7 @@
     async function listRemote({ module = null, limit = 1000 } = {}) {
         const sync = window.OnlineSyncService;
         const session = sync?.getSession?.();
-        const client = window.SupabaseClientService?.getClient?.();
+        const client = window.BackendClientService?.getClient?.();
         if (!client || !session?.user) return [];
 
         const requested = Math.max(1, Math.min(Number(limit) || 1000, 2000));
