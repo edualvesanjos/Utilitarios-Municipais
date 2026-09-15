@@ -23,3 +23,10 @@ Copie `.env.example` para `.env` e informe a mesma Anon Key usada no laboratóri
 5. Conferir no SuperDB que `profiles` recebeu exatamente 1 registro do usuário.
 6. Alterar o nome de exibição, sair/entrar e conferir a atualização do profile.
 7. Confirmar que `user_data`, `sync_log` e `history_entries` continuam vazias nesta etapa.
+
+
+## v4.6.0 DEV — Etapa 2 (correção)
+
+- Corrige a persistência de **Como gostaria de ser chamado?** em `profiles.display_name`.
+- O evento `um:display-name-changed` agora chama `ensureProfile()` diretamente quando existe sessão autenticada.
+- A sincronização geral de `user_data`, `sync_log` e `history_entries` permanece fora do escopo desta etapa.

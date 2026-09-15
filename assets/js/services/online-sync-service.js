@@ -916,9 +916,22 @@
                 scheduleAutoSync(true);
             }
         });
-        window.addEventListener("um:display-name-changed", () => {
+        window.addEventListener("um:display-name-changed", async () => {
             renderOnlineStatus();
             resetWatchedSnapshot();
+
+            // v4.6.0 DEV — Etapa 2 (correção):
+            // o nome de exibição pertence a profiles e deve ser persistido
+            // independentemente da sincronização geral de user_data.
+            if (session?.user) {
+                try {
+                    await ensureProfile(session.user);
+                    Logger.info("Nome de exibição atualizado no profile SuperDB.");
+                } catch (error) {
+                    Logger.warn("Não foi possível atualizar o nome de exibição no profile SuperDB.", error);
+                }
+            }
+
             scheduleAutoSync(true);
         });
 
