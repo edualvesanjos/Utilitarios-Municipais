@@ -44,3 +44,12 @@ Copie `.env.example` para `.env` e informe a mesma Anon Key usada no laboratóri
 - O SDK `@superdb/client@0.2.2` não oferece o modificador `.in()` usado pelo fluxo legado do Supabase.
 - `fetchRemoteRows()` agora faz SELECT autenticado por `user_id` e filtra os `data_type` conhecidos na aplicação.
 - O REST upsert permanece como estratégia de gravação.
+
+
+### v4.6.0 DEV — Etapa 3 (correção 2)
+
+- Corrige `updated_at` no REST upsert de `user_data`.
+- Cada lote de sincronização passa a enviar explicitamente o timestamp de atualização.
+- `documents` também passa a enviar `updated_at`.
+- `Última sincronização` passa a registrar o instante real em que o upload foi concluído com sucesso.
+- `Última atualização remota` continua baseada no timestamp retornado pelo backend.

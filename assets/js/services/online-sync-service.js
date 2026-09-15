@@ -219,7 +219,8 @@
                 user_id: session.user.id,
                 data_type: "documents",
                 content: localContent,
-                version: SYNC_SCHEMA_VERSION
+                version: SYNC_SCHEMA_VERSION,
+                updated_at: nowIso()
             }]);
 
             await writeSyncLog("success", 1, {
@@ -253,7 +254,8 @@
             user_id: session.user.id,
             data_type: "documents",
             content: mergedContent,
-            version: SYNC_SCHEMA_VERSION
+            version: SYNC_SCHEMA_VERSION,
+            updated_at: nowIso()
         }]);
 
         await writeSyncLog("success", 1, {
@@ -453,17 +455,20 @@
         safeSet(LAST_ATTEMPT_KEY, nowIso());
         setOnlineState({ status: "syncing", direction: "upload" });
         try {
+            const updatedAt = nowIso();
             const rows = collectLocalData().map((item) => ({
                 user_id: session.user.id,
                 data_type: item.data_type,
                 content: item.content,
-                version: SYNC_SCHEMA_VERSION
+                version: SYNC_SCHEMA_VERSION,
+                updated_at: updatedAt
             }));
             const savedRows = await saveUserDataRows(rows);
 
             const remoteAt = latestRemoteTimestamp(savedRows || []);
-            const syncedAt = remoteAt ? new Date(remoteAt).toISOString() : nowIso();
-            safeSet(LAST_SYNC_KEY, syncedAt);
+            const completedAt = nowIso();
+            const syncedAt = remoteAt ? new Date(remoteAt).toISOString() : completedAt;
+            safeSet(LAST_SYNC_KEY, completedAt);
             safeSet(LAST_REMOTE_UPDATE_KEY, syncedAt);
             resetWatchedSnapshot();
             setPending(false);
