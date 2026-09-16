@@ -1,3 +1,11 @@
+## 4.6.1.5 DEV — Compatibilidade de validação
+
+- Corrige `ValidationCenter` para validar `Event.target` antes de usar `matches()` e `classList`.
+- Elimina o `TypeError: e.target.matches is not a function` observado no Firefox.
+- Mantém o comportamento existente de validação de `input`, `select` e `textarea`.
+- Formata `assets/js/core/validation.js` para facilitar manutenção e diagnóstico.
+- Não altera a sincronização SuperDB nem a lógica homologada de `history_entries`.
+
 ## 4.6.1.4 DEV — Etapa 5
 
 - Corrige o REST de `history_entries` reproduzindo a estratégia homologada no laboratório v0.2.0.
