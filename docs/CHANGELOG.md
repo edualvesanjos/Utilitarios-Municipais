@@ -1,3 +1,8 @@
+## 4.6.1.1 DEV — Etapa 5 — Diagnóstico
+
+- Instrumenta o fluxo `history_entries` no Console com prefixo `[History DEV]`, sem expor credenciais.
+- Não altera a estratégia funcional da Etapa 5.
+
 ## 4.6.1 DEV — Etapa 5
 
 - Inicia a migração de `history_entries` para o SuperDB DEV.
