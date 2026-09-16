@@ -85,3 +85,10 @@ Copie `.env.example` para `.env` e informe a mesma Anon Key usada no laboratóri
 
 - Feedback explícito para sincronização manual sem alterações.
 - Campo Cor principal passa a refletir a preferência recuperada do backend.
+
+
+## v4.6.1 DEV — Etapa 5
+
+- Inicia `history_entries` no SuperDB DEV.
+- Escrita usa REST upsert idempotente por `user_id + client_id`.
+- Outbox, merge remoto e tombstones permanecem preservados.

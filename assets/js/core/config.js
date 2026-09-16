@@ -1,4 +1,4 @@
-const APP_VERSION = "4.6.0.9";
+const APP_VERSION = "4.6.1";
 window.APP_VERSION = APP_VERSION;
 
 /*
@@ -63,7 +63,7 @@ window.getSupabaseEnvironmentConfig = getSupabaseEnvironmentConfig;
 const BACKEND_MIGRATION = Object.freeze({
     activeProvider: "superdb",
     targetProvider: "superdb",
-    stage: "sync-log",
+    stage: "history-entries",
     superdb: Object.freeze({
         authUrl: "https://auth.superdb.com.br",
         project: "utilitariosmunicipais_teste",

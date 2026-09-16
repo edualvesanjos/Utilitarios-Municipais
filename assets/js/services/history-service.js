@@ -144,6 +144,63 @@
         return rows;
     }
 
+    function getSuperDbConfig() {
+        const migration = window.BACKEND_MIGRATION || {};
+        return {
+            authUrl: migration?.superdb?.authUrl || "",
+            project: migration?.superdb?.project || "",
+            anonKey: migration?.superdb?.anonKey || ""
+        };
+    }
+
+    async function getHistoryDataPlaneToken() {
+        const client = window.BackendClientService?.getClient?.();
+        if (!client?.auth?.getDataPlaneToken) {
+            throw new Error("Token do Data Plane indisponível para history_entries.");
+        }
+        const result = await client.auth.getDataPlaneToken();
+        const token = result?.data?.token || result?.data?.access_token || result?.token || null;
+        if (result?.error) throw result.error;
+        if (!token) throw new Error("SuperDB não retornou token do Data Plane.");
+        return token;
+    }
+
+    async function superDbHistoryUpsert(payload) {
+        const cfg = getSuperDbConfig();
+        if (!cfg.authUrl || !cfg.project) throw new Error("Configuração SuperDB incompleta.");
+
+        const token = await getHistoryDataPlaneToken();
+        const endpoint = `${cfg.authUrl.replace(/\/$/, "")}/rest/v1/${encodeURIComponent(cfg.project)}/history_entries?on_conflict=user_id,client_id`;
+
+        const response = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Prefer": "resolution=merge-duplicates,return=representation",
+                "Authorization": `Bearer ${token}`,
+                ...(cfg.anonKey ? { "apikey": cfg.anonKey } : {})
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const text = await response.text();
+        let data = [];
+        if (text) {
+            try { data = JSON.parse(text); }
+            catch { data = text; }
+        }
+
+        if (!response.ok) {
+            const error = new Error(data?.message || data?.error || `Falha HTTP ${response.status} no history_entries.`);
+            error.status = response.status;
+            error.code = data?.code || null;
+            error.details = data?.details || null;
+            throw error;
+        }
+        return Array.isArray(data) ? data : [];
+    }
+
     async function uploadPending() {
         const sync = window.OnlineSyncService;
         const session = sync?.getSession?.();
@@ -171,14 +228,20 @@
         }));
 
         try {
-            const { data, error } = await client
-                .from("history_entries")
-                .upsert(payload, { onConflict: "user_id,client_id", ignoreDuplicates: false })
-                .select("client_id");
+            let data = [];
 
-            if (error) throw error;
+            if (window.BackendClientService?.getActiveProvider?.() === "superdb") {
+                data = await superDbHistoryUpsert(payload);
+            } else {
+                const result = await client
+                    .from("history_entries")
+                    .upsert(payload, { onConflict: "user_id,client_id", ignoreDuplicates: false })
+                    .select("client_id");
+                if (result.error) throw result.error;
+                data = result.data || [];
+            }
 
-            const uploadedIds = (data || []).map((item) => item.client_id);
+            const uploadedIds = (data || []).map((item) => item.client_id).filter(Boolean);
             removePending(uploadedIds);
             return { uploaded: uploadedIds.length, remaining: listPending().length };
         } catch (error) {

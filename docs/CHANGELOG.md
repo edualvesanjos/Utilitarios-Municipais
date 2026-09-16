@@ -1,3 +1,12 @@
+## 4.6.1 DEV — Etapa 5
+
+- Inicia a migração de `history_entries` para o SuperDB DEV.
+- Mantém a outbox local e a chave de idempotência `user_id + client_id`.
+- Para SuperDB, o envio pendente usa REST upsert com `on_conflict=user_id,client_id`, pois o SDK 0.2.2 não expõe `upsert()` no query builder.
+- Mantém leitura/merge remoto pelo Backend Adapter.
+- Preserva o caminho legado de upsert para outros providers.
+- Esta etapa deve ser homologada primeiro com um único usuário/dispositivo antes dos testes cruzados.
+
 ## 4.6.0.9 DEV — Etapa 4
 
 - Adiciona confirmação visual ao `Sincronizar agora` quando os dados locais e remotos já estão iguais.
