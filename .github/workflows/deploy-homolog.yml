@@ -44,6 +44,38 @@ jobs:
           VITE_SUPERDB_ANON_KEY: ${{ secrets.VITE_SUPERDB_ANON_KEY }}
         run: npm run build
 
+      - name: Completar arquivos estáticos
+        run: |
+          mkdir -p dist/assets
+
+          cp -rn assets/css dist/assets/ 2>/dev/null || true
+          cp -rn assets/img dist/assets/ 2>/dev/null || true
+          cp -rn assets/images dist/assets/ 2>/dev/null || true
+          cp -rn assets/icons dist/assets/ 2>/dev/null || true
+
+          mkdir -p dist/assets/js
+
+          find assets/js -type f ! -name "superdb-client-loader.js" | while read file; do
+            destino="dist/$file"
+            mkdir -p "$(dirname "$destino")"
+
+            if [ ! -e "$destino" ]; then
+              cp "$file" "$destino"
+            fi
+          done
+
+      - name: Verificar arquivos da homologação
+        run: |
+          test -f dist/index.html
+          test -f dist/assets/js/core/config.js
+          test -f dist/assets/js/services/logger.js
+          test -f dist/assets/js/services/backend-client.js
+          test -f dist/assets/js/services/history-service.js
+          test -f dist/assets/js/services/online-sync-service.js
+          test -f dist/assets/js/app.js
+
+          echo "OK: arquivos estáticos necessários estão presentes."
+
       - name: Publicar no repositório de homologação
         env:
           HOMOLOG_TOKEN: ${{ secrets.HOMOLOG_REPO_TOKEN }}
