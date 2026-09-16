@@ -214,21 +214,26 @@
         if (!cfg.authUrl || !cfg.project) throw new Error("Configuração SuperDB incompleta.");
 
         const token = await getHistoryDataPlaneToken();
-        const endpoint = `${cfg.authUrl.replace(/\/$/, "")}/rest/v1/${encodeURIComponent(cfg.project)}/history_entries?on_conflict=user_id,client_id`;
+        const endpoint = "https://api.superdb.com.br/history_entries?on_conflict=user_id,client_id";
+        const profile = `proj_${cfg.project}`;
 
         historyDevLog("Enviando history_entries via REST.", {
             registros: Array.isArray(payload) ? payload.length : 1,
             projeto: cfg.project,
+            api: "api.superdb.com.br",
+            profile,
             conflito: "user_id,client_id"
         });
         const response = await fetch(endpoint, {
             method: "POST",
             headers: {
+                "Authorization": `Bearer ${token}`,
+                ...(cfg.anonKey ? { "apikey": cfg.anonKey } : {}),
                 "Content-Type": "application/json",
                 "Accept": "application/json",
-                "Prefer": "resolution=merge-duplicates,return=representation",
-                "Authorization": `Bearer ${token}`,
-                ...(cfg.anonKey ? { "apikey": cfg.anonKey } : {})
+                "Accept-Profile": profile,
+                "Content-Profile": profile,
+                "Prefer": "resolution=merge-duplicates,return=representation"
             },
             body: JSON.stringify(payload)
         });

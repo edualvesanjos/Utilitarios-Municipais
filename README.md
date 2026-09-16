@@ -102,3 +102,10 @@ Diagnóstico seguro da estrutura retornada por `getDataPlaneToken()`, sem exposi
 ## v4.6.1.3 DEV — Etapa 5
 
 Corrige a obtenção do Data Plane token para `history_entries`, aceitando o retorno direto em string do SuperDB 0.2.2.
+
+
+
+## v4.6.1.4 DEV — Etapa 5
+
+O envio REST de `history_entries` passa a usar a mesma rota e os mesmos headers
+do upsert REST homologado no laboratório SuperDB v0.2.0.

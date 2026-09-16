@@ -1,3 +1,12 @@
+## 4.6.1.4 DEV — Etapa 5
+
+- Corrige o REST de `history_entries` reproduzindo a estratégia homologada no laboratório v0.2.0.
+- Endpoint passa a usar `https://api.superdb.com.br/history_entries`.
+- Mantém `on_conflict=user_id,client_id` e `Prefer: resolution=merge-duplicates,return=representation`.
+- Adiciona `Accept-Profile` e `Content-Profile` com `proj_<project>`, conforme o teste REST aprovado.
+- Mantém autenticação com Data Plane token e `apikey`.
+- Mantém os diagnósticos `[History DEV]` durante a homologação da outbox.
+
 ## 4.6.1.3 DEV — Etapa 5
 
 - Corrige a leitura do Data Plane token do SuperDB 0.2.2.
