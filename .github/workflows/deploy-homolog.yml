@@ -20,17 +20,32 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
+      - name: Configurar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Gerar build de homologação
+        env:
+          VITE_SUPERDB_ANON_KEY: ${{ secrets.VITE_SUPERDB_ANON_KEY }}
+        run: npm run build
+
       - name: Publicar no repositório de homologação
         env:
           HOMOLOG_TOKEN: ${{ secrets.HOMOLOG_REPO_TOKEN }}
         run: |
+          cd dist
+
+          git init
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          rm -rf .github
-
           git add -A
-          git commit -m "prepara homologacao" || true
+          git commit -m "publica homologacao"
 
           git remote add homolog-pages \
             https://x-access-token:${HOMOLOG_TOKEN}@github.com/edualvesanjos/Utilitarios-Municipais-Homolog.git
