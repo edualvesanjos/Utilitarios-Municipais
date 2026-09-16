@@ -92,3 +92,8 @@ Copie `.env.example` para `.env` e informe a mesma Anon Key usada no laboratóri
 - Inicia `history_entries` no SuperDB DEV.
 - Escrita usa REST upsert idempotente por `user_id + client_id`.
 - Outbox, merge remoto e tombstones permanecem preservados.
+
+
+## v4.6.1.2 DEV — Etapa 5
+
+Diagnóstico seguro da estrutura retornada por `getDataPlaneToken()`, sem exposição do token.

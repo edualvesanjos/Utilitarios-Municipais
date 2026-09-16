@@ -168,6 +168,28 @@
         }
         historyDevLog("Solicitando token do Data Plane.");
         const result = await client.auth.getDataPlaneToken();
+
+        // Diagnóstico seguro: revela apenas estrutura/tipos, nunca valores.
+        const describeObject = (value) => {
+            if (value === null) return { tipo: "null", propriedades: [] };
+            if (Array.isArray(value)) return { tipo: "array", propriedades: [] };
+            if (typeof value !== "object") return { tipo: typeof value, propriedades: [] };
+            return {
+                tipo: "object",
+                propriedades: Object.keys(value).sort()
+            };
+        };
+
+        historyDevLog("Estrutura de getDataPlaneToken().", {
+            resultado: describeObject(result),
+            data: describeObject(result?.data),
+            token_direto_tipo: typeof result?.token,
+            access_token_direto_tipo: typeof result?.access_token,
+            data_token_tipo: typeof result?.data?.token,
+            data_access_token_tipo: typeof result?.data?.access_token,
+            error_presente: Boolean(result?.error)
+        });
+
         const token = result?.data?.token || result?.data?.access_token || result?.token || null;
         if (result?.error) throw result.error;
         if (!token) throw new Error("SuperDB não retornou token do Data Plane.");

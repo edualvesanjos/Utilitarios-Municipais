@@ -1,4 +1,4 @@
-const APP_VERSION = "4.6.1.1";
+const APP_VERSION = "4.6.1.2";
 window.APP_VERSION = APP_VERSION;
 
 /*

@@ -1,3 +1,10 @@
+## 4.6.1.2 DEV — Etapa 5 — Diagnóstico Data Plane
+
+- Inspeciona de forma segura a estrutura retornada por `auth.getDataPlaneToken()`.
+- Exibe somente nomes de propriedades e tipos; nenhum token, chave ou valor sensível é registrado.
+- Mantém os registros pendentes da outbox intactos para o próximo teste.
+- Não altera ainda a estratégia de extração do token.
+
 ## 4.6.1.1 DEV — Etapa 5 — Diagnóstico
 
 - Instrumenta o fluxo `history_entries` no Console com prefixo `[History DEV]`, sem expor credenciais.
