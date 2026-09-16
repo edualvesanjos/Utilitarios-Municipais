@@ -553,7 +553,67 @@
         }
     }
 
-    async function synchronize({ silent = false } = {}) {
+    function sessionExpiresAtMs(currentSession = session) {
+        const value = Number(currentSession?.expires_at);
+        if (!Number.isFinite(value) || value <= 0) return null;
+        // SuperDB 0.2.2 retorna expires_at em milissegundos; aceita segundos
+        // defensivamente caso o formato mude.
+        return value < 100000000000 ? value * 1000 : value;
+    }
+
+    function isSessionNearExpiry(currentSession = session, marginMs = 60000) {
+        const expiresAt = sessionExpiresAtMs(currentSession);
+        return expiresAt !== null && expiresAt <= Date.now() + marginMs;
+    }
+
+    function isJwtExpiredError(error) {
+        const text = [
+            error?.message,
+            error?.code,
+            error?.details,
+            error?.status
+        ].filter(Boolean).join(" ").toLowerCase();
+        return text.includes("jwt expired") ||
+               text.includes("token expired") ||
+               text.includes("expired jwt");
+    }
+
+    async function refreshBackendSession({ reason = "proactive", silent = false } = {}) {
+        if (!client?.auth?.refreshSession) return false;
+
+        try {
+            const { data, error } = await client.auth.refreshSession();
+            if (error) throw error;
+
+            const nextSession = data?.session || null;
+            if (!nextSession?.user) throw new Error("A renovação não retornou uma sessão válida.");
+
+            session = nextSession;
+            renderOnlineStatus();
+            window.Logger?.info?.("Sessão SuperDB renovada.", {
+                reason,
+                expires_at: session.expires_at ?? null
+            });
+            return true;
+        } catch (error) {
+            window.Logger?.warn?.("Não foi possível renovar a sessão SuperDB.", error);
+            session = null;
+            resetWatchedSnapshot();
+            setConflict(false);
+            setOnlineState({ status: "local" });
+            renderOnlineStatus();
+            if (!silent) notify("Sua sessão expirou. Entre novamente para continuar sincronizando.", "warning");
+            return false;
+        }
+    }
+
+    async function ensureFreshBackendSession({ silent = false } = {}) {
+        if (!client?.auth || !session?.user) return false;
+        if (!isSessionNearExpiry(session)) return true;
+        return refreshBackendSession({ reason: "session-expiring", silent });
+    }
+
+    async function synchronize({ silent = false, authRetry = false } = {}) {
         if (!client || !session?.user) {
             if (!silent) notify("Faça login para sincronizar.", "warning");
             return false;
@@ -565,6 +625,11 @@
             return false;
         }
         if (syncInProgress) return false;
+
+        if (!(await ensureFreshBackendSession({ silent }))) {
+            if (!silent && session?.user) notify("Não foi possível validar sua sessão.", "warning");
+            return false;
+        }
 
         try {
             let rows = await fetchRemoteRows();
@@ -589,6 +654,15 @@
             if (hasPendingChanges() || !rows.length) return pushLocalData({ silent });
             return applyRemoteRows(rows, { silent });
         } catch (error) {
+            if (!authRetry && isJwtExpiredError(error)) {
+                const refreshed = await refreshBackendSession({ reason: "jwt-expired", silent });
+                if (refreshed) {
+                    window.Logger?.info?.("Repetindo sincronização após renovar JWT.");
+                    return synchronize({ silent, authRetry: true });
+                }
+                return false;
+            }
+
             setOnlineState({ status: "error", message: error.message });
             if (!silent) notify(`Falha ao comparar os dados: ${error.message}`, "error");
             return false;
@@ -976,6 +1050,13 @@
             const { data, error } = await client.auth.getSession();
             if (error) throw error;
             session = data.session;
+
+            if (session?.user && isSessionNearExpiry(session)) {
+                const refreshed = await refreshBackendSession({ reason: "startup", silent: true });
+                if (!refreshed) {
+                    window.Logger?.info?.("Sessão persistida expirada; novo login será necessário.");
+                }
+            }
         } catch (error) {
             window.ErrorHandler?.report(error, "Sessão do backend", { silent: true });
             session = null;

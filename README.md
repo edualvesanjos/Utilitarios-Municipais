@@ -72,3 +72,10 @@ Copie `.env.example` para `.env` e informe a mesma Anon Key usada no laboratóri
 
 - Ativa `sync_log` no SuperDB DEV.
 - Mantém `history_entries` fora da migração nesta etapa.
+
+
+## v4.6.0.8 DEV — Etapa 4
+
+- Adiciona renovação automática do JWT do SuperDB com `refreshSession()`.
+- Trata sessão persistida expirada e expiração durante a sincronização.
+- Preserva dados locais quando uma sessão não puder ser renovada.

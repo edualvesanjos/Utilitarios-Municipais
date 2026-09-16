@@ -1391,7 +1391,8 @@
                             <li><strong>SuperDB DEV:</strong> autenticação, sessão, profiles e user_data em validação pelo Backend Adapter.</li>
                             <li><strong>Login:</strong> retentativa após credenciais inválidas preserva o cliente autenticador.</li>
                             <li><strong>Logout:</strong> a interface reflete imediatamente a sessão encerrada, sem exigir F5.</li>
-                            <li><strong>Etapa 4:</strong> sync_log passa a registrar as sincronizações no SuperDB DEV.</li>
+                            <li><strong>Etapa 4:</strong> sync_log registra as sincronizações no SuperDB DEV.</li>
+                            <li><strong>Sessão:</strong> JWT expirado passa a ser renovado automaticamente via refreshSession().</li>
                             <li><strong>Sincronização:</strong> REST upsert de user_data mantém conteúdo e updated_at no SuperDB.</li>
                         </ul>
                     </section>
@@ -1400,6 +1401,27 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline" id="aboutVersionHistory">
+                        <article class="about-version-item is-open">
+                            <button class="about-version-toggle" type="button" aria-expanded="true">
+                                <span class="about-version-heading">
+                                    <strong>4.6.0.8 DEV</strong>
+                                    <span>Etapa 4 — renovação automática de JWT</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details">
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>SuperDB</h4>
+                                        <ul>
+                                            <li>Renovação preventiva da sessão persistida antes da sincronização.</li>
+                                            <li>Uma única renovação e repetição quando o backend retornar JWT expirado.</li>
+                                            <li>Se a renovação falhar, a interface solicita novo login sem apagar dados locais.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
                         <article class="about-version-item is-open">
                             <button class="about-version-toggle" type="button" aria-expanded="true">
                                 <span class="about-version-heading">

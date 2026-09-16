@@ -1,3 +1,12 @@
+## 4.6.0.8 DEV — Etapa 4
+
+- Implementa renovação de sessão do SuperDB via `auth.refreshSession()`, validada previamente no laboratório v0.2.2.
+- Ao iniciar, renova sessão persistida expirada ou a menos de 60 segundos do vencimento.
+- Antes de sincronizar, valida preventivamente a sessão.
+- Ao receber `JWT expired`, renova a sessão e repete a sincronização uma única vez.
+- Se a renovação falhar, encerra somente o estado autenticado e solicita novo login, preservando os dados locais.
+- Mantém a validação de `sync_log` da Etapa 4.
+
 ## 4.6.0.7 DEV — Etapa 4
 
 - Ativa a gravação de `sync_log` no SuperDB DEV.
