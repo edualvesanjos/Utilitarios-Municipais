@@ -1380,7 +1380,7 @@
                             <div><dt>Aplicativo</dt><dd data-app-name>Utilitários Municipais</dd></div>
                             <div><dt>Versão</dt><dd data-app-version></dd></div>
                             <div><dt>Arquitetura</dt><dd>Modular — Série 4</dd></div>
-                            <div><dt>Armazenamento</dt><dd>Local + Supabase</dd></div>
+                            <div><dt>Armazenamento</dt><dd>Local + Backend Adapter</dd></div>
                             <div><dt>Ambiente BD</dt><dd id="aboutDatabaseEnvironment">—</dd></div>
                         </dl>
                     </section>
@@ -1388,10 +1388,14 @@
                     <section class="settings-card">
                         <h3>Novidades da <span data-app-version></span></h3>
                         <ul class="about-list">
-                            <li><strong>Mobile:</strong> sidebar refatorada para eliminar regras responsivas concorrentes acumuladas.</li>
-                            <li><strong>Layout:</strong> pesquisa, menus e rodapé passam a seguir uma única grade vertical no mobile.</li>
-                            <li><strong>iOS/Android:</strong> regras consolidadas para WebKit e Chromium, sem CSS separado por navegador.</li>
-                            <li><strong>Backdrop:</strong> preservada a camada externa corrigida na v4.5.3.5.</li>
+                            <li><strong>SuperDB DEV:</strong> autenticação, sessão, profiles e user_data em validação pelo Backend Adapter.</li>
+                            <li><strong>Login:</strong> retentativa após credenciais inválidas preserva o cliente autenticador.</li>
+                            <li><strong>Logout:</strong> a interface reflete imediatamente a sessão encerrada, sem exigir F5.</li>
+                            <li><strong>Etapa 4:</strong> sync_log registra as sincronizações no SuperDB DEV.</li>
+                            <li><strong>Sessão:</strong> JWT expirado passa a ser renovado automaticamente via refreshSession().</li>
+                            <li><strong>Interface:</strong> Sincronizar agora confirma quando os dados já estão atualizados e Cor principal acompanha o valor recuperado.</li>
+                            <li><strong>Etapa 5:</strong> inicia a migração dos históricos para history_entries no SuperDB DEV.</li>
+                            <li><strong>Sincronização:</strong> REST upsert de user_data mantém conteúdo e updated_at no SuperDB.</li>
                         </ul>
                     </section>
                 </div>
@@ -1399,6 +1403,150 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline" id="aboutVersionHistory">
+                        <article class="about-version-item is-open">
+                            <button class="about-version-toggle" type="button" aria-expanded="true">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.4 DEV</strong>
+                                    <span>Etapa 5 — REST homologado do SuperDB</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details">
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>history_entries</h4>
+                                        <ul>
+                                            <li>REST ajustado para api.superdb.com.br conforme laboratório v0.2.0.</li>
+                                            <li>Profiles do projeto enviados em Accept-Profile e Content-Profile.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="about-version-item is-open">
+                            <button class="about-version-toggle" type="button" aria-expanded="true">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.3 DEV</strong>
+                                    <span>Etapa 5 — correção do Data Plane token</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details">
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>history_entries</h4>
+                                        <ul>
+                                            <li>Corrigida a leitura do token retornado diretamente como string pelo SuperDB 0.2.2.</li>
+                                            <li>Mantido diagnóstico DEV para homologar o envio da outbox.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="about-version-item is-open">
+                            <button class="about-version-toggle" type="button" aria-expanded="true">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1 DEV</strong>
+                                    <span>Etapa 5 — history_entries no SuperDB</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details">
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Migração</h4>
+                                        <ul>
+                                            <li>Ativada a escrita de históricos no SuperDB DEV.</li>
+                                            <li>REST upsert preserva a idempotência por user_id + client_id.</li>
+                                            <li>Primeira homologação deve ser feita com um único usuário/dispositivo.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="about-version-item is-open">
+                            <button class="about-version-toggle" type="button" aria-expanded="true">
+                                <span class="about-version-heading">
+                                    <strong>4.6.0.9 DEV</strong>
+                                    <span>Etapa 4 — ajustes finais de sincronização</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details">
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Ajustes</h4>
+                                        <ul>
+                                            <li>Feedback visual no Sincronizar agora quando não existem diferenças.</li>
+                                            <li>Reidratação do campo Cor principal após recuperação remota.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="about-version-item is-open">
+                            <button class="about-version-toggle" type="button" aria-expanded="true">
+                                <span class="about-version-heading">
+                                    <strong>4.6.0.8 DEV</strong>
+                                    <span>Etapa 4 — renovação automática de JWT</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details">
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>SuperDB</h4>
+                                        <ul>
+                                            <li>Renovação preventiva da sessão persistida antes da sincronização.</li>
+                                            <li>Uma única renovação e repetição quando o backend retornar JWT expirado.</li>
+                                            <li>Se a renovação falhar, a interface solicita novo login sem apagar dados locais.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="about-version-item is-open">
+                            <button class="about-version-toggle" type="button" aria-expanded="true">
+                                <span class="about-version-heading">
+                                    <strong>4.6.0.7 DEV</strong>
+                                    <span>Etapa 4 — sync_log no SuperDB</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details">
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Migração</h4>
+                                        <ul>
+                                            <li>Ativada a gravação de sync_log no SuperDB DEV.</li>
+                                            <li>Logs registram backend e etapa de migração nos detalhes.</li>
+                                            <li>history_entries permanece fora desta etapa.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="about-version-item is-open">
+                            <button class="about-version-toggle" type="button" aria-expanded="true">
+                                <span class="about-version-heading">
+                                    <strong>4.6.0.6 DEV</strong>
+                                    <span>Etapa 3 — migração SuperDB e correção do logout</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details">
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Alterações</h4>
+                                        <ul>
+                                            <li>Atualização imediata da interface após encerrar a sessão.</li>
+                                            <li>Preservação dos dados locais durante o logout.</li>
+                                            <li>Continuidade da validação de user_data no SuperDB DEV.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
                         <article class="about-version-item is-open">
                             <button class="about-version-toggle" type="button" aria-expanded="true">
                                 <span class="about-version-heading">
@@ -1987,6 +2135,8 @@
     <script src="assets/js/services/version-service.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <script src="assets/js/services/supabase-client.js"></script>
+    <script type="module" src="assets/js/services/superdb-client-loader.js"></script>
+    <script src="assets/js/services/backend-client.js"></script>
     <script src="assets/js/registry/tools.js"></script>
     <script src="assets/js/services/storage-service.js"></script>
     <script src="assets/js/services/history-service.js"></script>

@@ -1,4 +1,4 @@
-const APP_VERSION = "4.5.3.8";
+const APP_VERSION = "4.6.1.4";
 window.APP_VERSION = APP_VERSION;
 
 /*
@@ -8,7 +8,7 @@ window.APP_VERSION = APP_VERSION;
  *   const APP_ENVIRONMENT = "development";
  *
  * Para publicação oficial:
- *   const APP_ENVIRONMENT = "production";
+ *   const APP_ENVIRONMENT = "development";
  *
  * IMPORTANTE:
  * - Nunca coloque sb_secret_... ou service_role neste arquivo.
@@ -54,3 +54,20 @@ const APP_CONFIG = Object.freeze({
 
 window.SUPABASE_ENVIRONMENTS = SUPABASE_ENVIRONMENTS;
 window.getSupabaseEnvironmentConfig = getSupabaseEnvironmentConfig;
+
+
+/* v4.6.0 DEV — abstração de backend para migração Supabase → SuperDB.
+ * Etapa 1 mantém o Supabase como backend operacional e registra o SuperDB
+ * homologado como destino da migração. Nenhuma chave privada deve ser incluída.
+ */
+const BACKEND_MIGRATION = Object.freeze({
+    activeProvider: "superdb",
+    targetProvider: "superdb",
+    stage: "history-entries",
+    superdb: Object.freeze({
+        authUrl: "https://auth.superdb.com.br",
+        project: "utilitariosmunicipais_teste",
+        anonKey: ""
+    })
+});
+window.BACKEND_MIGRATION = BACKEND_MIGRATION;

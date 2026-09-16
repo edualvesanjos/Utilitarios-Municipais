@@ -1,4 +1,83 @@
+## 4.6.1.4 DEV — Etapa 5
+
+- Corrige o REST de `history_entries` reproduzindo a estratégia homologada no laboratório v0.2.0.
+- Endpoint passa a usar `https://api.superdb.com.br/history_entries`.
+- Mantém `on_conflict=user_id,client_id` e `Prefer: resolution=merge-duplicates,return=representation`.
+- Adiciona `Accept-Profile` e `Content-Profile` com `proj_<project>`, conforme o teste REST aprovado.
+- Mantém autenticação com Data Plane token e `apikey`.
+- Mantém os diagnósticos `[History DEV]` durante a homologação da outbox.
+
+## 4.6.1.3 DEV — Etapa 5
+
+- Corrige a leitura do Data Plane token do SuperDB 0.2.2.
+- `auth.getDataPlaneToken()` é aceito no formato real validado em laboratório/aplicação: string direta.
+- Mantém compatibilidade defensiva com formatos de resposta em objeto.
+- Mantém os diagnósticos `[History DEV]` para homologar o envio dos registros pendentes.
+- Nenhum token ou credencial é exibido no Console.
+
+## 4.6.1.2 DEV — Etapa 5 — Diagnóstico Data Plane
+
+- Inspeciona de forma segura a estrutura retornada por `auth.getDataPlaneToken()`.
+- Exibe somente nomes de propriedades e tipos; nenhum token, chave ou valor sensível é registrado.
+- Mantém os registros pendentes da outbox intactos para o próximo teste.
+- Não altera ainda a estratégia de extração do token.
+
+## 4.6.1.1 DEV — Etapa 5 — Diagnóstico
+
+- Instrumenta o fluxo `history_entries` no Console com prefixo `[History DEV]`, sem expor credenciais.
+- Não altera a estratégia funcional da Etapa 5.
+
+## 4.6.1 DEV — Etapa 5
+
+- Inicia a migração de `history_entries` para o SuperDB DEV.
+- Mantém a outbox local e a chave de idempotência `user_id + client_id`.
+- Para SuperDB, o envio pendente usa REST upsert com `on_conflict=user_id,client_id`, pois o SDK 0.2.2 não expõe `upsert()` no query builder.
+- Mantém leitura/merge remoto pelo Backend Adapter.
+- Preserva o caminho legado de upsert para outros providers.
+- Esta etapa deve ser homologada primeiro com um único usuário/dispositivo antes dos testes cruzados.
+
+## 4.6.0.9 DEV — Etapa 4
+
+- Adiciona confirmação visual ao `Sincronizar agora` quando os dados locais e remotos já estão iguais.
+- Corrige a reidratação dos controles de Interface após recuperação remota, incluindo o campo `Cor principal`.
+- Mantém a renovação automática de JWT e a validação de `sync_log`.
+
+## 4.6.0.8 DEV — Etapa 4
+
+- Implementa renovação de sessão do SuperDB via `auth.refreshSession()`, validada previamente no laboratório v0.2.2.
+- Ao iniciar, renova sessão persistida expirada ou a menos de 60 segundos do vencimento.
+- Antes de sincronizar, valida preventivamente a sessão.
+- Ao receber `JWT expired`, renova a sessão e repete a sincronização uma única vez.
+- Se a renovação falhar, encerra somente o estado autenticado e solicita novo login, preservando os dados locais.
+- Mantém a validação de `sync_log` da Etapa 4.
+
+## 4.6.0.7 DEV — Etapa 4
+
+- Ativa a gravação de `sync_log` no SuperDB DEV.
+- Mantém `user_data`, autenticação, sessão e `profiles` já homologados.
+- Registra `backend` e `migration_stage` no campo `details` do log.
+- A falha de gravação do log permanece não bloqueante para a sincronização principal.
+- `history_entries` permanece para etapa posterior.
+
+## 4.6.0.6 DEV — Etapa 3
+
+- Corrige o logout no SuperDB DEV: após `signOut()` bem-sucedido, a sessão local é zerada e a interface é renderizada imediatamente, sem exigir F5.
+- Centraliza o logout de cabeçalho e Configurações em `signOutAndRefreshUi()`.
+- Mantém os dados locais disponíveis após sair da conta.
+- Preserva os diagnósticos de retentativa de login e as correções de `user_data` da Etapa 3.
+
 # Changelog
+
+## 4.6.0 DEV — Etapa 1
+
+### Backend Adapter / preparação da migração SuperDB
+- Criada a camada `BackendClientService` entre os serviços da aplicação e o provedor de backend.
+- `online-sync-service.js` e `history-service.js` deixam de acessar diretamente `SupabaseClientService`.
+- Supabase permanece operacional nesta etapa para evitar alteração funcional prematura.
+- SuperDB `utilitariosmunicipais_teste` registrado como destino homologado da migração.
+- Ambiente da aplicação alterado para `development`.
+- `.env.example` atualizado com as variáveis públicas necessárias ao futuro cliente SuperDB.
+- Nenhuma alteração no modelo local, módulos funcionais ou banco de produção.
 
 ## 4.5.3.8
 

@@ -144,10 +144,127 @@
         return rows;
     }
 
+    function getSuperDbConfig() {
+        const migration = window.BACKEND_MIGRATION || {};
+        return {
+            authUrl: migration?.superdb?.authUrl || "",
+            project: migration?.superdb?.project || "",
+            anonKey: migration?.superdb?.anonKey || ""
+        };
+    }
+
+    function historyDevLog(message, details = null) {
+        try {
+            if (window.APP_ENVIRONMENT === "production") return;
+            if (details === null) console.info(`[History DEV] ${message}`);
+            else console.info(`[History DEV] ${message}`, details);
+        } catch {}
+    }
+
+    async function getHistoryDataPlaneToken() {
+        const client = window.BackendClientService?.getClient?.();
+        if (!client?.auth?.getDataPlaneToken) {
+            throw new Error("Token do Data Plane indisponível para history_entries.");
+        }
+        historyDevLog("Solicitando token do Data Plane.");
+        const result = await client.auth.getDataPlaneToken();
+
+        // Diagnóstico seguro: revela apenas estrutura/tipos, nunca valores.
+        const describeObject = (value) => {
+            if (value === null) return { tipo: "null", propriedades: [] };
+            if (Array.isArray(value)) return { tipo: "array", propriedades: [] };
+            if (typeof value !== "object") return { tipo: typeof value, propriedades: [] };
+            return {
+                tipo: "object",
+                propriedades: Object.keys(value).sort()
+            };
+        };
+
+        historyDevLog("Estrutura de getDataPlaneToken().", {
+            resultado: describeObject(result),
+            data: describeObject(result?.data),
+            token_direto_tipo: typeof result?.token,
+            access_token_direto_tipo: typeof result?.access_token,
+            data_token_tipo: typeof result?.data?.token,
+            data_access_token_tipo: typeof result?.data?.access_token,
+            error_presente: Boolean(result?.error)
+        });
+
+        if (result?.error) throw result.error;
+
+        const token =
+            typeof result === "string"
+                ? result
+                : result?.data?.token ||
+                  result?.data?.access_token ||
+                  result?.token ||
+                  result?.access_token ||
+                  null;
+
+        if (!token) throw new Error("SuperDB não retornou token do Data Plane.");
+        historyDevLog("Token do Data Plane obtido.", {
+            disponivel: true,
+            formato: typeof result === "string" ? "string-direta" : "objeto"
+        });
+        return token;
+    }
+
+    async function superDbHistoryUpsert(payload) {
+        const cfg = getSuperDbConfig();
+        if (!cfg.authUrl || !cfg.project) throw new Error("Configuração SuperDB incompleta.");
+
+        const token = await getHistoryDataPlaneToken();
+        const endpoint = "https://api.superdb.com.br/history_entries?on_conflict=user_id,client_id";
+        const profile = `proj_${cfg.project}`;
+
+        historyDevLog("Enviando history_entries via REST.", {
+            registros: Array.isArray(payload) ? payload.length : 1,
+            projeto: cfg.project,
+            api: "api.superdb.com.br",
+            profile,
+            conflito: "user_id,client_id"
+        });
+        const response = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                ...(cfg.anonKey ? { "apikey": cfg.anonKey } : {}),
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Accept-Profile": profile,
+                "Content-Profile": profile,
+                "Prefer": "resolution=merge-duplicates,return=representation"
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const text = await response.text();
+        let data = [];
+        if (text) {
+            try { data = JSON.parse(text); }
+            catch { data = text; }
+        }
+
+        historyDevLog("Resposta REST de history_entries.", {
+            status: response.status,
+            ok: response.ok,
+            registros_retornados: Array.isArray(data) ? data.length : null
+        });
+        if (!response.ok) {
+            const error = new Error(data?.message || data?.error || `Falha HTTP ${response.status} no history_entries.`);
+            error.status = response.status;
+            error.code = data?.code || null;
+            error.details = data?.details || null;
+            throw error;
+        }
+        return Array.isArray(data) ? data : [];
+    }
+
     async function uploadPending() {
+        historyDevLog("uploadPending chamado.");
         const sync = window.OnlineSyncService;
         const session = sync?.getSession?.();
-        const client = window.SupabaseClientService?.getClient?.();
+        const client = window.BackendClientService?.getClient?.();
         const rows = listPending();
 
         if (!rows.length) return { uploaded: 0, remaining: 0 };
@@ -171,17 +288,34 @@
         }));
 
         try {
-            const { data, error } = await client
-                .from("history_entries")
-                .upsert(payload, { onConflict: "user_id,client_id", ignoreDuplicates: false })
-                .select("client_id");
+            let data = [];
 
-            if (error) throw error;
+            if (window.BackendClientService?.getActiveProvider?.() === "superdb") {
+                data = await superDbHistoryUpsert(payload);
+            } else {
+                const result = await client
+                    .from("history_entries")
+                    .upsert(payload, { onConflict: "user_id,client_id", ignoreDuplicates: false })
+                    .select("client_id");
+                if (result.error) throw result.error;
+                data = result.data || [];
+            }
 
-            const uploadedIds = (data || []).map((item) => item.client_id);
+            const uploadedIds = (data || []).map((item) => item.client_id).filter(Boolean);
+            historyDevLog("history_entries enviados.", {
+                retornados: uploadedIds.length,
+                provider: window.BackendClientService?.getActiveProvider?.() || "unknown",
+                pendentes_antes_remocao: listPending().length
+            });
             removePending(uploadedIds);
             return { uploaded: uploadedIds.length, remaining: listPending().length };
         } catch (error) {
+            historyDevLog("Falha no upload de history_entries.", {
+                message: error?.message || String(error),
+                status: error?.status ?? null,
+                code: error?.code ?? null,
+                details: error?.details ?? null
+            });
             updatePendingAttempt(clientIds, { error: error?.message || error });
             throw error;
         }
@@ -190,7 +324,7 @@
     async function listRemote({ module = null, limit = 1000 } = {}) {
         const sync = window.OnlineSyncService;
         const session = sync?.getSession?.();
-        const client = window.SupabaseClientService?.getClient?.();
+        const client = window.BackendClientService?.getClient?.();
         if (!client || !session?.user) return [];
 
         const requested = Math.max(1, Math.min(Number(limit) || 1000, 2000));
@@ -563,7 +697,12 @@
     }
 
     async function performSync({ silent = true } = {}) {
-        scanLocalHistories();
+        const scanned = scanLocalHistories();
+        historyDevLog("scanLocalHistories concluído.", {
+            resultado_scan: scanned ?? null,
+            pendentes: listPending().length,
+            usuario_conectado: Boolean(window.OnlineSyncService?.getSession?.()?.user)
+        });
         setSyncState({
             syncing: true,
             lastAttemptAt: nowIso(),
