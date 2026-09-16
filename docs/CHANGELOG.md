@@ -1,3 +1,11 @@
+## 4.6.1.3 DEV — Etapa 5
+
+- Corrige a leitura do Data Plane token do SuperDB 0.2.2.
+- `auth.getDataPlaneToken()` é aceito no formato real validado em laboratório/aplicação: string direta.
+- Mantém compatibilidade defensiva com formatos de resposta em objeto.
+- Mantém os diagnósticos `[History DEV]` para homologar o envio dos registros pendentes.
+- Nenhum token ou credencial é exibido no Console.
+
 ## 4.6.1.2 DEV — Etapa 5 — Diagnóstico Data Plane
 
 - Inspeciona de forma segura a estrutura retornada por `auth.getDataPlaneToken()`.

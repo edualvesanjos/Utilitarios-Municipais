@@ -97,3 +97,8 @@ Copie `.env.example` para `.env` e informe a mesma Anon Key usada no laboratóri
 ## v4.6.1.2 DEV — Etapa 5
 
 Diagnóstico seguro da estrutura retornada por `getDataPlaneToken()`, sem exposição do token.
+
+
+## v4.6.1.3 DEV — Etapa 5
+
+Corrige a obtenção do Data Plane token para `history_entries`, aceitando o retorno direto em string do SuperDB 0.2.2.

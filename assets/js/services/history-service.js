@@ -190,10 +190,22 @@
             error_presente: Boolean(result?.error)
         });
 
-        const token = result?.data?.token || result?.data?.access_token || result?.token || null;
         if (result?.error) throw result.error;
+
+        const token =
+            typeof result === "string"
+                ? result
+                : result?.data?.token ||
+                  result?.data?.access_token ||
+                  result?.token ||
+                  result?.access_token ||
+                  null;
+
         if (!token) throw new Error("SuperDB não retornou token do Data Plane.");
-        historyDevLog("Token do Data Plane obtido.", { disponivel: true });
+        historyDevLog("Token do Data Plane obtido.", {
+            disponivel: true,
+            formato: typeof result === "string" ? "string-direta" : "objeto"
+        });
         return token;
     }
 
