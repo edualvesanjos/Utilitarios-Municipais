@@ -1,3 +1,13 @@
+## 4.6.1.6 DEV — Identidade funcional dos históricos
+
+- Corrige duplicações de históricos observadas após uso offline, fechamento da aplicação e reconexão.
+- `HistoryService` passa a desconsiderar campos temporais/técnicos na identidade funcional dos itens.
+- `queueHistory()` passa a usar `client_id` determinístico por módulo, ação e conteúdo funcional.
+- `scanLocalHistories()` usa a mesma estratégia determinística para ações `record`.
+- CPF/CNPJ deixa de recriar o mesmo documento válido em sucessivos eventos de atualização.
+- Mantidos os logs `[History DEV]` para validação da correção.
+- Nenhum registro existente do SuperDB é apagado automaticamente.
+
 ## 4.6.1.5 DEV — Compatibilidade de validação
 
 - Corrige `ValidationCenter` para validar `Event.target` antes de usar `matches()` e `classList`.

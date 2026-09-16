@@ -115,3 +115,10 @@ do upsert REST homologado no laboratório SuperDB v0.2.0.
 
 - Protege os listeners do `ValidationCenter` contra `Event.target` que não seja um `Element`.
 - Corrige o erro observado no Firefox sem alterar as regras de validação dos campos.
+
+
+## v4.6.1.6 DEV — Identidade funcional dos históricos
+
+- Estabiliza a identidade dos históricos na sincronização offline/online.
+- Evita recriação do mesmo CPF/CNPJ válido em eventos sucessivos.
+- Mantém logs de diagnóstico DEV durante a homologação.
