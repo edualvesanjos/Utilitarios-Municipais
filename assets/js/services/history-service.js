@@ -363,7 +363,14 @@
         "schemaVersion",
         "sync_status",
         "created_at",
-        "updated_at"
+        "updated_at",
+        "createdAt",
+        "copiedAt",
+        "timestamp",
+        "date",
+        "savedAt",
+        "finishedAt",
+        "occurred_at"
     ]);
 
     function sanitizeForFingerprint(value) {
@@ -431,7 +438,19 @@
     }
 
     function queueHistory(module, value, action = "record", options = {}) {
-        const record = enqueue({ module, action, value, timestamp: options.timestamp || timestampFromValue(value), clientId: options.clientId || null, metadata: options.metadata || {} });
+        const clientId =
+            options.clientId ||
+            deterministicActionClientId(module, action, value);
+
+        const record = enqueue({
+            module,
+            action,
+            value,
+            timestamp: options.timestamp || timestampFromValue(value),
+            clientId,
+            metadata: options.metadata || {}
+        });
+
         window.setTimeout(() => syncAll({ silent: true }).catch(() => {}), 0);
         return record;
     }
@@ -442,7 +461,7 @@
             const items = StorageService.get(cfg.key, []);
             if (!Array.isArray(items)) return;
             items.forEach((value) => {
-                const clientId = deterministicClientId(module, value);
+                const clientId = deterministicActionClientId(module, "record", value);
                 const before = listPending().length;
                 enqueue({
                     module,
