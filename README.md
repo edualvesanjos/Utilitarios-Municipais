@@ -109,3 +109,9 @@ Corrige a obtenção do Data Plane token para `history_entries`, aceitando o ret
 
 O envio REST de `history_entries` passa a usar a mesma rota e os mesmos headers
 do upsert REST homologado no laboratório SuperDB v0.2.0.
+
+
+## v4.6.1.5 DEV — Compatibilidade de validação
+
+- Protege os listeners do `ValidationCenter` contra `Event.target` que não seja um `Element`.
+- Corrige o erro observado no Firefox sem alterar as regras de validação dos campos.
