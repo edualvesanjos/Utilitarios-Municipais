@@ -79,3 +79,9 @@ Copie `.env.example` para `.env` e informe a mesma Anon Key usada no laboratóri
 - Adiciona renovação automática do JWT do SuperDB com `refreshSession()`.
 - Trata sessão persistida expirada e expiração durante a sincronização.
 - Preserva dados locais quando uma sessão não puder ser renovada.
+
+
+## v4.6.0.9 DEV — Etapa 4
+
+- Feedback explícito para sincronização manual sem alterações.
+- Campo Cor principal passa a refletir a preferência recuperada do backend.

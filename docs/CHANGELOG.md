@@ -1,3 +1,9 @@
+## 4.6.0.9 DEV — Etapa 4
+
+- Adiciona confirmação visual ao `Sincronizar agora` quando os dados locais e remotos já estão iguais.
+- Corrige a reidratação dos controles de Interface após recuperação remota, incluindo o campo `Cor principal`.
+- Mantém a renovação automática de JWT e a validação de `sync_log`.
+
 ## 4.6.0.8 DEV — Etapa 4
 
 - Implementa renovação de sessão do SuperDB via `auth.refreshSession()`, validada previamente no laboratório v0.2.2.

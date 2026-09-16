@@ -1393,6 +1393,7 @@
                             <li><strong>Logout:</strong> a interface reflete imediatamente a sessão encerrada, sem exigir F5.</li>
                             <li><strong>Etapa 4:</strong> sync_log registra as sincronizações no SuperDB DEV.</li>
                             <li><strong>Sessão:</strong> JWT expirado passa a ser renovado automaticamente via refreshSession().</li>
+                            <li><strong>Interface:</strong> Sincronizar agora confirma quando os dados já estão atualizados e Cor principal acompanha o valor recuperado.</li>
                             <li><strong>Sincronização:</strong> REST upsert de user_data mantém conteúdo e updated_at no SuperDB.</li>
                         </ul>
                     </section>
@@ -1401,6 +1402,26 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline" id="aboutVersionHistory">
+                        <article class="about-version-item is-open">
+                            <button class="about-version-toggle" type="button" aria-expanded="true">
+                                <span class="about-version-heading">
+                                    <strong>4.6.0.9 DEV</strong>
+                                    <span>Etapa 4 — ajustes finais de sincronização</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details">
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Ajustes</h4>
+                                        <ul>
+                                            <li>Feedback visual no Sincronizar agora quando não existem diferenças.</li>
+                                            <li>Reidratação do campo Cor principal após recuperação remota.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
                         <article class="about-version-item is-open">
                             <button class="about-version-toggle" type="button" aria-expanded="true">
                                 <span class="about-version-heading">

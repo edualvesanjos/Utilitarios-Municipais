@@ -643,6 +643,7 @@
                 setConflict(false);
                 resetWatchedSnapshot();
                 setOnlineState({ status: "synced", at: syncedAt, direction: "compare" });
+                if (!silent) notify("Sincronização concluída. Os dados estão atualizados.", "success");
                 return true;
             }
             if (detectConflict(rows)) {
