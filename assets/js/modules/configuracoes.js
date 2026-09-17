@@ -227,7 +227,7 @@ const clearDeviceHistoriesButton = $("#limparHistoricosDispositivo");
 if (clearDeviceHistoriesButton) {
     clearDeviceHistoriesButton.addEventListener("click", async () => {
         const confirmed = await confirmAction(
-            "Os históricos serão removidos somente deste navegador. Registros existentes no Supabase poderão retornar na próxima sincronização. Deseja continuar?",
+            "Os históricos serão removidos somente deste navegador. Registros existentes no armazenamento online poderão retornar na próxima sincronização. Deseja continuar?",
             {
                 title: "Limpar históricos deste dispositivo",
                 confirmText: "Limpar deste dispositivo"
@@ -316,7 +316,7 @@ if (deleteSyncedHistoriesButton) {
 
 $("#limparTudo").addEventListener("click", async () => {
     const confirmed = await confirmAction(
-        "Esta ação apagará todos os dados locais do aplicativo neste navegador. Dados sincronizados no Supabase não serão excluídos. Deseja continuar?",
+        "Esta ação apagará todos os dados locais do aplicativo neste navegador. Dados sincronizados online não serão excluídos. Deseja continuar?",
         {
             title: "Apagar todos os dados locais",
             confirmText: "Apagar dados locais"

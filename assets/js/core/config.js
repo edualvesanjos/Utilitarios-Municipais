@@ -1,4 +1,4 @@
-const APP_VERSION = "4.6.1.7";
+const APP_VERSION = "4.6.1.8";
 window.APP_VERSION = APP_VERSION;
 
 /*
@@ -8,37 +8,25 @@ window.APP_VERSION = APP_VERSION;
  *   const APP_ENVIRONMENT = "development";
  *
  * Para publicação oficial:
- *   const APP_ENVIRONMENT = "development";
+ *   const APP_ENVIRONMENT = "production";
  *
  * IMPORTANTE:
- * - Nunca coloque sb_secret_... ou service_role neste arquivo.
- * - Somente a Publishable key (sb_publishable_...) pode ficar no navegador.
+ * - Nunca inclua chaves privadas ou credenciais administrativas
+ *   no código executado pelo navegador.
+ * - Credenciais públicas necessárias ao frontend devem ser
+ *   fornecidas somente pelos mecanismos previstos para o ambiente.
  */
 const APP_ENVIRONMENT = "development";
 window.APP_ENVIRONMENT = APP_ENVIRONMENT;
 
-const SUPABASE_ENVIRONMENTS = Object.freeze({
-    production: Object.freeze({
-        name: "Produção",
-        url: "https://ehrujhxfiupghdfrumeq.supabase.co",
-        publishableKey: "sb_publishable_2XNgzkyCD04BPUNNO1SJCg_moPRRk9N"
-    }),
-    development: Object.freeze({
-        name: "Desenvolvimento",
-        url: "https://rrddlydsnjugwcfwmvee.supabase.co",
-        publishableKey: "sb_publishable_u75tO9Eyd8frEyr9KwsCZQ_bXf38TeU"
-    })
+const APP_ENVIRONMENT_NAMES = Object.freeze({
+    development: "Desenvolvimento",
+    production: "Produção"
 });
 
-function getSupabaseEnvironmentConfig(environment = APP_ENVIRONMENT) {
-    const selected = SUPABASE_ENVIRONMENTS[environment];
-    if (!selected) {
-        throw new Error(`Ambiente Supabase inválido: ${environment}`);
-    }
-    return selected;
+function getEnvironmentName(environment = APP_ENVIRONMENT) {
+    return APP_ENVIRONMENT_NAMES[environment] || environment;
 }
-
-const ACTIVE_SUPABASE_CONFIG = getSupabaseEnvironmentConfig();
 
 const APP_CONFIG = Object.freeze({
     name: "Utilitários Municipais",
@@ -46,28 +34,24 @@ const APP_CONFIG = Object.freeze({
     schemaVersion: 13,
     storagePrefix: "utilitariosMunicipais:",
     environment: APP_ENVIRONMENT,
-    environmentName: ACTIVE_SUPABASE_CONFIG.name,
-    debug: APP_ENVIRONMENT === "development",
-    supabaseUrl: ACTIVE_SUPABASE_CONFIG.url,
-    supabasePublishableKey: ACTIVE_SUPABASE_CONFIG.publishableKey
+    environmentName: getEnvironmentName(),
+    debug: APP_ENVIRONMENT === "development"
 });
 
-window.SUPABASE_ENVIRONMENTS = SUPABASE_ENVIRONMENTS;
-window.getSupabaseEnvironmentConfig = getSupabaseEnvironmentConfig;
-
-
-/* v4.6.0 DEV — abstração de backend para migração Supabase → SuperDB.
- * Etapa 1 mantém o Supabase como backend operacional e registra o SuperDB
- * homologado como destino da migração. Nenhuma chave privada deve ser incluída.
+/* v4.6.x DEV — SuperDB como backend operacional exclusivo.
+ * Migração funcional concluída em DEV após homologação de autenticação,
+ * user_data, sync_log e history_entries.
+ * Nenhuma chave privada deve ser incluída no código-fonte.
  */
 const BACKEND_MIGRATION = Object.freeze({
     activeProvider: "superdb",
     targetProvider: "superdb",
-    stage: "history-entries",
+    stage: "superdb-only",
     superdb: Object.freeze({
         authUrl: "https://auth.superdb.com.br",
         project: "utilitariosmunicipais_teste",
         anonKey: ""
     })
 });
+
 window.BACKEND_MIGRATION = BACKEND_MIGRATION;

@@ -1,3 +1,14 @@
+## 4.6.1.8 DEV — Consolidação do SuperDB
+
+- Consolida o SuperDB como backend operacional exclusivo da aplicação.
+- Remove o SDK, cliente, configurações e fallback legados do Supabase no runtime.
+- Remove URLs e chaves públicas antigas do Supabase da configuração da aplicação.
+- Desacopla os textos da interface do provedor de backend, utilizando termos como dados online e armazenamento online.
+- Ajusta as mensagens de resolução de conflitos para representar corretamente dados locais e online.
+- Mantém preservada a documentação histórica das versões que utilizavam Supabase.
+- Mantém os mecanismos atuais de sincronização automática, reconexão, foco, visibilidade e sincronização manual.
+- Mantém Realtime fora desta versão para implementação posterior.
+
 ## 4.6.1.7 DEV — Limpeza dos logs de diagnóstico
 
 - Remove os logs temporários `[History DEV]` utilizados durante a estabilização dos históricos.

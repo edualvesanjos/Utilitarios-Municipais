@@ -1,34 +1,49 @@
-/* Utilitários Municipais v4.6.0 DEV — Backend Adapter, Etapa 4. */
+/* Utilitários Municipais v4.6.x DEV — Backend Adapter SuperDB. */
 (function () {
     "use strict";
 
     let initializationError = null;
 
     function getActiveProvider() {
-        return window.BACKEND_MIGRATION?.activeProvider || "supabase";
+        return "superdb";
     }
 
     function getTargetProvider() {
-        return window.BACKEND_MIGRATION?.targetProvider || getActiveProvider();
+        return "superdb";
     }
 
     function getClient() {
         try {
-            const provider = getActiveProvider();
-            if (provider === "supabase") return window.SupabaseClientService?.getClient?.() || null;
-            if (provider === "superdb") return window.SuperDBClientService?.getClient?.() || null;
-            throw new Error(`Provider de backend inválido: ${provider}`);
+            const client =
+                window.SuperDBClientService?.getClient?.() || null;
+
+            if (!client) {
+                const serviceError =
+                    window.SuperDBClientService?.getError?.();
+
+                if (serviceError) {
+                    throw serviceError;
+                }
+            }
+
+            return client;
         } catch (error) {
             initializationError = error;
-            window.ErrorHandler?.report(error, "Backend Adapter", { silent: true });
+
+            window.ErrorHandler?.report(
+                error,
+                "Backend Adapter",
+                { silent: true }
+            );
+
             return null;
         }
     }
 
     function isConfigured() {
-        if (getActiveProvider() === "supabase") return Boolean(window.SupabaseClientService?.isConfigured?.());
-        if (getActiveProvider() === "superdb") return Boolean(window.SuperDBClientService?.isConfigured?.());
-        return false;
+        return Boolean(
+            window.SuperDBClientService?.isConfigured?.()
+        );
     }
 
     function getEnvironment() {
@@ -37,8 +52,17 @@
             name: APP_CONFIG.environmentName,
             activeProvider: getActiveProvider(),
             targetProvider: getTargetProvider(),
-            migrationStage: window.BACKEND_MIGRATION?.stage || "legacy"
+            migrationStage:
+                window.BACKEND_MIGRATION?.stage || "superdb-only"
         };
+    }
+
+    function getError() {
+        return (
+            initializationError ||
+            window.SuperDBClientService?.getError?.() ||
+            null
+        );
     }
 
     window.BackendClientService = Object.freeze({
@@ -47,6 +71,6 @@
         getEnvironment,
         getActiveProvider,
         getTargetProvider,
-        getError: () => initializationError || (getActiveProvider() === "superdb" ? window.SuperDBClientService?.getError?.() : window.SupabaseClientService?.getError?.()) || null
+        getError
     });
 })();
