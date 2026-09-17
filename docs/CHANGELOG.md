@@ -1,3 +1,10 @@
+## 4.6.1.7 DEV — Limpeza dos logs de diagnóstico
+
+- Remove os logs temporários `[History DEV]` utilizados durante a estabilização dos históricos.
+- Remove os logs temporários `[Auth DEV]` utilizados durante os testes de autenticação.
+- Mantém os tratamentos de erro e logs operacionais permanentes.
+- Preserva o comportamento de autenticação e sincronização homologado na v4.6.1.6.
+
 ## 4.6.1.6 DEV — Identidade funcional dos históricos
 
 - Corrige duplicações de históricos observadas após uso offline, fechamento da aplicação e reconexão.
