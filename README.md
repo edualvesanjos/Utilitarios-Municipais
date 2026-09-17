@@ -7,7 +7,7 @@ Etapa de migração controlada para o SuperDB.
 - SuperDB passa a ser o backend ativo apenas na branch DEV.
 - Autenticação, restauração de sessão e `profiles` são habilitados no SuperDB.
 - `user_data`, `sync_log` e `history_entries` ainda não são sincronizados nesta etapa.
-- Supabase permanece carregado como backend legado/rollback, mas não é o provider ativo.
+- SuperDB é o backend operacional exclusivo da aplicação; o cliente e o SDK legados do Supabase não são mais carregados no runtime.
 - O `profiles` usa SELECT + INSERT/UPDATE porque o SDK `@superdb/client@0.2.2` não expõe `.upsert()`.
 
 ## Configuração

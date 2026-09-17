@@ -419,8 +419,8 @@
             .eq("user_id", session.user.id);
 
         // O SDK SuperDB 0.2.2 não implementa todos os modificadores do
-        // Supabase. Filtramos os grupos conhecidos localmente para manter
-        // esta rotina compatível com ambos os providers.
+        // Filtramos os grupos conhecidos localmente para manter
+        // compatibilidade com os dados retornados pelo backend.
         const { data, error } = await query;
         if (error) throw error;
         const permittedTypes = new Set(Object.keys(SYNC_GROUPS));
@@ -851,12 +851,12 @@
                 <button class="online-modal-close" type="button" aria-label="Fechar">×</button>
                 <span class="eyebrow">Sincronização</span>
                 <h2 id="onlineConflictTitle">Conflito de dados</h2>
-                <p>Foram encontradas alterações neste navegador e também no Supabase após a última sincronização.</p>
+                <p>Foram encontradas alterações neste navegador e também nos dados online após a última sincronização.</p>
                 <p class="help-text">Nenhum dado será substituído até você escolher uma opção.</p>
                 <p class="mini-description">Nenhum lado será descartado automaticamente. Escolha qual versão deve prevalecer.</p>
                 <div class="online-conflict-options">
-                    <button id="onlineKeepLocal" class="primary" type="button"><strong>Manter dados locais</strong><span>Envia este navegador para o Supabase.</span></button>
-                    <button id="onlineUseRemote" class="secondary" type="button"><strong>Usar dados online</strong><span>Substitui as preferências locais pelas armazenadas no Supabase.</span></button>
+                    <button id="onlineKeepLocal" class="primary" type="button"><strong>Manter dados locais</strong><span>Envia os dados deste navegador para o armazenamento online.</span></button>
+                    <button id="onlineUseRemote" class="secondary" type="button"><strong>Usar dados online</strong><span>Substitui os dados locais pelos armazenados online.</span></button>
                 </div>
                 <button id="onlineResolveLater" class="text-button" type="button">Resolver depois</button>
             </div>`;
