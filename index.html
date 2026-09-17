@@ -1385,11 +1385,15 @@
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da <span data-app-version></span></h3>
-                        <ul class="about-list">
-                            <li><strong>Diagnóstico:</strong> removidos os logs temporários <code>[History DEV]</code> utilizados na estabilização dos históricos.</li>
-                            <li><strong>Autenticação:</strong> removidos os logs temporários <code>[Auth DEV]</code> utilizados durante os testes de login e sessão.</li>
-                            <li><strong>Estabilização:</strong> mantidos os tratamentos de erro, logs operacionais e os fluxos de autenticação e sincronização homologados.</li>
+                        <h3>Novidades da 4.6.1.8</h3>
+                        <ul>
+                            <li><strong>SuperDB:</strong> consolidado como backend operacional exclusivo da aplicação.</li>
+                            <li><strong>Arquitetura:</strong> removidos do runtime o SDK, o cliente, as configurações e o fallback legados do Supabase.</li>
+                            <li><strong>Configuração:</strong> removidas URLs e chaves antigas do Supabase do código operacional.</li>
+                            <li><strong>Interface:</strong> mensagens de sincronização passam a utilizar termos neutros como dados online e armazenamento online.</li>
+                            <li><strong>Conflitos:</strong> mensagens ajustadas para representar corretamente a escolha entre dados locais e online.</li>
+                            <li><strong>Histórico de versões:</strong> todas as versões passam a iniciar recolhidas, mantendo expansão individual.</li>
+                            <li><strong>Sincronização:</strong> preservados os mecanismos atuais já homologados; Realtime permanece para evolução posterior.</li>
                         </ul>
                     </section>
                 </div>
