@@ -911,15 +911,6 @@
         const signInButton = modal.querySelector("#onlineSignIn");
         const credentials = () => ({ email: emailInput.value.trim(), password: passwordInput.value });
 
-        const logAuthDiagnostic = (stage, extra = {}) => {
-            if (window.APP_ENVIRONMENT !== "development") return;
-            const adapterClient = window.BackendClientService?.getClient?.() || null;
-            window.Logger?.info?.(`[Auth DEV] ${stage}`, {
-                service_client: Boolean(client), adapter_client: Boolean(adapterClient),
-                service_auth: Boolean(client?.auth), adapter_auth: Boolean(adapterClient?.auth), ...extra
-            });
-        };
-
         emailInput.addEventListener("input", () => { if (feedback.textContent !== "Entrando...") feedback.textContent = ""; });
         passwordInput.addEventListener("input", () => { if (feedback.textContent !== "Entrando...") feedback.textContent = ""; });
 
@@ -928,7 +919,7 @@
             if (!email || !password) { feedback.textContent = "Informe o e-mail e a senha."; return; }
             signInButton.disabled = true;
             feedback.textContent = "Entrando...";
-            logAuthDiagnostic("antes da tentativa");
+           
             try {
                 let authClient = client;
                 if (!authClient?.auth?.signInWithPassword) authClient = window.BackendClientService?.getClient?.() || null;
@@ -936,28 +927,23 @@
                 client = authClient;
                 const { data, error } = await authClient.auth.signInWithPassword({ email, password });
                 if (error) {
-                    logAuthDiagnostic("tentativa rejeitada", { status: error.status ?? null, code: error.code ?? null });
                     feedback.textContent = error.message || "E-mail ou senha inválidos.";
                     passwordInput.value = ""; passwordInput.focus(); return;
                 }
                 if (!data?.session?.user) {
-                    logAuthDiagnostic("resposta sem sessão");
                     feedback.textContent = "Não foi possível iniciar a sessão. Tente novamente.";
                     passwordInput.value = ""; passwordInput.focus(); return;
                 }
                 session = data.session;
-                logAuthDiagnostic("login aceito", { user_id: session.user.id });
                 feedback.textContent = "Login realizado.";
                 renderOnlineStatus();
                 await ensureProfile(session.user);
                 setTimeout(close, 500);
             } catch (error) {
-                logAuthDiagnostic("exceção", { message: error?.message || String(error) });
                 feedback.textContent = error?.message || "Falha ao realizar o login. Tente novamente.";
                 passwordInput.value = ""; passwordInput.focus();
             } finally {
                 signInButton.disabled = false;
-                logAuthDiagnostic("fim da tentativa");
             }
         });
         modal.querySelector("#onlineSignUp").addEventListener("click", async () => {

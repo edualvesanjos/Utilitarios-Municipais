@@ -67,8 +67,8 @@ ValidationCenter.register(
 );
 
 ValidationCenter.register(
-    "#inscricaoValor",
-    (value) => digitsOnly(value).length <= 17,
+    '#inscricaoValor',
+    (value) => onlyDigits(value).length <= 17,
     "A inscrição excede o limite esperado."
 );
 
