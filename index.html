@@ -1385,15 +1385,13 @@
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 4.6.1.8</h3>
+                        <h3>Novidades da 4.6.1.14</h3>
                         <ul>
-                            <li><strong>SuperDB:</strong> consolidado como backend operacional exclusivo da aplicação.</li>
-                            <li><strong>Arquitetura:</strong> removidos do runtime o SDK, o cliente, as configurações e o fallback legados do Supabase.</li>
-                            <li><strong>Configuração:</strong> removidas URLs e chaves antigas do Supabase do código operacional.</li>
-                            <li><strong>Interface:</strong> mensagens de sincronização passam a utilizar termos neutros como dados online e armazenamento online.</li>
-                            <li><strong>Conflitos:</strong> mensagens ajustadas para representar corretamente a escolha entre dados locais e online.</li>
-                            <li><strong>Histórico de versões:</strong> todas as versões passam a iniciar recolhidas, mantendo expansão individual.</li>
-                            <li><strong>Sincronização:</strong> preservados os mecanismos atuais já homologados; Realtime permanece para evolução posterior.</li>
+                            <li><strong>Logout:</strong> o Realtime passa a ser encerrado explicitamente no fluxo de saída, mesmo se o evento <code>SIGNED_OUT</code> atrasar ou não for emitido.</li>
+                            <li><strong>Limpeza:</strong> canal e timers de renovação/reconexão são encerrados junto com a sessão.</li>
+                            <li><strong>Login:</strong> eventos redundantes de autenticação não recriam uma conexão que já esteja em <code>SUBSCRIBED</code>.</li>
+                            <li><strong>Estabilidade:</strong> <code>disconnect()</code> passa a evitar efeitos/logs duplicados em encerramentos repetidos.</li>
+                            <li><strong>Realtime:</strong> preservadas a renovação preventiva do token e a recuperação após retorno online.</li>
                         </ul>
                     </section>
                 </div>
@@ -1401,6 +1399,188 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline" id="aboutVersionHistory">
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.14 DEV</strong>
+                                    <span>Estabilidade de logout e login do Realtime</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Autenticação e Realtime</h4>
+                                        <ul>
+                                            <li>Encerra explicitamente o Realtime no logout, sem depender apenas do evento do SDK.</li>
+                                            <li>Limpa canal e timers associados à sessão encerrada.</li>
+                                            <li>Evita recriar uma conexão já inscrita durante eventos redundantes de login.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.13 DEV</strong>
+                                    <span>Recuperação resiliente no retorno online</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Retorno da rede</h4>
+                                        <ul>
+                                            <li>Registra o evento <code>online</code> independentemente do estado momentâneo da sessão.</li>
+                                            <li>Reavalia a sessão após 500 ms quando necessário antes de iniciar a recuperação.</li>
+                                            <li>Mantém a reconexão protegida contra duplicidade e respeita logout/desconexões intencionais.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.12 DEV</strong>
+                                    <span>Recuperação do Realtime no retorno online</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Recuperação de rede</h4>
+                                        <ul>
+                                            <li>Registra quando uma assinatura ativa atravessa uma interrupção de rede.</li>
+                                            <li>Verifica a recuperação no retorno online mesmo se o último estado conhecido ainda for <code>SUBSCRIBED</code>.</li>
+                                            <li>Aguarda 5 segundos pela recuperação automática do SDK antes de recriar a conexão.</li>
+                                            <li>Cancela a recuperação programada se o canal confirmar novamente <code>SUBSCRIBED</code>.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.11 DEV</strong>
+                                    <span>Renovação normal e reconexão do Realtime</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Estabilidade do Realtime</h4>
+                                        <ul>
+                                            <li>Restaura o intervalo normal de renovação preventiva do token após o teste controlado da versão anterior.</li>
+                                            <li>Trata falhas e encerramentos do canal com agendamento controlado de reconexão.</li>
+                                            <li>Verifica a necessidade de recuperação do Realtime quando o navegador volta a ficar online.</li>
+                                            <li>Evita reconexões concorrentes e respeita desconexões intencionais, como logout.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.10 DEV</strong>
+                                    <span>Validação da renovação do token Realtime</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Renovação controlada</h4>
+                                        <ul>
+                                            <li>Reduz temporariamente o intervalo de renovação para 60 segundos para validar o ciclo completo sem aguardar 55 minutos.</li>
+                                            <li>Mantém a atualização da autenticação por <code>setAuth(...)</code> sem recriar o canal Realtime.</li>
+                                            <li>Registra no log DEV o modo de teste e o resultado da renovação.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.9 DEV</strong>
+                                    <span>Estabilidade do Realtime</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Etapa 1 — Estado da assinatura</h4>
+                                        <ul>
+                                            <li>Passa a acompanhar internamente o estado real da assinatura Realtime.</li>
+                                            <li><code>isConnected()</code> retorna verdadeiro somente quando o canal está em <code>SUBSCRIBED</code>.</li>
+                                            <li>A renovação de token e a reconexão automática permaneceram fora desta primeira etapa.</li>
+                                        </ul>
+                                    </section>
+                                    <section>
+                                        <h4>Etapa 2 — Renovação do token</h4>
+                                        <ul>
+                                            <li>Agenda a renovação preventiva conforme a validade informada pelo token Realtime.</li>
+                                            <li>Valida a sessão SuperDB antes de emitir uma nova credencial Realtime.</li>
+                                            <li>Atualiza o cliente ativo com <code>setAuth(...)</code>, sem recriar o canal em uma renovação normal.</li>
+                                            <li>Remove o timer de renovação ao desconectar ou efetuar logout.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.8 DEV</strong>
+                                    <span>Consolidação do SuperDB e Realtime</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Backend</h4>
+                                        <ul>
+                                            <li>Consolida o SuperDB como backend operacional exclusivo da aplicação.</li>
+                                            <li>Remove do runtime os componentes e configurações legados do Supabase.</li>
+                                            <li>Adota terminologia neutra para dados e armazenamento online.</li>
+                                        </ul>
+                                    </section>
+                        
+                                    <section>
+                                        <h4>Realtime</h4>
+                                        <ul>
+                                            <li>Implementa a conexão Realtime para acompanhamento das alterações dos dados online.</li>
+                                            <li>Consolida eventos do mesmo lote antes de solicitar a sincronização.</li>
+                                            <li>Ajusta a inicialização para utilizar corretamente a sessão autenticada restaurada.</li>
+                                        </ul>
+                                    </section>
+                        
+                                    <section>
+                                        <h4>Sincronização</h4>
+                                        <ul>
+                                            <li>Preserva os mecanismos de sincronização automática e manual já homologados.</li>
+                                            <li>Mantém o tratamento de conflitos entre dados locais e online.</li>
+                                            <li>Valida a conexão automática do Realtime após a restauração da sessão.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>                        
                         <article class="about-version-item">
                             <button class="about-version-toggle" type="button" aria-expanded="false">
                                 <span class="about-version-heading">
@@ -2199,6 +2379,7 @@
     <script src="assets/js/services/storage-service.js"></script>
     <script src="assets/js/services/history-service.js"></script>
     <script src="assets/js/services/online-sync-service.js"></script>
+    <script type="module" src="assets/js/services/realtime-service.js"></script>   
     <script src="assets/js/core/sidebar-45.js"></script>
     <script src="assets/js/core/about-history-45.js"></script>
     <script src="assets/js/core/storage.js"></script>

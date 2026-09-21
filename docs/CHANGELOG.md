@@ -1,4 +1,58 @@
-## 4.6.1.8 DEV — Consolidação do SuperDB
+## 4.6.1.14 DEV — Estabilidade de logout e login do Realtime
+
+- Garante o encerramento explícito do Realtime no fluxo de logout, sem depender exclusivamente do evento `SIGNED_OUT` do SDK.
+- Evita manter canal, timer de renovação ou reconexão ativos após o encerramento da sessão.
+- Torna `disconnect()` idempotente para evitar logs duplicados quando o logout explícito e o evento de autenticação encerrarem a mesma conexão.
+- Evita recriar uma conexão Realtime que já esteja efetivamente em `SUBSCRIBED` durante eventos redundantes de autenticação.
+- Preserva a renovação preventiva do token e a recuperação `offline → online` homologadas nas versões anteriores.
+
+## 4.6.1.13 DEV — Recuperação resiliente no retorno online
+
+- Registra o evento `online` antes de validar a sessão, permitindo diagnosticar o retorno da rede independentemente do estado momentâneo da autenticação.
+- Reavalia a sessão após 500 ms quando ela ainda não estiver disponível no instante exato do evento `online`.
+- Mantém a recuperação condicionada a uma sessão autenticada, sem criar conexão Realtime para usuário desconectado.
+- Preserva a janela de reconexão controlada de 5 segundos e cancela timers auxiliares no `disconnect()`.
+- Mantém a renovação preventiva do token em aproximadamente 3300 segundos para tokens com validade de 3600 segundos.
+
+## 4.6.1.12 DEV — Recuperação do Realtime no retorno online
+
+- Registra explicitamente quando a rede foi interrompida durante uma assinatura Realtime ativa.
+- Ao receber o evento `online`, verifica a assinatura mesmo quando o último estado conhecido ainda é `SUBSCRIBED`.
+- Agenda recuperação controlada após `offline → online` quando não houver confirmação de recuperação automática do canal.
+- Mantém uma janela de 5 segundos para permitir que o SDK se recupere sozinho antes de recriar a conexão.
+- Cancela a reconexão programada se o canal confirmar `SUBSCRIBED` durante essa janela.
+- Mantém a renovação preventiva normal do token e a lógica de sincronização/conflitos sem alterações.
+
+## 4.6.1.11 DEV — Renovação normal e reconexão do Realtime
+
+- Restaura a renovação preventiva normal do token Realtime, removendo o intervalo temporário de 60 segundos da v4.6.1.10.
+- Mantém a atualização do token com `setAuth(...)`, sem recriar o canal durante uma renovação normal.
+- Passa a tratar os estados `CHANNEL_ERROR`, `TIMED_OUT` e `CLOSED` para programar uma nova conexão quando houver sessão autenticada e rede disponível.
+- Evita agendamentos concorrentes de reconexão e cancela o timer ao desconectar intencionalmente.
+- Ao retornar ao estado online, verifica se o Realtime está fora de `SUBSCRIBED` e agenda a recuperação da conexão.
+- Mantém a lógica de sincronização e de conflitos no `OnlineSyncService`, sem duplicá-la no `RealtimeService`.
+
+## 4.6.1.10 DEV — Validação da renovação do token Realtime
+
+- Mantém o estado real da assinatura Realtime validado na v4.6.1.9.
+- Mantém a renovação do token com `setAuth(...)` sem recriar o canal.
+- Reduz temporariamente o intervalo de renovação para 60 segundos, exclusivamente para validação funcional.
+- Identifica no log DEV quando o agendamento está operando em modo de teste.
+- Remove o artefato de pesquisa `4_6_1_8.code-search`, sem uso no runtime da aplicação.
+- Mantém a reconexão automática após falhas de canal fora do escopo desta versão de teste.
+
+## 4.6.1.9 DEV — Estabilidade do Realtime
+
+- Inicia a etapa de estabilização do Realtime sobre a base homologada da v4.6.1.8.
+- Passa a registrar internamente o estado real da assinatura Realtime.
+- Ajusta `isConnected()` para retornar verdadeiro somente quando a assinatura estiver em `SUBSCRIBED`.
+- Agenda a renovação preventiva do token Realtime antes de sua expiração.
+- Garante uma sessão SuperDB válida antes de solicitar um novo token Realtime.
+- Atualiza a autenticação do cliente existente com `setAuth(...)`, sem recriar o canal durante a renovação normal.
+- Cancela o timer de renovação ao desconectar ou efetuar logout.
+- Mantém a reconexão automática após falhas de canal para a próxima etapa desta versão.
+
+## 4.6.1.8 DEV — Consolidação do SuperDB e Realtime
 
 - Consolida o SuperDB como backend operacional exclusivo da aplicação.
 - Remove o SDK, cliente, configurações e fallback legados do Supabase no runtime.
@@ -6,8 +60,11 @@
 - Desacopla os textos da interface do provedor de backend, utilizando termos como dados online e armazenamento online.
 - Ajusta as mensagens de resolução de conflitos para representar corretamente dados locais e online.
 - Mantém preservada a documentação histórica das versões que utilizavam Supabase.
-- Mantém os mecanismos atuais de sincronização automática, reconexão, foco, visibilidade e sincronização manual.
-- Mantém Realtime fora desta versão para implementação posterior.
+- Mantém os mecanismos de sincronização automática, reconexão, foco, visibilidade e sincronização manual.
+- Implementa a conexão Realtime para acompanhamento das alterações dos dados online.
+- Consolida eventos Realtime antes de solicitar a sincronização, evitando processamento individual de alterações do mesmo lote.
+- Ajusta a inicialização para disponibilizar o `OnlineSyncService` antes do evento `um:session-ready`, garantindo que o Realtime encontre a sessão autenticada.
+- Valida a conexão automática do Realtime após a restauração da sessão, sem necessidade de conexão manual.
 
 ## 4.6.1.7 DEV — Limpeza dos logs de diagnóstico
 
