@@ -1,3 +1,10 @@
+## 4.6.1.17 DEV — Sincronização automática entre navegadores
+
+- Prepara a homologação do fluxo completo `navegador A → SuperDB → Realtime → navegador B`.
+- Mantém o processamento remoto centralizado em `handleRealtimeChange() → pullRemoteData()`, preservando a detecção de conflitos existente.
+- Adiciona log DEV do resultado da sincronização solicitada pelo Realtime para distinguir evento recebido de dados efetivamente aplicados.
+- Não altera a política de sincronização, resolução de conflitos, renovação de token ou reconexão já homologadas.
+
 ## 4.6.1.16 DEV — Reconexão explícita após novo login
 
 - Restabelece o Realtime diretamente no fluxo de login bem-sucedido, logo após a nova sessão ser armazenada.

@@ -1,6 +1,6 @@
 import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
 
-/* Utilitários Municipais v4.6.1.16 DEV — Estabilidade de logout e login do Realtime. */
+/* Utilitários Municipais v4.6.1.17 DEV — Validação da sincronização automática entre navegadores. */
 (async function () {
     "use strict";
 
@@ -241,7 +241,11 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
             );
 
             try {
-                await sync.handleRealtimeChange();
+                const applied = await sync.handleRealtimeChange();
+                devLog(
+                    "Sincronização solicitada pelo Realtime concluída.",
+                    { applied: applied === true }
+                );
             } catch (error) {
                 devLog("Falha ao processar alteração remota.", {
                     message:

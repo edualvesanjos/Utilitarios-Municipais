@@ -1385,12 +1385,12 @@
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 4.6.1.16</h3>
+                        <h3>Novidades da 4.6.1.17</h3>
                         <ul>
-                            <li><strong>Login:</strong> o fluxo de entrada restabelece o Realtime explicitamente assim que recebe a nova sessão.</li>
-                            <li><strong>Autenticação:</strong> a reconexão não depende exclusivamente de um novo evento <code>SIGNED_IN</code> do cliente.</li>
-                            <li><strong>Resiliência:</strong> a conexão Realtime ocorre antes de <code>ensureProfile()</code>, isolando falhas REST posteriores.</li>
-                            <li><strong>Estabilidade:</strong> preservados logout explícito, renovação do token e recuperação após retorno online.</li>
+                            <li><strong>Sincronização automática:</strong> preparada a validação do fluxo completo entre dois navegadores com Realtime ativo.</li>
+                            <li><strong>Diagnóstico:</strong> o Console informa quando a sincronização solicitada por um evento Realtime foi concluída e se os dados foram aplicados.</li>
+                            <li><strong>Conflitos:</strong> permanece preservado o fluxo existente <code>handleRealtimeChange() → pullRemoteData() → detectConflict()</code>.</li>
+                            <li><strong>Estabilidade:</strong> não altera renovação do token, reconexão de rede nem o ciclo de logout/login já homologados.</li>
                         </ul>
                     </section>
                 </div>
@@ -1398,6 +1398,28 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline" id="aboutVersionHistory">
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.17 DEV</strong>
+                                    <span>Sincronização automática entre navegadores</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Realtime e sincronização</h4>
+                                        <ul>
+                                            <li>Valida o fluxo de alteração remota entre dois navegadores autenticados.</li>
+                                            <li>Registra o resultado do processamento iniciado pelo Realtime.</li>
+                                            <li>Preserva a detecção de conflitos exclusivamente no serviço de sincronização.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
                         <article class="about-version-item">
                             <button class="about-version-toggle" type="button" aria-expanded="false">
                                 <span class="about-version-heading">
