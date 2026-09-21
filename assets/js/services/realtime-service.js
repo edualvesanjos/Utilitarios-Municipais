@@ -1,6 +1,6 @@
 import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
 
-/* Utilitários Municipais v4.6.1.17 DEV — Validação da sincronização automática entre navegadores. */
+/* Utilitários Municipais v4.6.1.18 DEV — Recuperação após falha temporária do SuperDB. */
 (async function () {
     "use strict";
 
@@ -170,10 +170,15 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
             }
 
             reconnectInProgress = true;
+            let connected = false;
             try {
-                await connect();
+                connected = await connect();
             } finally {
                 reconnectInProgress = false;
+            }
+
+            if (!connected) {
+                scheduleReconnect("RETRY_FAILED");
             }
         }, RECONNECT_DELAY_MS);
     }

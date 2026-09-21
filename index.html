@@ -1385,12 +1385,12 @@
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 4.6.1.17</h3>
+                        <h3>Novidades da 4.6.1.18</h3>
                         <ul>
-                            <li><strong>Sincronização automática:</strong> preparada a validação do fluxo completo entre dois navegadores com Realtime ativo.</li>
-                            <li><strong>Diagnóstico:</strong> o Console informa quando a sincronização solicitada por um evento Realtime foi concluída e se os dados foram aplicados.</li>
-                            <li><strong>Conflitos:</strong> permanece preservado o fluxo existente <code>handleRealtimeChange() → pullRemoteData() → detectConflict()</code>.</li>
-                            <li><strong>Estabilidade:</strong> não altera renovação do token, reconexão de rede nem o ciclo de logout/login já homologados.</li>
+                            <li><strong>Recuperação automática:</strong> uma tentativa de reconexão que falhar por indisponibilidade temporária do SuperDB passa a programar nova tentativa controlada.</li>
+                            <li><strong>Proteção de concorrência:</strong> a nova tentativa só é agendada após liberar o estado interno de reconexão em andamento.</li>
+                            <li><strong>Intervalo preservado:</strong> mantém tentativas espaçadas em 5 segundos, sem criar reconexões paralelas.</li>
+                            <li><strong>Base estável:</strong> parte da 4.6.1.17 DEV e preserva sincronização entre navegadores, renovação de token, retorno online e logout/login já validados.</li>
                         </ul>
                     </section>
                 </div>
@@ -1398,6 +1398,28 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline" id="aboutVersionHistory">
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.18 DEV</strong>
+                                    <span>Recuperação após falha temporária do SuperDB</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Resiliência do Realtime</h4>
+                                        <ul>
+                                            <li>Repete de forma controlada a reconexão quando a tentativa anterior falha ao obter novo token.</li>
+                                            <li>Libera o bloqueio de reconexão antes de agendar a tentativa seguinte.</li>
+                                            <li>Preserva o intervalo de 5 segundos e evita tentativas concorrentes.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
                         <article class="about-version-item">
                             <button class="about-version-toggle" type="button" aria-expanded="false">
                                 <span class="about-version-heading">

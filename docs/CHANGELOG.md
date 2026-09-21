@@ -1,3 +1,10 @@
+## 4.6.1.18 DEV — Recuperação após falha temporária do SuperDB
+
+- Corrige a recuperação do Realtime quando uma tentativa de reconexão falha ao obter novo token por indisponibilidade temporária do SuperDB.
+- Após uma tentativa malsucedida, agenda nova reconexão controlada somente depois de liberar o estado `reconnectInProgress`, evitando que o bloqueio de concorrência descarte a próxima tentativa.
+- Mantém o intervalo de 5 segundos, a proteção contra reconexões concorrentes e as regras já homologadas de logout, retorno online e renovação de token.
+- Parte da v4.6.1.17 DEV, preservando-a como checkpoint anterior.
+
 ## 4.6.1.17 DEV — Sincronização automática entre navegadores
 
 - Prepara a homologação do fluxo completo `navegador A → SuperDB → Realtime → navegador B`.
