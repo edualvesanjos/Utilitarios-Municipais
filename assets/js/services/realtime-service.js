@@ -1,6 +1,6 @@
 import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
 
-/* Utilitários Municipais v4.6.1.12 DEV — Recuperação do Realtime no retorno online. */
+/* Utilitários Municipais v4.6.1.13 DEV — Recuperação resiliente no retorno online. */
 (async function () {
     "use strict";
 
@@ -16,6 +16,7 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
     const TOKEN_RENEWAL_MARGIN_MS = 5 * 60 * 1000;
     const MIN_TOKEN_RENEWAL_DELAY_MS = 30 * 1000;
     const RECONNECT_DELAY_MS = 5 * 1000;
+    const ONLINE_SESSION_RECHECK_DELAY_MS = 500;
 
     let realtimeClient = null;
     let realtimeChannel = null;
@@ -28,6 +29,7 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
     let reconnectInProgress = false;
     let intentionalDisconnect = false;
     let networkInterrupted = false;
+    let onlineSessionRecheckTimer = null;
 
     function devLog(message, details = null) {
         if (window.APP_ENVIRONMENT !== "development") return;
@@ -273,6 +275,8 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
         debounceTimer = null;
         clearTokenRenewalTimer();
         clearReconnectTimer();
+        clearTimeout(onlineSessionRecheckTimer);
+        onlineSessionRecheckTimer = null;
         tokenRenewalInProgress = false;
 
         try {
@@ -430,20 +434,43 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
     }  
 
     window.addEventListener("online", () => {
-        if (!getSession()?.user) return;
+        clearTimeout(onlineSessionRecheckTimer);
+        onlineSessionRecheckTimer = null;
+
+        const hasSession = Boolean(getSession()?.user);
 
         devLog("Navegador online; verificando Realtime.", {
             status: subscriptionStatus,
-            networkInterrupted
+            networkInterrupted,
+            session: hasSession
         });
 
-        if (networkInterrupted || subscriptionStatus !== "SUBSCRIBED") {
-            scheduleReconnect(
-                networkInterrupted
-                    ? "ONLINE_AFTER_OFFLINE"
-                    : "ONLINE"
-            );
+        const recoverIfNeeded = () => {
+            const sessionReady = Boolean(getSession()?.user);
+
+            if (!sessionReady) {
+                devLog("Recuperação Realtime aguardando sessão após retorno online.");
+                return;
+            }
+
+            if (networkInterrupted || subscriptionStatus !== "SUBSCRIBED") {
+                scheduleReconnect(
+                    networkInterrupted
+                        ? "ONLINE_AFTER_OFFLINE"
+                        : "ONLINE"
+                );
+            }
+        };
+
+        if (hasSession) {
+            recoverIfNeeded();
+            return;
         }
+
+        onlineSessionRecheckTimer = setTimeout(() => {
+            onlineSessionRecheckTimer = null;
+            recoverIfNeeded();
+        }, ONLINE_SESSION_RECHECK_DELAY_MS);
     });
 
     window.addEventListener("offline", () => {

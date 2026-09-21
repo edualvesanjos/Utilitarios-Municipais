@@ -1385,14 +1385,13 @@
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 4.6.1.12</h3>
+                        <h3>Novidades da 4.6.1.13</h3>
                         <ul>
-                            <li><strong>Retorno online:</strong> o Realtime passa a registrar explicitamente interrupções de rede e verificar a recuperação ao voltar online.</li>
-                            <li><strong>Reconexão:</strong> uma interrupção <code>offline → online</code> pode programar recuperação mesmo quando o último estado conhecido ainda é <code>SUBSCRIBED</code>.</li>
-                            <li><strong>Proteção:</strong> mantém uma janela de 5 segundos para permitir recuperação automática pelo SDK antes de recriar a conexão.</li>
-                            <li><strong>Estado:</strong> uma nova confirmação <code>SUBSCRIBED</code> cancela a reconexão programada.</li>
-                            <li><strong>Token:</strong> preservada a renovação preventiva normal validada nas versões anteriores.</li>
-                            <li><strong>Arquitetura:</strong> sincronização e conflitos continuam sob responsabilidade do <code>OnlineSyncService</code>.</li>
+                            <li><strong>Retorno online:</strong> o evento de retorno da rede passa a ser registrado antes da validação da sessão autenticada.</li>
+                            <li><strong>Sessão:</strong> quando a sessão ainda não estiver disponível no instante do evento <code>online</code>, o Realtime realiza uma nova verificação após 500 ms.</li>
+                            <li><strong>Reconexão:</strong> a recuperação continua condicionada a uma sessão válida e à necessidade real de restabelecer o canal.</li>
+                            <li><strong>Proteção:</strong> mantida a janela controlada de 5 segundos para evitar reconexões desnecessárias.</li>
+                            <li><strong>Token:</strong> preservada a renovação preventiva normal do token Realtime.</li>
                         </ul>
                     </section>
                 </div>
@@ -1400,6 +1399,28 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline" id="aboutVersionHistory">
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.13 DEV</strong>
+                                    <span>Recuperação resiliente no retorno online</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Retorno da rede</h4>
+                                        <ul>
+                                            <li>Registra o evento <code>online</code> independentemente do estado momentâneo da sessão.</li>
+                                            <li>Reavalia a sessão após 500 ms quando necessário antes de iniciar a recuperação.</li>
+                                            <li>Mantém a reconexão protegida contra duplicidade e respeita logout/desconexões intencionais.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
                         <article class="about-version-item">
                             <button class="about-version-toggle" type="button" aria-expanded="false">
                                 <span class="about-version-heading">

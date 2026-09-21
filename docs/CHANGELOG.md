@@ -1,3 +1,11 @@
+## 4.6.1.13 DEV — Recuperação resiliente no retorno online
+
+- Registra o evento `online` antes de validar a sessão, permitindo diagnosticar o retorno da rede independentemente do estado momentâneo da autenticação.
+- Reavalia a sessão após 500 ms quando ela ainda não estiver disponível no instante exato do evento `online`.
+- Mantém a recuperação condicionada a uma sessão autenticada, sem criar conexão Realtime para usuário desconectado.
+- Preserva a janela de reconexão controlada de 5 segundos e cancela timers auxiliares no `disconnect()`.
+- Mantém a renovação preventiva do token em aproximadamente 3300 segundos para tokens com validade de 3600 segundos.
+
 ## 4.6.1.12 DEV — Recuperação do Realtime no retorno online
 
 - Registra explicitamente quando a rede foi interrompida durante uma assinatura Realtime ativa.
