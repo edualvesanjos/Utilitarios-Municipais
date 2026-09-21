@@ -1180,6 +1180,7 @@
             upload: pushLocalData,
             restore: pullRemoteData,
             handleRealtimeChange,
+            ensureFreshSession: ensureFreshBackendSession,
             openLogin: openAuthModal,
             openConflict: openConflictModal,
             getSession: () => session,

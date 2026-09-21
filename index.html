@@ -1385,17 +1385,14 @@
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 4.6.1.8</h3>
+                        <h3>Novidades da 4.6.1.10</h3>
                         <ul>
-                            <li><strong>SuperDB:</strong> consolidado como backend operacional exclusivo da aplicação.</li>
-                            <li><strong>Arquitetura:</strong> removidos do runtime o SDK, o cliente, as configurações e o fallback legados do Supabase.</li>
-                            <li><strong>Configuração:</strong> removidas URLs e chaves antigas do Supabase do código operacional.</li>
-                            <li><strong>Interface:</strong> mensagens de sincronização passam a utilizar termos neutros como dados online e armazenamento online.</li>
-                            <li><strong>Conflitos:</strong> mensagens ajustadas para representar corretamente a escolha entre dados locais e online.</li>
-                            <li><strong>Histórico de versões:</strong> todas as versões passam a iniciar recolhidas, mantendo expansão individual.</li>
-                            <li><strong>Realtime:</strong> implementada a atualização orientada por eventos para alterações dos dados online.</li>
-                            <li><strong>Autenticação:</strong> ajustada a ordem de inicialização para que o Realtime utilize corretamente a sessão restaurada.</li>
-                            <li><strong>Sincronização:</strong> eventos Realtime do mesmo lote são consolidados antes do processamento dos dados remotos.</li>
+                            <li><strong>Realtime:</strong> iniciada a validação controlada da renovação automática do token.</li>
+                            <li><strong>Teste de renovação:</strong> o intervalo foi reduzido temporariamente para 60 segundos para permitir a observação do ciclo completo.</li>
+                            <li><strong>Autenticação:</strong> o novo token continua sendo aplicado com <code>setAuth(...)</code>, preservando o cliente e o canal existentes.</li>
+                            <li><strong>Diagnóstico:</strong> o log DEV identifica o agendamento temporário utilizado durante a homologação.</li>
+                            <li><strong>Limpeza:</strong> removido o artefato de pesquisa <code>4_6_1_8.code-search</code>, sem dependência no runtime.</li>
+                            <li><strong>Escopo:</strong> reconexão automática após falhas de canal permanece para uma versão posterior.</li>
                         </ul>
                     </section>
                 </div>
@@ -1403,6 +1400,59 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline" id="aboutVersionHistory">
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.10 DEV</strong>
+                                    <span>Validação da renovação do token Realtime</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Renovação controlada</h4>
+                                        <ul>
+                                            <li>Reduz temporariamente o intervalo de renovação para 60 segundos para validar o ciclo completo sem aguardar 55 minutos.</li>
+                                            <li>Mantém a atualização da autenticação por <code>setAuth(...)</code> sem recriar o canal Realtime.</li>
+                                            <li>Registra no log DEV o modo de teste e o resultado da renovação.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.9 DEV</strong>
+                                    <span>Estabilidade do Realtime</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Etapa 1 — Estado da assinatura</h4>
+                                        <ul>
+                                            <li>Passa a acompanhar internamente o estado real da assinatura Realtime.</li>
+                                            <li><code>isConnected()</code> retorna verdadeiro somente quando o canal está em <code>SUBSCRIBED</code>.</li>
+                                            <li>A renovação de token e a reconexão automática permaneceram fora desta primeira etapa.</li>
+                                        </ul>
+                                    </section>
+                                    <section>
+                                        <h4>Etapa 2 — Renovação do token</h4>
+                                        <ul>
+                                            <li>Agenda a renovação preventiva conforme a validade informada pelo token Realtime.</li>
+                                            <li>Valida a sessão SuperDB antes de emitir uma nova credencial Realtime.</li>
+                                            <li>Atualiza o cliente ativo com <code>setAuth(...)</code>, sem recriar o canal em uma renovação normal.</li>
+                                            <li>Remove o timer de renovação ao desconectar ou efetuar logout.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
                         <article class="about-version-item">
                             <button class="about-version-toggle" type="button" aria-expanded="false">
                                 <span class="about-version-heading">

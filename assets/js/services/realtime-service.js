@@ -1,6 +1,6 @@
 import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
 
-/* Utilitários Municipais v4.6.2 DEV — Realtime SuperDB, Etapa 1. */
+/* Utilitários Municipais v4.6.1.10 DEV — Teste controlado da renovação do token Realtime. */
 (async function () {
     "use strict";
 
@@ -13,11 +13,17 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
     const REALTIME_TABLE = "user_data";
 
     const DEBOUNCE_MS = 750;
+    const TOKEN_RENEWAL_MARGIN_MS = 5 * 60 * 1000;
+    const MIN_TOKEN_RENEWAL_DELAY_MS = 30 * 1000;
+    const TOKEN_RENEWAL_TEST_DELAY_MS = 60 * 1000;
 
     let realtimeClient = null;
     let realtimeChannel = null;
     let debounceTimer = null;
     let initializationInProgress = false;
+    let subscriptionStatus = "CLOSED";
+    let tokenRenewalTimer = null;
+    let tokenRenewalInProgress = false;
 
     function devLog(message, details = null) {
         if (window.APP_ENVIRONMENT !== "development") return;
@@ -49,6 +55,86 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
             result?.data?.access_token ||
             null
         );
+    }
+
+    async function ensureFreshSuperDbSession() {
+        const sync = window.OnlineSyncService;
+
+        if (!sync?.ensureFreshSession) {
+            return Boolean(getSession()?.user);
+        }
+
+        return sync.ensureFreshSession({ silent: true });
+    }
+
+    function clearTokenRenewalTimer() {
+        clearTimeout(tokenRenewalTimer);
+        tokenRenewalTimer = null;
+    }
+
+    function scheduleTokenRenewal(expiresIn) {
+        clearTokenRenewalTimer();
+
+        const lifetimeMs = Number(expiresIn) * 1000;
+        if (!Number.isFinite(lifetimeMs) || lifetimeMs <= 0) {
+            devLog("Renovação automática não agendada: validade do token indisponível.");
+            return;
+        }
+
+        // TESTE CONTROLADO v4.6.1.10: força a renovação em 60 segundos.
+        // Restaurar o cálculo normal antes do fechamento para produção.
+        const delayMs = TOKEN_RENEWAL_TEST_DELAY_MS;
+
+        tokenRenewalTimer = setTimeout(() => {
+            renewRealtimeToken().catch((error) => {
+                devLog("Falha na renovação automática do token.", {
+                    message: error?.message || String(error)
+                });
+            });
+        }, delayMs);
+
+        devLog("Renovação do token agendada.", {
+            expiresIn: Number(expiresIn),
+            renewInSeconds: Math.round(delayMs / 1000),
+            testMode: delayMs === TOKEN_RENEWAL_TEST_DELAY_MS
+        });
+    }
+
+    async function renewRealtimeToken() {
+        if (tokenRenewalInProgress) return false;
+        if (!realtimeClient || !getSession()?.user) return false;
+
+        tokenRenewalInProgress = true;
+        const activeClient = realtimeClient;
+
+        try {
+            const sessionReady = await ensureFreshSuperDbSession();
+            if (!sessionReady) {
+                throw new Error("Sessão SuperDB indisponível para renovar o Realtime.");
+            }
+
+            const mint = await mintRealtimeToken();
+
+            if (realtimeClient !== activeClient || !getSession()?.user) {
+                return false;
+            }
+
+            if (typeof activeClient.setAuth !== "function") {
+                throw new Error("Cliente Realtime não oferece setAuth().");
+            }
+
+            await activeClient.setAuth(mint.token);
+            scheduleTokenRenewal(mint.expires_in);
+
+            devLog("Token Realtime renovado.", {
+                expiresIn: mint.expires_in ?? null,
+                status: subscriptionStatus
+            });
+
+            return true;
+        } finally {
+            tokenRenewalInProgress = false;
+        }
     }
 
     async function mintRealtimeToken() {
@@ -145,6 +231,8 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
     async function disconnect() {
         clearTimeout(debounceTimer);
         debounceTimer = null;
+        clearTokenRenewalTimer();
+        tokenRenewalInProgress = false;
 
         try {
             if (realtimeChannel && realtimeClient) {
@@ -160,6 +248,7 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
 
         realtimeChannel = null;
         realtimeClient = null;
+        subscriptionStatus = "CLOSED";
 
         devLog("Realtime desconectado.");
     }
@@ -214,10 +303,14 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
 
             realtimeChannel.subscribe(
                 (status, error) => {
+                    subscriptionStatus =
+                        status || "CLOSED";
+
                     devLog(
                         "Status da assinatura.",
                         {
-                            status,
+                            status:
+                                subscriptionStatus,
                             error:
                                 error?.message ||
                                 error ||
@@ -231,6 +324,8 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
                 expiresIn:
                     mint.expires_in ?? null
             });
+
+            scheduleTokenRenewal(mint.expires_in);
 
             return true;
         } catch (error) {
@@ -281,9 +376,7 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
         connect,
         disconnect,
         isConnected: () =>
-            Boolean(
-                realtimeClient &&
-                realtimeChannel
-            )
+            subscriptionStatus ===
+            "SUBSCRIBED"
     });
 })();

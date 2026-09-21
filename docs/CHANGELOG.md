@@ -1,3 +1,23 @@
+## 4.6.1.10 DEV — Validação da renovação do token Realtime
+
+- Mantém o estado real da assinatura Realtime validado na v4.6.1.9.
+- Mantém a renovação do token com `setAuth(...)` sem recriar o canal.
+- Reduz temporariamente o intervalo de renovação para 60 segundos, exclusivamente para validação funcional.
+- Identifica no log DEV quando o agendamento está operando em modo de teste.
+- Remove o artefato de pesquisa `4_6_1_8.code-search`, sem uso no runtime da aplicação.
+- Mantém a reconexão automática após falhas de canal fora do escopo desta versão de teste.
+
+## 4.6.1.9 DEV — Estabilidade do Realtime
+
+- Inicia a etapa de estabilização do Realtime sobre a base homologada da v4.6.1.8.
+- Passa a registrar internamente o estado real da assinatura Realtime.
+- Ajusta `isConnected()` para retornar verdadeiro somente quando a assinatura estiver em `SUBSCRIBED`.
+- Agenda a renovação preventiva do token Realtime antes de sua expiração.
+- Garante uma sessão SuperDB válida antes de solicitar um novo token Realtime.
+- Atualiza a autenticação do cliente existente com `setAuth(...)`, sem recriar o canal durante a renovação normal.
+- Cancela o timer de renovação ao desconectar ou efetuar logout.
+- Mantém a reconexão automática após falhas de canal para a próxima etapa desta versão.
+
 ## 4.6.1.8 DEV — Consolidação do SuperDB e Realtime
 
 - Consolida o SuperDB como backend operacional exclusivo da aplicação.
