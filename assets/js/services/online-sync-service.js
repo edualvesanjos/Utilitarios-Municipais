@@ -941,6 +941,13 @@
                 session = data.session;
                 feedback.textContent = "Login realizado.";
                 renderOnlineStatus();
+
+                // O login explícito precisa restabelecer o Realtime diretamente.
+                // Alguns clientes/backend não emitem SIGNED_IN novamente após um
+                // logout/login no mesmo ciclo da página, portanto não dependemos
+                // exclusivamente de onAuthStateChange para esta transição.
+                await window.RealtimeService?.connect?.();
+
                 await ensureProfile(session.user);
                 setTimeout(close, 500);
             } catch (error) {
@@ -958,7 +965,10 @@
             if (!error && data?.session) {
                 session = data.session;
                 renderOnlineStatus();
-                if (session?.user) await ensureProfile(session.user);
+                if (session?.user) {
+                    await window.RealtimeService?.connect?.();
+                    await ensureProfile(session.user);
+                }
                 setTimeout(close, 700);
             }
         });
@@ -1097,14 +1107,27 @@
                     }
 
                     if (event === "SIGNED_IN" && session?.user) {
-                        await ensureProfile(session.user);
-
-                        if (!authProfileStage) {
-                            await synchronize({ silent: true });
-                            await window.HistoryService?.syncAll?.({ silent: true });
-                        }
-
+                        // O Realtime pertence ao ciclo de autenticação e não deve
+                        // depender do sucesso da sincronização REST. Em indisponibilidade
+                        // temporária do backend (ex.: 503), synchronize()/HistoryService
+                        // podem falhar; a tentativa de conexão Realtime precisa ocorrer
+                        // independentemente dessas operações auxiliares.
                         await window.RealtimeService?.connect?.();
+
+                        try {
+                            await ensureProfile(session.user);
+
+                            if (!authProfileStage) {
+                                await synchronize({ silent: true });
+                                await window.HistoryService?.syncAll?.({ silent: true });
+                            }
+                        } catch (error) {
+                            window.ErrorHandler?.report(
+                                error,
+                                "Sincronização após login",
+                                { silent: true }
+                            );
+                        }
                     }
 
                     if (event === "SIGNED_OUT") {

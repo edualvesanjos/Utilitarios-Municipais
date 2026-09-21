@@ -1,3 +1,25 @@
+## 4.6.1.17 DEV — Sincronização automática entre navegadores
+
+- Prepara a homologação do fluxo completo `navegador A → SuperDB → Realtime → navegador B`.
+- Mantém o processamento remoto centralizado em `handleRealtimeChange() → pullRemoteData()`, preservando a detecção de conflitos existente.
+- Adiciona log DEV do resultado da sincronização solicitada pelo Realtime para distinguir evento recebido de dados efetivamente aplicados.
+- Não altera a política de sincronização, resolução de conflitos, renovação de token ou reconexão já homologadas.
+
+## 4.6.1.16 DEV — Reconexão explícita após novo login
+
+- Restabelece o Realtime diretamente no fluxo de login bem-sucedido, logo após a nova sessão ser armazenada.
+- Remove a dependência exclusiva do evento `SIGNED_IN` para reconectar após `logout → login` na mesma página.
+- Aplica a mesma garantia ao fluxo de criação de conta quando a resposta já contém uma sessão autenticada.
+- Mantém a conexão Realtime antes de `ensureProfile()`, evitando que falhas REST impeçam a reconexão.
+- Preserva logout explícito, renovação preventiva do token e recuperação `offline → online` homologadas anteriormente.
+
+## 4.6.1.15 DEV — Login Realtime independente da sincronização
+
+- Conecta o Realtime imediatamente após `SIGNED_IN`, antes das rotinas REST de perfil, sincronização e histórico.
+- Impede que uma falha temporária de sincronização, inclusive resposta HTTP 503, bloqueie a reconexão do Realtime após novo login.
+- Isola falhas das rotinas auxiliares pós-login e as encaminha ao `ErrorHandler` sem interromper o ciclo de autenticação do Realtime.
+- Preserva logout explícito, renovação preventiva do token e recuperação `offline → online` homologadas anteriormente.
+
 ## 4.6.1.14 DEV — Estabilidade de logout e login do Realtime
 
 - Garante o encerramento explícito do Realtime no fluxo de logout, sem depender exclusivamente do evento `SIGNED_OUT` do SDK.
