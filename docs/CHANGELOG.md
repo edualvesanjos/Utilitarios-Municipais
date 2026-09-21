@@ -1,3 +1,10 @@
+## 4.6.1.15 DEV — Login Realtime independente da sincronização
+
+- Conecta o Realtime imediatamente após `SIGNED_IN`, antes das rotinas REST de perfil, sincronização e histórico.
+- Impede que uma falha temporária de sincronização, inclusive resposta HTTP 503, bloqueie a reconexão do Realtime após novo login.
+- Isola falhas das rotinas auxiliares pós-login e as encaminha ao `ErrorHandler` sem interromper o ciclo de autenticação do Realtime.
+- Preserva logout explícito, renovação preventiva do token e recuperação `offline → online` homologadas anteriormente.
+
 ## 4.6.1.14 DEV — Estabilidade de logout e login do Realtime
 
 - Garante o encerramento explícito do Realtime no fluxo de logout, sem depender exclusivamente do evento `SIGNED_OUT` do SDK.

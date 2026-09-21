@@ -1,6 +1,6 @@
 import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
 
-/* Utilitários Municipais v4.6.1.14 DEV — Estabilidade de logout e login do Realtime. */
+/* Utilitários Municipais v4.6.1.15 DEV — Estabilidade de logout e login do Realtime. */
 (async function () {
     "use strict";
 

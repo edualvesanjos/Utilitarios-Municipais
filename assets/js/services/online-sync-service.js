@@ -1097,14 +1097,27 @@
                     }
 
                     if (event === "SIGNED_IN" && session?.user) {
-                        await ensureProfile(session.user);
-
-                        if (!authProfileStage) {
-                            await synchronize({ silent: true });
-                            await window.HistoryService?.syncAll?.({ silent: true });
-                        }
-
+                        // O Realtime pertence ao ciclo de autenticação e não deve
+                        // depender do sucesso da sincronização REST. Em indisponibilidade
+                        // temporária do backend (ex.: 503), synchronize()/HistoryService
+                        // podem falhar; a tentativa de conexão Realtime precisa ocorrer
+                        // independentemente dessas operações auxiliares.
                         await window.RealtimeService?.connect?.();
+
+                        try {
+                            await ensureProfile(session.user);
+
+                            if (!authProfileStage) {
+                                await synchronize({ silent: true });
+                                await window.HistoryService?.syncAll?.({ silent: true });
+                            }
+                        } catch (error) {
+                            window.ErrorHandler?.report(
+                                error,
+                                "Sincronização após login",
+                                { silent: true }
+                            );
+                        }
                     }
 
                     if (event === "SIGNED_OUT") {
