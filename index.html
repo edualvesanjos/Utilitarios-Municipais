@@ -1385,11 +1385,11 @@
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 4.6.1.15</h3>
+                        <h3>Novidades da 4.6.1.16</h3>
                         <ul>
-                            <li><strong>Login:</strong> o Realtime passa a conectar imediatamente após <code>SIGNED_IN</code>, sem aguardar a sincronização REST.</li>
-                            <li><strong>Resiliência:</strong> falhas temporárias do backend, inclusive HTTP 503, não bloqueiam a tentativa de reconexão do Realtime.</li>
-                            <li><strong>Sincronização:</strong> erros nas rotinas auxiliares pós-login ficam isolados e são encaminhados ao tratamento de erros.</li>
+                            <li><strong>Login:</strong> o fluxo de entrada restabelece o Realtime explicitamente assim que recebe a nova sessão.</li>
+                            <li><strong>Autenticação:</strong> a reconexão não depende exclusivamente de um novo evento <code>SIGNED_IN</code> do cliente.</li>
+                            <li><strong>Resiliência:</strong> a conexão Realtime ocorre antes de <code>ensureProfile()</code>, isolando falhas REST posteriores.</li>
                             <li><strong>Estabilidade:</strong> preservados logout explícito, renovação do token e recuperação após retorno online.</li>
                         </ul>
                     </section>
@@ -1398,6 +1398,28 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline" id="aboutVersionHistory">
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.16 DEV</strong>
+                                    <span>Reconexão explícita após novo login</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Autenticação e Realtime</h4>
+                                        <ul>
+                                            <li>Restabelece o Realtime diretamente após o login retornar uma sessão válida.</li>
+                                            <li>Não depende exclusivamente do evento <code>SIGNED_IN</code> para o ciclo <code>logout → login</code>.</li>
+                                            <li>Mantém a conexão antes das operações REST de perfil e sincronização.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
                         <article class="about-version-item">
                             <button class="about-version-toggle" type="button" aria-expanded="false">
                                 <span class="about-version-heading">

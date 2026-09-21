@@ -1,3 +1,11 @@
+## 4.6.1.16 DEV — Reconexão explícita após novo login
+
+- Restabelece o Realtime diretamente no fluxo de login bem-sucedido, logo após a nova sessão ser armazenada.
+- Remove a dependência exclusiva do evento `SIGNED_IN` para reconectar após `logout → login` na mesma página.
+- Aplica a mesma garantia ao fluxo de criação de conta quando a resposta já contém uma sessão autenticada.
+- Mantém a conexão Realtime antes de `ensureProfile()`, evitando que falhas REST impeçam a reconexão.
+- Preserva logout explícito, renovação preventiva do token e recuperação `offline → online` homologadas anteriormente.
+
 ## 4.6.1.15 DEV — Login Realtime independente da sincronização
 
 - Conecta o Realtime imediatamente após `SIGNED_IN`, antes das rotinas REST de perfil, sincronização e histórico.
