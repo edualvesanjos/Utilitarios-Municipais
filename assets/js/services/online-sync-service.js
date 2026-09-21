@@ -716,6 +716,9 @@
 
             // Não depende exclusivamente de onAuthStateChange: o SDK pode
             // concluir o signOut sem emitir o evento imediatamente.
+            // O Realtime também é encerrado explicitamente para não manter
+            // canal ou timers ativos caso o evento SIGNED_OUT atrase ou falhe.
+            await window.RealtimeService?.disconnect?.();
             session = null;
             resetWatchedSnapshot();
             setConflict(false);

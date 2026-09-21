@@ -1,3 +1,11 @@
+## 4.6.1.14 DEV — Estabilidade de logout e login do Realtime
+
+- Garante o encerramento explícito do Realtime no fluxo de logout, sem depender exclusivamente do evento `SIGNED_OUT` do SDK.
+- Evita manter canal, timer de renovação ou reconexão ativos após o encerramento da sessão.
+- Torna `disconnect()` idempotente para evitar logs duplicados quando o logout explícito e o evento de autenticação encerrarem a mesma conexão.
+- Evita recriar uma conexão Realtime que já esteja efetivamente em `SUBSCRIBED` durante eventos redundantes de autenticação.
+- Preserva a renovação preventiva do token e a recuperação `offline → online` homologadas nas versões anteriores.
+
 ## 4.6.1.13 DEV — Recuperação resiliente no retorno online
 
 - Registra o evento `online` antes de validar a sessão, permitindo diagnosticar o retorno da rede independentemente do estado momentâneo da autenticação.

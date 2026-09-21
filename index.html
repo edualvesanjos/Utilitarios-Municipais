@@ -1385,13 +1385,13 @@
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 4.6.1.13</h3>
+                        <h3>Novidades da 4.6.1.14</h3>
                         <ul>
-                            <li><strong>Retorno online:</strong> o evento de retorno da rede passa a ser registrado antes da validação da sessão autenticada.</li>
-                            <li><strong>Sessão:</strong> quando a sessão ainda não estiver disponível no instante do evento <code>online</code>, o Realtime realiza uma nova verificação após 500 ms.</li>
-                            <li><strong>Reconexão:</strong> a recuperação continua condicionada a uma sessão válida e à necessidade real de restabelecer o canal.</li>
-                            <li><strong>Proteção:</strong> mantida a janela controlada de 5 segundos para evitar reconexões desnecessárias.</li>
-                            <li><strong>Token:</strong> preservada a renovação preventiva normal do token Realtime.</li>
+                            <li><strong>Logout:</strong> o Realtime passa a ser encerrado explicitamente no fluxo de saída, mesmo se o evento <code>SIGNED_OUT</code> atrasar ou não for emitido.</li>
+                            <li><strong>Limpeza:</strong> canal e timers de renovação/reconexão são encerrados junto com a sessão.</li>
+                            <li><strong>Login:</strong> eventos redundantes de autenticação não recriam uma conexão que já esteja em <code>SUBSCRIBED</code>.</li>
+                            <li><strong>Estabilidade:</strong> <code>disconnect()</code> passa a evitar efeitos/logs duplicados em encerramentos repetidos.</li>
+                            <li><strong>Realtime:</strong> preservadas a renovação preventiva do token e a recuperação após retorno online.</li>
                         </ul>
                     </section>
                 </div>
@@ -1399,6 +1399,28 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline" id="aboutVersionHistory">
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.14 DEV</strong>
+                                    <span>Estabilidade de logout e login do Realtime</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Autenticação e Realtime</h4>
+                                        <ul>
+                                            <li>Encerra explicitamente o Realtime no logout, sem depender apenas do evento do SDK.</li>
+                                            <li>Limpa canal e timers associados à sessão encerrada.</li>
+                                            <li>Evita recriar uma conexão já inscrita durante eventos redundantes de login.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
                         <article class="about-version-item">
                             <button class="about-version-toggle" type="button" aria-expanded="false">
                                 <span class="about-version-heading">

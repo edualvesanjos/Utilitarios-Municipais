@@ -1,6 +1,6 @@
 import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
 
-/* Utilitários Municipais v4.6.1.13 DEV — Recuperação resiliente no retorno online. */
+/* Utilitários Municipais v4.6.1.14 DEV — Estabilidade de logout e login do Realtime. */
 (async function () {
     "use strict";
 
@@ -270,6 +270,14 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
     }
 
     async function disconnect({ intentional = true } = {}) {
+        const hadRealtimeState = Boolean(
+            realtimeClient ||
+            realtimeChannel ||
+            subscriptionStatus !== "CLOSED" ||
+            tokenRenewalTimer ||
+            reconnectTimer
+        );
+
         intentionalDisconnect = intentional;
         clearTimeout(debounceTimer);
         debounceTimer = null;
@@ -295,11 +303,21 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
         realtimeClient = null;
         subscriptionStatus = "CLOSED";
 
-        devLog("Realtime desconectado.");
+        if (hadRealtimeState) {
+            devLog("Realtime desconectado.");
+        }
     }
 
     async function connect() {
         if (initializationInProgress) return false;
+
+        if (
+            subscriptionStatus === "SUBSCRIBED" &&
+            realtimeClient &&
+            realtimeChannel
+        ) {
+            return true;
+        }
 
         if (!getSession()?.user) {
             devLog(
