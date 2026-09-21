@@ -1,3 +1,12 @@
+## 4.6.1.12 DEV — Recuperação do Realtime no retorno online
+
+- Registra explicitamente quando a rede foi interrompida durante uma assinatura Realtime ativa.
+- Ao receber o evento `online`, verifica a assinatura mesmo quando o último estado conhecido ainda é `SUBSCRIBED`.
+- Agenda recuperação controlada após `offline → online` quando não houver confirmação de recuperação automática do canal.
+- Mantém uma janela de 5 segundos para permitir que o SDK se recupere sozinho antes de recriar a conexão.
+- Cancela a reconexão programada se o canal confirmar `SUBSCRIBED` durante essa janela.
+- Mantém a renovação preventiva normal do token e a lógica de sincronização/conflitos sem alterações.
+
 ## 4.6.1.11 DEV — Renovação normal e reconexão do Realtime
 
 - Restaura a renovação preventiva normal do token Realtime, removendo o intervalo temporário de 60 segundos da v4.6.1.10.

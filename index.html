@@ -1385,13 +1385,13 @@
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 4.6.1.11</h3>
+                        <h3>Novidades da 4.6.1.12</h3>
                         <ul>
-                            <li><strong>Token Realtime:</strong> restaurada a renovação preventiva normal conforme a validade recebida, removendo o intervalo temporário de 60 segundos.</li>
-                            <li><strong>Autenticação:</strong> mantida a atualização por <code>setAuth(...)</code> sem recriar o canal durante uma renovação normal.</li>
-                            <li><strong>Reconexão:</strong> estados <code>CHANNEL_ERROR</code>, <code>TIMED_OUT</code> e <code>CLOSED</code> passam a programar recuperação controlada da conexão.</li>
-                            <li><strong>Rede:</strong> ao voltar ao estado online, o Realtime verifica a assinatura e agenda reconexão quando necessário.</li>
-                            <li><strong>Proteção:</strong> evita timers concorrentes e cancela a reconexão quando a desconexão é intencional.</li>
+                            <li><strong>Retorno online:</strong> o Realtime passa a registrar explicitamente interrupções de rede e verificar a recuperação ao voltar online.</li>
+                            <li><strong>Reconexão:</strong> uma interrupção <code>offline → online</code> pode programar recuperação mesmo quando o último estado conhecido ainda é <code>SUBSCRIBED</code>.</li>
+                            <li><strong>Proteção:</strong> mantém uma janela de 5 segundos para permitir recuperação automática pelo SDK antes de recriar a conexão.</li>
+                            <li><strong>Estado:</strong> uma nova confirmação <code>SUBSCRIBED</code> cancela a reconexão programada.</li>
+                            <li><strong>Token:</strong> preservada a renovação preventiva normal validada nas versões anteriores.</li>
                             <li><strong>Arquitetura:</strong> sincronização e conflitos continuam sob responsabilidade do <code>OnlineSyncService</code>.</li>
                         </ul>
                     </section>
@@ -1400,6 +1400,29 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline" id="aboutVersionHistory">
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.12 DEV</strong>
+                                    <span>Recuperação do Realtime no retorno online</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Recuperação de rede</h4>
+                                        <ul>
+                                            <li>Registra quando uma assinatura ativa atravessa uma interrupção de rede.</li>
+                                            <li>Verifica a recuperação no retorno online mesmo se o último estado conhecido ainda for <code>SUBSCRIBED</code>.</li>
+                                            <li>Aguarda 5 segundos pela recuperação automática do SDK antes de recriar a conexão.</li>
+                                            <li>Cancela a recuperação programada se o canal confirmar novamente <code>SUBSCRIBED</code>.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
                         <article class="about-version-item">
                             <button class="about-version-toggle" type="button" aria-expanded="false">
                                 <span class="about-version-heading">

@@ -1,6 +1,6 @@
 import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
 
-/* Utilitários Municipais v4.6.1.11 DEV — Renovação normal e reconexão do Realtime. */
+/* Utilitários Municipais v4.6.1.12 DEV — Recuperação do Realtime no retorno online. */
 (async function () {
     "use strict";
 
@@ -27,6 +27,7 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
     let reconnectTimer = null;
     let reconnectInProgress = false;
     let intentionalDisconnect = false;
+    let networkInterrupted = false;
 
     function devLog(message, details = null) {
         if (window.APP_ENVIRONMENT !== "development") return;
@@ -365,6 +366,7 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
                     );
 
                     if (subscriptionStatus === "SUBSCRIBED") {
+                        networkInterrupted = false;
                         clearReconnectTimer();
                         return;
                     }
@@ -428,13 +430,24 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
     }  
 
     window.addEventListener("online", () => {
-        if (getSession()?.user && subscriptionStatus !== "SUBSCRIBED") {
-            devLog("Navegador online; verificando Realtime.");
-            scheduleReconnect("ONLINE");
+        if (!getSession()?.user) return;
+
+        devLog("Navegador online; verificando Realtime.", {
+            status: subscriptionStatus,
+            networkInterrupted
+        });
+
+        if (networkInterrupted || subscriptionStatus !== "SUBSCRIBED") {
+            scheduleReconnect(
+                networkInterrupted
+                    ? "ONLINE_AFTER_OFFLINE"
+                    : "ONLINE"
+            );
         }
     });
 
     window.addEventListener("offline", () => {
+        networkInterrupted = true;
         clearReconnectTimer();
         devLog("Navegador offline; reconexão aguardará retorno da rede.");
     });
