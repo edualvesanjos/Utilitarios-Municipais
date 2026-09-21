@@ -1,3 +1,12 @@
+## 4.6.1.11 DEV — Renovação normal e reconexão do Realtime
+
+- Restaura a renovação preventiva normal do token Realtime, removendo o intervalo temporário de 60 segundos da v4.6.1.10.
+- Mantém a atualização do token com `setAuth(...)`, sem recriar o canal durante uma renovação normal.
+- Passa a tratar os estados `CHANNEL_ERROR`, `TIMED_OUT` e `CLOSED` para programar uma nova conexão quando houver sessão autenticada e rede disponível.
+- Evita agendamentos concorrentes de reconexão e cancela o timer ao desconectar intencionalmente.
+- Ao retornar ao estado online, verifica se o Realtime está fora de `SUBSCRIBED` e agenda a recuperação da conexão.
+- Mantém a lógica de sincronização e de conflitos no `OnlineSyncService`, sem duplicá-la no `RealtimeService`.
+
 ## 4.6.1.10 DEV — Validação da renovação do token Realtime
 
 - Mantém o estado real da assinatura Realtime validado na v4.6.1.9.

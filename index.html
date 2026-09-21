@@ -1385,14 +1385,14 @@
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 4.6.1.10</h3>
+                        <h3>Novidades da 4.6.1.11</h3>
                         <ul>
-                            <li><strong>Realtime:</strong> iniciada a validação controlada da renovação automática do token.</li>
-                            <li><strong>Teste de renovação:</strong> o intervalo foi reduzido temporariamente para 60 segundos para permitir a observação do ciclo completo.</li>
-                            <li><strong>Autenticação:</strong> o novo token continua sendo aplicado com <code>setAuth(...)</code>, preservando o cliente e o canal existentes.</li>
-                            <li><strong>Diagnóstico:</strong> o log DEV identifica o agendamento temporário utilizado durante a homologação.</li>
-                            <li><strong>Limpeza:</strong> removido o artefato de pesquisa <code>4_6_1_8.code-search</code>, sem dependência no runtime.</li>
-                            <li><strong>Escopo:</strong> reconexão automática após falhas de canal permanece para uma versão posterior.</li>
+                            <li><strong>Token Realtime:</strong> restaurada a renovação preventiva normal conforme a validade recebida, removendo o intervalo temporário de 60 segundos.</li>
+                            <li><strong>Autenticação:</strong> mantida a atualização por <code>setAuth(...)</code> sem recriar o canal durante uma renovação normal.</li>
+                            <li><strong>Reconexão:</strong> estados <code>CHANNEL_ERROR</code>, <code>TIMED_OUT</code> e <code>CLOSED</code> passam a programar recuperação controlada da conexão.</li>
+                            <li><strong>Rede:</strong> ao voltar ao estado online, o Realtime verifica a assinatura e agenda reconexão quando necessário.</li>
+                            <li><strong>Proteção:</strong> evita timers concorrentes e cancela a reconexão quando a desconexão é intencional.</li>
+                            <li><strong>Arquitetura:</strong> sincronização e conflitos continuam sob responsabilidade do <code>OnlineSyncService</code>.</li>
                         </ul>
                     </section>
                 </div>
@@ -1400,6 +1400,29 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline" id="aboutVersionHistory">
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.11 DEV</strong>
+                                    <span>Renovação normal e reconexão do Realtime</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Estabilidade do Realtime</h4>
+                                        <ul>
+                                            <li>Restaura o intervalo normal de renovação preventiva do token após o teste controlado da versão anterior.</li>
+                                            <li>Trata falhas e encerramentos do canal com agendamento controlado de reconexão.</li>
+                                            <li>Verifica a necessidade de recuperação do Realtime quando o navegador volta a ficar online.</li>
+                                            <li>Evita reconexões concorrentes e respeita desconexões intencionais, como logout.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
                         <article class="about-version-item">
                             <button class="about-version-toggle" type="button" aria-expanded="false">
                                 <span class="about-version-heading">

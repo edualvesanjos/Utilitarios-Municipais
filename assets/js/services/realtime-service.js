@@ -1,6 +1,6 @@
 import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
 
-/* Utilitários Municipais v4.6.1.10 DEV — Teste controlado da renovação do token Realtime. */
+/* Utilitários Municipais v4.6.1.11 DEV — Renovação normal e reconexão do Realtime. */
 (async function () {
     "use strict";
 
@@ -15,7 +15,7 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
     const DEBOUNCE_MS = 750;
     const TOKEN_RENEWAL_MARGIN_MS = 5 * 60 * 1000;
     const MIN_TOKEN_RENEWAL_DELAY_MS = 30 * 1000;
-    const TOKEN_RENEWAL_TEST_DELAY_MS = 60 * 1000;
+    const RECONNECT_DELAY_MS = 5 * 1000;
 
     let realtimeClient = null;
     let realtimeChannel = null;
@@ -24,6 +24,9 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
     let subscriptionStatus = "CLOSED";
     let tokenRenewalTimer = null;
     let tokenRenewalInProgress = false;
+    let reconnectTimer = null;
+    let reconnectInProgress = false;
+    let intentionalDisconnect = false;
 
     function devLog(message, details = null) {
         if (window.APP_ENVIRONMENT !== "development") return;
@@ -81,9 +84,10 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
             return;
         }
 
-        // TESTE CONTROLADO v4.6.1.10: força a renovação em 60 segundos.
-        // Restaurar o cálculo normal antes do fechamento para produção.
-        const delayMs = TOKEN_RENEWAL_TEST_DELAY_MS;
+        const delayMs = Math.max(
+            MIN_TOKEN_RENEWAL_DELAY_MS,
+            lifetimeMs - TOKEN_RENEWAL_MARGIN_MS
+        );
 
         tokenRenewalTimer = setTimeout(() => {
             renewRealtimeToken().catch((error) => {
@@ -95,8 +99,7 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
 
         devLog("Renovação do token agendada.", {
             expiresIn: Number(expiresIn),
-            renewInSeconds: Math.round(delayMs / 1000),
-            testMode: delayMs === TOKEN_RENEWAL_TEST_DELAY_MS
+            renewInSeconds: Math.round(delayMs / 1000)
         });
     }
 
@@ -135,6 +138,41 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
         } finally {
             tokenRenewalInProgress = false;
         }
+    }
+
+    function clearReconnectTimer() {
+        clearTimeout(reconnectTimer);
+        reconnectTimer = null;
+    }
+
+    function scheduleReconnect(reason) {
+        if (intentionalDisconnect || !getSession()?.user || !navigator.onLine) {
+            return;
+        }
+
+        if (reconnectTimer || reconnectInProgress) {
+            return;
+        }
+
+        devLog("Reconexão agendada.", {
+            reason,
+            retryInSeconds: Math.round(RECONNECT_DELAY_MS / 1000)
+        });
+
+        reconnectTimer = setTimeout(async () => {
+            reconnectTimer = null;
+
+            if (intentionalDisconnect || !getSession()?.user || !navigator.onLine) {
+                return;
+            }
+
+            reconnectInProgress = true;
+            try {
+                await connect();
+            } finally {
+                reconnectInProgress = false;
+            }
+        }, RECONNECT_DELAY_MS);
     }
 
     async function mintRealtimeToken() {
@@ -228,10 +266,12 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
         scheduleRemoteChange();
     }
 
-    async function disconnect() {
+    async function disconnect({ intentional = true } = {}) {
+        intentionalDisconnect = intentional;
         clearTimeout(debounceTimer);
         debounceTimer = null;
         clearTokenRenewalTimer();
+        clearReconnectTimer();
         tokenRenewalInProgress = false;
 
         try {
@@ -264,9 +304,11 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
         }
 
         initializationInProgress = true;
+        intentionalDisconnect = false;
+        clearReconnectTimer();
 
         try {
-            await disconnect();
+            await disconnect({ intentional: false });
 
             const mint =
                 await mintRealtimeToken();
@@ -301,8 +343,12 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
                         handleDatabaseChange
                     );
 
+            const activeChannel = realtimeChannel;
+
             realtimeChannel.subscribe(
                 (status, error) => {
+                    if (activeChannel !== realtimeChannel) return;
+
                     subscriptionStatus =
                         status || "CLOSED";
 
@@ -317,6 +363,15 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
                                 null
                         }
                     );
+
+                    if (subscriptionStatus === "SUBSCRIBED") {
+                        clearReconnectTimer();
+                        return;
+                    }
+
+                    if (["CHANNEL_ERROR", "TIMED_OUT", "CLOSED"].includes(subscriptionStatus)) {
+                        scheduleReconnect(subscriptionStatus);
+                    }
                 }
             );
 
@@ -338,7 +393,8 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
                 }
             );
 
-            await disconnect();
+            await disconnect({ intentional: false });
+            scheduleReconnect("CONNECT_ERROR");
             return false;
         } finally {
             initializationInProgress = false;
@@ -370,6 +426,18 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
             );
         });
     }  
+
+    window.addEventListener("online", () => {
+        if (getSession()?.user && subscriptionStatus !== "SUBSCRIBED") {
+            devLog("Navegador online; verificando Realtime.");
+            scheduleReconnect("ONLINE");
+        }
+    });
+
+    window.addEventListener("offline", () => {
+        clearReconnectTimer();
+        devLog("Navegador offline; reconexão aguardará retorno da rede.");
+    });
 
     window.RealtimeService =
     Object.freeze({
