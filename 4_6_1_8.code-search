@@ -1,0 +1,50 @@
+# Query: 4.6.1.8
+# ContextLines: 1
+
+8 results - 6 files
+
+index.html:
+  1386                      <section class="settings-card">
+  1387                      <section class="settings-card">
+  1388:                         <h3>Novidades da 4.6.1.8</h3>
+
+  1388                          <ul>
+  1389                          <ul>
+
+  1407                                  <span class="about-version-heading">
+  1408                                  <span class="about-version-heading">
+  1409:                                     <strong>4.6.1.8 DEV</strong>
+  1409                                      <span>Consolidação do SuperDB e Realtime</span>
+  1410                                      <span>Consolidação do SuperDB e Realtime</span>
+
+manifest.json:
+  10:   "version": "4.6.1.8"
+
+package-lock.json:
+  1    "name": "utilitarios-municipais",
+  2    "name": "utilitarios-municipais",
+  3:   "version": "4.6.1.8",
+
+  3    "lockfileVersion": 3,
+  4    "lockfileVersion": 3,
+
+  7        "name": "utilitarios-municipais",
+  8        "name": "utilitarios-municipais",
+  9:       "version": "4.6.1.8",
+  9        "devDependencies": {
+  10        "devDependencies": {
+
+package.json:
+  1    "name": "utilitarios-municipais",
+  2    "name": "utilitarios-municipais",
+  3:   "version": "4.6.1.8",
+  3    "private": true,
+  4    "private": true,
+
+assets/js/core/config.js:
+  1: const APP_VERSION = "4.6.1.8";
+
+docs/CHANGELOG.md:
+  1: ## 4.6.1.8 DEV — Consolidação do SuperDB e Realtime
+  1  
+  2  

@@ -1,4 +1,4 @@
-## 4.6.1.8 DEV — Consolidação do SuperDB
+## 4.6.1.8 DEV — Consolidação do SuperDB e Realtime
 
 - Consolida o SuperDB como backend operacional exclusivo da aplicação.
 - Remove o SDK, cliente, configurações e fallback legados do Supabase no runtime.
@@ -6,8 +6,11 @@
 - Desacopla os textos da interface do provedor de backend, utilizando termos como dados online e armazenamento online.
 - Ajusta as mensagens de resolução de conflitos para representar corretamente dados locais e online.
 - Mantém preservada a documentação histórica das versões que utilizavam Supabase.
-- Mantém os mecanismos atuais de sincronização automática, reconexão, foco, visibilidade e sincronização manual.
-- Mantém Realtime fora desta versão para implementação posterior.
+- Mantém os mecanismos de sincronização automática, reconexão, foco, visibilidade e sincronização manual.
+- Implementa a conexão Realtime para acompanhamento das alterações dos dados online.
+- Consolida eventos Realtime antes de solicitar a sincronização, evitando processamento individual de alterações do mesmo lote.
+- Ajusta a inicialização para disponibilizar o `OnlineSyncService` antes do evento `um:session-ready`, garantindo que o Realtime encontre a sessão autenticada.
+- Valida a conexão automática do Realtime após a restauração da sessão, sem necessidade de conexão manual.
 
 ## 4.6.1.7 DEV — Limpeza dos logs de diagnóstico
 

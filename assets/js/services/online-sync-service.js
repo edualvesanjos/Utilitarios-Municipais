@@ -77,7 +77,7 @@
     }
 
     function safeRemove(key) {
-        try { localStorage.removeItem(key); } catch {}
+        try { localStorage.removeItem(key); } catch { }
     }
 
     function parseDate(value) {
@@ -325,7 +325,7 @@
         try {
             const prefs = JSON.parse(safeGet(prefsKey, "{}"));
             displayName = String(prefs.displayName || "Usuário").trim().slice(0, 40) || "Usuário";
-        } catch {}
+        } catch { }
         if (window.BackendClientService?.getActiveProvider?.() === "superdb") {
             const existing = await client.from("profiles").select("*").eq("id", user.id);
             if (existing.error) throw existing.error;
@@ -347,7 +347,7 @@
         if (tokenResult?.error) throw tokenResult.error;
         const token = typeof tokenResult === "string" ? tokenResult
             : tokenResult?.data?.token ?? tokenResult?.data?.data_plane_token
-                ?? tokenResult?.token ?? tokenResult?.data_plane_token ?? null;
+            ?? tokenResult?.token ?? tokenResult?.data_plane_token ?? null;
         if (!token) throw new Error("Não foi possível obter o data_plane_token do SuperDB.");
 
         const cfg = window.SuperDBClientService?.getConfiguration?.() || {};
@@ -368,7 +368,7 @@
         });
         const raw = await response.text();
         let body = raw;
-        try { body = raw ? JSON.parse(raw) : []; } catch {}
+        try { body = raw ? JSON.parse(raw) : []; } catch { }
         if (!response.ok) {
             const error = new Error(`SuperDB REST ${response.status}: ${response.statusText}`);
             error.status = response.status;
@@ -574,8 +574,8 @@
             error?.status
         ].filter(Boolean).join(" ").toLowerCase();
         return text.includes("jwt expired") ||
-               text.includes("token expired") ||
-               text.includes("expired jwt");
+            text.includes("token expired") ||
+            text.includes("expired jwt");
     }
 
     async function refreshBackendSession({ reason = "proactive", silent = false } = {}) {
@@ -691,7 +691,7 @@
             const prefs = raw ? JSON.parse(raw) : {};
             const name = String(prefs?.displayName || "").replace(/\s+/g, " ").trim().slice(0, 40);
             if (name) return name;
-        } catch {}
+        } catch { }
         const email = session?.user?.email || "";
         return email ? email.split("@")[0] : "Entrar";
     }
@@ -773,6 +773,7 @@
         let state = "local";
         let message = "Dados armazenados neste navegador.";
         let accountState = "Somente local";
+
         if (session?.user) {
             accountState = navigator.onLine ? "Online" : "Offline";
             if (!navigator.onLine) {
@@ -919,7 +920,7 @@
             if (!email || !password) { feedback.textContent = "Informe o e-mail e a senha."; return; }
             signInButton.disabled = true;
             feedback.textContent = "Entrando...";
-           
+
             try {
                 let authClient = client;
                 if (!authClient?.auth?.signInWithPassword) authClient = window.BackendClientService?.getClient?.() || null;
@@ -1033,21 +1034,34 @@
             window.Logger?.warn(message);
             return;
         }
+
         try {
             const { data, error } = await client.auth.getSession();
             if (error) throw error;
             session = data.session;
 
             if (session?.user && isSessionNearExpiry(session)) {
-                const refreshed = await refreshBackendSession({ reason: "startup", silent: true });
+                const refreshed = await refreshBackendSession({
+                    reason: "startup",
+                    silent: true
+                });
+
                 if (!refreshed) {
-                    window.Logger?.info?.("Sessão persistida expirada; novo login será necessário.");
+                    window.Logger?.info?.(
+                        "Sessão persistida expirada; novo login será necessário."
+                    );
                 }
             }
+
         } catch (error) {
-            window.ErrorHandler?.report(error, "Sessão do backend", { silent: true });
+            window.ErrorHandler?.report(
+                error,
+                "Sessão do backend",
+                { silent: true }
+            );
             session = null;
         }
+
         if (safeGet(MIGRATION_KEY, "false") !== "true") {
             setConflict(false);
             safeSet(MIGRATION_KEY, "true");
@@ -1069,24 +1083,37 @@
 
         const authProfileStage = window.BACKEND_MIGRATION?.stage === "auth-profile-disabled";
         if (typeof client.auth.onAuthStateChange === "function") {
-            client.auth.onAuthStateChange(async (event, nextSession) => {
+            client.auth.onAuthStateChange((event, nextSession) => {
                 session = nextSession;
                 resetWatchedSnapshot();
                 renderOnlineStatus();
-                if (event === "SIGNED_IN" && session?.user) {
-                    await ensureProfile(session.user);
-                    if (!authProfileStage) {
-                        await synchronize({ silent: true });
-                        await window.HistoryService?.syncAll?.({ silent: true });
+
+                setTimeout(async () => {
+                    if (event === "INITIAL_SESSION" && session?.user) {
+                        await window.RealtimeService?.connect?.();
                     }
-                }
-                if (event === "SIGNED_OUT") {
-                    session = null;
-                    resetWatchedSnapshot();
-                    setConflict(false);
-                    setOnlineState({ status: "local" });
-                    renderOnlineStatus();
-                }
+
+                    if (event === "SIGNED_IN" && session?.user) {
+                        await ensureProfile(session.user);
+
+                        if (!authProfileStage) {
+                            await synchronize({ silent: true });
+                            await window.HistoryService?.syncAll?.({ silent: true });
+                        }
+
+                        await window.RealtimeService?.connect?.();
+                    }
+
+                    if (event === "SIGNED_OUT") {
+                        await window.RealtimeService?.disconnect?.();
+
+                        session = null;
+                        resetWatchedSnapshot();
+                        setConflict(false);
+                        setOnlineState({ status: "local" });
+                        renderOnlineStatus();
+                    }
+                }, 0);
             });
         }
 
@@ -1138,10 +1165,21 @@
             if (session?.user && hasPendingChanges()) safeSet(PENDING_KEY, "true");
         });
 
+        async function handleRealtimeChange() {
+            if (!session?.user) return false;
+            if (!navigator.onLine) return false;
+
+            return pullRemoteData({
+                silent: true,
+                force: false
+            });
+        }
+
         window.OnlineSyncService = Object.freeze({
             sync: synchronize,
             upload: pushLocalData,
             restore: pullRemoteData,
+            handleRealtimeChange,
             openLogin: openAuthModal,
             openConflict: openConflictModal,
             getSession: () => session,
@@ -1149,6 +1187,12 @@
             hasPendingChanges,
             hasConflict
         });
+
+        if (session?.user) {               
+            window.dispatchEvent(
+                new CustomEvent("um:session-ready")
+            );
+        }        
     }
 
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initializeOnline, { once: true });

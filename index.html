@@ -1393,7 +1393,9 @@
                             <li><strong>Interface:</strong> mensagens de sincronização passam a utilizar termos neutros como dados online e armazenamento online.</li>
                             <li><strong>Conflitos:</strong> mensagens ajustadas para representar corretamente a escolha entre dados locais e online.</li>
                             <li><strong>Histórico de versões:</strong> todas as versões passam a iniciar recolhidas, mantendo expansão individual.</li>
-                            <li><strong>Sincronização:</strong> preservados os mecanismos atuais já homologados; Realtime permanece para evolução posterior.</li>
+                            <li><strong>Realtime:</strong> implementada a atualização orientada por eventos para alterações dos dados online.</li>
+                            <li><strong>Autenticação:</strong> ajustada a ordem de inicialização para que o Realtime utilize corretamente a sessão restaurada.</li>
+                            <li><strong>Sincronização:</strong> eventos Realtime do mesmo lote são consolidados antes do processamento dos dados remotos.</li>
                         </ul>
                     </section>
                 </div>
@@ -1401,6 +1403,45 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline" id="aboutVersionHistory">
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.8 DEV</strong>
+                                    <span>Consolidação do SuperDB e Realtime</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Backend</h4>
+                                        <ul>
+                                            <li>Consolida o SuperDB como backend operacional exclusivo da aplicação.</li>
+                                            <li>Remove do runtime os componentes e configurações legados do Supabase.</li>
+                                            <li>Adota terminologia neutra para dados e armazenamento online.</li>
+                                        </ul>
+                                    </section>
+                        
+                                    <section>
+                                        <h4>Realtime</h4>
+                                        <ul>
+                                            <li>Implementa a conexão Realtime para acompanhamento das alterações dos dados online.</li>
+                                            <li>Consolida eventos do mesmo lote antes de solicitar a sincronização.</li>
+                                            <li>Ajusta a inicialização para utilizar corretamente a sessão autenticada restaurada.</li>
+                                        </ul>
+                                    </section>
+                        
+                                    <section>
+                                        <h4>Sincronização</h4>
+                                        <ul>
+                                            <li>Preserva os mecanismos de sincronização automática e manual já homologados.</li>
+                                            <li>Mantém o tratamento de conflitos entre dados locais e online.</li>
+                                            <li>Valida a conexão automática do Realtime após a restauração da sessão.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>                        
                         <article class="about-version-item">
                             <button class="about-version-toggle" type="button" aria-expanded="false">
                                 <span class="about-version-heading">
@@ -2199,6 +2240,7 @@
     <script src="assets/js/services/storage-service.js"></script>
     <script src="assets/js/services/history-service.js"></script>
     <script src="assets/js/services/online-sync-service.js"></script>
+    <script type="module" src="assets/js/services/realtime-service.js"></script>   
     <script src="assets/js/core/sidebar-45.js"></script>
     <script src="assets/js/core/about-history-45.js"></script>
     <script src="assets/js/core/storage.js"></script>
