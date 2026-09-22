@@ -594,6 +594,9 @@
                 reason,
                 expires_at: session.expires_at ?? null
             });
+            window.dispatchEvent(new CustomEvent("um:session-refreshed", {
+                detail: { reason }
+            }));
             return true;
         } catch (error) {
             window.Logger?.warn?.("Não foi possível renovar a sessão SuperDB.", error);
@@ -1207,6 +1210,7 @@
             restore: pullRemoteData,
             handleRealtimeChange,
             ensureFreshSession: ensureFreshBackendSession,
+            refreshSession: refreshBackendSession,
             openLogin: openAuthModal,
             openConflict: openConflictModal,
             getSession: () => session,

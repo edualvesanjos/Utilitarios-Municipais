@@ -1,6 +1,6 @@
 import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
 
-/* Utilitários Municipais v4.6.1.18 DEV — Recuperação após falha temporária do SuperDB. */
+/* Utilitários Municipais v4.6.1.19 DEV — Recuperação do Realtime após renovação da sessão. */
 (async function () {
     "use strict";
 
@@ -433,6 +433,32 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
             initializationInProgress = false;
         }
     }
+
+    window.addEventListener("um:session-refreshed", () => {
+        if (!getSession()?.user || !navigator.onLine) return;
+
+        if (subscriptionStatus === "SUBSCRIBED" && realtimeClient && realtimeChannel) {
+            renewRealtimeToken().catch((error) => {
+                devLog("Falha ao atualizar Realtime após renovar sessão.", {
+                    message: error?.message || String(error)
+                });
+                scheduleReconnect("SESSION_REFRESH_TOKEN_ERROR");
+            });
+            return;
+        }
+
+        devLog("Sessão renovada; recuperando Realtime.", {
+            status: subscriptionStatus
+        });
+        connect().then((connected) => {
+            if (!connected) scheduleReconnect("SESSION_REFRESH_RETRY");
+        }).catch((error) => {
+            devLog("Falha ao recuperar Realtime após renovar sessão.", {
+                message: error?.message || String(error)
+            });
+            scheduleReconnect("SESSION_REFRESH_ERROR");
+        });
+    });
 
     window.addEventListener("um:session-ready", () => {
         connect().catch((error) => {

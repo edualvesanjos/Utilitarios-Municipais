@@ -1385,12 +1385,12 @@
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 4.6.1.18</h3>
+                        <h3>Novidades da 4.6.1.19</h3>
                         <ul>
-                            <li><strong>Recuperação automática:</strong> uma tentativa de reconexão que falhar por indisponibilidade temporária do SuperDB passa a programar nova tentativa controlada.</li>
-                            <li><strong>Proteção de concorrência:</strong> a nova tentativa só é agendada após liberar o estado interno de reconexão em andamento.</li>
-                            <li><strong>Intervalo preservado:</strong> mantém tentativas espaçadas em 5 segundos, sem criar reconexões paralelas.</li>
-                            <li><strong>Base estável:</strong> parte da 4.6.1.17 DEV e preserva sincronização entre navegadores, renovação de token, retorno online e logout/login já validados.</li>
+                            <li><strong>Recuperação após renovar sessão:</strong> se a sessão SuperDB for renovada com o Realtime desconectado, o canal passa a ser recuperado automaticamente.</li>
+                            <li><strong>Canal já ativo:</strong> quando estiver SUBSCRIBED, a autenticação do Realtime é atualizada sem recriar o canal desnecessariamente.</li>
+                            <li><strong>Histórico e 401:</strong> uma resposta 401 em history_entries força renovação da sessão e uma única repetição autenticada.</li>
+                            <li><strong>Resiliência preservada:</strong> mantém as reconexões controladas da 4.6.1.18 e a proteção contra tentativas concorrentes.</li>
                         </ul>
                     </section>
                 </div>
@@ -1398,6 +1398,28 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline" id="aboutVersionHistory">
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.19 DEV</strong>
+                                    <span>Recuperação após renovação de sessão</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Autenticação e Realtime</h4>
+                                        <ul>
+                                            <li>Recupera o Realtime após uma renovação bem-sucedida da sessão quando o canal estiver desconectado.</li>
+                                            <li>Atualiza a autenticação do canal quando ele já estiver SUBSCRIBED.</li>
+                                            <li>Repete history_entries uma única vez após 401, depois de renovar a sessão.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
                         <article class="about-version-item">
                             <button class="about-version-toggle" type="button" aria-expanded="false">
                                 <span class="about-version-heading">

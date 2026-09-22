@@ -1,3 +1,11 @@
+## 4.6.1.19 DEV — Recuperação após renovação de sessão
+
+- Recupera o Realtime quando a sessão SuperDB é renovada e o canal não está mais `SUBSCRIBED`.
+- Quando o Realtime já está conectado, atualiza sua autenticação após a renovação da sessão sem recriar o canal desnecessariamente.
+- Adiciona uma única repetição autenticada do `history_entries` após resposta HTTP 401, forçando antes a renovação da sessão SuperDB.
+- Preserva as tentativas controladas de reconexão da v4.6.1.18 e evita reconexões concorrentes.
+- Mantém separada a correção pendente do indicador “Último backup”.
+
 ## 4.6.1.18 DEV — Recuperação após falha temporária do SuperDB
 
 - Corrige a recuperação do Realtime quando uma tentativa de reconexão falha ao obter novo token por indisponibilidade temporária do SuperDB.

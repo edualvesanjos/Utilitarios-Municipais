@@ -187,7 +187,7 @@
         return token;
     }
 
-    async function superDbHistoryUpsert(payload) {
+    async function superDbHistoryUpsert(payload, { authRetry = false } = {}) {
         const cfg = getSuperDbConfig();
         if (!cfg.authUrl || !cfg.project) throw new Error("Configuração SuperDB incompleta.");
 
@@ -222,6 +222,16 @@
             registros_retornados: Array.isArray(data) ? data.length : null
         });*/
         if (!response.ok) {
+            if (response.status === 401 && !authRetry) {
+                const refreshed = await window.OnlineSyncService?.refreshSession?.({
+                    reason: "history-401",
+                    silent: true
+                });
+                if (refreshed) {
+                    return superDbHistoryUpsert(payload, { authRetry: true });
+                }
+            }
+
             const error = new Error(data?.message || data?.error || `Falha HTTP ${response.status} no history_entries.`);
             error.status = response.status;
             error.code = data?.code || null;
