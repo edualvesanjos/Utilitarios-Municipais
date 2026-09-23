@@ -1,3 +1,11 @@
+## 4.6.1.20 DEV — Recuperação autenticada do Realtime
+
+- Trata HTTP 401 na emissão do token Realtime como falha de autenticação, em vez de simples indisponibilidade de conexão.
+- Ao receber 401, renova a sessão SuperDB e repete uma única vez a solicitação do token Realtime com a sessão atualizada.
+- Se o token continuar sendo rejeitado após a renovação, aplica espera de 60 segundos antes de nova tentativa, evitando centenas de requisições repetidas com autenticação recusada.
+- Mantém em 5 segundos a reconexão para falhas transitórias de rede/serviço e preserva as proteções contra tentativas concorrentes da v4.6.1.19.
+- Mantém separada a correção pendente do indicador “Último backup”.
+
 ## 4.6.1.19 DEV — Recuperação após renovação de sessão
 
 - Recupera o Realtime quando a sessão SuperDB é renovada e o canal não está mais `SUBSCRIBED`.

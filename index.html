@@ -1385,12 +1385,12 @@
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 4.6.1.19</h3>
+                        <h3>Novidades da 4.6.1.20</h3>
                         <ul>
-                            <li><strong>Recuperação após renovar sessão:</strong> se a sessão SuperDB for renovada com o Realtime desconectado, o canal passa a ser recuperado automaticamente.</li>
-                            <li><strong>Canal já ativo:</strong> quando estiver SUBSCRIBED, a autenticação do Realtime é atualizada sem recriar o canal desnecessariamente.</li>
-                            <li><strong>Histórico e 401:</strong> uma resposta 401 em history_entries força renovação da sessão e uma única repetição autenticada.</li>
-                            <li><strong>Resiliência preservada:</strong> mantém as reconexões controladas da 4.6.1.18 e a proteção contra tentativas concorrentes.</li>
+                            <li><strong>401 do token Realtime:</strong> passa a renovar a sessão SuperDB antes de repetir a solicitação do token.</li>
+                            <li><strong>Uma repetição autenticada:</strong> após renovar a sessão, tenta novamente o token Realtime com a credencial atualizada.</li>
+                            <li><strong>Proteção contra repetição excessiva:</strong> se o 401 persistir após a renovação, aguarda 60 segundos antes de nova tentativa.</li>
+                            <li><strong>Falhas transitórias:</strong> mantém em 5 segundos a reconexão para indisponibilidade de rede ou serviço.</li>
                         </ul>
                     </section>
                 </div>
@@ -1398,6 +1398,27 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline" id="aboutVersionHistory">
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.20 DEV</strong>
+                                    <span>Recuperação autenticada do Realtime</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Autenticação e Realtime</h4>
+                                        <ul>
+                                            <li>Renova a sessão SuperDB quando a emissão do token Realtime retornar HTTP 401.</li>
+                                            <li>Repete a emissão do token uma única vez após a renovação autenticada.</li>
+                                            <li>Se o 401 persistir, aguarda 60 segundos antes de nova tentativa; demais falhas mantêm reconexão em 5 segundos.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
                         <article class="about-version-item">
                             <button class="about-version-toggle" type="button" aria-expanded="false">
                                 <span class="about-version-heading">
