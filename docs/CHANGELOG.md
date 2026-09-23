@@ -1,3 +1,9 @@
+## 4.6.1.21 DEV — Atualização do último backup
+
+- Corrige a atualização imediata do indicador “Último backup” após exportar um backup.
+- Mantém sincronizados os indicadores de backup exibidos em Configurações e no Dashboard na mesma sessão do navegador.
+- Preserva sem alterações a estabilização de autenticação e Realtime homologada na v4.6.1.20.
+
 ## 4.6.1.20 DEV — Recuperação autenticada do Realtime
 
 - Trata HTTP 401 na emissão do token Realtime como falha de autenticação, em vez de simples indisponibilidade de conexão.

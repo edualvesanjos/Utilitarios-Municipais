@@ -1385,12 +1385,11 @@
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 4.6.1.20</h3>
+                        <h3>Novidades da 4.6.1.21</h3>
                         <ul>
-                            <li><strong>401 do token Realtime:</strong> passa a renovar a sessão SuperDB antes de repetir a solicitação do token.</li>
-                            <li><strong>Uma repetição autenticada:</strong> após renovar a sessão, tenta novamente o token Realtime com a credencial atualizada.</li>
-                            <li><strong>Proteção contra repetição excessiva:</strong> se o 401 persistir após a renovação, aguarda 60 segundos antes de nova tentativa.</li>
-                            <li><strong>Falhas transitórias:</strong> mantém em 5 segundos a reconexão para indisponibilidade de rede ou serviço.</li>
+                            <li><strong>Último backup:</strong> o horário passa a ser atualizado imediatamente após a exportação.</li>
+                            <li><strong>Indicadores sincronizados:</strong> Configurações e Dashboard passam a refletir o mesmo registro de backup sem exigir recarregar a página.</li>
+                            <li><strong>Realtime preservado:</strong> mantém sem alterações a estabilização homologada na v4.6.1.20.</li>
                         </ul>
                     </section>
                 </div>
@@ -1398,6 +1397,26 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline" id="aboutVersionHistory">
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.21 DEV</strong>
+                                    <span>Atualização do último backup</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Backup</h4>
+                                        <ul>
+                                            <li>Atualiza imediatamente o horário do último backup após a exportação.</li>
+                                            <li>Mantém os indicadores de Configurações e Dashboard consistentes na mesma sessão.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
                         <article class="about-version-item">
                             <button class="about-version-toggle" type="button" aria-expanded="false">
                                 <span class="about-version-heading">
