@@ -1385,11 +1385,11 @@
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 4.6.1.21</h3>
+                        <h3>Novidades da 4.6.2</h3>
                         <ul>
-                            <li><strong>Último backup:</strong> o horário passa a ser atualizado imediatamente após a exportação.</li>
-                            <li><strong>Indicadores sincronizados:</strong> Configurações e Dashboard passam a refletir o mesmo registro de backup sem exigir recarregar a página.</li>
-                            <li><strong>Realtime preservado:</strong> mantém sem alterações a estabilização homologada na v4.6.1.20.</li>
+                            <li><strong>Checkpoint DEV:</strong> consolida a correção do indicador “Último backup” validada na série 4.6.1.x.</li>
+                            <li><strong>Realtime preservado:</strong> não altera a implementação homologada, preparando a base para novo teste prolongado de estabilidade.</li>
+                            <li><strong>Banco PROD:</strong> mantém esta versão DEV independente da implantação do SuperDB PROD.</li>
                         </ul>
                     </section>
                 </div>
@@ -1397,6 +1397,24 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline" id="aboutVersionHistory">
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.2 DEV</strong>
+                                    <span>Checkpoint para teste prolongado do Realtime</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Resumo</h4>
+                                        <p>Consolida a correção do indicador “Último backup” e preserva o Realtime sem alterações funcionais para reinício do teste prolongado.</p>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
                         <article class="about-version-item">
                             <button class="about-version-toggle" type="button" aria-expanded="false">
                                 <span class="about-version-heading">

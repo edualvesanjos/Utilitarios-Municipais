@@ -1,3 +1,9 @@
+## 4.6.2 DEV — Checkpoint para teste prolongado do Realtime
+
+- Consolida a correção do indicador “Último backup” já implementada e validada na v4.6.1.21 DEV.
+- Preserva sem alterações funcionais a implementação de autenticação, sincronização e Realtime da série v4.6.1.x.
+- Estabelece uma nova base DEV para reiniciar o teste prolongado de estabilidade interrompido durante a implantação do banco SuperDB PROD.
+
 ## 4.6.1.21 DEV — Atualização do último backup
 
 - Corrige a atualização imediata do indicador “Último backup” após exportar um backup.
