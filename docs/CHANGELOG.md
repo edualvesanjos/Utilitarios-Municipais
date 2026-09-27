@@ -1,3 +1,11 @@
+# 4.6.2.3 DEV
+
+- Isola a persistência da sessão SuperDB por ambiente e projeto.
+- Impede que uma sessão autenticada no PROD seja reutilizada ao abrir o DEV, e vice-versa.
+- Mantém separadas também as chaves internas de autenticação/PKCE armazenadas pelo SDK.
+- Preserva a seleção automática de projeto, schema e Anon Key implementada na v4.6.2.2 DEV.
+- A primeira abertura após esta atualização exige novo login no ambiente ativo.
+
 # 4.6.2.2 DEV
 
 - Isolamento das configurações SuperDB entre DEV e PROD.

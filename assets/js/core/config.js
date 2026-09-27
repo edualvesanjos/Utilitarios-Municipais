@@ -1,4 +1,4 @@
-const APP_VERSION = "4.6.2.2";
+const APP_VERSION = "4.6.2.3";
 window.APP_VERSION = APP_VERSION;
 
 /*
@@ -38,7 +38,7 @@ const APP_CONFIG = Object.freeze({
     debug: APP_ENVIRONMENT === "development"
 });
 
-/* v4.6.2.2 DEV — configuração isolada por ambiente.
+/* v4.6.2.3 DEV — configuração e sessão isoladas por ambiente.
  * A troca DEV/PROD é controlada exclusivamente por APP_ENVIRONMENT.
  * Projeto/schema não podem mais ser sobrescritos por VITE_SUPERDB_PROJECT.
  */
