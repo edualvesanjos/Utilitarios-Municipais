@@ -1,6 +1,6 @@
 import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
 
-/* Utilitários Municipais v4.6.2.3 DEV — Realtime isolado por ambiente. */
+/* Utilitários Municipais v4.6.2 PROD — Realtime isolado por ambiente. */
 (async function () {
     "use strict";
 

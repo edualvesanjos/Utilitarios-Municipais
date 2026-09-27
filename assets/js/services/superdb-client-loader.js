@@ -1,4 +1,4 @@
-/* Utilitários Municipais v4.6.2.3 DEV — SuperDB Client com isolamento de sessão por ambiente. */
+/* Utilitários Municipais v4.6.2 PROD — SuperDB Client com isolamento de sessão por ambiente. */
 import { createClient } from "https://esm.unpkg.com/@superdb/client@0.2.2";
 
 let instance = null;
