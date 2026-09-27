@@ -8,7 +8,7 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
         "https://auth.superdb.com.br/rt/v1/token";
 
     const REALTIME_SCHEMA =
-        "proj_utilitariosmunicipais_teste";
+        "proj_p_f1c97412fa";
 
     const REALTIME_TABLE = "user_data";
 

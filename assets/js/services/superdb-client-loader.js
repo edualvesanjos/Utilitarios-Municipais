@@ -25,7 +25,7 @@ function getClient() {
     if (initializationError) return null;
     try {
         const { url, project, key } = getConfiguration();
-        if (!isConfigured()) throw new Error("SuperDB DEV não configurado. Preencha VITE_SUPERDB_ANON_KEY no arquivo .env.");
+        if (!isConfigured()) throw new Error("SuperDB não configurado. Verifique a configuração do projeto.");
         instance = createClient(url, key, { project });
         window.Logger?.info("Cliente SuperDB inicializado.");
         return instance;

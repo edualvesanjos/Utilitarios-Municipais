@@ -1,3 +1,11 @@
+## 4.6.2 PROD — Migração para SuperDB
+
+- Promovida a base homologada 4.6.2.1 DEV para produção.
+- Ambiente alterado para `production`.
+- Projeto SuperDB PROD configurado como `p_f1c97412fa`.
+- Realtime configurado no schema `proj_p_f1c97412fa`.
+- Mantida a serialização da renovação de sessão homologada em DEV.
+
 ## 4.6.2.1 DEV — Serialização da renovação de sessão
 
 - Centraliza chamadas concorrentes de `refreshSession()` em uma única renovação compartilhada.
