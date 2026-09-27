@@ -36,10 +36,24 @@ function updateSettingsStatistics() {
 
 function updateSettingsSummary() {
     const lastBackup = localStorage.getItem(LAST_BACKUP_KEY);
+    const formattedBackup = lastBackup ? formatDateTime(lastBackup) : "";
+    const settingsBackup = $("#ultimoBackupInfo");
+    const dashboardBackup = $("#dashboardLastBackup");
+    const dashboard32Backup = $("#v32LastBackup");
 
-    $("#ultimoBackupInfo").textContent = lastBackup
-        ? `Último backup exportado em ${formatDateTime(lastBackup)}.`
-        : "Nenhum backup registrado.";
+    if (settingsBackup) {
+        settingsBackup.textContent = lastBackup
+            ? `Último backup exportado em ${formattedBackup}.`
+            : "Nenhum backup registrado.";
+    }
+
+    if (dashboardBackup) {
+        dashboardBackup.textContent = lastBackup ? formattedBackup : "Não realizado";
+    }
+
+    if (dashboard32Backup) {
+        dashboard32Backup.textContent = lastBackup ? formattedBackup : "Nenhum backup";
+    }
 
     updateSettingsStatistics();
 }
@@ -227,7 +241,7 @@ const clearDeviceHistoriesButton = $("#limparHistoricosDispositivo");
 if (clearDeviceHistoriesButton) {
     clearDeviceHistoriesButton.addEventListener("click", async () => {
         const confirmed = await confirmAction(
-            "Os históricos serão removidos somente deste navegador. Registros existentes no Supabase poderão retornar na próxima sincronização. Deseja continuar?",
+            "Os históricos serão removidos somente deste navegador. Registros existentes no armazenamento online poderão retornar na próxima sincronização. Deseja continuar?",
             {
                 title: "Limpar históricos deste dispositivo",
                 confirmText: "Limpar deste dispositivo"
@@ -316,7 +330,7 @@ if (deleteSyncedHistoriesButton) {
 
 $("#limparTudo").addEventListener("click", async () => {
     const confirmed = await confirmAction(
-        "Esta ação apagará todos os dados locais do aplicativo neste navegador. Dados sincronizados no Supabase não serão excluídos. Deseja continuar?",
+        "Esta ação apagará todos os dados locais do aplicativo neste navegador. Dados sincronizados online não serão excluídos. Deseja continuar?",
         {
             title: "Apagar todos os dados locais",
             confirmText: "Apagar dados locais"

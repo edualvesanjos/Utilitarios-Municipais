@@ -1057,8 +1057,7 @@
                                 </button>
                             </div>
                             <p class="help-text">
-                                A limpeza local não remove registros do Supabase e eles poderão retornar após
-                                uma nova sincronização. A exclusão sincronizada exige conexão e confirmação dupla.
+                                A limpeza local não remove registros armazenados online e eles poderão retornar após uma nova sincronização. A exclusão sincronizada exige conexão e confirmação dupla.
                             </p>
                         </section>
 
@@ -1093,7 +1092,7 @@
                             <h3>Restaurar aplicativo</h3>
                             <p class="help-text">
                                 Remove os dados locais deste navegador e retorna o aplicativo ao estado inicial.
-                                Dados sincronizados no Supabase não são excluídos por esta ação.
+                                Dados sincronizados online não são excluídos por esta ação.
                             </p>
                             <div class="actions">
                                 <button id="limparTudo" class="danger-outline" type="button">
@@ -1380,18 +1379,17 @@
                             <div><dt>Aplicativo</dt><dd data-app-name>Utilitários Municipais</dd></div>
                             <div><dt>Versão</dt><dd data-app-version></dd></div>
                             <div><dt>Arquitetura</dt><dd>Modular — Série 4</dd></div>
-                            <div><dt>Armazenamento</dt><dd>Local + Supabase</dd></div>
+                            <div><dt>Armazenamento</dt><dd>Local + Backend Adapter</dd></div>
                             <div><dt>Ambiente BD</dt><dd id="aboutDatabaseEnvironment">—</dd></div>
                         </dl>
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da <span data-app-version></span></h3>
-                        <ul class="about-list">
-                            <li><strong>Mobile:</strong> sidebar refatorada para eliminar regras responsivas concorrentes acumuladas.</li>
-                            <li><strong>Layout:</strong> pesquisa, menus e rodapé passam a seguir uma única grade vertical no mobile.</li>
-                            <li><strong>iOS/Android:</strong> regras consolidadas para WebKit e Chromium, sem CSS separado por navegador.</li>
-                            <li><strong>Backdrop:</strong> preservada a camada externa corrigida na v4.5.3.5.</li>
+                        <h3>Novidades da 4.6.2.1</h3>
+                        <ul>
+                            <li><strong>Renovação serializada:</strong> impede chamadas concorrentes de refresh da sessão SuperDB.</li>
+                            <li><strong>Refresh token:</strong> evita a condição de corrida que pode causar <code>refresh_token_reuse</code> e revogar a sessão.</li>
+                            <li><strong>Teste prolongado:</strong> prepara nova rodada de validação do Realtime e da autenticação.</li>
                         </ul>
                     </section>
                 </div>
@@ -1399,15 +1397,584 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline" id="aboutVersionHistory">
-                        <article class="about-version-item is-open">
-                            <button class="about-version-toggle" type="button" aria-expanded="true">
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.2.1 DEV</strong>
+                                    <span>Serialização da renovação de sessão</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid"><section><h4>Resumo</h4><p>Evita renovações concorrentes da sessão SuperDB, protegendo o refresh token rotativo contra reutilização e revogação da sessão.</p></section></div>
+                            </div>
+                        </article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.2 DEV</strong>
+                                    <span>Checkpoint para teste prolongado do Realtime</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Resumo</h4>
+                                        <p>Consolida a correção do indicador “Último backup” e preserva o Realtime sem alterações funcionais para reinício do teste prolongado.</p>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.21 DEV</strong>
+                                    <span>Atualização do último backup</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Backup</h4>
+                                        <ul>
+                                            <li>Atualiza imediatamente o horário do último backup após a exportação.</li>
+                                            <li>Mantém os indicadores de Configurações e Dashboard consistentes na mesma sessão.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.20 DEV</strong>
+                                    <span>Recuperação autenticada do Realtime</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Autenticação e Realtime</h4>
+                                        <ul>
+                                            <li>Renova a sessão SuperDB quando a emissão do token Realtime retornar HTTP 401.</li>
+                                            <li>Repete a emissão do token uma única vez após a renovação autenticada.</li>
+                                            <li>Se o 401 persistir, aguarda 60 segundos antes de nova tentativa; demais falhas mantêm reconexão em 5 segundos.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.19 DEV</strong>
+                                    <span>Recuperação após renovação de sessão</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Autenticação e Realtime</h4>
+                                        <ul>
+                                            <li>Recupera o Realtime após uma renovação bem-sucedida da sessão quando o canal estiver desconectado.</li>
+                                            <li>Atualiza a autenticação do canal quando ele já estiver SUBSCRIBED.</li>
+                                            <li>Repete history_entries uma única vez após 401, depois de renovar a sessão.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.18 DEV</strong>
+                                    <span>Recuperação após falha temporária do SuperDB</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Resiliência do Realtime</h4>
+                                        <ul>
+                                            <li>Repete de forma controlada a reconexão quando a tentativa anterior falha ao obter novo token.</li>
+                                            <li>Libera o bloqueio de reconexão antes de agendar a tentativa seguinte.</li>
+                                            <li>Preserva o intervalo de 5 segundos e evita tentativas concorrentes.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.17 DEV</strong>
+                                    <span>Sincronização automática entre navegadores</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Realtime e sincronização</h4>
+                                        <ul>
+                                            <li>Valida o fluxo de alteração remota entre dois navegadores autenticados.</li>
+                                            <li>Registra o resultado do processamento iniciado pelo Realtime.</li>
+                                            <li>Preserva a detecção de conflitos exclusivamente no serviço de sincronização.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.16 DEV</strong>
+                                    <span>Reconexão explícita após novo login</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Autenticação e Realtime</h4>
+                                        <ul>
+                                            <li>Restabelece o Realtime diretamente após o login retornar uma sessão válida.</li>
+                                            <li>Não depende exclusivamente do evento <code>SIGNED_IN</code> para o ciclo <code>logout → login</code>.</li>
+                                            <li>Mantém a conexão antes das operações REST de perfil e sincronização.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.15 DEV</strong>
+                                    <span>Login Realtime independente da sincronização</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Autenticação e resiliência</h4>
+                                        <ul>
+                                            <li>Conecta o Realtime imediatamente após o evento <code>SIGNED_IN</code>.</li>
+                                            <li>Não deixa falhas REST pós-login impedirem a conexão Realtime.</li>
+                                            <li>Preserva as proteções de logout, renovação e reconexão já homologadas.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.14 DEV</strong>
+                                    <span>Estabilidade de logout e login do Realtime</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Autenticação e Realtime</h4>
+                                        <ul>
+                                            <li>Encerra explicitamente o Realtime no logout, sem depender apenas do evento do SDK.</li>
+                                            <li>Limpa canal e timers associados à sessão encerrada.</li>
+                                            <li>Evita recriar uma conexão já inscrita durante eventos redundantes de login.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.13 DEV</strong>
+                                    <span>Recuperação resiliente no retorno online</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Retorno da rede</h4>
+                                        <ul>
+                                            <li>Registra o evento <code>online</code> independentemente do estado momentâneo da sessão.</li>
+                                            <li>Reavalia a sessão após 500 ms quando necessário antes de iniciar a recuperação.</li>
+                                            <li>Mantém a reconexão protegida contra duplicidade e respeita logout/desconexões intencionais.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.12 DEV</strong>
+                                    <span>Recuperação do Realtime no retorno online</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Recuperação de rede</h4>
+                                        <ul>
+                                            <li>Registra quando uma assinatura ativa atravessa uma interrupção de rede.</li>
+                                            <li>Verifica a recuperação no retorno online mesmo se o último estado conhecido ainda for <code>SUBSCRIBED</code>.</li>
+                                            <li>Aguarda 5 segundos pela recuperação automática do SDK antes de recriar a conexão.</li>
+                                            <li>Cancela a recuperação programada se o canal confirmar novamente <code>SUBSCRIBED</code>.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.11 DEV</strong>
+                                    <span>Renovação normal e reconexão do Realtime</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Estabilidade do Realtime</h4>
+                                        <ul>
+                                            <li>Restaura o intervalo normal de renovação preventiva do token após o teste controlado da versão anterior.</li>
+                                            <li>Trata falhas e encerramentos do canal com agendamento controlado de reconexão.</li>
+                                            <li>Verifica a necessidade de recuperação do Realtime quando o navegador volta a ficar online.</li>
+                                            <li>Evita reconexões concorrentes e respeita desconexões intencionais, como logout.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.10 DEV</strong>
+                                    <span>Validação da renovação do token Realtime</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Renovação controlada</h4>
+                                        <ul>
+                                            <li>Reduz temporariamente o intervalo de renovação para 60 segundos para validar o ciclo completo sem aguardar 55 minutos.</li>
+                                            <li>Mantém a atualização da autenticação por <code>setAuth(...)</code> sem recriar o canal Realtime.</li>
+                                            <li>Registra no log DEV o modo de teste e o resultado da renovação.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.9 DEV</strong>
+                                    <span>Estabilidade do Realtime</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Etapa 1 — Estado da assinatura</h4>
+                                        <ul>
+                                            <li>Passa a acompanhar internamente o estado real da assinatura Realtime.</li>
+                                            <li><code>isConnected()</code> retorna verdadeiro somente quando o canal está em <code>SUBSCRIBED</code>.</li>
+                                            <li>A renovação de token e a reconexão automática permaneceram fora desta primeira etapa.</li>
+                                        </ul>
+                                    </section>
+                                    <section>
+                                        <h4>Etapa 2 — Renovação do token</h4>
+                                        <ul>
+                                            <li>Agenda a renovação preventiva conforme a validade informada pelo token Realtime.</li>
+                                            <li>Valida a sessão SuperDB antes de emitir uma nova credencial Realtime.</li>
+                                            <li>Atualiza o cliente ativo com <code>setAuth(...)</code>, sem recriar o canal em uma renovação normal.</li>
+                                            <li>Remove o timer de renovação ao desconectar ou efetuar logout.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.8 DEV</strong>
+                                    <span>Consolidação do SuperDB e Realtime</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Backend</h4>
+                                        <ul>
+                                            <li>Consolida o SuperDB como backend operacional exclusivo da aplicação.</li>
+                                            <li>Remove do runtime os componentes e configurações legados do Supabase.</li>
+                                            <li>Adota terminologia neutra para dados e armazenamento online.</li>
+                                        </ul>
+                                    </section>
+                        
+                                    <section>
+                                        <h4>Realtime</h4>
+                                        <ul>
+                                            <li>Implementa a conexão Realtime para acompanhamento das alterações dos dados online.</li>
+                                            <li>Consolida eventos do mesmo lote antes de solicitar a sincronização.</li>
+                                            <li>Ajusta a inicialização para utilizar corretamente a sessão autenticada restaurada.</li>
+                                        </ul>
+                                    </section>
+                        
+                                    <section>
+                                        <h4>Sincronização</h4>
+                                        <ul>
+                                            <li>Preserva os mecanismos de sincronização automática e manual já homologados.</li>
+                                            <li>Mantém o tratamento de conflitos entre dados locais e online.</li>
+                                            <li>Valida a conexão automática do Realtime após a restauração da sessão.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>                        
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.7 DEV</strong>
+                                    <span>Limpeza dos logs de diagnóstico</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Estabilização</h4>
+                                        <ul>
+                                            <li>Remove os logs temporários de diagnóstico dos históricos e da autenticação.</li>
+                                            <li>Mantém os tratamentos de erro e os logs operacionais permanentes.</li>
+                                            <li>Preserva o fluxo de autenticação e sincronização homologado.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>                        
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.6 DEV</strong>
+                                    <span>Identidade funcional dos históricos</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Sincronização</h4>
+                                        <ul>
+                                            <li>Identidade determinística por módulo, ação e conteúdo funcional.</li>
+                                            <li>Campos temporais/técnicos deixam de provocar duplicações funcionais.</li>
+                                            <li>CPF/CNPJ não recria o mesmo documento válido em atualizações sucessivas.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.5 DEV</strong>
+                                    <span>Compatibilidade de validação no Firefox</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>ValidationCenter</h4>
+                                        <ul>
+                                            <li>Event.target é validado como Element antes do uso de matches() e classList.</li>
+                                            <li>Corrigido o TypeError observado no Firefox durante eventos de validação.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.4 DEV</strong>
+                                    <span>Etapa 5 — REST homologado do SuperDB</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>history_entries</h4>
+                                        <ul>
+                                            <li>REST ajustado para api.superdb.com.br conforme laboratório v0.2.0.</li>
+                                            <li>Profiles do projeto enviados em Accept-Profile e Content-Profile.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.3 DEV</strong>
+                                    <span>Etapa 5 — correção do Data Plane token</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>history_entries</h4>
+                                        <ul>
+                                            <li>Corrigida a leitura do token retornado diretamente como string pelo SuperDB 0.2.2.</li>
+                                            <li>Mantido diagnóstico DEV para homologar o envio da outbox.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1 DEV</strong>
+                                    <span>Etapa 5 — history_entries no SuperDB</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Migração</h4>
+                                        <ul>
+                                            <li>Ativada a escrita de históricos no SuperDB DEV.</li>
+                                            <li>REST upsert preserva a idempotência por user_id + client_id.</li>
+                                            <li>Primeira homologação deve ser feita com um único usuário/dispositivo.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.0.9 DEV</strong>
+                                    <span>Etapa 4 — ajustes finais de sincronização</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Ajustes</h4>
+                                        <ul>
+                                            <li>Feedback visual no Sincronizar agora quando não existem diferenças.</li>
+                                            <li>Reidratação do campo Cor principal após recuperação remota.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.0.8 DEV</strong>
+                                    <span>Etapa 4 — renovação automática de JWT</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>SuperDB</h4>
+                                        <ul>
+                                            <li>Renovação preventiva da sessão persistida antes da sincronização.</li>
+                                            <li>Uma única renovação e repetição quando o backend retornar JWT expirado.</li>
+                                            <li>Se a renovação falhar, a interface solicita novo login sem apagar dados locais.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.0.7 DEV</strong>
+                                    <span>Etapa 4 — sync_log no SuperDB</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Migração</h4>
+                                        <ul>
+                                            <li>Ativada a gravação de sync_log no SuperDB DEV.</li>
+                                            <li>Logs registram backend e etapa de migração nos detalhes.</li>
+                                            <li>history_entries permanece fora desta etapa.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.0.6 DEV</strong>
+                                    <span>Etapa 3 — migração SuperDB e correção do logout</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Alterações</h4>
+                                        <ul>
+                                            <li>Atualização imediata da interface após encerrar a sessão.</li>
+                                            <li>Preservação dos dados locais durante o logout.</li>
+                                            <li>Continuidade da validação de user_data no SuperDB DEV.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
                                 <span class="about-version-heading">
                                     <strong>4.5.3.1</strong>
                                     <span>Correção de autenticação e controles da conta</span>
                                 </span>
                                 <span class="about-version-chevron" aria-hidden="true">⌄</span>
                             </button>
-                            <div class="about-version-details">
+                            <div class="about-version-details" hidden>
                                 <div class="about-version-detail-grid">
                                     <section>
                                         <h4>Correções</h4>
@@ -1985,12 +2552,13 @@
     <script src="assets/js/services/logger.js"></script>
     <script src="assets/js/services/error-handler.js"></script>
     <script src="assets/js/services/version-service.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-    <script src="assets/js/services/supabase-client.js"></script>
+    <script type="module" src="assets/js/services/superdb-client-loader.js"></script>
+    <script src="assets/js/services/backend-client.js"></script>
     <script src="assets/js/registry/tools.js"></script>
     <script src="assets/js/services/storage-service.js"></script>
     <script src="assets/js/services/history-service.js"></script>
     <script src="assets/js/services/online-sync-service.js"></script>
+    <script type="module" src="assets/js/services/realtime-service.js"></script>   
     <script src="assets/js/core/sidebar-45.js"></script>
     <script src="assets/js/core/about-history-45.js"></script>
     <script src="assets/js/core/storage.js"></script>

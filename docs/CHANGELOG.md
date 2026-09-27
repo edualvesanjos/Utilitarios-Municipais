@@ -1,4 +1,266 @@
+# 4.6.2 PROD
+
+- Fecha a release de produção a partir da v4.6.2.3 DEV homologada.
+- Mantém seleção centralizada e segura dos ambientes SuperDB DEV/PROD.
+- Mantém sessões e armazenamento de autenticação isolados por ambiente e projeto.
+- Configura `APP_ENVIRONMENT = "production"` e `APP_VERSION = "4.6.2"`.
+- SuperDB PROD: projeto `p_f1c97412fa`, schema `proj_p_f1c97412fa`.
+- Preserva autenticação, persistência e Realtime validados no PROD.
+
+# 4.6.2.3 DEV
+
+- Isola a persistência da sessão SuperDB por ambiente e projeto.
+- Impede que uma sessão autenticada no PROD seja reutilizada ao abrir o DEV, e vice-versa.
+- Mantém separadas também as chaves internas de autenticação/PKCE armazenadas pelo SDK.
+- Preserva a seleção automática de projeto, schema e Anon Key implementada na v4.6.2.2 DEV.
+- A primeira abertura após esta atualização exige novo login no ambiente ativo.
+
+# 4.6.2.2 DEV
+
+- Isolamento das configurações SuperDB entre DEV e PROD.
+- `APP_ENVIRONMENT` passa a selecionar projeto e schema de forma centralizada.
+- Variáveis `VITE_SUPERDB_PROJECT` e `VITE_SUPERDB_URL` deixam de sobrescrever o ambiente ativo.
+- Chaves anon separadas em `VITE_SUPERDB_DEV_ANON_KEY` e `VITE_SUPERDB_PROD_ANON_KEY`.
+- Realtime passa a usar automaticamente o schema do ambiente ativo.
+- Identificação visual SuperDB DEV/PROD passa a acompanhar o ambiente.
+
+## 4.6.2.1 DEV — Serialização da renovação de sessão
+
+- Centraliza chamadas concorrentes de `refreshSession()` em uma única renovação compartilhada.
+- Evita reutilização simultânea do refresh token entre sincronização, histórico e Realtime.
+- Mantém as rotinas aguardando a mesma Promise quando uma renovação já está em andamento.
+- Corrige a condição de corrida identificada no teste prolongado da v4.6.2 DEV, que terminou em `refresh_token_reuse` e revogação da sessão.
+
+## 4.6.2 DEV — Checkpoint para teste prolongado do Realtime
+
+- Consolida a correção do indicador “Último backup” já implementada e validada na v4.6.1.21 DEV.
+- Preserva sem alterações funcionais a implementação de autenticação, sincronização e Realtime da série v4.6.1.x.
+- Estabelece uma nova base DEV para reiniciar o teste prolongado de estabilidade interrompido durante a implantação do banco SuperDB PROD.
+
+## 4.6.1.21 DEV — Atualização do último backup
+
+- Corrige a atualização imediata do indicador “Último backup” após exportar um backup.
+- Mantém sincronizados os indicadores de backup exibidos em Configurações e no Dashboard na mesma sessão do navegador.
+- Preserva sem alterações a estabilização de autenticação e Realtime homologada na v4.6.1.20.
+
+## 4.6.1.20 DEV — Recuperação autenticada do Realtime
+
+- Trata HTTP 401 na emissão do token Realtime como falha de autenticação, em vez de simples indisponibilidade de conexão.
+- Ao receber 401, renova a sessão SuperDB e repete uma única vez a solicitação do token Realtime com a sessão atualizada.
+- Se o token continuar sendo rejeitado após a renovação, aplica espera de 60 segundos antes de nova tentativa, evitando centenas de requisições repetidas com autenticação recusada.
+- Mantém em 5 segundos a reconexão para falhas transitórias de rede/serviço e preserva as proteções contra tentativas concorrentes da v4.6.1.19.
+- Mantém separada a correção pendente do indicador “Último backup”.
+
+## 4.6.1.19 DEV — Recuperação após renovação de sessão
+
+- Recupera o Realtime quando a sessão SuperDB é renovada e o canal não está mais `SUBSCRIBED`.
+- Quando o Realtime já está conectado, atualiza sua autenticação após a renovação da sessão sem recriar o canal desnecessariamente.
+- Adiciona uma única repetição autenticada do `history_entries` após resposta HTTP 401, forçando antes a renovação da sessão SuperDB.
+- Preserva as tentativas controladas de reconexão da v4.6.1.18 e evita reconexões concorrentes.
+- Mantém separada a correção pendente do indicador “Último backup”.
+
+## 4.6.1.18 DEV — Recuperação após falha temporária do SuperDB
+
+- Corrige a recuperação do Realtime quando uma tentativa de reconexão falha ao obter novo token por indisponibilidade temporária do SuperDB.
+- Após uma tentativa malsucedida, agenda nova reconexão controlada somente depois de liberar o estado `reconnectInProgress`, evitando que o bloqueio de concorrência descarte a próxima tentativa.
+- Mantém o intervalo de 5 segundos, a proteção contra reconexões concorrentes e as regras já homologadas de logout, retorno online e renovação de token.
+- Parte da v4.6.1.17 DEV, preservando-a como checkpoint anterior.
+
+## 4.6.1.17 DEV — Sincronização automática entre navegadores
+
+- Prepara a homologação do fluxo completo `navegador A → SuperDB → Realtime → navegador B`.
+- Mantém o processamento remoto centralizado em `handleRealtimeChange() → pullRemoteData()`, preservando a detecção de conflitos existente.
+- Adiciona log DEV do resultado da sincronização solicitada pelo Realtime para distinguir evento recebido de dados efetivamente aplicados.
+- Não altera a política de sincronização, resolução de conflitos, renovação de token ou reconexão já homologadas.
+
+## 4.6.1.16 DEV — Reconexão explícita após novo login
+
+- Restabelece o Realtime diretamente no fluxo de login bem-sucedido, logo após a nova sessão ser armazenada.
+- Remove a dependência exclusiva do evento `SIGNED_IN` para reconectar após `logout → login` na mesma página.
+- Aplica a mesma garantia ao fluxo de criação de conta quando a resposta já contém uma sessão autenticada.
+- Mantém a conexão Realtime antes de `ensureProfile()`, evitando que falhas REST impeçam a reconexão.
+- Preserva logout explícito, renovação preventiva do token e recuperação `offline → online` homologadas anteriormente.
+
+## 4.6.1.15 DEV — Login Realtime independente da sincronização
+
+- Conecta o Realtime imediatamente após `SIGNED_IN`, antes das rotinas REST de perfil, sincronização e histórico.
+- Impede que uma falha temporária de sincronização, inclusive resposta HTTP 503, bloqueie a reconexão do Realtime após novo login.
+- Isola falhas das rotinas auxiliares pós-login e as encaminha ao `ErrorHandler` sem interromper o ciclo de autenticação do Realtime.
+- Preserva logout explícito, renovação preventiva do token e recuperação `offline → online` homologadas anteriormente.
+
+## 4.6.1.14 DEV — Estabilidade de logout e login do Realtime
+
+- Garante o encerramento explícito do Realtime no fluxo de logout, sem depender exclusivamente do evento `SIGNED_OUT` do SDK.
+- Evita manter canal, timer de renovação ou reconexão ativos após o encerramento da sessão.
+- Torna `disconnect()` idempotente para evitar logs duplicados quando o logout explícito e o evento de autenticação encerrarem a mesma conexão.
+- Evita recriar uma conexão Realtime que já esteja efetivamente em `SUBSCRIBED` durante eventos redundantes de autenticação.
+- Preserva a renovação preventiva do token e a recuperação `offline → online` homologadas nas versões anteriores.
+
+## 4.6.1.13 DEV — Recuperação resiliente no retorno online
+
+- Registra o evento `online` antes de validar a sessão, permitindo diagnosticar o retorno da rede independentemente do estado momentâneo da autenticação.
+- Reavalia a sessão após 500 ms quando ela ainda não estiver disponível no instante exato do evento `online`.
+- Mantém a recuperação condicionada a uma sessão autenticada, sem criar conexão Realtime para usuário desconectado.
+- Preserva a janela de reconexão controlada de 5 segundos e cancela timers auxiliares no `disconnect()`.
+- Mantém a renovação preventiva do token em aproximadamente 3300 segundos para tokens com validade de 3600 segundos.
+
+## 4.6.1.12 DEV — Recuperação do Realtime no retorno online
+
+- Registra explicitamente quando a rede foi interrompida durante uma assinatura Realtime ativa.
+- Ao receber o evento `online`, verifica a assinatura mesmo quando o último estado conhecido ainda é `SUBSCRIBED`.
+- Agenda recuperação controlada após `offline → online` quando não houver confirmação de recuperação automática do canal.
+- Mantém uma janela de 5 segundos para permitir que o SDK se recupere sozinho antes de recriar a conexão.
+- Cancela a reconexão programada se o canal confirmar `SUBSCRIBED` durante essa janela.
+- Mantém a renovação preventiva normal do token e a lógica de sincronização/conflitos sem alterações.
+
+## 4.6.1.11 DEV — Renovação normal e reconexão do Realtime
+
+- Restaura a renovação preventiva normal do token Realtime, removendo o intervalo temporário de 60 segundos da v4.6.1.10.
+- Mantém a atualização do token com `setAuth(...)`, sem recriar o canal durante uma renovação normal.
+- Passa a tratar os estados `CHANNEL_ERROR`, `TIMED_OUT` e `CLOSED` para programar uma nova conexão quando houver sessão autenticada e rede disponível.
+- Evita agendamentos concorrentes de reconexão e cancela o timer ao desconectar intencionalmente.
+- Ao retornar ao estado online, verifica se o Realtime está fora de `SUBSCRIBED` e agenda a recuperação da conexão.
+- Mantém a lógica de sincronização e de conflitos no `OnlineSyncService`, sem duplicá-la no `RealtimeService`.
+
+## 4.6.1.10 DEV — Validação da renovação do token Realtime
+
+- Mantém o estado real da assinatura Realtime validado na v4.6.1.9.
+- Mantém a renovação do token com `setAuth(...)` sem recriar o canal.
+- Reduz temporariamente o intervalo de renovação para 60 segundos, exclusivamente para validação funcional.
+- Identifica no log DEV quando o agendamento está operando em modo de teste.
+- Remove o artefato de pesquisa `4_6_1_8.code-search`, sem uso no runtime da aplicação.
+- Mantém a reconexão automática após falhas de canal fora do escopo desta versão de teste.
+
+## 4.6.1.9 DEV — Estabilidade do Realtime
+
+- Inicia a etapa de estabilização do Realtime sobre a base homologada da v4.6.1.8.
+- Passa a registrar internamente o estado real da assinatura Realtime.
+- Ajusta `isConnected()` para retornar verdadeiro somente quando a assinatura estiver em `SUBSCRIBED`.
+- Agenda a renovação preventiva do token Realtime antes de sua expiração.
+- Garante uma sessão SuperDB válida antes de solicitar um novo token Realtime.
+- Atualiza a autenticação do cliente existente com `setAuth(...)`, sem recriar o canal durante a renovação normal.
+- Cancela o timer de renovação ao desconectar ou efetuar logout.
+- Mantém a reconexão automática após falhas de canal para a próxima etapa desta versão.
+
+## 4.6.1.8 DEV — Consolidação do SuperDB e Realtime
+
+- Consolida o SuperDB como backend operacional exclusivo da aplicação.
+- Remove o SDK, cliente, configurações e fallback legados do Supabase no runtime.
+- Remove URLs e chaves públicas antigas do Supabase da configuração da aplicação.
+- Desacopla os textos da interface do provedor de backend, utilizando termos como dados online e armazenamento online.
+- Ajusta as mensagens de resolução de conflitos para representar corretamente dados locais e online.
+- Mantém preservada a documentação histórica das versões que utilizavam Supabase.
+- Mantém os mecanismos de sincronização automática, reconexão, foco, visibilidade e sincronização manual.
+- Implementa a conexão Realtime para acompanhamento das alterações dos dados online.
+- Consolida eventos Realtime antes de solicitar a sincronização, evitando processamento individual de alterações do mesmo lote.
+- Ajusta a inicialização para disponibilizar o `OnlineSyncService` antes do evento `um:session-ready`, garantindo que o Realtime encontre a sessão autenticada.
+- Valida a conexão automática do Realtime após a restauração da sessão, sem necessidade de conexão manual.
+
+## 4.6.1.7 DEV — Limpeza dos logs de diagnóstico
+
+- Remove os logs temporários `[History DEV]` utilizados durante a estabilização dos históricos.
+- Remove os logs temporários `[Auth DEV]` utilizados durante os testes de autenticação.
+- Mantém os tratamentos de erro e logs operacionais permanentes.
+- Preserva o comportamento de autenticação e sincronização homologado na v4.6.1.6.
+
+## 4.6.1.6 DEV — Identidade funcional dos históricos
+
+- Corrige duplicações de históricos observadas após uso offline, fechamento da aplicação e reconexão.
+- `HistoryService` passa a desconsiderar campos temporais/técnicos na identidade funcional dos itens.
+- `queueHistory()` passa a usar `client_id` determinístico por módulo, ação e conteúdo funcional.
+- `scanLocalHistories()` usa a mesma estratégia determinística para ações `record`.
+- CPF/CNPJ deixa de recriar o mesmo documento válido em sucessivos eventos de atualização.
+- Mantidos os logs `[History DEV]` para validação da correção.
+- Nenhum registro existente do SuperDB é apagado automaticamente.
+
+## 4.6.1.5 DEV — Compatibilidade de validação
+
+- Corrige `ValidationCenter` para validar `Event.target` antes de usar `matches()` e `classList`.
+- Elimina o `TypeError: e.target.matches is not a function` observado no Firefox.
+- Mantém o comportamento existente de validação de `input`, `select` e `textarea`.
+- Formata `assets/js/core/validation.js` para facilitar manutenção e diagnóstico.
+- Não altera a sincronização SuperDB nem a lógica homologada de `history_entries`.
+
+## 4.6.1.4 DEV — Etapa 5
+
+- Corrige o REST de `history_entries` reproduzindo a estratégia homologada no laboratório v0.2.0.
+- Endpoint passa a usar `https://api.superdb.com.br/history_entries`.
+- Mantém `on_conflict=user_id,client_id` e `Prefer: resolution=merge-duplicates,return=representation`.
+- Adiciona `Accept-Profile` e `Content-Profile` com `proj_<project>`, conforme o teste REST aprovado.
+- Mantém autenticação com Data Plane token e `apikey`.
+- Mantém os diagnósticos `[History DEV]` durante a homologação da outbox.
+
+## 4.6.1.3 DEV — Etapa 5
+
+- Corrige a leitura do Data Plane token do SuperDB 0.2.2.
+- `auth.getDataPlaneToken()` é aceito no formato real validado em laboratório/aplicação: string direta.
+- Mantém compatibilidade defensiva com formatos de resposta em objeto.
+- Mantém os diagnósticos `[History DEV]` para homologar o envio dos registros pendentes.
+- Nenhum token ou credencial é exibido no Console.
+
+## 4.6.1.2 DEV — Etapa 5 — Diagnóstico Data Plane
+
+- Inspeciona de forma segura a estrutura retornada por `auth.getDataPlaneToken()`.
+- Exibe somente nomes de propriedades e tipos; nenhum token, chave ou valor sensível é registrado.
+- Mantém os registros pendentes da outbox intactos para o próximo teste.
+- Não altera ainda a estratégia de extração do token.
+
+## 4.6.1.1 DEV — Etapa 5 — Diagnóstico
+
+- Instrumenta o fluxo `history_entries` no Console com prefixo `[History DEV]`, sem expor credenciais.
+- Não altera a estratégia funcional da Etapa 5.
+
+## 4.6.1 DEV — Etapa 5
+
+- Inicia a migração de `history_entries` para o SuperDB DEV.
+- Mantém a outbox local e a chave de idempotência `user_id + client_id`.
+- Para SuperDB, o envio pendente usa REST upsert com `on_conflict=user_id,client_id`, pois o SDK 0.2.2 não expõe `upsert()` no query builder.
+- Mantém leitura/merge remoto pelo Backend Adapter.
+- Preserva o caminho legado de upsert para outros providers.
+- Esta etapa deve ser homologada primeiro com um único usuário/dispositivo antes dos testes cruzados.
+
+## 4.6.0.9 DEV — Etapa 4
+
+- Adiciona confirmação visual ao `Sincronizar agora` quando os dados locais e remotos já estão iguais.
+- Corrige a reidratação dos controles de Interface após recuperação remota, incluindo o campo `Cor principal`.
+- Mantém a renovação automática de JWT e a validação de `sync_log`.
+
+## 4.6.0.8 DEV — Etapa 4
+
+- Implementa renovação de sessão do SuperDB via `auth.refreshSession()`, validada previamente no laboratório v0.2.2.
+- Ao iniciar, renova sessão persistida expirada ou a menos de 60 segundos do vencimento.
+- Antes de sincronizar, valida preventivamente a sessão.
+- Ao receber `JWT expired`, renova a sessão e repete a sincronização uma única vez.
+- Se a renovação falhar, encerra somente o estado autenticado e solicita novo login, preservando os dados locais.
+- Mantém a validação de `sync_log` da Etapa 4.
+
+## 4.6.0.7 DEV — Etapa 4
+
+- Ativa a gravação de `sync_log` no SuperDB DEV.
+- Mantém `user_data`, autenticação, sessão e `profiles` já homologados.
+- Registra `backend` e `migration_stage` no campo `details` do log.
+- A falha de gravação do log permanece não bloqueante para a sincronização principal.
+- `history_entries` permanece para etapa posterior.
+
+## 4.6.0.6 DEV — Etapa 3
+
+- Corrige o logout no SuperDB DEV: após `signOut()` bem-sucedido, a sessão local é zerada e a interface é renderizada imediatamente, sem exigir F5.
+- Centraliza o logout de cabeçalho e Configurações em `signOutAndRefreshUi()`.
+- Mantém os dados locais disponíveis após sair da conta.
+- Preserva os diagnósticos de retentativa de login e as correções de `user_data` da Etapa 3.
+
 # Changelog
+
+## 4.6.0 DEV — Etapa 1
+
+### Backend Adapter / preparação da migração SuperDB
+- Criada a camada `BackendClientService` entre os serviços da aplicação e o provedor de backend.
+- `online-sync-service.js` e `history-service.js` deixam de acessar diretamente `SupabaseClientService`.
+- Supabase permanece operacional nesta etapa para evitar alteração funcional prematura.
+- SuperDB `utilitariosmunicipais_teste` registrado como destino homologado da migração.
+- Ambiente da aplicação alterado para `development`.
+- `.env.example` atualizado com as variáveis públicas necessárias ao futuro cliente SuperDB.
+- Nenhuma alteração no modelo local, módulos funcionais ou banco de produção.
 
 ## 4.5.3.8
 

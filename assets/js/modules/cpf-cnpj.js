@@ -328,7 +328,18 @@
     }
 
     function save(item) {
-        const history = historyItems().filter(
+        const currentHistory = historyItems();
+        const existing = currentHistory.find(
+            (entry) =>
+                entry.normalized === item.normalized &&
+                entry.type === item.type
+        );
+
+        if (existing) {
+            return existing;
+        }
+
+        const history = currentHistory.filter(
             (entry) => entry.normalized !== item.normalized
         );
 
@@ -338,6 +349,8 @@
         render();
         window.HistoryService?.notifyLocalChange?.();
         window.renderProductivity33?.();
+
+        return item;
     }
 
     async function update() {

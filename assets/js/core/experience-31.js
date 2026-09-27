@@ -41,8 +41,25 @@ function refreshDisplayNamePreference() {
 }
 
 window.refreshUxPreferences = function refreshUxPreferences() {
+    const prefs = get("prefs", {});
     applyPrefs();
     refreshDisplayNamePreference();
+
+    const theme = document.getElementById("uxTheme");
+    const font = document.getElementById("uxFont");
+    const accent = document.getElementById("uxAccent");
+    const layout = document.getElementById("uxLayout");
+
+    if (theme && document.activeElement !== theme) theme.value = prefs.theme || "light";
+    if (font && document.activeElement !== font) font.value = prefs.font || "normal";
+    if (accent && document.activeElement !== accent) accent.value = prefs.accent || "#0f4c81";
+    if (layout && document.activeElement !== layout) layout.value = prefs.layout || "grid";
+
+    document.querySelectorAll("[data-ux-widget]").forEach((input) => {
+        if (document.activeElement !== input) {
+            input.checked = prefs.widgets?.[input.dataset.uxWidget] !== false;
+        }
+    });
 };
 
 function applyPrefs(){const p=get("prefs",{theme:"light",compact:false,font:"normal",layout:"grid",displayName:"",widgets:{favorites:true,smart:true,indicators:true,summary:true,recent:true}});applyDisplayName(p);document.body.dataset.theme=p.theme;document.body.classList.toggle("ux-compact",!!p.compact);document.body.classList.toggle("ux-font-large",p.font==="large");document.documentElement.style.setProperty("--ux-accent",p.accent||"#0f4c81");document.documentElement.style.setProperty("--primary-color",p.accent||"#0f4c81");const all=document.getElementById("dashboardAllTools");if(all)all.dataset.layout=p.layout||"grid";const map={favorites:"dashboardFavoritesSection",smart:null,indicators:null,summary:null,recent:null};document.getElementById("dashboardFavoritesSection")?.classList.toggle("ux-hidden-widget",p.widgets?.favorites===false);document.querySelector(".dashboard-smart-grid")?.classList.toggle("ux-hidden-widget",p.widgets?.smart===false);document.querySelector(".dashboard-usage-indicators")?.classList.toggle("ux-hidden-widget",p.widgets?.indicators===false);document.querySelector(".dashboard-summary-grid")?.classList.toggle("ux-hidden-widget",p.widgets?.summary===false);document.querySelector(".dashboard-recent-card")?.classList.toggle("ux-hidden-widget",p.widgets?.recent===false)}

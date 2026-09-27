@@ -39,6 +39,7 @@
 
     let client = null;
     let session = null;
+    let sessionRefreshPromise = null;
     let syncTimer = null;
     let applyingRemote = false;
     let syncInProgress = false;
@@ -77,7 +78,7 @@
     }
 
     function safeRemove(key) {
-        try { localStorage.removeItem(key); } catch {}
+        try { localStorage.removeItem(key); } catch { }
     }
 
     function parseDate(value) {
@@ -215,14 +216,13 @@
         if (!documentRow) {
             if (!hasLocalDocumentStructure()) return rows;
 
-            const { error } = await client.from("user_data").upsert({
+            await saveUserDataRows([{
                 user_id: session.user.id,
                 data_type: "documents",
                 content: localContent,
-                version: SYNC_SCHEMA_VERSION
-            }, { onConflict: "user_id,data_type" });
-
-            if (error) throw error;
+                version: SYNC_SCHEMA_VERSION,
+                updated_at: nowIso()
+            }]);
 
             await writeSyncLog("success", 1, {
                 direction: "upload",
@@ -251,14 +251,13 @@
             mergedContent[key] = localContent[key];
         });
 
-        const { error } = await client.from("user_data").upsert({
+        await saveUserDataRows([{
             user_id: session.user.id,
             data_type: "documents",
             content: mergedContent,
-            version: SYNC_SCHEMA_VERSION
-        }, { onConflict: "user_id,data_type" });
-
-        if (error) throw error;
+            version: SYNC_SCHEMA_VERSION,
+            updated_at: nowIso()
+        }]);
 
         await writeSyncLog("success", 1, {
             direction: "upload",
@@ -327,7 +326,16 @@
         try {
             const prefs = JSON.parse(safeGet(prefsKey, "{}"));
             displayName = String(prefs.displayName || "Usuário").trim().slice(0, 40) || "Usuário";
-        } catch {}
+        } catch { }
+        if (window.BackendClientService?.getActiveProvider?.() === "superdb") {
+            const existing = await client.from("profiles").select("*").eq("id", user.id);
+            if (existing.error) throw existing.error;
+            const result = existing.data?.length
+                ? await client.from("profiles").update({ display_name: displayName, updated_at: new Date().toISOString() }).eq("id", user.id).select()
+                : await client.from("profiles").insert({ id: user.id, display_name: displayName }).select();
+            if (result.error) throw result.error;
+            return;
+        }
         const { error } = await client.from("profiles").upsert(
             { id: user.id, display_name: displayName },
             { onConflict: "id" }
@@ -335,30 +343,89 @@
         if (error) throw error;
     }
 
+    async function superdbRestUpsertUserData(rows) {
+        const tokenResult = await client.auth.getDataPlaneToken();
+        if (tokenResult?.error) throw tokenResult.error;
+        const token = typeof tokenResult === "string" ? tokenResult
+            : tokenResult?.data?.token ?? tokenResult?.data?.data_plane_token
+            ?? tokenResult?.token ?? tokenResult?.data_plane_token ?? null;
+        if (!token) throw new Error("Não foi possível obter o data_plane_token do SuperDB.");
+
+        const cfg = window.SuperDBClientService?.getConfiguration?.() || {};
+        if (!cfg.project || !cfg.key) throw new Error("Configuração SuperDB incompleta para REST upsert.");
+
+        const response = await fetch("https://api.superdb.com.br/user_data?on_conflict=user_id,data_type", {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`,
+                apikey: cfg.key,
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                "Accept-Profile": `proj_${cfg.project}`,
+                "Content-Profile": `proj_${cfg.project}`,
+                Prefer: "resolution=merge-duplicates,return=representation"
+            },
+            body: JSON.stringify(rows)
+        });
+        const raw = await response.text();
+        let body = raw;
+        try { body = raw ? JSON.parse(raw) : []; } catch { }
+        if (!response.ok) {
+            const error = new Error(`SuperDB REST ${response.status}: ${response.statusText}`);
+            error.status = response.status;
+            error.details = body;
+            throw error;
+        }
+        return Array.isArray(body) ? body : (body ? [body] : []);
+    }
+
+    async function saveUserDataRows(rows) {
+        if (window.BackendClientService?.getActiveProvider?.() === "superdb") {
+            return superdbRestUpsertUserData(rows);
+        }
+        const { data, error } = await client.from("user_data")
+            .upsert(rows, { onConflict: "user_id,data_type" })
+            .select("data_type,content,updated_at,version");
+        if (error) throw error;
+        return data || [];
+    }
+
     async function writeSyncLog(status, syncedItems, details = {}) {
         if (!session?.user) return;
+        if (window.BACKEND_MIGRATION?.stage === "user-data") return;
         try {
-            await client.from("sync_log").insert({
+            const { error } = await client.from("sync_log").insert({
                 user_id: session.user.id,
                 status,
                 app_version: APP_CONFIG.version,
                 device_id: getDeviceId(),
                 synced_items: syncedItems,
-                details: { sync_schema: SYNC_SCHEMA_VERSION, ...details }
+                details: {
+                    sync_schema: SYNC_SCHEMA_VERSION,
+                    backend: window.BackendClientService?.getActiveProvider?.() || "unknown",
+                    migration_stage: window.BACKEND_MIGRATION?.stage || "legacy",
+                    ...details
+                }
             });
+            if (error) throw error;
         } catch (error) {
             window.Logger?.warn("Não foi possível gravar o log de sincronização.", error);
         }
     }
 
     async function fetchRemoteRows() {
-        const { data, error } = await client
+        let query = client
             .from("user_data")
             .select("data_type,content,updated_at,version")
-            .eq("user_id", session.user.id)
-            .in("data_type", Object.keys(SYNC_GROUPS));
+            .eq("user_id", session.user.id);
+
+        // O SDK SuperDB 0.2.2 não implementa todos os modificadores do
+        // Filtramos os grupos conhecidos localmente para manter
+        // compatibilidade com os dados retornados pelo backend.
+        const { data, error } = await query;
         if (error) throw error;
-        return data || [];
+        const permittedTypes = new Set(Object.keys(SYNC_GROUPS));
+        return (data || []).filter((row) => permittedTypes.has(row.data_type));
     }
 
     function latestRemoteTimestamp(rows) {
@@ -395,21 +462,20 @@
         safeSet(LAST_ATTEMPT_KEY, nowIso());
         setOnlineState({ status: "syncing", direction: "upload" });
         try {
+            const updatedAt = nowIso();
             const rows = collectLocalData().map((item) => ({
                 user_id: session.user.id,
                 data_type: item.data_type,
                 content: item.content,
-                version: SYNC_SCHEMA_VERSION
+                version: SYNC_SCHEMA_VERSION,
+                updated_at: updatedAt
             }));
-            const { data: savedRows, error } = await client
-                .from("user_data")
-                .upsert(rows, { onConflict: "user_id,data_type" })
-                .select("data_type,content,updated_at,version");
-            if (error) throw error;
+            const savedRows = await saveUserDataRows(rows);
 
             const remoteAt = latestRemoteTimestamp(savedRows || []);
-            const syncedAt = remoteAt ? new Date(remoteAt).toISOString() : nowIso();
-            safeSet(LAST_SYNC_KEY, syncedAt);
+            const completedAt = nowIso();
+            const syncedAt = remoteAt ? new Date(remoteAt).toISOString() : completedAt;
+            safeSet(LAST_SYNC_KEY, completedAt);
             safeSet(LAST_REMOTE_UPDATE_KEY, syncedAt);
             resetWatchedSnapshot();
             setPending(false);
@@ -423,7 +489,7 @@
             setPending(true);
             setOnlineState({ status: "error", message: error.message });
             await writeSyncLog("error", 0, { direction: "upload", error: error.message });
-            window.ErrorHandler?.report(error, "Envio ao Supabase", { silent: true });
+            window.ErrorHandler?.report(error, "Envio ao backend", { silent: true });
             if (!silent) notify(`Falha ao sincronizar: ${error.message}`, "error");
             return false;
         } finally {
@@ -479,7 +545,7 @@
         } catch (error) {
             setOnlineState({ status: "error", message: error.message });
             await writeSyncLog("error", 0, { direction: "download", error: error.message });
-            window.ErrorHandler?.report(error, "Download do Supabase", { silent: true });
+            window.ErrorHandler?.report(error, "Download do backend", { silent: true });
             if (!silent) notify(`Falha ao baixar dados: ${error.message}`, "error");
             return false;
         } finally {
@@ -488,7 +554,85 @@
         }
     }
 
-    async function synchronize({ silent = false } = {}) {
+    function sessionExpiresAtMs(currentSession = session) {
+        const value = Number(currentSession?.expires_at);
+        if (!Number.isFinite(value) || value <= 0) return null;
+        // SuperDB 0.2.2 retorna expires_at em milissegundos; aceita segundos
+        // defensivamente caso o formato mude.
+        return value < 100000000000 ? value * 1000 : value;
+    }
+
+    function isSessionNearExpiry(currentSession = session, marginMs = 60000) {
+        const expiresAt = sessionExpiresAtMs(currentSession);
+        return expiresAt !== null && expiresAt <= Date.now() + marginMs;
+    }
+
+    function isJwtExpiredError(error) {
+        const text = [
+            error?.message,
+            error?.code,
+            error?.details,
+            error?.status
+        ].filter(Boolean).join(" ").toLowerCase();
+        return text.includes("jwt expired") ||
+            text.includes("token expired") ||
+            text.includes("expired jwt");
+    }
+
+    async function refreshBackendSession({ reason = "proactive", silent = false } = {}) {
+        if (!client?.auth?.refreshSession) return false;
+
+        // O refresh token do SuperDB e rotativo. Duas chamadas simultaneas de
+        // refreshSession() podem tentar reutilizar o mesmo token e revogar a
+        // sessao inteira. Todas as rotinas (sync, historico e Realtime) devem
+        // compartilhar a mesma renovacao em andamento.
+        if (sessionRefreshPromise) {
+            window.Logger?.info?.("Renovação da sessão SuperDB já em andamento; aguardando.", { reason });
+            return sessionRefreshPromise;
+        }
+
+        sessionRefreshPromise = (async () => {
+            try {
+                const { data, error } = await client.auth.refreshSession();
+                if (error) throw error;
+
+                const nextSession = data?.session || null;
+                if (!nextSession?.user) throw new Error("A renovação não retornou uma sessão válida.");
+
+                session = nextSession;
+                renderOnlineStatus();
+                window.Logger?.info?.("Sessão SuperDB renovada.", {
+                    reason,
+                    expires_at: session.expires_at ?? null
+                });
+                window.dispatchEvent(new CustomEvent("um:session-refreshed", {
+                    detail: { reason }
+                }));
+                return true;
+            } catch (error) {
+                window.Logger?.warn?.("Não foi possível renovar a sessão SuperDB.", error);
+                session = null;
+                resetWatchedSnapshot();
+                setConflict(false);
+                setOnlineState({ status: "local" });
+                renderOnlineStatus();
+                if (!silent) notify("Sua sessão expirou. Entre novamente para continuar sincronizando.", "warning");
+                return false;
+            } finally {
+                sessionRefreshPromise = null;
+            }
+        })();
+
+        return sessionRefreshPromise;
+    }
+
+    async function ensureFreshBackendSession({ silent = false } = {}) {
+        if (!client?.auth || !session?.user) return false;
+        if (!isSessionNearExpiry(session)) return true;
+        return refreshBackendSession({ reason: "session-expiring", silent });
+    }
+
+    async function synchronize({ silent = false, authRetry = false } = {}) {
         if (!client || !session?.user) {
             if (!silent) notify("Faça login para sincronizar.", "warning");
             return false;
@@ -500,6 +644,11 @@
             return false;
         }
         if (syncInProgress) return false;
+
+        if (!(await ensureFreshBackendSession({ silent }))) {
+            if (!silent && session?.user) notify("Não foi possível validar sua sessão.", "warning");
+            return false;
+        }
 
         try {
             let rows = await fetchRemoteRows();
@@ -513,6 +662,7 @@
                 setConflict(false);
                 resetWatchedSnapshot();
                 setOnlineState({ status: "synced", at: syncedAt, direction: "compare" });
+                if (!silent) notify("Sincronização concluída. Os dados estão atualizados.", "success");
                 return true;
             }
             if (detectConflict(rows)) {
@@ -524,6 +674,15 @@
             if (hasPendingChanges() || !rows.length) return pushLocalData({ silent });
             return applyRemoteRows(rows, { silent });
         } catch (error) {
+            if (!authRetry && isJwtExpiredError(error)) {
+                const refreshed = await refreshBackendSession({ reason: "jwt-expired", silent });
+                if (refreshed) {
+                    window.Logger?.info?.("Repetindo sincronização após renovar JWT.");
+                    return synchronize({ silent, authRetry: true });
+                }
+                return false;
+            }
+
             setOnlineState({ status: "error", message: error.message });
             if (!silent) notify(`Falha ao comparar os dados: ${error.message}`, "error");
             return false;
@@ -551,7 +710,7 @@
             const prefs = raw ? JSON.parse(raw) : {};
             const name = String(prefs?.displayName || "").replace(/\s+/g, " ").trim().slice(0, 40);
             if (name) return name;
-        } catch {}
+        } catch { }
         const email = session?.user?.email || "";
         return email ? email.split("@")[0] : "Entrar";
     }
@@ -561,6 +720,35 @@
         const button = document.getElementById("headerAccountButton");
         if (menu) menu.hidden = true;
         if (button) button.setAttribute("aria-expanded", "false");
+    }
+
+    async function signOutAndRefreshUi() {
+        const authClient = client || window.BackendClientService?.getClient?.() || null;
+        if (!authClient?.auth?.signOut) {
+            notify("Não foi possível encerrar a sessão: cliente de autenticação indisponível.");
+            return;
+        }
+
+        try {
+            const result = await authClient.auth.signOut();
+            if (result?.error) throw result.error;
+
+            // Não depende exclusivamente de onAuthStateChange: o SDK pode
+            // concluir o signOut sem emitir o evento imediatamente.
+            // O Realtime também é encerrado explicitamente para não manter
+            // canal ou timers ativos caso o evento SIGNED_OUT atrase ou falhe.
+            await window.RealtimeService?.disconnect?.();
+            session = null;
+            resetWatchedSnapshot();
+            setConflict(false);
+            setOnlineState({ status: "local" });
+            renderOnlineStatus();
+            closeHeaderAccountMenu();
+            notify("Sessão encerrada. O armazenamento local permanece disponível.");
+        } catch (error) {
+            window.ErrorHandler?.report?.(error, "Logout do backend", { silent: true });
+            notify(error?.message || "Não foi possível encerrar a sessão.");
+        }
     }
 
     function setupHeaderAccountControls() {
@@ -578,7 +766,7 @@
         document.addEventListener("keydown", (event) => { if (event.key === "Escape") closeHeaderAccountMenu(); });
         document.getElementById("headerSignIn")?.addEventListener("click", () => { closeHeaderAccountMenu(); openAuthModal(); });
         document.getElementById("headerSyncNow")?.addEventListener("click", () => { closeHeaderAccountMenu(); synchronize(); });
-        document.getElementById("headerSignOut")?.addEventListener("click", () => { closeHeaderAccountMenu(); client?.auth.signOut(); });
+        document.getElementById("headerSignOut")?.addEventListener("click", () => { closeHeaderAccountMenu(); signOutAndRefreshUi(); });
         document.getElementById("headerAccountSettings")?.addEventListener("click", () => {
             closeHeaderAccountMenu();
             document.querySelector('.ux-main-navigation [data-tab="configuracoes"]')?.click();
@@ -607,6 +795,7 @@
         let state = "local";
         let message = "Dados armazenados neste navegador.";
         let accountState = "Somente local";
+
         if (session?.user) {
             accountState = navigator.onLine ? "Online" : "Offline";
             if (!navigator.onLine) {
@@ -685,12 +874,12 @@
                 <button class="online-modal-close" type="button" aria-label="Fechar">×</button>
                 <span class="eyebrow">Sincronização</span>
                 <h2 id="onlineConflictTitle">Conflito de dados</h2>
-                <p>Foram encontradas alterações neste navegador e também no Supabase após a última sincronização.</p>
+                <p>Foram encontradas alterações neste navegador e também nos dados online após a última sincronização.</p>
                 <p class="help-text">Nenhum dado será substituído até você escolher uma opção.</p>
                 <p class="mini-description">Nenhum lado será descartado automaticamente. Escolha qual versão deve prevalecer.</p>
                 <div class="online-conflict-options">
-                    <button id="onlineKeepLocal" class="primary" type="button"><strong>Manter dados locais</strong><span>Envia este navegador para o Supabase.</span></button>
-                    <button id="onlineUseRemote" class="secondary" type="button"><strong>Usar dados online</strong><span>Substitui as preferências locais pelas armazenadas no Supabase.</span></button>
+                    <button id="onlineKeepLocal" class="primary" type="button"><strong>Manter dados locais</strong><span>Envia os dados deste navegador para o armazenamento online.</span></button>
+                    <button id="onlineUseRemote" class="secondary" type="button"><strong>Usar dados online</strong><span>Substitui os dados locais pelos armazenados online.</span></button>
                 </div>
                 <button id="onlineResolveLater" class="text-button" type="button">Resolver depois</button>
             </div>`;
@@ -726,7 +915,7 @@
         modal.innerHTML = `
             <div class="online-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="onlineAuthTitle">
                 <button class="online-modal-close" type="button" aria-label="Fechar">×</button>
-                <span class="eyebrow">Supabase</span>
+                <span class="eyebrow">SuperDB ${window.APP_ENVIRONMENT === "production" ? "PROD" : "DEV"}</span>
                 <h2 id="onlineAuthTitle">Acesso online</h2>
                 <p class="help-text">Entre para sincronizar preferências, personalização, favoritos, continuidade do Dashboard e seus modelos, grupos e categorias da Central de Documentos.</p>
                 <label>E-mail<input id="onlineEmail" type="email" autocomplete="email" required></label>
@@ -740,24 +929,75 @@
         modal.querySelector(".online-modal-close").addEventListener("click", close);
         modal.addEventListener("click", (event) => { if (event.target === modal) close(); });
         const feedback = modal.querySelector("#onlineAuthFeedback");
-        const credentials = () => ({ email: modal.querySelector("#onlineEmail").value.trim(), password: modal.querySelector("#onlinePassword").value });
-        modal.querySelector("#onlineSignIn").addEventListener("click", async () => {
+        const emailInput = modal.querySelector("#onlineEmail");
+        const passwordInput = modal.querySelector("#onlinePassword");
+        const signInButton = modal.querySelector("#onlineSignIn");
+        const credentials = () => ({ email: emailInput.value.trim(), password: passwordInput.value });
+
+        emailInput.addEventListener("input", () => { if (feedback.textContent !== "Entrando...") feedback.textContent = ""; });
+        passwordInput.addEventListener("input", () => { if (feedback.textContent !== "Entrando...") feedback.textContent = ""; });
+
+        signInButton.addEventListener("click", async () => {
             const { email, password } = credentials();
+            if (!email || !password) { feedback.textContent = "Informe o e-mail e a senha."; return; }
+            signInButton.disabled = true;
             feedback.textContent = "Entrando...";
-            const { error } = await client.auth.signInWithPassword({ email, password });
-            feedback.textContent = error ? error.message : "Login realizado.";
-            if (!error) setTimeout(close, 500);
+
+            try {
+                let authClient = client;
+                if (!authClient?.auth?.signInWithPassword) authClient = window.BackendClientService?.getClient?.() || null;
+                if (!authClient?.auth?.signInWithPassword) throw new Error("Cliente de autenticação não inicializado.");
+                client = authClient;
+                const { data, error } = await authClient.auth.signInWithPassword({ email, password });
+                if (error) {
+                    feedback.textContent = error.message || "E-mail ou senha inválidos.";
+                    passwordInput.value = ""; passwordInput.focus(); return;
+                }
+                if (!data?.session?.user) {
+                    feedback.textContent = "Não foi possível iniciar a sessão. Tente novamente.";
+                    passwordInput.value = ""; passwordInput.focus(); return;
+                }
+                session = data.session;
+                feedback.textContent = "Login realizado.";
+                renderOnlineStatus();
+
+                // O login explícito precisa restabelecer o Realtime diretamente.
+                // Alguns clientes/backend não emitem SIGNED_IN novamente após um
+                // logout/login no mesmo ciclo da página, portanto não dependemos
+                // exclusivamente de onAuthStateChange para esta transição.
+                await window.RealtimeService?.connect?.();
+
+                await ensureProfile(session.user);
+                setTimeout(close, 500);
+            } catch (error) {
+                feedback.textContent = error?.message || "Falha ao realizar o login. Tente novamente.";
+                passwordInput.value = ""; passwordInput.focus();
+            } finally {
+                signInButton.disabled = false;
+            }
         });
         modal.querySelector("#onlineSignUp").addEventListener("click", async () => {
             const { email, password } = credentials();
             feedback.textContent = "Criando conta...";
             const { data, error } = await client.auth.signUp({ email, password, options: { emailRedirectTo: location.href.split("#")[0] } });
-            feedback.textContent = error ? error.message : (data.session ? "Conta criada e login realizado." : "Conta criada. Confira seu e-mail para confirmar o cadastro.");
-            if (!error && data.session) setTimeout(close, 700);
+            feedback.textContent = error ? error.message : (data?.session ? "Conta criada e login realizado." : "Conta criada. Confira seu e-mail para confirmar o cadastro.");
+            if (!error && data?.session) {
+                session = data.session;
+                renderOnlineStatus();
+                if (session?.user) {
+                    await window.RealtimeService?.connect?.();
+                    await ensureProfile(session.user);
+                }
+                setTimeout(close, 700);
+            }
         });
         modal.querySelector("#onlineResetPassword").addEventListener("click", async () => {
             const email = modal.querySelector("#onlineEmail").value.trim();
             if (!email) { feedback.textContent = "Informe o e-mail."; return; }
+            if (typeof client.auth.resetPasswordForEmail !== "function") {
+                feedback.textContent = "Recuperação de senha será validada em etapa posterior da migração.";
+                return;
+            }
             const { error } = await client.auth.resetPasswordForEmail(email, { redirectTo: location.href.split("#")[0] });
             feedback.textContent = error ? error.message : "E-mail de recuperação enviado.";
         });
@@ -803,7 +1043,7 @@
         panel.querySelector("#onlineSyncNow").addEventListener("click", () => synchronize());
         panel.querySelector("#onlineRestore").addEventListener("click", () => pullRemoteData());
         panel.querySelector("#onlineResolveConflict").addEventListener("click", openConflictModal);
-        panel.querySelector("#onlineSignOut").addEventListener("click", () => client?.auth.signOut());
+        panel.querySelector("#onlineSignOut").addEventListener("click", () => signOutAndRefreshUi());
         const auto = panel.querySelector("#onlineAutoSync");
         auto.checked = isAutoSyncEnabled();
         auto.addEventListener("change", () => {
@@ -819,21 +1059,41 @@
         createAuthModal();
         createConflictModal();
         setupHeaderAccountControls();
-        client = window.SupabaseClientService?.getClient() || null;
+        client = window.BackendClientService?.getClient() || null;
         if (!client) {
-            const message = window.SupabaseClientService?.getError()?.message || "Cliente Supabase indisponível.";
+            const message = window.BackendClientService?.getError()?.message || "Backend online indisponível.";
             setOnlineState({ status: "unavailable", message });
             window.Logger?.warn(message);
             return;
         }
+
         try {
             const { data, error } = await client.auth.getSession();
             if (error) throw error;
             session = data.session;
+
+            if (session?.user && isSessionNearExpiry(session)) {
+                const refreshed = await refreshBackendSession({
+                    reason: "startup",
+                    silent: true
+                });
+
+                if (!refreshed) {
+                    window.Logger?.info?.(
+                        "Sessão persistida expirada; novo login será necessário."
+                    );
+                }
+            }
+
         } catch (error) {
-            window.ErrorHandler?.report(error, "Sessão Supabase", { silent: true });
+            window.ErrorHandler?.report(
+                error,
+                "Sessão do backend",
+                { silent: true }
+            );
             session = null;
         }
+
         if (safeGet(MIGRATION_KEY, "false") !== "true") {
             setConflict(false);
             safeSet(MIGRATION_KEY, "true");
@@ -853,23 +1113,59 @@
 
         renderOnlineStatus();
 
-        client.auth.onAuthStateChange(async (event, nextSession) => {
-            session = nextSession;
-            resetWatchedSnapshot();
-            renderOnlineStatus();
-            if (event === "SIGNED_IN" && session?.user) {
-                await ensureProfile(session.user);
-                await synchronize({ silent: true });
-                await window.HistoryService?.syncAll?.({ silent: true });
-            }
-            if (event === "SIGNED_OUT") {
-                setConflict(false);
-                setOnlineState({ status: "local" });
-                notify("Sessão encerrada. O armazenamento local permanece disponível.");
-            }
-        });
+        const authProfileStage = window.BACKEND_MIGRATION?.stage === "auth-profile-disabled";
+        if (typeof client.auth.onAuthStateChange === "function") {
+            client.auth.onAuthStateChange((event, nextSession) => {
+                session = nextSession;
+                resetWatchedSnapshot();
+                renderOnlineStatus();
 
-        if (session?.user && navigator.onLine) await synchronize({ silent: true });
+                setTimeout(async () => {
+                    if (event === "INITIAL_SESSION" && session?.user) {
+                        await window.RealtimeService?.connect?.();
+                    }
+
+                    if (event === "SIGNED_IN" && session?.user) {
+                        // O Realtime pertence ao ciclo de autenticação e não deve
+                        // depender do sucesso da sincronização REST. Em indisponibilidade
+                        // temporária do backend (ex.: 503), synchronize()/HistoryService
+                        // podem falhar; a tentativa de conexão Realtime precisa ocorrer
+                        // independentemente dessas operações auxiliares.
+                        await window.RealtimeService?.connect?.();
+
+                        try {
+                            await ensureProfile(session.user);
+
+                            if (!authProfileStage) {
+                                await synchronize({ silent: true });
+                                await window.HistoryService?.syncAll?.({ silent: true });
+                            }
+                        } catch (error) {
+                            window.ErrorHandler?.report(
+                                error,
+                                "Sincronização após login",
+                                { silent: true }
+                            );
+                        }
+                    }
+
+                    if (event === "SIGNED_OUT") {
+                        await window.RealtimeService?.disconnect?.();
+
+                        session = null;
+                        resetWatchedSnapshot();
+                        setConflict(false);
+                        setOnlineState({ status: "local" });
+                        renderOnlineStatus();
+                    }
+                }, 0);
+            });
+        }
+
+        if (session?.user && navigator.onLine) {
+            await ensureProfile(session.user);
+            if (!authProfileStage) await synchronize({ silent: true });
+        }
 
         window.addEventListener("storage", (event) => {
             if (event.key && Object.values(SYNC_GROUPS).some((keys) => keys.includes(event.key))) {
@@ -877,9 +1173,22 @@
                 scheduleAutoSync(true);
             }
         });
-        window.addEventListener("um:display-name-changed", () => {
+        window.addEventListener("um:display-name-changed", async () => {
             renderOnlineStatus();
             resetWatchedSnapshot();
+
+            // v4.6.0 DEV — Etapa 2 (correção):
+            // o nome de exibição pertence a profiles e deve ser persistido
+            // independentemente da sincronização geral de user_data.
+            if (session?.user) {
+                try {
+                    await ensureProfile(session.user);
+                    Logger.info("Nome de exibição atualizado no profile SuperDB.");
+                } catch (error) {
+                    Logger.warn("Não foi possível atualizar o nome de exibição no profile SuperDB.", error);
+                }
+            }
+
             scheduleAutoSync(true);
         });
 
@@ -901,10 +1210,23 @@
             if (session?.user && hasPendingChanges()) safeSet(PENDING_KEY, "true");
         });
 
+        async function handleRealtimeChange() {
+            if (!session?.user) return false;
+            if (!navigator.onLine) return false;
+
+            return pullRemoteData({
+                silent: true,
+                force: false
+            });
+        }
+
         window.OnlineSyncService = Object.freeze({
             sync: synchronize,
             upload: pushLocalData,
             restore: pullRemoteData,
+            handleRealtimeChange,
+            ensureFreshSession: ensureFreshBackendSession,
+            refreshSession: refreshBackendSession,
             openLogin: openAuthModal,
             openConflict: openConflictModal,
             getSession: () => session,
@@ -912,6 +1234,12 @@
             hasPendingChanges,
             hasConflict
         });
+
+        if (session?.user) {               
+            window.dispatchEvent(
+                new CustomEvent("um:session-ready")
+            );
+        }        
     }
 
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initializeOnline, { once: true });
