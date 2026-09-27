@@ -39,6 +39,7 @@
 
     let client = null;
     let session = null;
+    let sessionRefreshPromise = null;
     let syncTimer = null;
     let applyingRemote = false;
     let syncInProgress = false;
@@ -581,30 +582,48 @@
     async function refreshBackendSession({ reason = "proactive", silent = false } = {}) {
         if (!client?.auth?.refreshSession) return false;
 
-        try {
-            const { data, error } = await client.auth.refreshSession();
-            if (error) throw error;
-
-            const nextSession = data?.session || null;
-            if (!nextSession?.user) throw new Error("A renovação não retornou uma sessão válida.");
-
-            session = nextSession;
-            renderOnlineStatus();
-            window.Logger?.info?.("Sessão SuperDB renovada.", {
-                reason,
-                expires_at: session.expires_at ?? null
-            });
-            return true;
-        } catch (error) {
-            window.Logger?.warn?.("Não foi possível renovar a sessão SuperDB.", error);
-            session = null;
-            resetWatchedSnapshot();
-            setConflict(false);
-            setOnlineState({ status: "local" });
-            renderOnlineStatus();
-            if (!silent) notify("Sua sessão expirou. Entre novamente para continuar sincronizando.", "warning");
-            return false;
+        // O refresh token do SuperDB e rotativo. Duas chamadas simultaneas de
+        // refreshSession() podem tentar reutilizar o mesmo token e revogar a
+        // sessao inteira. Todas as rotinas (sync, historico e Realtime) devem
+        // compartilhar a mesma renovacao em andamento.
+        if (sessionRefreshPromise) {
+            window.Logger?.info?.("Renovação da sessão SuperDB já em andamento; aguardando.", { reason });
+            return sessionRefreshPromise;
         }
+
+        sessionRefreshPromise = (async () => {
+            try {
+                const { data, error } = await client.auth.refreshSession();
+                if (error) throw error;
+
+                const nextSession = data?.session || null;
+                if (!nextSession?.user) throw new Error("A renovação não retornou uma sessão válida.");
+
+                session = nextSession;
+                renderOnlineStatus();
+                window.Logger?.info?.("Sessão SuperDB renovada.", {
+                    reason,
+                    expires_at: session.expires_at ?? null
+                });
+                window.dispatchEvent(new CustomEvent("um:session-refreshed", {
+                    detail: { reason }
+                }));
+                return true;
+            } catch (error) {
+                window.Logger?.warn?.("Não foi possível renovar a sessão SuperDB.", error);
+                session = null;
+                resetWatchedSnapshot();
+                setConflict(false);
+                setOnlineState({ status: "local" });
+                renderOnlineStatus();
+                if (!silent) notify("Sua sessão expirou. Entre novamente para continuar sincronizando.", "warning");
+                return false;
+            } finally {
+                sessionRefreshPromise = null;
+            }
+        })();
+
+        return sessionRefreshPromise;
     }
 
     async function ensureFreshBackendSession({ silent = false } = {}) {
@@ -896,7 +915,7 @@
         modal.innerHTML = `
             <div class="online-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="onlineAuthTitle">
                 <button class="online-modal-close" type="button" aria-label="Fechar">×</button>
-                <span class="eyebrow">SuperDB DEV</span>
+                <span class="eyebrow">SuperDB ${window.APP_ENVIRONMENT === "production" ? "PROD" : "DEV"}</span>
                 <h2 id="onlineAuthTitle">Acesso online</h2>
                 <p class="help-text">Entre para sincronizar preferências, personalização, favoritos, continuidade do Dashboard e seus modelos, grupos e categorias da Central de Documentos.</p>
                 <label>E-mail<input id="onlineEmail" type="email" autocomplete="email" required></label>
@@ -1207,6 +1226,7 @@
             restore: pullRemoteData,
             handleRealtimeChange,
             ensureFreshSession: ensureFreshBackendSession,
+            refreshSession: refreshBackendSession,
             openLogin: openAuthModal,
             openConflict: openConflictModal,
             getSession: () => session,

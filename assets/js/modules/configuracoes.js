@@ -36,10 +36,24 @@ function updateSettingsStatistics() {
 
 function updateSettingsSummary() {
     const lastBackup = localStorage.getItem(LAST_BACKUP_KEY);
+    const formattedBackup = lastBackup ? formatDateTime(lastBackup) : "";
+    const settingsBackup = $("#ultimoBackupInfo");
+    const dashboardBackup = $("#dashboardLastBackup");
+    const dashboard32Backup = $("#v32LastBackup");
 
-    $("#ultimoBackupInfo").textContent = lastBackup
-        ? `Último backup exportado em ${formatDateTime(lastBackup)}.`
-        : "Nenhum backup registrado.";
+    if (settingsBackup) {
+        settingsBackup.textContent = lastBackup
+            ? `Último backup exportado em ${formattedBackup}.`
+            : "Nenhum backup registrado.";
+    }
+
+    if (dashboardBackup) {
+        dashboardBackup.textContent = lastBackup ? formattedBackup : "Não realizado";
+    }
+
+    if (dashboard32Backup) {
+        dashboard32Backup.textContent = lastBackup ? formattedBackup : "Nenhum backup";
+    }
 
     updateSettingsStatistics();
 }

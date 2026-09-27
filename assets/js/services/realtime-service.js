@@ -1,6 +1,6 @@
 import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
 
-/* Utilitários Municipais v4.6.1.17 DEV — Validação da sincronização automática entre navegadores. */
+/* Utilitários Municipais v4.6.2.3 DEV — Realtime isolado por ambiente. */
 (async function () {
     "use strict";
 
@@ -8,7 +8,7 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
         "https://auth.superdb.com.br/rt/v1/token";
 
     const REALTIME_SCHEMA =
-        "proj_utilitariosmunicipais_teste";
+        window.BACKEND_MIGRATION?.superdb?.schema || "";
 
     const REALTIME_TABLE = "user_data";
 
@@ -16,6 +16,7 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
     const TOKEN_RENEWAL_MARGIN_MS = 5 * 60 * 1000;
     const MIN_TOKEN_RENEWAL_DELAY_MS = 30 * 1000;
     const RECONNECT_DELAY_MS = 5 * 1000;
+    const AUTH_RECONNECT_DELAY_MS = 60 * 1000;
     const ONLINE_SESSION_RECHECK_DELAY_MS = 500;
 
     let realtimeClient = null;
@@ -148,7 +149,7 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
         reconnectTimer = null;
     }
 
-    function scheduleReconnect(reason) {
+    function scheduleReconnect(reason, delayMs = RECONNECT_DELAY_MS) {
         if (intentionalDisconnect || !getSession()?.user || !navigator.onLine) {
             return;
         }
@@ -159,7 +160,7 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
 
         devLog("Reconexão agendada.", {
             reason,
-            retryInSeconds: Math.round(RECONNECT_DELAY_MS / 1000)
+            retryInSeconds: Math.round(delayMs / 1000)
         });
 
         reconnectTimer = setTimeout(async () => {
@@ -170,15 +171,20 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
             }
 
             reconnectInProgress = true;
+            let connected = false;
             try {
-                await connect();
+                connected = await connect();
             } finally {
                 reconnectInProgress = false;
             }
-        }, RECONNECT_DELAY_MS);
+
+            if (!connected) {
+                scheduleReconnect("RETRY_FAILED");
+            }
+        }, delayMs);
     }
 
-    async function mintRealtimeToken() {
+    async function mintRealtimeToken({ authRetry = false } = {}) {
         const superdb = getSuperDbClient();
 
         if (!superdb?.auth?.getDataPlaneToken) {
@@ -209,10 +215,31 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
             }
         );
 
+        if (response.status === 401 && !authRetry) {
+            devLog("Token Realtime rejeitado; renovando sessão SuperDB.");
+
+            const refreshed = await window.OnlineSyncService?.refreshSession?.({
+                reason: "realtime-token-401",
+                silent: true
+            });
+
+            if (!refreshed || !getSession()?.user) {
+                const error = new Error(
+                    "Falha ao renovar sessão após HTTP 401 do Realtime."
+                );
+                error.status = 401;
+                throw error;
+            }
+
+            return mintRealtimeToken({ authRetry: true });
+        }
+
         if (!response.ok) {
-            throw new Error(
+            const error = new Error(
                 `Falha ao obter token Realtime: HTTP ${response.status}`
             );
+            error.status = response.status;
+            throw error;
         }
 
         const mint = await response.json();
@@ -421,13 +448,43 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
                 }
             );
 
+            const status = Number(error?.status) || null;
             await disconnect({ intentional: false });
-            scheduleReconnect("CONNECT_ERROR");
+            scheduleReconnect(
+                status === 401 ? "AUTH_RETRY_FAILED" : "CONNECT_ERROR",
+                status === 401 ? AUTH_RECONNECT_DELAY_MS : RECONNECT_DELAY_MS
+            );
             return false;
         } finally {
             initializationInProgress = false;
         }
     }
+
+    window.addEventListener("um:session-refreshed", () => {
+        if (!getSession()?.user || !navigator.onLine) return;
+
+        if (subscriptionStatus === "SUBSCRIBED" && realtimeClient && realtimeChannel) {
+            renewRealtimeToken().catch((error) => {
+                devLog("Falha ao atualizar Realtime após renovar sessão.", {
+                    message: error?.message || String(error)
+                });
+                scheduleReconnect("SESSION_REFRESH_TOKEN_ERROR");
+            });
+            return;
+        }
+
+        devLog("Sessão renovada; recuperando Realtime.", {
+            status: subscriptionStatus
+        });
+        connect().then((connected) => {
+            if (!connected) scheduleReconnect("SESSION_REFRESH_RETRY");
+        }).catch((error) => {
+            devLog("Falha ao recuperar Realtime após renovar sessão.", {
+                message: error?.message || String(error)
+            });
+            scheduleReconnect("SESSION_REFRESH_ERROR");
+        });
+    });
 
     window.addEventListener("um:session-ready", () => {
         connect().catch((error) => {

@@ -1385,12 +1385,11 @@
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 4.6.1.17</h3>
+                        <h3>Novidades da 4.6.2.1</h3>
                         <ul>
-                            <li><strong>Sincronização automática:</strong> preparada a validação do fluxo completo entre dois navegadores com Realtime ativo.</li>
-                            <li><strong>Diagnóstico:</strong> o Console informa quando a sincronização solicitada por um evento Realtime foi concluída e se os dados foram aplicados.</li>
-                            <li><strong>Conflitos:</strong> permanece preservado o fluxo existente <code>handleRealtimeChange() → pullRemoteData() → detectConflict()</code>.</li>
-                            <li><strong>Estabilidade:</strong> não altera renovação do token, reconexão de rede nem o ciclo de logout/login já homologados.</li>
+                            <li><strong>Renovação serializada:</strong> impede chamadas concorrentes de refresh da sessão SuperDB.</li>
+                            <li><strong>Refresh token:</strong> evita a condição de corrida que pode causar <code>refresh_token_reuse</code> e revogar a sessão.</li>
+                            <li><strong>Teste prolongado:</strong> prepara nova rodada de validação do Realtime e da autenticação.</li>
                         </ul>
                     </section>
                 </div>
@@ -1398,6 +1397,121 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline" id="aboutVersionHistory">
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.2.1 DEV</strong>
+                                    <span>Serialização da renovação de sessão</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid"><section><h4>Resumo</h4><p>Evita renovações concorrentes da sessão SuperDB, protegendo o refresh token rotativo contra reutilização e revogação da sessão.</p></section></div>
+                            </div>
+                        </article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.2 DEV</strong>
+                                    <span>Checkpoint para teste prolongado do Realtime</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Resumo</h4>
+                                        <p>Consolida a correção do indicador “Último backup” e preserva o Realtime sem alterações funcionais para reinício do teste prolongado.</p>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.21 DEV</strong>
+                                    <span>Atualização do último backup</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Backup</h4>
+                                        <ul>
+                                            <li>Atualiza imediatamente o horário do último backup após a exportação.</li>
+                                            <li>Mantém os indicadores de Configurações e Dashboard consistentes na mesma sessão.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.20 DEV</strong>
+                                    <span>Recuperação autenticada do Realtime</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Autenticação e Realtime</h4>
+                                        <ul>
+                                            <li>Renova a sessão SuperDB quando a emissão do token Realtime retornar HTTP 401.</li>
+                                            <li>Repete a emissão do token uma única vez após a renovação autenticada.</li>
+                                            <li>Se o 401 persistir, aguarda 60 segundos antes de nova tentativa; demais falhas mantêm reconexão em 5 segundos.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.19 DEV</strong>
+                                    <span>Recuperação após renovação de sessão</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Autenticação e Realtime</h4>
+                                        <ul>
+                                            <li>Recupera o Realtime após uma renovação bem-sucedida da sessão quando o canal estiver desconectado.</li>
+                                            <li>Atualiza a autenticação do canal quando ele já estiver SUBSCRIBED.</li>
+                                            <li>Repete history_entries uma única vez após 401, depois de renovar a sessão.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.1.18 DEV</strong>
+                                    <span>Recuperação após falha temporária do SuperDB</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid">
+                                    <section>
+                                        <h4>Resiliência do Realtime</h4>
+                                        <ul>
+                                            <li>Repete de forma controlada a reconexão quando a tentativa anterior falha ao obter novo token.</li>
+                                            <li>Libera o bloqueio de reconexão antes de agendar a tentativa seguinte.</li>
+                                            <li>Preserva o intervalo de 5 segundos e evita tentativas concorrentes.</li>
+                                        </ul>
+                                    </section>
+                                </div>
+                            </div>
+                        </article>
+
                         <article class="about-version-item">
                             <button class="about-version-toggle" type="button" aria-expanded="false">
                                 <span class="about-version-heading">

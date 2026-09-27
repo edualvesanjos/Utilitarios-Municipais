@@ -1,3 +1,62 @@
+# 4.6.2.3 DEV
+
+- Isola a persistência da sessão SuperDB por ambiente e projeto.
+- Impede que uma sessão autenticada no PROD seja reutilizada ao abrir o DEV, e vice-versa.
+- Mantém separadas também as chaves internas de autenticação/PKCE armazenadas pelo SDK.
+- Preserva a seleção automática de projeto, schema e Anon Key implementada na v4.6.2.2 DEV.
+- A primeira abertura após esta atualização exige novo login no ambiente ativo.
+
+# 4.6.2.2 DEV
+
+- Isolamento das configurações SuperDB entre DEV e PROD.
+- `APP_ENVIRONMENT` passa a selecionar projeto e schema de forma centralizada.
+- Variáveis `VITE_SUPERDB_PROJECT` e `VITE_SUPERDB_URL` deixam de sobrescrever o ambiente ativo.
+- Chaves anon separadas em `VITE_SUPERDB_DEV_ANON_KEY` e `VITE_SUPERDB_PROD_ANON_KEY`.
+- Realtime passa a usar automaticamente o schema do ambiente ativo.
+- Identificação visual SuperDB DEV/PROD passa a acompanhar o ambiente.
+
+## 4.6.2.1 DEV — Serialização da renovação de sessão
+
+- Centraliza chamadas concorrentes de `refreshSession()` em uma única renovação compartilhada.
+- Evita reutilização simultânea do refresh token entre sincronização, histórico e Realtime.
+- Mantém as rotinas aguardando a mesma Promise quando uma renovação já está em andamento.
+- Corrige a condição de corrida identificada no teste prolongado da v4.6.2 DEV, que terminou em `refresh_token_reuse` e revogação da sessão.
+
+## 4.6.2 DEV — Checkpoint para teste prolongado do Realtime
+
+- Consolida a correção do indicador “Último backup” já implementada e validada na v4.6.1.21 DEV.
+- Preserva sem alterações funcionais a implementação de autenticação, sincronização e Realtime da série v4.6.1.x.
+- Estabelece uma nova base DEV para reiniciar o teste prolongado de estabilidade interrompido durante a implantação do banco SuperDB PROD.
+
+## 4.6.1.21 DEV — Atualização do último backup
+
+- Corrige a atualização imediata do indicador “Último backup” após exportar um backup.
+- Mantém sincronizados os indicadores de backup exibidos em Configurações e no Dashboard na mesma sessão do navegador.
+- Preserva sem alterações a estabilização de autenticação e Realtime homologada na v4.6.1.20.
+
+## 4.6.1.20 DEV — Recuperação autenticada do Realtime
+
+- Trata HTTP 401 na emissão do token Realtime como falha de autenticação, em vez de simples indisponibilidade de conexão.
+- Ao receber 401, renova a sessão SuperDB e repete uma única vez a solicitação do token Realtime com a sessão atualizada.
+- Se o token continuar sendo rejeitado após a renovação, aplica espera de 60 segundos antes de nova tentativa, evitando centenas de requisições repetidas com autenticação recusada.
+- Mantém em 5 segundos a reconexão para falhas transitórias de rede/serviço e preserva as proteções contra tentativas concorrentes da v4.6.1.19.
+- Mantém separada a correção pendente do indicador “Último backup”.
+
+## 4.6.1.19 DEV — Recuperação após renovação de sessão
+
+- Recupera o Realtime quando a sessão SuperDB é renovada e o canal não está mais `SUBSCRIBED`.
+- Quando o Realtime já está conectado, atualiza sua autenticação após a renovação da sessão sem recriar o canal desnecessariamente.
+- Adiciona uma única repetição autenticada do `history_entries` após resposta HTTP 401, forçando antes a renovação da sessão SuperDB.
+- Preserva as tentativas controladas de reconexão da v4.6.1.18 e evita reconexões concorrentes.
+- Mantém separada a correção pendente do indicador “Último backup”.
+
+## 4.6.1.18 DEV — Recuperação após falha temporária do SuperDB
+
+- Corrige a recuperação do Realtime quando uma tentativa de reconexão falha ao obter novo token por indisponibilidade temporária do SuperDB.
+- Após uma tentativa malsucedida, agenda nova reconexão controlada somente depois de liberar o estado `reconnectInProgress`, evitando que o bloqueio de concorrência descarte a próxima tentativa.
+- Mantém o intervalo de 5 segundos, a proteção contra reconexões concorrentes e as regras já homologadas de logout, retorno online e renovação de token.
+- Parte da v4.6.1.17 DEV, preservando-a como checkpoint anterior.
+
 ## 4.6.1.17 DEV — Sincronização automática entre navegadores
 
 - Prepara a homologação do fluxo completo `navegador A → SuperDB → Realtime → navegador B`.
