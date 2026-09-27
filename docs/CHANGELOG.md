@@ -1,3 +1,10 @@
+## 4.6.2.1 DEV — Serialização da renovação de sessão
+
+- Centraliza chamadas concorrentes de `refreshSession()` em uma única renovação compartilhada.
+- Evita reutilização simultânea do refresh token entre sincronização, histórico e Realtime.
+- Mantém as rotinas aguardando a mesma Promise quando uma renovação já está em andamento.
+- Corrige a condição de corrida identificada no teste prolongado da v4.6.2 DEV, que terminou em `refresh_token_reuse` e revogação da sessão.
+
 ## 4.6.2 DEV — Checkpoint para teste prolongado do Realtime
 
 - Consolida a correção do indicador “Último backup” já implementada e validada na v4.6.1.21 DEV.

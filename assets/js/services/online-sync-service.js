@@ -39,6 +39,7 @@
 
     let client = null;
     let session = null;
+    let sessionRefreshPromise = null;
     let syncTimer = null;
     let applyingRemote = false;
     let syncInProgress = false;
@@ -581,33 +582,48 @@
     async function refreshBackendSession({ reason = "proactive", silent = false } = {}) {
         if (!client?.auth?.refreshSession) return false;
 
-        try {
-            const { data, error } = await client.auth.refreshSession();
-            if (error) throw error;
-
-            const nextSession = data?.session || null;
-            if (!nextSession?.user) throw new Error("A renovação não retornou uma sessão válida.");
-
-            session = nextSession;
-            renderOnlineStatus();
-            window.Logger?.info?.("Sessão SuperDB renovada.", {
-                reason,
-                expires_at: session.expires_at ?? null
-            });
-            window.dispatchEvent(new CustomEvent("um:session-refreshed", {
-                detail: { reason }
-            }));
-            return true;
-        } catch (error) {
-            window.Logger?.warn?.("Não foi possível renovar a sessão SuperDB.", error);
-            session = null;
-            resetWatchedSnapshot();
-            setConflict(false);
-            setOnlineState({ status: "local" });
-            renderOnlineStatus();
-            if (!silent) notify("Sua sessão expirou. Entre novamente para continuar sincronizando.", "warning");
-            return false;
+        // O refresh token do SuperDB e rotativo. Duas chamadas simultaneas de
+        // refreshSession() podem tentar reutilizar o mesmo token e revogar a
+        // sessao inteira. Todas as rotinas (sync, historico e Realtime) devem
+        // compartilhar a mesma renovacao em andamento.
+        if (sessionRefreshPromise) {
+            window.Logger?.info?.("Renovação da sessão SuperDB já em andamento; aguardando.", { reason });
+            return sessionRefreshPromise;
         }
+
+        sessionRefreshPromise = (async () => {
+            try {
+                const { data, error } = await client.auth.refreshSession();
+                if (error) throw error;
+
+                const nextSession = data?.session || null;
+                if (!nextSession?.user) throw new Error("A renovação não retornou uma sessão válida.");
+
+                session = nextSession;
+                renderOnlineStatus();
+                window.Logger?.info?.("Sessão SuperDB renovada.", {
+                    reason,
+                    expires_at: session.expires_at ?? null
+                });
+                window.dispatchEvent(new CustomEvent("um:session-refreshed", {
+                    detail: { reason }
+                }));
+                return true;
+            } catch (error) {
+                window.Logger?.warn?.("Não foi possível renovar a sessão SuperDB.", error);
+                session = null;
+                resetWatchedSnapshot();
+                setConflict(false);
+                setOnlineState({ status: "local" });
+                renderOnlineStatus();
+                if (!silent) notify("Sua sessão expirou. Entre novamente para continuar sincronizando.", "warning");
+                return false;
+            } finally {
+                sessionRefreshPromise = null;
+            }
+        })();
+
+        return sessionRefreshPromise;
     }
 
     async function ensureFreshBackendSession({ silent = false } = {}) {

@@ -1385,11 +1385,11 @@
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 4.6.2</h3>
+                        <h3>Novidades da 4.6.2.1</h3>
                         <ul>
-                            <li><strong>Checkpoint DEV:</strong> consolida a correção do indicador “Último backup” validada na série 4.6.1.x.</li>
-                            <li><strong>Realtime preservado:</strong> não altera a implementação homologada, preparando a base para novo teste prolongado de estabilidade.</li>
-                            <li><strong>Banco PROD:</strong> mantém esta versão DEV independente da implantação do SuperDB PROD.</li>
+                            <li><strong>Renovação serializada:</strong> impede chamadas concorrentes de refresh da sessão SuperDB.</li>
+                            <li><strong>Refresh token:</strong> evita a condição de corrida que pode causar <code>refresh_token_reuse</code> e revogar a sessão.</li>
+                            <li><strong>Teste prolongado:</strong> prepara nova rodada de validação do Realtime e da autenticação.</li>
                         </ul>
                     </section>
                 </div>
@@ -1397,6 +1397,18 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline" id="aboutVersionHistory">
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.2.1 DEV</strong>
+                                    <span>Serialização da renovação de sessão</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid"><section><h4>Resumo</h4><p>Evita renovações concorrentes da sessão SuperDB, protegendo o refresh token rotativo contra reutilização e revogação da sessão.</p></section></div>
+                            </div>
+                        </article>
                         <article class="about-version-item">
                             <button class="about-version-toggle" type="button" aria-expanded="false">
                                 <span class="about-version-heading">
