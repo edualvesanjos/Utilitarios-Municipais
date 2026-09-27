@@ -1,4 +1,4 @@
-const APP_VERSION = "4.6.2.4";
+const APP_VERSION = "4.6.2";
 window.APP_VERSION = APP_VERSION;
 
 /*
@@ -16,7 +16,7 @@ window.APP_VERSION = APP_VERSION;
  * - Credenciais públicas necessárias ao frontend devem ser
  *   fornecidas somente pelos mecanismos previstos para o ambiente.
  */
-const APP_ENVIRONMENT = "development";
+const APP_ENVIRONMENT = "production";
 window.APP_ENVIRONMENT = APP_ENVIRONMENT;
 
 const APP_ENVIRONMENT_NAMES = Object.freeze({
@@ -38,7 +38,7 @@ const APP_CONFIG = Object.freeze({
     debug: APP_ENVIRONMENT === "development"
 });
 
-/* v4.6.2.4 DEV — configuração, chave pública e sessão isoladas por ambiente.
+/* v4.6.2 PROD — configuração, chave pública e sessão isoladas por ambiente.
  * A troca DEV/PROD é controlada exclusivamente por APP_ENVIRONMENT.
  * Projeto/schema não podem mais ser sobrescritos por VITE_SUPERDB_PROJECT.
  */
