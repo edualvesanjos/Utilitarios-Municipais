@@ -1,11 +1,7 @@
-# 4.6.2 PROD
-
-- Fecha a release de produção a partir da v4.6.2.3 DEV homologada.
-- Mantém seleção centralizada e segura dos ambientes SuperDB DEV/PROD.
-- Mantém sessões e armazenamento de autenticação isolados por ambiente e projeto.
-- Configura `APP_ENVIRONMENT = "production"` e `APP_VERSION = "4.6.2"`.
-- SuperDB PROD: projeto `p_f1c97412fa`, schema `proj_p_f1c97412fa`.
-- Preserva autenticação, persistência e Realtime validados no PROD.
+## 4.6.2.4 DEV
+- PROD deixa de depender do `.env` para a Anon Key pública.
+- DEV mantém compatibilidade com `VITE_SUPERDB_ANON_KEY` do homolog.
+- Mantido isolamento de projeto, schema e sessão por ambiente.
 
 # 4.6.2.3 DEV
 
