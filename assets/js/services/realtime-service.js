@@ -1,6 +1,6 @@
 import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
 
-/* Utilitários Municipais v4.6.1.20 DEV — Recuperação autenticada do token Realtime. */
+/* Utilitários Municipais v4.6.2.2 DEV — Realtime isolado por ambiente. */
 (async function () {
     "use strict";
 
@@ -8,7 +8,7 @@ import { RealtimeClient } from "https://esm.sh/@supabase/realtime-js@2";
         "https://auth.superdb.com.br/rt/v1/token";
 
     const REALTIME_SCHEMA =
-        "proj_p_f1c97412fa";
+        window.BACKEND_MIGRATION?.superdb?.schema || "";
 
     const REALTIME_TABLE = "user_data";
 

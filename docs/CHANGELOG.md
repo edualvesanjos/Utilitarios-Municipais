@@ -1,10 +1,11 @@
-## 4.6.2 PROD — Migração para SuperDB
+# 4.6.2.2 DEV
 
-- Promovida a base homologada 4.6.2.1 DEV para produção.
-- Ambiente alterado para `production`.
-- Projeto SuperDB PROD configurado como `p_f1c97412fa`.
-- Realtime configurado no schema `proj_p_f1c97412fa`.
-- Mantida a serialização da renovação de sessão homologada em DEV.
+- Isolamento das configurações SuperDB entre DEV e PROD.
+- `APP_ENVIRONMENT` passa a selecionar projeto e schema de forma centralizada.
+- Variáveis `VITE_SUPERDB_PROJECT` e `VITE_SUPERDB_URL` deixam de sobrescrever o ambiente ativo.
+- Chaves anon separadas em `VITE_SUPERDB_DEV_ANON_KEY` e `VITE_SUPERDB_PROD_ANON_KEY`.
+- Realtime passa a usar automaticamente o schema do ambiente ativo.
+- Identificação visual SuperDB DEV/PROD passa a acompanhar o ambiente.
 
 ## 4.6.2.1 DEV — Serialização da renovação de sessão
 

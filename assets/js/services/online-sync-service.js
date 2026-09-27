@@ -915,7 +915,7 @@
         modal.innerHTML = `
             <div class="online-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="onlineAuthTitle">
                 <button class="online-modal-close" type="button" aria-label="Fechar">×</button>
-                <span class="eyebrow">SuperDB DEV</span>
+                <span class="eyebrow">SuperDB ${window.APP_ENVIRONMENT === "production" ? "PROD" : "DEV"}</span>
                 <h2 id="onlineAuthTitle">Acesso online</h2>
                 <p class="help-text">Entre para sincronizar preferências, personalização, favoritos, continuidade do Dashboard e seus modelos, grupos e categorias da Central de Documentos.</p>
                 <label>E-mail<input id="onlineEmail" type="email" autocomplete="email" required></label>

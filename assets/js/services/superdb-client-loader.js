@@ -1,4 +1,4 @@
-/* Utilitários Municipais v4.6.0 DEV — SuperDB Client, Etapa 4. */
+/* Utilitários Municipais v4.6.2.2 DEV — SuperDB Client com isolamento de ambientes. */
 import { createClient } from "https://esm.unpkg.com/@superdb/client@0.2.2";
 
 let instance = null;
@@ -7,10 +7,17 @@ let initializationError = null;
 function getConfiguration() {
     const migration = window.BACKEND_MIGRATION?.superdb || {};
     const env = import.meta.env || {};
+    const environment = window.APP_ENVIRONMENT || "development";
+    const key = environment === "production"
+        ? env.VITE_SUPERDB_PROD_ANON_KEY
+        : env.VITE_SUPERDB_DEV_ANON_KEY;
+
     return {
-        url: env.VITE_SUPERDB_URL || migration.authUrl || "https://auth.superdb.com.br",
-        project: env.VITE_SUPERDB_PROJECT || migration.project || "",
-        key: env.VITE_SUPERDB_ANON_KEY || migration.anonKey || ""
+        environment,
+        url: migration.authUrl || "https://auth.superdb.com.br",
+        project: migration.project || "",
+        schema: migration.schema || "",
+        key: key || ""
     };
 }
 
@@ -25,7 +32,7 @@ function getClient() {
     if (initializationError) return null;
     try {
         const { url, project, key } = getConfiguration();
-        if (!isConfigured()) throw new Error("SuperDB não configurado. Verifique a configuração do projeto.");
+        if (!isConfigured()) throw new Error("SuperDB DEV não configurado. Preencha VITE_SUPERDB_ANON_KEY no arquivo .env.");
         instance = createClient(url, key, { project });
         window.Logger?.info("Cliente SuperDB inicializado.");
         return instance;

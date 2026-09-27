@@ -145,11 +145,11 @@
     }
 
     function getSuperDbConfig() {
-        const migration = window.BACKEND_MIGRATION || {};
+        const cfg = window.SuperDBClientService?.getConfiguration?.() || {};
         return {
-            authUrl: migration?.superdb?.authUrl || "",
-            project: migration?.superdb?.project || "",
-            anonKey: migration?.superdb?.anonKey || ""
+            authUrl: cfg.url || "",
+            project: cfg.project || "",
+            anonKey: cfg.key || ""
         };
     }
 
