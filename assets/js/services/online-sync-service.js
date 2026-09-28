@@ -735,9 +735,6 @@
 
             // Não depende exclusivamente de onAuthStateChange: o SDK pode
             // concluir o signOut sem emitir o evento imediatamente.
-            // O Realtime também é encerrado explicitamente para não manter
-            // canal ou timers ativos caso o evento SIGNED_OUT atrase ou falhe.
-            await window.RealtimeService?.disconnect?.();
             session = null;
             resetWatchedSnapshot();
             setConflict(false);
@@ -961,11 +958,6 @@
                 feedback.textContent = "Login realizado.";
                 renderOnlineStatus();
 
-                // O login explícito precisa restabelecer o Realtime diretamente.
-                // Alguns clientes/backend não emitem SIGNED_IN novamente após um
-                // logout/login no mesmo ciclo da página, portanto não dependemos
-                // exclusivamente de onAuthStateChange para esta transição.
-                await window.RealtimeService?.connect?.();
 
                 await ensureProfile(session.user);
                 setTimeout(close, 500);
@@ -985,8 +977,7 @@
                 session = data.session;
                 renderOnlineStatus();
                 if (session?.user) {
-                    await window.RealtimeService?.connect?.();
-                    await ensureProfile(session.user);
+                        await ensureProfile(session.user);
                 }
                 setTimeout(close, 700);
             }
@@ -1122,17 +1113,10 @@
 
                 setTimeout(async () => {
                     if (event === "INITIAL_SESSION" && session?.user) {
-                        await window.RealtimeService?.connect?.();
-                    }
+                            }
 
                     if (event === "SIGNED_IN" && session?.user) {
-                        // O Realtime pertence ao ciclo de autenticação e não deve
-                        // depender do sucesso da sincronização REST. Em indisponibilidade
-                        // temporária do backend (ex.: 503), synchronize()/HistoryService
-                        // podem falhar; a tentativa de conexão Realtime precisa ocorrer
-                        // independentemente dessas operações auxiliares.
-                        await window.RealtimeService?.connect?.();
-
+        
                         try {
                             await ensureProfile(session.user);
 
@@ -1150,8 +1134,7 @@
                     }
 
                     if (event === "SIGNED_OUT") {
-                        await window.RealtimeService?.disconnect?.();
-
+            
                         session = null;
                         resetWatchedSnapshot();
                         setConflict(false);
@@ -1210,21 +1193,10 @@
             if (session?.user && hasPendingChanges()) safeSet(PENDING_KEY, "true");
         });
 
-        async function handleRealtimeChange() {
-            if (!session?.user) return false;
-            if (!navigator.onLine) return false;
-
-            return pullRemoteData({
-                silent: true,
-                force: false
-            });
-        }
-
         window.OnlineSyncService = Object.freeze({
             sync: synchronize,
             upload: pushLocalData,
             restore: pullRemoteData,
-            handleRealtimeChange,
             ensureFreshSession: ensureFreshBackendSession,
             refreshSession: refreshBackendSession,
             openLogin: openAuthModal,

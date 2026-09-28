@@ -1,3 +1,8 @@
+## 4.6.2.4 DEV
+- PROD deixa de depender do `.env` para a Anon Key pública.
+- DEV mantém compatibilidade com `VITE_SUPERDB_ANON_KEY` do homolog.
+- Mantido isolamento de projeto, schema e sessão por ambiente.
+
 # 4.6.2.3 DEV
 
 - Isola a persistência da sessão SuperDB por ambiente e projeto.

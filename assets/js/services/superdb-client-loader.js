@@ -1,4 +1,4 @@
-/* Utilitários Municipais v4.6.2.3 DEV — SuperDB Client com isolamento de sessão por ambiente. */
+/* Utilitários Municipais v4.6.2.4 DEV — SuperDB Client com ambiente e sessão isolados. */
 import { createClient } from "https://esm.unpkg.com/@superdb/client@0.2.2";
 
 let instance = null;
@@ -8,9 +8,11 @@ function getConfiguration() {
     const migration = window.BACKEND_MIGRATION?.superdb || {};
     const env = import.meta.env || {};
     const environment = window.APP_ENVIRONMENT || "development";
+    // PROD possui fallback versionado para não depender do .env no deploy.
+    // DEV mantém compatibilidade com o secret legado do homolog.
     const key = environment === "production"
-        ? env.VITE_SUPERDB_PROD_ANON_KEY
-        : env.VITE_SUPERDB_DEV_ANON_KEY;
+        ? (env.VITE_SUPERDB_PROD_ANON_KEY || migration.anonKey)
+        : (env.VITE_SUPERDB_DEV_ANON_KEY || env.VITE_SUPERDB_ANON_KEY || migration.anonKey);
 
     return {
         environment,
@@ -55,7 +57,7 @@ function getClient() {
             const variable = environment === "production"
                 ? "VITE_SUPERDB_PROD_ANON_KEY"
                 : "VITE_SUPERDB_DEV_ANON_KEY";
-            throw new Error(`SuperDB ${environment === "production" ? "PROD" : "DEV"} não configurado. Preencha ${variable} no arquivo .env.`);
+            throw new Error(`SuperDB ${environment === "production" ? "PROD" : "DEV"} não configurado. Verifique ${variable} e a configuração do ambiente.`);
         }
         instance = createClient(url, key, {
             project,
