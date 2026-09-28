@@ -5,7 +5,7 @@ window.APP_VERSION = APP_VERSION;
  * Ambiente ativo da aplicação.
  *
  * Para testes:
- *   const APP_ENVIRONMENT = "development";
+ *   const APP_ENVIRONMENT = "production";
  *
  * Para publicação oficial:
  *   const APP_ENVIRONMENT = "production";
@@ -16,7 +16,7 @@ window.APP_VERSION = APP_VERSION;
  * - Credenciais públicas necessárias ao frontend devem ser
  *   fornecidas somente pelos mecanismos previstos para o ambiente.
  */
-const APP_ENVIRONMENT = "development";
+const APP_ENVIRONMENT = "production";
 window.APP_ENVIRONMENT = APP_ENVIRONMENT;
 
 const APP_ENVIRONMENT_NAMES = Object.freeze({
@@ -38,7 +38,7 @@ const APP_CONFIG = Object.freeze({
     debug: APP_ENVIRONMENT === "development"
 });
 
-/* v4.6.3 DEV — sincronização SuperDB sem Realtime; ambientes e sessões permanecem isolados.
+/* v4.6.3 PROD — sincronização SuperDB sem Realtime; ambientes e sessões permanecem isolados.
  * A troca DEV/PROD é controlada exclusivamente por APP_ENVIRONMENT.
  * Projeto/schema não podem mais ser sobrescritos por VITE_SUPERDB_PROJECT.
  */
