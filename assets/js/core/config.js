@@ -5,7 +5,7 @@ window.APP_VERSION = APP_VERSION;
  * Ambiente ativo da aplicação.
  *
  * Para testes:
- *   const APP_ENVIRONMENT = "production";
+ *   const APP_ENVIRONMENT = "development";
  *
  * Para publicação oficial:
  *   const APP_ENVIRONMENT = "production";
@@ -16,7 +16,7 @@ window.APP_VERSION = APP_VERSION;
  * - Credenciais públicas necessárias ao frontend devem ser
  *   fornecidas somente pelos mecanismos previstos para o ambiente.
  */
-const APP_ENVIRONMENT = "production";
+const APP_ENVIRONMENT = "development";
 window.APP_ENVIRONMENT = APP_ENVIRONMENT;
 
 const APP_ENVIRONMENT_NAMES = Object.freeze({
