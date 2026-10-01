@@ -1385,11 +1385,11 @@
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 4.6.4 DEV</h3>
+                        <h3>Novidades da 4.6.4.1 DEV</h3>
                         <ul>
-                            <li><strong>Preferências operacionais:</strong> cinco configurações passam a acompanhar o usuário entre navegadores.</li>
-                            <li><strong>Sem Realtime:</strong> a ampliação utiliza somente a sincronização normal já homologada.</li>
-                            <li><strong>Etapa isolada:</strong> demais dados locais permanecem fora desta versão para teste incremental.</li>
+                            <li><strong>Conflitos por grupo:</strong> o modal só é aberto quando o mesmo grupo possui alterações locais e remotas concorrentes.</li>
+                            <li><strong>Preferências operacionais:</strong> mantém as cinco configurações sincronizadas na etapa anterior.</li>
+                            <li><strong>Correção isolada:</strong> nenhum novo dado foi acrescentado à sincronização nesta versão.</li>
                         </ul>
                     </section>
                 </div>
@@ -1397,6 +1397,18 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline" id="aboutVersionHistory">
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.4.1 DEV</strong>
+                                    <span>Correção de falso conflito entre grupos</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid"><section><h4>Resumo</h4><p>A detecção de conflito passa a considerar concorrência no mesmo grupo, evitando que uma preferência operacional gere conflito por atualização independente de outro grupo.</p></section></div>
+                            </div>
+                        </article>
                         <article class="about-version-item">
                             <button class="about-version-toggle" type="button" aria-expanded="false">
                                 <span class="about-version-heading">

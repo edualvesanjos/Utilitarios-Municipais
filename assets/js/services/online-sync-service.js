@@ -32,6 +32,7 @@
     const LAST_SYNC_KEY = `${APP_CONFIG.storagePrefix}online:lastSync`;
     const LAST_ATTEMPT_KEY = `${APP_CONFIG.storagePrefix}online:lastAttempt`;
     const LAST_LOCAL_CHANGE_KEY = `${APP_CONFIG.storagePrefix}online:lastLocalChange`;
+    const LAST_LOCAL_GROUP_CHANGES_KEY = `${APP_CONFIG.storagePrefix}online:lastLocalGroupChanges`;
     const LAST_REMOTE_UPDATE_KEY = `${APP_CONFIG.storagePrefix}online:lastRemoteUpdate`;
     const AUTO_SYNC_KEY = `${APP_CONFIG.storagePrefix}online:autoSync`;
     const DEVICE_KEY = `${APP_CONFIG.storagePrefix}online:deviceId`;
@@ -52,6 +53,7 @@
     let syncInProgress = false;
     let currentConflict = null;
     let watchedLocalSnapshot = "";
+    let watchedLocalGroups = {};
     let localWatchTimer = null;
 
     function notify(message, type = "success") {
@@ -306,8 +308,36 @@
         return fetchRemoteRows();
     }
 
+    function readLocalGroupChanges() {
+        try {
+            const parsed = JSON.parse(safeGet(LAST_LOCAL_GROUP_CHANGES_KEY, "{}"));
+            return parsed && typeof parsed === "object" ? parsed : {};
+        } catch {
+            return {};
+        }
+    }
+
+    function markLocalGroupChanges(groups) {
+        if (!Array.isArray(groups) || !groups.length) return;
+        const changes = readLocalGroupChanges();
+        const changedAt = nowIso();
+        groups.forEach((group) => {
+            if (SYNC_GROUPS[group]) changes[group] = changedAt;
+        });
+        safeSet(LAST_LOCAL_GROUP_CHANGES_KEY, JSON.stringify(changes));
+    }
+
+    function clearLocalGroupChanges() {
+        safeRemove(LAST_LOCAL_GROUP_CHANGES_KEY);
+    }
+
+    function groupForStorageKey(key) {
+        return Object.entries(SYNC_GROUPS).find(([, keys]) => keys.includes(key))?.[0] || null;
+    }
+
     function resetWatchedSnapshot() {
-        watchedLocalSnapshot = stableStringify(localSnapshotObject());
+        watchedLocalGroups = localSnapshotObject();
+        watchedLocalSnapshot = stableStringify(watchedLocalGroups);
     }
 
     function startSelectiveLocalWatch() {
@@ -318,9 +348,15 @@
                 resetWatchedSnapshot();
                 return;
             }
-            const nextSnapshot = stableStringify(localSnapshotObject());
+            const nextGroups = localSnapshotObject();
+            const nextSnapshot = stableStringify(nextGroups);
             if (nextSnapshot === watchedLocalSnapshot) return;
+            const changedGroups = Object.keys(SYNC_GROUPS).filter(
+                (group) => stableStringify(nextGroups[group] || {}) !== stableStringify(watchedLocalGroups[group] || {})
+            );
+            watchedLocalGroups = nextGroups;
             watchedLocalSnapshot = nextSnapshot;
+            markLocalGroupChanges(changedGroups);
             scheduleAutoSync(true);
         }, 900);
     }
@@ -469,11 +505,25 @@
 
     function detectConflict(rows) {
         if (!hasPendingChanges() || !rows.length || snapshotsEqual(rows)) return false;
+
         const lastSync = parseDate(safeGet(LAST_SYNC_KEY, ""));
-        const localChanged = parseDate(safeGet(LAST_LOCAL_CHANGE_KEY, ""));
-        const remoteChanged = latestRemoteTimestamp(rows);
-        return localChanged > lastSync + CONFLICT_TOLERANCE_MS
-            && remoteChanged > lastSync + CONFLICT_TOLERANCE_MS;
+        const localGroupChanges = readLocalGroupChanges();
+        const localSnapshot = localSnapshotObject();
+        const remoteSnapshot = remoteSnapshotObject(rows);
+        const remoteRowsByGroup = Object.fromEntries(rows.map((row) => [row.data_type, row]));
+
+        // Um conflito só existe quando o MESMO grupo foi alterado localmente
+        // e também mudou no backend depois da última sincronização.
+        // Alterações em grupos independentes não devem abrir o modal.
+        return Object.keys(SYNC_GROUPS).some((group) => {
+            if (stableStringify(localSnapshot[group] || {}) === stableStringify(remoteSnapshot[group] || {})) {
+                return false;
+            }
+            const localChanged = parseDate(localGroupChanges[group]);
+            const remoteChanged = parseDate(remoteRowsByGroup[group]?.updated_at);
+            return localChanged > lastSync + CONFLICT_TOLERANCE_MS
+                && remoteChanged > lastSync + CONFLICT_TOLERANCE_MS;
+        });
     }
 
     async function pushLocalData({ silent = false, force = false } = {}) {
@@ -514,6 +564,7 @@
             safeSet(LAST_REMOTE_UPDATE_KEY, syncedAt);
             resetWatchedSnapshot();
             setPending(false);
+            clearLocalGroupChanges();
             setConflict(false);
             setOnlineState({ status: "synced", at: syncedAt, direction: "upload" });
             await ensureProfile(session.user);
@@ -542,6 +593,7 @@
         safeSet(LAST_SYNC_KEY, syncedAt);
         if (remoteAt) safeSet(LAST_REMOTE_UPDATE_KEY, new Date(remoteAt).toISOString());
         setPending(false);
+        clearLocalGroupChanges();
         setConflict(false);
         setOnlineState({ status: "synced", at: syncedAt, direction: "download" });
         refreshApplication();
@@ -1188,7 +1240,9 @@
         }
 
         window.addEventListener("storage", (event) => {
-            if (event.key && Object.values(SYNC_GROUPS).some((keys) => keys.includes(event.key))) {
+            const group = event.key ? groupForStorageKey(event.key) : null;
+            if (group) {
+                markLocalGroupChanges([group]);
                 resetWatchedSnapshot();
                 scheduleAutoSync(true);
             }

@@ -1,3 +1,9 @@
+## 4.6.4.1 DEV — Corrigir falso conflito entre grupos
+- Corrige a detecção de conflitos para comparar alterações concorrentes por grupo de sincronização.
+- Uma preferência operacional alterada localmente não entra mais em conflito apenas porque outro grupo foi atualizado no backend.
+- Preserva o modal quando o mesmo grupo tiver alterações locais e remotas posteriores à última sincronização.
+- Mantém sem alterações o escopo de dados sincronizados da v4.6.4 DEV.
+
 ## 4.6.4 DEV — Preferências operacionais sincronizadas
 - Adiciona o grupo `operational_preferences` à sincronização normal sem Realtime.
 - Sincroniza remoção de pontos do Nome de arquivo, cópia automática da Inscrição, valor e casas decimais da UVRM e ordenação da Central de Documentos.
