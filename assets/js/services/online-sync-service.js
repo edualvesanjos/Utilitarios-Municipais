@@ -4,6 +4,7 @@
 
     const SYNC_GROUPS = Object.freeze({
         preferences: Object.freeze([`${APP_CONFIG.storagePrefix}saveFields`]),
+        file_builder: Object.freeze([`${APP_CONFIG.storagePrefix}fileBuilder`]),
         operational_preferences: Object.freeze([
             `${APP_CONFIG.storagePrefix}fileRemovePoints`,
             `${APP_CONFIG.storagePrefix}registrationAutoCopy`,
@@ -42,7 +43,7 @@
     const DOCUMENTS_MIGRATION_KEY = `${APP_CONFIG.storagePrefix}online:documents426`;
     const DOCUMENTS_STRUCTURE_MIGRATION_KEY =
         `${APP_CONFIG.storagePrefix}online:documents4524`;
-    const SYNC_SCHEMA_VERSION = 8;
+    const SYNC_SCHEMA_VERSION = 9;
     const CONFLICT_TOLERANCE_MS = 2500;
 
     let client = null;
@@ -303,6 +304,34 @@
             direction: "upload",
             groups: ["operational_preferences"],
             migration: "4.6.4-create"
+        });
+
+        return fetchRemoteRows();
+    }
+
+    function hasLocalFileBuilder() {
+        return SYNC_GROUPS.file_builder.some(
+            (key) => safeGet(key, null) !== null
+        );
+    }
+
+    async function ensureFileBuilderGroup(rows) {
+        if (!session?.user) return rows;
+        if (rows.some((row) => row.data_type === "file_builder")) return rows;
+        if (!hasLocalFileBuilder()) return rows;
+
+        await saveUserDataRows([{
+            user_id: session.user.id,
+            data_type: "file_builder",
+            content: collectGroup(SYNC_GROUPS.file_builder),
+            version: SYNC_SCHEMA_VERSION,
+            updated_at: nowIso()
+        }]);
+
+        await writeSyncLog("success", 1, {
+            direction: "upload",
+            groups: ["file_builder"],
+            migration: "4.6.5-create"
         });
 
         return fetchRemoteRows();
@@ -617,6 +646,7 @@
             let rows = await fetchRemoteRows();
             rows = await ensureDocumentGroupStructure(rows);
             rows = await ensureOperationalPreferencesGroup(rows);
+            rows = await ensureFileBuilderGroup(rows);
             if (!rows.length) {
                 syncInProgress = false;
                 return pushLocalData({ silent, force: true });
@@ -742,6 +772,7 @@
             let rows = await fetchRemoteRows();
             rows = await ensureDocumentGroupStructure(rows);
             rows = await ensureOperationalPreferencesGroup(rows);
+            rows = await ensureFileBuilderGroup(rows);
             if (rows.length && snapshotsEqual(rows)) {
                 const remoteAt = latestRemoteTimestamp(rows);
                 const syncedAt = remoteAt ? new Date(remoteAt).toISOString() : nowIso();

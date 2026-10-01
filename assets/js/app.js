@@ -161,6 +161,7 @@ function refreshPersistedApplicationData() {
         $("#uvrmCasas").value = storedDecimals;
     }
 
+    safeInvoke(() => window.refreshFileBuilderFromStorage?.());
     renderAllExistingHistories();
     safeInvoke(renderUvrmCurrentList);
     safeInvoke(updateSettingsSummary);

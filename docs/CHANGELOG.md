@@ -1,3 +1,10 @@
+## 4.6.5 DEV — Montador de arquivo e favicons
+
+- Sincroniza `fileBuilder` em grupo próprio (`file_builder`), incluindo blocos habilitados, ordem e separador.
+- Atualiza a interface do montador após receber dados remotos, mantendo a detecção de conflitos por grupo e sem Realtime.
+- Adiciona favicons 16, 32 e 48 px, `favicon.ico`, Apple Touch Icon 180 px e ícones PWA 192/512 px.
+- Atualiza `manifest.json` e `index.html` para usar a nova identidade visual.
+
 ## 4.6.4.1 DEV — Corrigir falso conflito entre grupos
 - Corrige a detecção de conflitos para comparar alterações concorrentes por grupo de sincronização.
 - Uma preferência operacional alterada localmente não entra mais em conflito apenas porque outro grupo foi atualizado no backend.

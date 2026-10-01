@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0f4c81">
     <title>Utilitários Municipais</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%232563eb'/><text x='32' y='42' text-anchor='middle' font-family='Arial' font-size='34' font-weight='bold' fill='white'>UM</text></svg>">
+    <link rel="icon" href="assets/icons/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="assets/css/base.css">
     <link rel="stylesheet" href="assets/css/components.css">
@@ -1385,11 +1388,11 @@
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 4.6.4.1 DEV</h3>
+                        <h3>Novidades da 4.6.5 DEV</h3>
                         <ul>
-                            <li><strong>Conflitos por grupo:</strong> o modal só é aberto quando o mesmo grupo possui alterações locais e remotas concorrentes.</li>
-                            <li><strong>Preferências operacionais:</strong> mantém as cinco configurações sincronizadas na etapa anterior.</li>
-                            <li><strong>Correção isolada:</strong> nenhum novo dado foi acrescentado à sincronização nesta versão.</li>
+                            <li><strong>Nome de arquivo:</strong> sincroniza a configuração do montador, incluindo blocos habilitados, ordem e separador.</li>
+                            <li><strong>Sincronização normal:</strong> mantém a detecção de conflitos por grupo, sem Realtime.</li>
+                            <li><strong>Identidade visual:</strong> adiciona a família de favicons para navegador, Apple Touch Icon e PWA.</li>
                         </ul>
                     </section>
                 </div>
@@ -1397,6 +1400,18 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline" id="aboutVersionHistory">
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.5 DEV</strong>
+                                    <span>Montador de arquivo sincronizado e favicons</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid"><section><h4>Resumo</h4><p>Sincroniza o fileBuilder em grupo próprio, preservando conflitos por grupo, e incorpora a família de favicons do sistema.</p></section></div>
+                            </div>
+                        </article>
                         <article class="about-version-item">
                             <button class="about-version-toggle" type="button" aria-expanded="false">
                                 <span class="about-version-heading">
