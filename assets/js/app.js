@@ -135,6 +135,18 @@ function initializeApplication() {
 function refreshPersistedApplicationData() {
     migrateCompatibleStorageKeys();
 
+    const registrationAutoCopy = $("#inscricaoCopiaAutomatica");
+    if (registrationAutoCopy) {
+        registrationAutoCopy.checked =
+            localStorage.getItem(REGISTRATION_AUTO_COPY_KEY) === "true";
+    }
+
+    const fileRemovePoints = $("#arquivoRemoverPontos");
+    if (fileRemovePoints) {
+        fileRemovePoints.checked =
+            localStorage.getItem(FILE_REMOVE_POINTS_KEY) !== "false";
+    }
+
     const storedUvrmValue = localStorage.getItem(UVRM_VALUE_KEY);
     if (storedUvrmValue !== null && document.activeElement !== $("#uvrmValorUnitario")) {
         const normalizedUvrmValue = String(storedUvrmValue).replace(".", ",");

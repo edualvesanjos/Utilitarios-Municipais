@@ -4,6 +4,13 @@
 
     const SYNC_GROUPS = Object.freeze({
         preferences: Object.freeze([`${APP_CONFIG.storagePrefix}saveFields`]),
+        operational_preferences: Object.freeze([
+            `${APP_CONFIG.storagePrefix}fileRemovePoints`,
+            `${APP_CONFIG.storagePrefix}registrationAutoCopy`,
+            `${APP_CONFIG.storagePrefix}uvrmValue`,
+            `${APP_CONFIG.storagePrefix}uvrmDecimals`,
+            `${APP_CONFIG.storagePrefix}documentSort`
+        ]),
         favorites: Object.freeze([`${APP_CONFIG.storagePrefix}favorites`]),
         personalization: Object.freeze([
             `${APP_CONFIG.storagePrefix}ux31:prefs`,
@@ -34,7 +41,7 @@
     const DOCUMENTS_MIGRATION_KEY = `${APP_CONFIG.storagePrefix}online:documents426`;
     const DOCUMENTS_STRUCTURE_MIGRATION_KEY =
         `${APP_CONFIG.storagePrefix}online:documents4524`;
-    const SYNC_SCHEMA_VERSION = 7;
+    const SYNC_SCHEMA_VERSION = 8;
     const CONFLICT_TOLERANCE_MS = 2500;
 
     let client = null;
@@ -266,6 +273,34 @@
             added_keys: missingKeys.map(
                 (key) => key.replace(APP_CONFIG.storagePrefix, "")
             )
+        });
+
+        return fetchRemoteRows();
+    }
+
+    function hasLocalOperationalPreferences() {
+        return SYNC_GROUPS.operational_preferences.some(
+            (key) => safeGet(key, null) !== null
+        );
+    }
+
+    async function ensureOperationalPreferencesGroup(rows) {
+        if (!session?.user) return rows;
+        if (rows.some((row) => row.data_type === "operational_preferences")) return rows;
+        if (!hasLocalOperationalPreferences()) return rows;
+
+        await saveUserDataRows([{
+            user_id: session.user.id,
+            data_type: "operational_preferences",
+            content: collectGroup(SYNC_GROUPS.operational_preferences),
+            version: SYNC_SCHEMA_VERSION,
+            updated_at: nowIso()
+        }]);
+
+        await writeSyncLog("success", 1, {
+            direction: "upload",
+            groups: ["operational_preferences"],
+            migration: "4.6.4-create"
         });
 
         return fetchRemoteRows();
@@ -529,6 +564,7 @@
         try {
             let rows = await fetchRemoteRows();
             rows = await ensureDocumentGroupStructure(rows);
+            rows = await ensureOperationalPreferencesGroup(rows);
             if (!rows.length) {
                 syncInProgress = false;
                 return pushLocalData({ silent, force: true });
@@ -653,6 +689,7 @@
         try {
             let rows = await fetchRemoteRows();
             rows = await ensureDocumentGroupStructure(rows);
+            rows = await ensureOperationalPreferencesGroup(rows);
             if (rows.length && snapshotsEqual(rows)) {
                 const remoteAt = latestRemoteTimestamp(rows);
                 const syncedAt = remoteAt ? new Date(remoteAt).toISOString() : nowIso();

@@ -1,3 +1,10 @@
+## 4.6.4 DEV — Preferências operacionais sincronizadas
+- Adiciona o grupo `operational_preferences` à sincronização normal sem Realtime.
+- Sincroniza remoção de pontos do Nome de arquivo, cópia automática da Inscrição, valor e casas decimais da UVRM e ordenação da Central de Documentos.
+- Atualiza os controles visuais após aplicar dados remotos.
+- Corrige o atalho de tema do Dashboard para usar a chave canônica já sincronizada.
+- Mantém modelos, construtor de arquivo, sequência de lotes, campos persistidos e descrições UVRM fora desta etapa.
+
 ## 4.6.2.4 DEV
 - PROD deixa de depender do `.env` para a Anon Key pública.
 - DEV mantém compatibilidade com `VITE_SUPERDB_ANON_KEY` do homolog.
