@@ -1,3 +1,10 @@
+## 4.6.6 DEV — Modelos do Nome de arquivo
+
+- Sincroniza `fileModels` em grupo próprio (`file_models`) pela sincronização normal, sem Realtime.
+- Preserva criação, aplicação e remoção dos modelos salvos entre dispositivos.
+- Atualiza a lista de modelos na interface após receber dados remotos.
+- Mantém a detecção de conflitos por grupo e eleva o schema de sincronização para 10.
+
 ## 4.6.5 DEV — Montador de arquivo e favicons
 
 - Sincroniza `fileBuilder` em grupo próprio (`file_builder`), incluindo blocos habilitados, ordem e separador.

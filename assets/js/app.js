@@ -162,6 +162,7 @@ function refreshPersistedApplicationData() {
     }
 
     safeInvoke(() => window.refreshFileBuilderFromStorage?.());
+    safeInvoke(renderFileModels);
     renderAllExistingHistories();
     safeInvoke(renderUvrmCurrentList);
     safeInvoke(updateSettingsSummary);
