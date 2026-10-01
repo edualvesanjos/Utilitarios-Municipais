@@ -1,3 +1,9 @@
+## 4.6.7.1 DEV — Corrigir SQL da sequência de Lotes
+
+- Remove a chave estrangeira para `auth.users`, relação não exposta pelo SuperDB.
+- Mantém `user_id` como chave primária e as políticas RLS com `auth.uid()`.
+- Preserva a sincronização da sequência e o reinício correto em `00001`.
+
 ## 4.6.7 DEV — Sequência de Lotes sincronizada
 
 - Cria `lot_sequence_state` para sincronizar o estado atual da sequência de Lotes separadamente de `user_data`.
