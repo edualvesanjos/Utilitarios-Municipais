@@ -157,6 +157,15 @@ $("#gerarLotes").addEventListener("click", async () => {
     const finalSequence = initial + quantity - 1;
     const nextSequence = finalSequence + 1;
 
+    // v4.6.7: confirma o novo estado da sequência antes de concluir a geração.
+    // Reduções manuais são válidas; somente uma revisão remota concorrente bloqueia a operação.
+    const sequenceResult = await window.LotSequenceService?.commitSequence?.(finalSequence);
+    if (sequenceResult?.conflict) {
+        showToast("A sequência foi alterada em outro dispositivo. Sincronize e tente novamente.");
+        await window.LotSequenceService?.sync?.({ preferRemote: true });
+        return;
+    }
+
     $("#loteResultado").textContent = lots.join("\n");
     localStorage.setItem(LOT_SEQUENCE_KEY, String(finalSequence));
 
@@ -200,6 +209,12 @@ $("#reiniciarSequenciaLotes").addEventListener("click", async () => {
 
     // Zero is used only as the internal state before the first sequence.
     // The first lot generated after a reset is therefore 00001.
+    const resetResult = await window.LotSequenceService?.commitSequence?.(0);
+    if (resetResult?.conflict) {
+        showToast("A sequência foi alterada em outro dispositivo. Sincronize antes de reiniciar.");
+        await window.LotSequenceService?.sync?.({ preferRemote: true });
+        return;
+    }
     localStorage.setItem(LOT_SEQUENCE_KEY, "0");
     $("#loteSequenciaInicial").value = 1;
     $("#loteResultado").textContent = "—";

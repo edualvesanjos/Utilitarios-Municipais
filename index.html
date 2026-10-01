@@ -1388,11 +1388,11 @@
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 4.6.6 DEV</h3>
+                        <h3>Novidades da 4.6.7 DEV</h3>
                         <ul>
-                            <li><strong>Nome de arquivo:</strong> sincroniza os modelos salvos entre dispositivos.</li>
-                            <li><strong>Interface:</strong> atualiza a lista de modelos após receber dados remotos.</li>
-                            <li><strong>Sincronização normal:</strong> mantém a detecção de conflitos por grupo, sem Realtime.</li>
+                            <li><strong>Lotes:</strong> sincroniza o estado atual da sequência em tabela própria.</li>
+                            <li><strong>Concorrência:</strong> usa revisão para detectar alterações simultâneas sem impedir reduções manuais válidas.</li>
+                            <li><strong>Reinício:</strong> corrige a Limpeza seletiva para a próxima sequência começar em 00001.</li>
                         </ul>
                     </section>
                 </div>
@@ -1400,6 +1400,19 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline" id="aboutVersionHistory">
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.7 DEV</strong>
+                                    <span>Sequência de Lotes sincronizada</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid"><section><h4>Resumo</h4><p>Sincroniza a sequência de Lotes em tabela própria, preserva alterações manuais para números menores, protege concorrência por revisão e corrige o reinício para 00001.</p></section></div>
+                            </div>
+                        </article>
+                        
                         <article class="about-version-item">
                             <button class="about-version-toggle" type="button" aria-expanded="false">
                                 <span class="about-version-heading">
@@ -2610,6 +2623,7 @@
     <script src="assets/js/services/storage-service.js"></script>
     <script src="assets/js/services/history-service.js"></script>
     <script src="assets/js/services/online-sync-service.js"></script>
+    <script src="assets/js/services/lot-sequence-service.js"></script>
     <script src="assets/js/core/sidebar-45.js"></script>
     <script src="assets/js/core/about-history-45.js"></script>
     <script src="assets/js/core/storage.js"></script>

@@ -1,3 +1,12 @@
+## 4.6.7 DEV — Sequência de Lotes sincronizada
+
+- Cria `lot_sequence_state` para sincronizar o estado atual da sequência de Lotes separadamente de `user_data`.
+- Mantém `history_entries` como histórico dos lotes gerados, sem duplicar registros.
+- Permite aumentar ou reduzir manualmente a sequência; uma redução válida não é tratada como conflito.
+- Usa `revision` para impedir sobrescrita silenciosa quando dois dispositivos partem de estados diferentes.
+- Mantém funcionamento local quando offline e tenta consolidar o estado no próximo sincronismo.
+- Corrige a Limpeza seletiva para reiniciar a sequência em `00001` (estado interno `0`), em vez de `00004`.
+
 ## 4.6.6 DEV — Modelos do Nome de arquivo
 
 - Sincroniza `fileModels` em grupo próprio (`file_models`) pela sincronização normal, sem Realtime.

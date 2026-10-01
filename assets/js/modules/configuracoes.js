@@ -229,7 +229,8 @@ $("#executarLimpezaSeletiva").addEventListener("click", async () => {
     }
 
     if (resetSequence) {
-        localStorage.setItem(LOT_SEQUENCE_KEY, "3");
+        localStorage.setItem(LOT_SEQUENCE_KEY, "0");
+        window.LotSequenceService?.setLocalSequence?.(0, { dirty: true });
     }
 
     showToast("Limpeza seletiva concluída.");
