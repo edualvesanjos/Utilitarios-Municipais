@@ -1,3 +1,12 @@
+## 4.6.7.2 DEV — Concorrência e interface de Lotes
+
+- Exibe decisão explícita quando outro dispositivo alterou a sequência antes da geração.
+- Permite manter o estado online ou, por confirmação do usuário, aplicar a sequência local mesmo quando ela for menor.
+- Mantém trava por `revision` para impedir uma segunda sobrescrita concorrente silenciosa.
+- Reorganiza a tela de Lotes no fluxo configurar → conferir → gerar → resultado → baixar/limpar.
+- Dá destaque ao resultado efetivamente gerado e reduz o peso visual da conferência prévia.
+- Preserva o reinício correto da sequência em `00001`.
+
 ## 4.6.7.1 DEV — Corrigir SQL da sequência de Lotes
 
 - Remove a chave estrangeira para `auth.users`, relação não exposta pelo SuperDB.

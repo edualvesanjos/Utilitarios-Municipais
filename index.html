@@ -635,23 +635,23 @@
                             </div>
                         </div>
 
-                        <div class="preview-card">
-                            <span>Pré-visualização</span>
+                        <div class="lot-preview-compact">
+                            <span>Conferência antes de gerar</span>
                             <strong id="lotePreview">9999900004</strong>
                         </div>
 
-                        <div class="actions">
+                        <div class="actions lot-generate-actions">
                             <button id="gerarLotes" class="primary">Gerar lote(s)</button>
-                            <button id="baixarLotesTxt" class="secondary">Baixar TXT</button>
-                            <button id="limparLotes" class="secondary">Limpar resultado</button>
                         </div>
 
-                        <div class="result-box">
-                            <span>Resultado</span>
+                        <div class="result-box lot-result-box">
+                            <span>Resultado gerado</span>
                             <pre id="loteResultado">—</pre>
                         </div>
 
-                        <div class="actions">
+                        <div class="actions lot-result-actions">
+                            <button id="baixarLotesTxt" class="secondary">Baixar TXT</button>
+                            <button id="limparLotes" class="secondary">Limpar resultado</button>
                             <button id="reiniciarSequenciaLotes" class="danger-outline">Reiniciar sequência</button>
                         </div>
 
@@ -1388,12 +1388,12 @@
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 4.6.7.1 DEV</h3>
+                        <h3>Novidades da 4.6.7.2 DEV</h3>
                         <ul>
-                            <li><strong>Lotes:</strong> sincroniza o estado atual da sequência em tabela própria.</li>
-                            <li><strong>Concorrência:</strong> usa revisão para detectar alterações simultâneas sem impedir reduções manuais válidas.</li>
-                                                        <li><strong>4.6.7.1 DEV</strong> — Correção do SQL da sequência de Lotes para SuperDB.</li>
-<li><strong>Reinício:</strong> corrige a Limpeza seletiva para a próxima sequência começar em 00001.</li>
+                            <li><strong>Concorrência:</strong> conflito de sequência agora exige escolha explícita antes de substituir o estado online.</li>
+                            <li><strong>Lotes:</strong> reorganiza conferência, geração e resultado para destacar o lote efetivamente gerado.</li>
+                            <li><strong>Resultado:</strong> Baixar TXT e Limpar resultado ficam associados à área de resultado.</li>
+                            <li><strong>Reinício:</strong> mantém a próxima sequência começando corretamente em 00001.</li>
                         </ul>
                     </section>
                 </div>
@@ -1401,6 +1401,19 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline" id="aboutVersionHistory">
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.7.2 DEV</strong>
+                                    <span>Concorrência e interface de Lotes</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details">
+                                <p>Trata explicitamente conflitos de sequência entre dispositivos e reorganiza a área de geração e resultado.</p>
+                            </div>
+                        </article>
+
                         <article class="about-version-item">
                             <button class="about-version-toggle" type="button" aria-expanded="false">
                                 <span class="about-version-heading">

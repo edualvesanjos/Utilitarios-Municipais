@@ -1,4 +1,4 @@
-/* v4.6.7 DEV — Estado sincronizado da sequência de lotes, sem Realtime. */
+/* v4.6.7.2 DEV — Estado sincronizado da sequência de lotes, sem Realtime. */
 (function () {
     "use strict";
 
@@ -104,13 +104,35 @@
         return { saved: true, sequence: next };
     }
 
+    // v4.6.7.2: aplica uma escolha local somente após confirmação explícita do usuário
+    // quando a revisão remota avançou. A revisão corrente ainda é usada como trava
+    // otimista para impedir uma segunda sobrescrita concorrente silenciosa.
+    async function forceCommitSequence(value) {
+        const next = Math.max(0, Math.min(99999, Number(value) || 0));
+        const c = client(); const s = session();
+        if (!c || !s?.user || !navigator.onLine) return { offline: true, sequence: next };
+        const remote = await fetchRemote();
+        if (!remote) return commitSequence(next);
+        const expected = Number(remote.revision);
+        const { data, error } = await c.from("lot_sequence_state")
+            .update({ last_sequence: next, revision: expected + 1, device_id: deviceId() })
+            .eq("user_id", s.user.id).eq("revision", expected)
+            .select("last_sequence,revision,device_id,updated_at");
+        if (error) throw error;
+        if (!data?.length) return { conflict: true, remote: await fetchRemote() };
+        const saved = data[0];
+        localStorage.setItem(LOT_SEQUENCE_KEY, String(next));
+        writeMeta({ revision: saved.revision, dirty: false, updatedAt: saved.updated_at });
+        return { saved: true, sequence: next, forced: true };
+    }
+
     function setLocalSequence(value, { dirty = false } = {}) {
         const next = Math.max(0, Number(value) || 0);
         localStorage.setItem(LOT_SEQUENCE_KEY, String(next));
         if (dirty) writeMeta({ ...readMeta(), dirty: true });
     }
 
-    window.LotSequenceService = Object.freeze({ sync, commitSequence, setLocalSequence, fetchRemote });
+    window.LotSequenceService = Object.freeze({ sync, commitSequence, forceCommitSequence, setLocalSequence, fetchRemote });
     window.addEventListener("um:session-ready", () => sync().catch((e) => window.Logger?.warn("Falha ao sincronizar sequência de lotes.", e)));
     window.addEventListener("online", () => sync().catch(() => {}));
     document.addEventListener("visibilitychange", () => {
