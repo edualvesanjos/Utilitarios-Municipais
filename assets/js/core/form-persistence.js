@@ -9,7 +9,6 @@ const persistentFieldIds = [
     "loteSeparador",
     "uvrmValorUnitario",
     "uvrmCasas",
-    "uvrmDescricao",
     "uvrmTipoLancamento",
     "uvrmValorLancamento",
     "percentualModo",
@@ -48,11 +47,11 @@ function restoreFormData() {
 
     const data = getJson(FORM_DATA_KEY, {});
 
-    Object.entries(data).forEach(([id, value]) => {
+    persistentFieldIds.forEach((id) => {
         const field = document.getElementById(id);
 
-        if (field) {
-            field.value = value;
+        if (field && Object.prototype.hasOwnProperty.call(data, id)) {
+            field.value = data[id];
         }
     });
 }

@@ -137,3 +137,10 @@ do upsert REST homologado no laboratório SuperDB v0.2.0.
 - Faz união e deduplicação entre dispositivos, mantendo até 30 descrições.
 - Mantém `uvrmCurrentList` exclusivamente local.
 - Não utiliza Realtime e não exige alteração SQL.
+
+
+## v4.6.9.2 DEV — Descrição UVRM separada do formulário
+
+- A descrição da UVRM deixa de integrar `formData`.
+- O histórico recente continua sincronizado e disponível no seletor próprio.
+- Dados antigos de descrição existentes em `formData` não são mais restaurados.
