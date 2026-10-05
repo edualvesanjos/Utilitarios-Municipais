@@ -5,6 +5,7 @@
     const SYNC_GROUPS = Object.freeze({
         preferences: Object.freeze([`${APP_CONFIG.storagePrefix}saveFields`]),
         form_data: Object.freeze([`${APP_CONFIG.storagePrefix}formData`]),
+        uvrm_description_history: Object.freeze([`${APP_CONFIG.storagePrefix}uvrmDescriptionHistory`]),
         file_builder: Object.freeze([`${APP_CONFIG.storagePrefix}fileBuilder`]),
         file_models: Object.freeze([`${APP_CONFIG.storagePrefix}fileModels`]),
         operational_preferences: Object.freeze([
@@ -47,7 +48,7 @@
     const DOCUMENTS_MIGRATION_KEY = `${APP_CONFIG.storagePrefix}online:documents426`;
     const DOCUMENTS_STRUCTURE_MIGRATION_KEY =
         `${APP_CONFIG.storagePrefix}online:documents4524`;
-    const SYNC_SCHEMA_VERSION = 12;
+    const SYNC_SCHEMA_VERSION = 13;
     const CONFLICT_TOLERANCE_MS = 2500;
 
     let client = null;
@@ -196,6 +197,74 @@
 
     function snapshotsEqual(rows) {
         return stableStringify(localSnapshotObject()) === stableStringify(remoteSnapshotObject(rows));
+    }
+
+    const UVRM_DESCRIPTION_HISTORY_GROUP = "uvrm_description_history";
+    const UVRM_DESCRIPTION_HISTORY_KEY = `${APP_CONFIG.storagePrefix}uvrmDescriptionHistory`;
+    const UVRM_DESCRIPTION_HISTORY_LIMIT = 30;
+
+    function parseUvrmDescriptionHistory(raw) {
+        try {
+            const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
+            return Array.isArray(parsed)
+                ? parsed.map((value) => String(value || "").trim().replace(/\s+/g, " ")).filter(Boolean)
+                : [];
+        } catch {
+            return [];
+        }
+    }
+
+    function mergeUvrmDescriptionLists(primary, secondary) {
+        const result = [];
+        const seen = new Set();
+        [...primary, ...secondary].forEach((description) => {
+            const value = String(description || "").trim().replace(/\s+/g, " ");
+            const key = value.toLocaleLowerCase("pt-BR");
+            if (!value || seen.has(key)) return;
+            seen.add(key);
+            result.push(value);
+        });
+        return result.slice(0, UVRM_DESCRIPTION_HISTORY_LIMIT);
+    }
+
+    async function mergeUvrmDescriptionHistory(rows) {
+        if (!session?.user) return rows;
+
+        const remoteRow = rows.find((row) => row.data_type === UVRM_DESCRIPTION_HISTORY_GROUP);
+        const localList = parseUvrmDescriptionHistory(safeGet(UVRM_DESCRIPTION_HISTORY_KEY, "[]"));
+        const remoteList = parseUvrmDescriptionHistory(remoteRow?.content?.[UVRM_DESCRIPTION_HISTORY_KEY] ?? "[]");
+        if (!localList.length && !remoteList.length) return rows;
+
+        const localChanged = Boolean(readLocalGroupChanges()[UVRM_DESCRIPTION_HISTORY_GROUP]);
+        const merged = localChanged
+            ? mergeUvrmDescriptionLists(localList, remoteList)
+            : mergeUvrmDescriptionLists(remoteList, localList);
+        const serialized = JSON.stringify(merged);
+        safeSet(UVRM_DESCRIPTION_HISTORY_KEY, serialized);
+
+        const remoteSerialized = JSON.stringify(remoteList);
+        if (!remoteRow || serialized !== remoteSerialized) {
+            const updatedAt = nowIso();
+            const saved = await saveUserDataRows([{
+                user_id: session.user.id,
+                data_type: UVRM_DESCRIPTION_HISTORY_GROUP,
+                content: { [UVRM_DESCRIPTION_HISTORY_KEY]: serialized },
+                version: SYNC_SCHEMA_VERSION,
+                updated_at: updatedAt
+            }]);
+            const savedRow = saved?.[0] || {
+                data_type: UVRM_DESCRIPTION_HISTORY_GROUP,
+                content: { [UVRM_DESCRIPTION_HISTORY_KEY]: serialized },
+                version: SYNC_SCHEMA_VERSION,
+                updated_at: updatedAt
+            };
+            rows = rows.filter((row) => row.data_type !== UVRM_DESCRIPTION_HISTORY_GROUP);
+            rows.push(savedRow);
+        } else if (remoteRow) {
+            remoteRow.content = { ...(remoteRow.content || {}), [UVRM_DESCRIPTION_HISTORY_KEY]: serialized };
+        }
+
+        return rows;
     }
 
     function documentTemplatesCount(content = collectGroup(SYNC_GROUPS.documents)) {
@@ -485,7 +554,8 @@
             "renderDashboardFavorites",
             "refreshUsageViews",
             "updateDashboardLastToolHighlight",
-            "refreshDocumentCentral"
+            "refreshDocumentCentral",
+            "refreshUvrmDescriptionSuggestions"
         ];
         refreshers.forEach((name) => {
             if (typeof window[name] === "function") {
@@ -641,6 +711,7 @@
         // e também mudou no backend depois da última sincronização.
         // Alterações em grupos independentes não devem abrir o modal.
         return Object.keys(SYNC_GROUPS).some((group) => {
+            if (group === UVRM_DESCRIPTION_HISTORY_GROUP) return false;
             if (stableStringify(localSnapshot[group] || {}) === stableStringify(remoteSnapshot[group] || {})) {
                 return false;
             }
@@ -755,6 +826,7 @@
             rows = await ensureFileBuilderGroup(rows);
             rows = await ensureFileModelsGroup(rows);
             rows = await ensureFormDataGroup(rows);
+            rows = await mergeUvrmDescriptionHistory(rows);
             if (!rows.length) {
                 syncInProgress = false;
                 return pushLocalData({ silent, force: true });
@@ -883,6 +955,7 @@
             rows = await ensureFileBuilderGroup(rows);
             rows = await ensureFileModelsGroup(rows);
             rows = await ensureFormDataGroup(rows);
+            rows = await mergeUvrmDescriptionHistory(rows);
             if (rows.length && snapshotsEqual(rows)) {
                 const remoteAt = latestRemoteTimestamp(rows);
                 const syncedAt = remoteAt ? new Date(remoteAt).toISOString() : nowIso();

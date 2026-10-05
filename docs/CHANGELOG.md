@@ -1,3 +1,12 @@
+## 4.6.9 DEV — Histórico recente de descrições da UVRM
+
+- Sincroniza `uvrmDescriptionHistory` em grupo próprio (`uvrm_description_history`) pela sincronização normal, sem Realtime.
+- Combina os históricos local e online por união, preservando descrições existentes nos dois dispositivos.
+- Remove duplicidades sem diferenciar maiúsculas/minúsculas e mantém o limite de 30 descrições recentes.
+- Alterações locais recentes têm prioridade de ordem; ao apenas receber dados, a ordem online é preservada.
+- O grupo usa mesclagem automática e não abre conflito de sobrescrita para listas concorrentes.
+- Eleva o schema de sincronização para 13 e o schema local para 14.
+
 ## 4.6.8.3 DEV — Corrigir envio das preferências do CPF / CNPJ
 
 - Corrige a detecção da alteração de “Copiar automaticamente” e “Sem máscara” no mesmo navegador.

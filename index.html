@@ -1399,11 +1399,11 @@
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 4.6.8.3 DEV</h3>
+                        <h3>Novidades da 4.6.9 DEV</h3>
                         <ul>
-                            <li><strong>CPF / CNPJ:</strong> corrige o envio das preferências “Copiar automaticamente” e “Sem máscara”.</li>
-                            <li><strong>Sincronização:</strong> alterações nessas opções agora notificam diretamente o grupo de preferências operacionais.</li>
-                            <li><strong>Confiabilidade:</strong> a alteração é marcada como pendente imediatamente, sem depender apenas do observador periódico do armazenamento.</li>
+                            <li><strong>UVRM:</strong> o histórico recente de descrições passa a ser sincronizado entre dispositivos.</li>
+                            <li><strong>Mesclagem:</strong> históricos diferentes são unidos e deduplicados, sem sobrescrever silenciosamente a lista do outro dispositivo.</li>
+                            <li><strong>Escopo:</strong> mantém até 30 descrições; a lista atual de lançamentos da UVRM continua exclusivamente local.</li>
                         </ul>
                     </section>
                 </div>
@@ -1411,6 +1411,19 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline" id="aboutVersionHistory">
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.8.3 DEV</strong>
+                                    <span>Correção da sincronização do CPF / CNPJ</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <p>Corrige o disparo da sincronização das preferências “Copiar automaticamente” e “Sem máscara”.</p>
+                            </div>
+                        </article>
+
                         <article class="about-version-item">
                             <button class="about-version-toggle" type="button" aria-expanded="false">
                                 <span class="about-version-heading">

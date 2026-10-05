@@ -122,3 +122,11 @@ do upsert REST homologado no laboratório SuperDB v0.2.0.
 - Estabiliza a identidade dos históricos na sincronização offline/online.
 - Evita recriação do mesmo CPF/CNPJ válido em eventos sucessivos.
 - Mantém logs de diagnóstico DEV durante a homologação.
+
+
+## v4.6.9 DEV — Histórico recente de descrições UVRM
+
+- Sincroniza o histórico de descrições da UVRM em grupo próprio.
+- Faz união e deduplicação entre dispositivos, mantendo até 30 descrições.
+- Mantém `uvrmCurrentList` exclusivamente local.
+- Não utiliza Realtime e não exige alteração SQL.
