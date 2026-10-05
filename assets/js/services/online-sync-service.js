@@ -563,6 +563,27 @@
         return data || [];
     }
 
+    async function deleteSyncedFormData() {
+        if (!client || !session?.user) return false;
+        if (!navigator.onLine) {
+            notify("Sem conexão. Conecte-se para remover os dados preenchidos online.", "warning");
+            return false;
+        }
+        const { error } = await client.from("user_data")
+            .delete()
+            .eq("user_id", session.user.id)
+            .eq("data_type", "form_data");
+        if (error) throw error;
+        safeRemove(`${APP_CONFIG.storagePrefix}formData`);
+        resetWatchedSnapshot();
+        await writeSyncLog("success", 1, {
+            direction: "delete",
+            groups: ["form_data"],
+            reason: "save-fields-disabled"
+        });
+        return true;
+    }
+
     async function writeSyncLog(status, syncedItems, details = {}) {
         if (!session?.user) return;
         if (window.BACKEND_MIGRATION?.stage === "user-data") return;
@@ -697,6 +718,9 @@
                 applyGroup(row.content);
             }
         });
+        if (!isSyncGroupEnabled("form_data")) {
+            safeRemove(`${APP_CONFIG.storagePrefix}formData`);
+        }
         const syncedAt = nowIso();
         const remoteAt = latestRemoteTimestamp(rows);
         safeSet(LAST_SYNC_KEY, syncedAt);
@@ -1401,6 +1425,7 @@
 
         window.OnlineSyncService = Object.freeze({
             sync: synchronize,
+            deleteSyncedFormData,
             upload: pushLocalData,
             restore: pullRemoteData,
             ensureFreshSession: ensureFreshBackendSession,

@@ -1032,6 +1032,17 @@
                 <div class="generator-grid">
                     <section class="builder-panel">
                         <section class="settings-card">
+                            <h3>Dados preenchidos</h3>
+                            <p class="help-text">Controle se os campos persistentes podem ser salvos neste navegador e sincronizados com sua conta.</p>
+                            <label class="checkbox-row">
+                                <input id="salvarCampos" type="checkbox">
+                                Salvar dados preenchidos
+                            </label>
+                            <p class="help-text">Ao desativar, os dados preenchidos salvos localmente e online serão removidos. Preferências e históricos não são afetados.</p>
+                            <p id="salvarCamposStatus" class="feedback" aria-live="polite"></p>
+                        </section>
+
+                        <section class="settings-card">
                             <h3>Backup completo</h3><p class="help-text">Exporte todas as preferências, modelos, sequências e históricos para um arquivo JSON.</p>
                             <div class="actions"><button id="exportarBackup" class="primary">Exportar backup</button><label class="file-button secondary">Importar backup<input id="importarBackup" type="file" accept=".json,application/json"></label></div>
                             <p id="backupStatus" class="feedback" aria-live="polite"></p>
@@ -1388,12 +1399,12 @@
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 4.6.8 DEV</h3>
+                        <h3>Novidades da 4.6.8.1 DEV</h3>
                         <ul>
-                            <li><strong>Campos preenchidos:</strong> sincroniza os dados persistidos entre dispositivos.</li>
-                            <li><strong>Privacidade:</strong> o grupo <code>formData</code> só participa da sincronização quando salvar campos estiver habilitado.</li>
-                            <li><strong>Interface:</strong> campos recebidos online são restaurados automaticamente na tela.</li>
-                            <li><strong>Sincronização:</strong> mantém conflitos isolados por grupo e sem Realtime.</li>
+                            <li><strong>Configurações:</strong> adiciona a opção visível “Salvar dados preenchidos”.</li>
+                            <li><strong>Sincronização:</strong> campos persistentes só são enviados e restaurados quando a opção estiver habilitada.</li>
+                            <li><strong>Privacidade:</strong> ao desativar, os dados preenchidos salvos localmente e online são removidos.</li>
+                            <li><strong>Controle:</strong> preferências, históricos e demais dados sincronizados não são afetados.</li>
                         </ul>
                     </section>
                 </div>
@@ -1404,13 +1415,13 @@
                         <article class="about-version-item">
                             <button class="about-version-toggle" type="button" aria-expanded="false">
                                 <span class="about-version-heading">
-                                    <strong>4.6.8 DEV</strong>
-                                    <span>Campos preenchidos sincronizados</span>
+                                    <strong>4.6.8.1 DEV</strong>
+                                    <span>Dados preenchidos opcionais e sincronizados</span>
                                 </span>
                                 <span class="about-version-chevron" aria-hidden="true">⌄</span>
                             </button>
-                            <div class="about-version-details">
-                                <p>Sincroniza formData somente quando a persistência de campos estiver habilitada.</p>
+                            <div class="about-version-details" hidden>
+                                <p>Adiciona controle visível para salvar e sincronizar campos persistentes e remove os dados armazenados quando a opção é desativada.</p>
                             </div>
                         </article>
 

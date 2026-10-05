@@ -192,6 +192,46 @@ $("#importarBackup").addEventListener("change", async (event) => {
     }
 });
 
+
+const saveFieldsToggle = $("#salvarCampos");
+const saveFieldsStatus = $("#salvarCamposStatus");
+
+if (saveFieldsToggle) {
+    saveFieldsToggle.checked = shouldSaveFields();
+    saveFieldsToggle.addEventListener("change", async () => {
+        const enabled = saveFieldsToggle.checked;
+        localStorage.setItem(SAVE_FIELDS_KEY, enabled ? "true" : "false");
+
+        try {
+            if (enabled) {
+                saveFormData();
+                if (saveFieldsStatus) saveFieldsStatus.textContent = "Dados preenchidos habilitados para salvamento e sincronização.";
+                await window.OnlineSyncService?.sync?.({ silent: true });
+                showToast("Salvamento dos dados preenchidos ativado.");
+                return;
+            }
+
+            localStorage.removeItem(FORM_DATA_KEY);
+            if (saveFieldsStatus) saveFieldsStatus.textContent = "Removendo dados preenchidos salvos...";
+            const removedOnline = await window.OnlineSyncService?.deleteSyncedFormData?.();
+            await window.OnlineSyncService?.sync?.({ silent: true });
+            if (saveFieldsStatus) {
+                saveFieldsStatus.textContent = removedOnline === false
+                    ? "Dados locais removidos. A remoção online requer conexão."
+                    : "Dados preenchidos locais e online removidos.";
+            }
+            showToast("Salvamento dos dados preenchidos desativado.");
+        } catch (error) {
+            if (saveFieldsStatus) {
+                saveFieldsStatus.textContent = "Não foi possível concluir a atualização online. Tente novamente conectado.";
+                saveFieldsStatus.classList.add("error");
+            }
+            window.ErrorHandler?.report(error, "Configuração de dados preenchidos", { silent: true });
+            showToast("A configuração foi salva localmente, mas a atualização online falhou.");
+        }
+    });
+}
+
 $("#executarLimpezaSeletiva").addEventListener("click", async () => {
     const clearModels = $("#limparModelosArquivos").checked;
     const clearFields = $("#limparPreferenciasCampos").checked;

@@ -135,6 +135,11 @@ function initializeApplication() {
 function refreshPersistedApplicationData() {
     migrateCompatibleStorageKeys();
 
+    const saveFieldsToggle = $("#salvarCampos");
+    if (saveFieldsToggle) {
+        saveFieldsToggle.checked = shouldSaveFields();
+    }
+
     const registrationAutoCopy = $("#inscricaoCopiaAutomatica");
     if (registrationAutoCopy) {
         registrationAutoCopy.checked =
