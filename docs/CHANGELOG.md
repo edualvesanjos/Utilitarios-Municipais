@@ -1,3 +1,10 @@
+## 4.6.9.2 DEV — Separar descrição atual do histórico UVRM
+
+- Remove `uvrmDescricao` dos campos persistidos em `formData`.
+- Mantém a descrição recente sincronizada apenas no histórico próprio da UVRM.
+- Impede que uma descrição antiga ainda presente em `formData` remoto seja restaurada no campo.
+- Preserva o seletor próprio e a união + deduplicação do histórico entre dispositivos.
+
 ## 4.6.9.1 DEV — Seletor de descrições UVRM compatível
 
 - Substitui o `datalist` nativo por um seletor próprio de descrições recentes.
