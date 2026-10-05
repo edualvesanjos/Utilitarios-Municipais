@@ -25,6 +25,11 @@
     let current = "";
     let lastAuto = "";
 
+    autoCopy.checked = localStorage.getItem(DOCUMENT_FISCAL_AUTO_COPY_KEY) === "true";
+    if (noMask) {
+        noMask.checked = localStorage.getItem(DOCUMENT_FISCAL_NO_MASK_KEY) === "true";
+    }
+
     function escapeDocumentHtml(value) {
         return String(value ?? "")
             .replace(/&/g, "&amp;")
@@ -456,11 +461,6 @@
         });
 
         input.value = "";
-        autoCopy.checked = false;
-
-        if (noMask) {
-            noMask.checked = false;
-        }
 
         current = "";
         lastAuto = "";
@@ -498,6 +498,7 @@
     });
 
     autoCopy.addEventListener("change", () => {
+        localStorage.setItem(DOCUMENT_FISCAL_AUTO_COPY_KEY, String(autoCopy.checked));
         lastAuto = "";
 
         if (autoCopy.checked) {
@@ -506,6 +507,7 @@
     });
 
     noMask?.addEventListener("change", () => {
+        localStorage.setItem(DOCUMENT_FISCAL_NO_MASK_KEY, String(noMask.checked));
         lastAuto = "";
         update();
     });

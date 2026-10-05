@@ -1,3 +1,10 @@
+## 4.6.8.2 DEV — Preferências do CPF / CNPJ sincronizadas
+
+- Persiste e sincroniza “Copiar automaticamente” e “Sem máscara” como preferências operacionais.
+- Restaura as duas opções após recarregar a aplicação ou receber dados remotos.
+- O botão “Limpar” passa a limpar somente os dados do módulo, preservando essas preferências.
+- Eleva o schema de sincronização para 12.
+
 ## 4.6.8.1 DEV — Dados preenchidos opcionais e sincronizados
 
 - Adiciona em Configurações a opção visível “Salvar dados preenchidos”.
