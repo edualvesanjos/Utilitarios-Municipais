@@ -124,6 +124,13 @@ do upsert REST homologado no laboratório SuperDB v0.2.0.
 - Mantém logs de diagnóstico DEV durante a homologação.
 
 
+
+## v4.6.9.1 DEV — Seletor de descrições UVRM
+
+- Seletor próprio para descrições recentes, sem dependência de `datalist`.
+- Compatibilidade consistente entre Firefox, Edge e Chrome.
+- Descrição restaurada não impede abrir e escolher outras opções.
+
 ## v4.6.9 DEV — Histórico recente de descrições UVRM
 
 - Sincroniza o histórico de descrições da UVRM em grupo próprio.

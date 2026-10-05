@@ -1,3 +1,10 @@
+## 4.6.9.1 DEV — Seletor de descrições UVRM compatível
+
+- Substitui o `datalist` nativo por um seletor próprio de descrições recentes.
+- Mantém o campo livre para digitação e permite abrir o histórico mesmo quando há uma descrição restaurada.
+- Uniformiza a seleção de descrições entre Firefox, Edge e Chrome.
+- Preserva a sincronização por união + deduplicação implementada na 4.6.9.
+
 ## 4.6.9 DEV — Histórico recente de descrições da UVRM
 
 - Sincroniza `uvrmDescriptionHistory` em grupo próprio (`uvrm_description_history`) pela sincronização normal, sem Realtime.

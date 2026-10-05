@@ -47,14 +47,32 @@ function getUvrmDescriptionHistory() {
         : [];
 }
 
+function setUvrmDescriptionPickerOpen(open) {
+    const list = $("#uvrmDescricaoSugestoes");
+    const input = $("#uvrmDescricao");
+    const toggle = $("#uvrmDescricaoAbrir");
+    if (!list || !input || !toggle) return;
+    const hasOptions = list.childElementCount > 0;
+    const shouldOpen = Boolean(open && hasOptions);
+    list.hidden = !shouldOpen;
+    input.setAttribute("aria-expanded", String(shouldOpen));
+    toggle.setAttribute("aria-expanded", String(shouldOpen));
+}
+
 function renderUvrmDescriptionSuggestions() {
     const list = $("#uvrmDescricaoSugestoes");
     if (!list) return;
-    list.replaceChildren(...getUvrmDescriptionHistory().map(description => {
-        const option = document.createElement("option");
-        option.value = description;
+    const history = getUvrmDescriptionHistory();
+    list.replaceChildren(...history.map(description => {
+        const option = document.createElement("button");
+        option.type = "button";
+        option.className = "uvrm-description-option";
+        option.setAttribute("role", "option");
+        option.dataset.description = description;
+        option.textContent = description;
         return option;
     }));
+    if (!history.length) setUvrmDescriptionPickerOpen(false);
 }
 window.refreshUvrmDescriptionSuggestions = renderUvrmDescriptionSuggestions;
 
@@ -286,7 +304,51 @@ function renderUvrmHistory() {
 $("#uvrmTipoLancamento").addEventListener("change", updateUvrmTypeInterface);
 $("#uvrmValorLancamento").addEventListener("input", calculateUvrmPreview);
 $("#uvrmMultiplicador").addEventListener("input", calculateUvrmPreview);
-$("#uvrmDescricao").addEventListener("input", calculateUvrmPreview);
+$("#uvrmDescricao").addEventListener("input", () => {
+    calculateUvrmPreview();
+    // Digitar continua livre; o histórico permanece acessível pelo botão ao lado.
+});
+$("#uvrmDescricao").addEventListener("focus", () => {
+    renderUvrmDescriptionSuggestions();
+});
+$("#uvrmDescricaoAbrir").addEventListener("click", () => {
+    renderUvrmDescriptionSuggestions();
+    setUvrmDescriptionPickerOpen($("#uvrmDescricaoSugestoes").hidden);
+});
+$("#uvrmDescricaoSugestoes").addEventListener("click", event => {
+    const option = event.target.closest(".uvrm-description-option");
+    if (!option) return;
+    $("#uvrmDescricao").value = option.dataset.description || option.textContent || "";
+    setUvrmDescriptionPickerOpen(false);
+    calculateUvrmPreview();
+    $("#uvrmDescricao").focus();
+});
+document.addEventListener("click", event => {
+    const picker = $("#uvrmDescricaoPicker");
+    if (picker && !picker.contains(event.target)) setUvrmDescriptionPickerOpen(false);
+});
+$("#uvrmDescricao").addEventListener("keydown", event => {
+    if (event.key === "ArrowDown" && $("#uvrmDescricaoSugestoes").hidden) {
+        event.preventDefault();
+        renderUvrmDescriptionSuggestions();
+        setUvrmDescriptionPickerOpen(true);
+        $("#uvrmDescricaoSugestoes .uvrm-description-option")?.focus();
+    }
+    if (event.key === "Escape") setUvrmDescriptionPickerOpen(false);
+});
+$("#uvrmDescricaoSugestoes").addEventListener("keydown", event => {
+    const options = [...document.querySelectorAll("#uvrmDescricaoSugestoes .uvrm-description-option")];
+    const index = options.indexOf(document.activeElement);
+    if (event.key === "ArrowDown" && options.length) {
+        event.preventDefault(); options[(index + 1) % options.length].focus();
+    }
+    if (event.key === "ArrowUp" && options.length) {
+        event.preventDefault(); options[(index - 1 + options.length) % options.length].focus();
+    }
+    if (event.key === "Escape") {
+        setUvrmDescriptionPickerOpen(false); $("#uvrmDescricao").focus();
+    }
+});
 function persistUvrmPreferences() {
     localStorage.setItem(UVRM_VALUE_KEY, $("#uvrmValorUnitario").value);
     localStorage.setItem(UVRM_DECIMALS_KEY, $("#uvrmCasas").value);
