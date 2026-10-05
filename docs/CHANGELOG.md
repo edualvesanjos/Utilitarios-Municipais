@@ -1,3 +1,12 @@
+## 4.6.10 DEV — Recuperação de senha e seleção rápida de campos
+
+- Implementa o fluxo completo “Esqueci minha senha” com a API de autenticação do SuperDB.
+- Envia uma URL absoluta de retorno e trata os erros de URL não cadastrada exibindo o endereço que deve ser autorizado no painel.
+- Ao abrir o link recebido por e-mail, exibe a tela para definir e confirmar a nova senha e consome o token de recuperação.
+- Padroniza a URL de confirmação de cadastro com a mesma URL de retorno da autenticação.
+- Adiciona seleção de todo o conteúdo por duplo clique nos campos Nome, Processo e Prefixo do gerador de nome de arquivo.
+- Não altera o banco de dados nem exige SQL novo.
+
 ## 4.6.9.3 DEV — Separar valor atual da UVRM do formulário
 
 - Remove `uvrmValorLancamento` dos campos persistidos em `formData`.
