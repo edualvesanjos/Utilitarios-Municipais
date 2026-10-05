@@ -927,6 +927,13 @@
         syncTimer = setTimeout(() => synchronize({ silent: true }), 1800);
     }
 
+    function notifyLocalGroupChange(group) {
+        if (!SYNC_GROUPS[group] || applyingRemote || !session?.user) return;
+        markLocalGroupChanges([group]);
+        resetWatchedSnapshot();
+        scheduleAutoSync(true);
+    }
+
     function formatDate(value) {
         if (!value) return "Nunca";
         const date = new Date(value);
@@ -1437,7 +1444,8 @@
             getSession: () => session,
             getGroups: () => Object.keys(SYNC_GROUPS),
             hasPendingChanges,
-            hasConflict
+            hasConflict,
+            notifyLocalGroupChange
         });
 
         if (session?.user) {               

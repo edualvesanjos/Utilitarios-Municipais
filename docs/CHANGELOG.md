@@ -1,3 +1,10 @@
+## 4.6.8.3 DEV — Corrigir envio das preferências do CPF / CNPJ
+
+- Corrige a detecção da alteração de “Copiar automaticamente” e “Sem máscara” no mesmo navegador.
+- Notifica diretamente o serviço de sincronização quando essas opções são alteradas.
+- Marca `operational_preferences` como pendente imediatamente e agenda a sincronização automática.
+- Mantém o observador genérico do armazenamento como mecanismo complementar.
+
 ## 4.6.8.2 DEV — Preferências do CPF / CNPJ sincronizadas
 
 - Persiste e sincroniza “Copiar automaticamente” e “Sem máscara” como preferências operacionais.
