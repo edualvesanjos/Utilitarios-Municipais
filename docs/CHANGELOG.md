@@ -1,3 +1,10 @@
+## 4.6.9.3 DEV — Separar valor atual da UVRM do formulário
+
+- Remove `uvrmValorLancamento` dos campos persistidos em `formData`.
+- Mantém `uvrmValorUnitario` e `uvrmCasas` como configurações persistentes da UVRM.
+- Impede que um valor de lançamento antigo ainda presente em `formData` remoto seja restaurado no campo.
+- Preserva o histórico sincronizado de descrições e o seletor compatível entre navegadores.
+
 ## 4.6.9.2 DEV — Separar descrição atual do histórico UVRM
 
 - Remove `uvrmDescricao` dos campos persistidos em `formData`.

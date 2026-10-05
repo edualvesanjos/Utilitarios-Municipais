@@ -1404,13 +1404,12 @@
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 4.6.9.2 DEV</h3>
+                        <h3>Novidades da 4.6.9.3 DEV</h3>
                         <ul>
-                            <li><strong>UVRM:</strong> o histórico recente de descrições permanece sincronizado entre dispositivos.</li>
-                            <li><strong>Descrição:</strong> o valor atual não é mais restaurado por “Salvar dados preenchidos”; somente o histórico de opções é sincronizado.</li>
-                            <li><strong>Compatibilidade:</strong> a seleção de descrições recentes usa um seletor próprio, consistente entre Firefox, Edge e Chrome.</li>
-                            <li><strong>Mesclagem:</strong> históricos diferentes são unidos e deduplicados, sem sobrescrever silenciosamente a lista do outro dispositivo.</li>
-                            <li><strong>Escopo:</strong> mantém até 30 descrições; a lista atual de lançamentos da UVRM continua exclusivamente local.</li>
+                            <li><strong>UVRM:</strong> o valor do lançamento atual não é mais restaurado por “Salvar dados preenchidos”.</li>
+                            <li><strong>Configurações:</strong> Valor unitário e Casas decimais continuam persistentes e sincronizados normalmente.</li>
+                            <li><strong>Descrição:</strong> permanece fora do formulário persistente e disponível pelo histórico sincronizado.</li>
+                            <li><strong>Compatibilidade:</strong> o seletor próprio de descrições continua consistente entre Firefox, Edge e Chrome.</li>
                         </ul>
                     </section>
                 </div>
@@ -1418,6 +1417,22 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline" id="aboutVersionHistory">
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.9.2 DEV</strong>
+                                    <span>Descrição UVRM separada do formulário</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-content" hidden>
+                                <ul>
+                                    <li>Remove a descrição atual da UVRM do formData e mantém somente o histórico sincronizado.</li>
+                                    <li>Versão substituída pela 4.6.9.3 para aplicar o mesmo conceito ao valor do lançamento.</li>
+                                </ul>
+                            </div>
+                        </article>
+
                         <article class="about-version-item">
                             <button class="about-version-toggle" type="button" aria-expanded="false">
                                 <span class="about-version-heading">

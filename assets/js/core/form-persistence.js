@@ -10,7 +10,6 @@ const persistentFieldIds = [
     "uvrmValorUnitario",
     "uvrmCasas",
     "uvrmTipoLancamento",
-    "uvrmValorLancamento",
     "percentualModo",
     "percentualValor1",
     "percentualValor2"
