@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0f4c81">
     <title>Utilitários Municipais</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%232563eb'/><text x='32' y='42' text-anchor='middle' font-family='Arial' font-size='34' font-weight='bold' fill='white'>UM</text></svg>">
+    <link rel="icon" href="assets/icons/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="assets/css/base.css">
     <link rel="stylesheet" href="assets/css/components.css">
@@ -632,23 +635,23 @@
                             </div>
                         </div>
 
-                        <div class="preview-card">
-                            <span>Pré-visualização</span>
+                        <div class="lot-preview-compact">
+                            <span>Conferência antes de gerar</span>
                             <strong id="lotePreview">9999900004</strong>
                         </div>
 
-                        <div class="actions">
+                        <div class="actions lot-generate-actions">
                             <button id="gerarLotes" class="primary">Gerar lote(s)</button>
-                            <button id="baixarLotesTxt" class="secondary">Baixar TXT</button>
-                            <button id="limparLotes" class="secondary">Limpar resultado</button>
                         </div>
 
-                        <div class="result-box">
-                            <span>Resultado</span>
+                        <div class="result-box lot-result-box">
+                            <span>Resultado gerado</span>
                             <pre id="loteResultado">—</pre>
                         </div>
 
-                        <div class="actions">
+                        <div class="actions lot-result-actions">
+                            <button id="baixarLotesTxt" class="secondary">Baixar TXT</button>
+                            <button id="limparLotes" class="secondary">Limpar resultado</button>
                             <button id="reiniciarSequenciaLotes" class="danger-outline">Reiniciar sequência</button>
                         </div>
 
@@ -1029,6 +1032,17 @@
                 <div class="generator-grid">
                     <section class="builder-panel">
                         <section class="settings-card">
+                            <h3>Dados preenchidos</h3>
+                            <p class="help-text">Controle se os campos persistentes podem ser salvos neste navegador e sincronizados com sua conta.</p>
+                            <label class="checkbox-row">
+                                <input id="salvarCampos" type="checkbox">
+                                Salvar dados preenchidos
+                            </label>
+                            <p class="help-text">Ao desativar, os dados preenchidos salvos localmente e online serão removidos. Preferências e históricos não são afetados.</p>
+                            <p id="salvarCamposStatus" class="feedback" aria-live="polite"></p>
+                        </section>
+
+                        <section class="settings-card">
                             <h3>Backup completo</h3><p class="help-text">Exporte todas as preferências, modelos, sequências e históricos para um arquivo JSON.</p>
                             <div class="actions"><button id="exportarBackup" class="primary">Exportar backup</button><label class="file-button secondary">Importar backup<input id="importarBackup" type="file" accept=".json,application/json"></label></div>
                             <p id="backupStatus" class="feedback" aria-live="polite"></p>
@@ -1385,11 +1399,12 @@
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 4.6.2.1</h3>
+                        <h3>Novidades da 4.6.8.1 DEV</h3>
                         <ul>
-                            <li><strong>Renovação serializada:</strong> impede chamadas concorrentes de refresh da sessão SuperDB.</li>
-                            <li><strong>Refresh token:</strong> evita a condição de corrida que pode causar <code>refresh_token_reuse</code> e revogar a sessão.</li>
-                            <li><strong>Teste prolongado:</strong> prepara nova rodada de validação do Realtime e da autenticação.</li>
+                            <li><strong>Configurações:</strong> adiciona a opção visível “Salvar dados preenchidos”.</li>
+                            <li><strong>Sincronização:</strong> campos persistentes só são enviados e restaurados quando a opção estiver habilitada.</li>
+                            <li><strong>Privacidade:</strong> ao desativar, os dados preenchidos salvos localmente e online são removidos.</li>
+                            <li><strong>Controle:</strong> preferências, históricos e demais dados sincronizados não são afetados.</li>
                         </ul>
                     </section>
                 </div>
@@ -1397,6 +1412,94 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline" id="aboutVersionHistory">
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.8.1 DEV</strong>
+                                    <span>Dados preenchidos opcionais e sincronizados</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <p>Adiciona controle visível para salvar e sincronizar campos persistentes e remove os dados armazenados quando a opção é desativada.</p>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.7.2 DEV</strong>
+                                    <span>Concorrência e interface de Lotes</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details">
+                                <p>Trata explicitamente conflitos de sequência entre dispositivos e reorganiza a área de geração e resultado.</p>
+                            </div>
+                        </article>
+
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.7 DEV</strong>
+                                    <span>Sequência de Lotes sincronizada</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid"><section><h4>Resumo</h4><p>Sincroniza a sequência de Lotes em tabela própria, preserva alterações manuais para números menores, protege concorrência por revisão e corrige o reinício para 00001.</p></section></div>
+                            </div>
+                        </article>
+                        
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.6 DEV</strong>
+                                    <span>Modelos do Nome de arquivo sincronizados</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid"><section><h4>Resumo</h4><p>Sincroniza fileModels em grupo próprio, atualiza a lista após dados remotos e preserva a detecção de conflitos por grupo.</p></section></div>
+                            </div>
+                        </article>
+                        
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.5 DEV</strong>
+                                    <span>Montador de arquivo sincronizado e favicons</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid"><section><h4>Resumo</h4><p>Sincroniza o fileBuilder em grupo próprio, preservando conflitos por grupo, e incorpora a família de favicons do sistema.</p></section></div>
+                            </div>
+                        </article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.4.1 DEV</strong>
+                                    <span>Correção de falso conflito entre grupos</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid"><section><h4>Resumo</h4><p>A detecção de conflito passa a considerar concorrência no mesmo grupo, evitando que uma preferência operacional gere conflito por atualização independente de outro grupo.</p></section></div>
+                            </div>
+                        </article>
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.4 DEV</strong>
+                                    <span>Preferências operacionais sincronizadas</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details" hidden>
+                                <div class="about-version-detail-grid"><section><h4>Resumo</h4><p>Sincroniza cinco preferências operacionais em grupo próprio, sem Realtime, e corrige a chave de tema usada pelo atalho do Dashboard.</p></section></div>
+                            </div>
+                        </article>
                         <article class="about-version-item">
                             <button class="about-version-toggle" type="button" aria-expanded="false">
                                 <span class="about-version-heading">
@@ -2558,6 +2661,7 @@
     <script src="assets/js/services/storage-service.js"></script>
     <script src="assets/js/services/history-service.js"></script>
     <script src="assets/js/services/online-sync-service.js"></script>
+    <script src="assets/js/services/lot-sequence-service.js"></script>
     <script src="assets/js/core/sidebar-45.js"></script>
     <script src="assets/js/core/about-history-45.js"></script>
     <script src="assets/js/core/storage.js"></script>

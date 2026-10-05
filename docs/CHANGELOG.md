@@ -1,3 +1,62 @@
+## 4.6.8.1 DEV — Dados preenchidos opcionais e sincronizados
+
+- Adiciona em Configurações a opção visível “Salvar dados preenchidos”.
+- Sincroniza `formData` somente quando a opção estiver habilitada.
+- Ao desativar, remove os dados preenchidos locais e o grupo `form_data` armazenado online.
+- Impede que `formData` remoto seja aplicado quando a preferência estiver desabilitada.
+- Mantém preferências, históricos e demais grupos de sincronização independentes.
+
+## 4.6.7.2 DEV — Concorrência e interface de Lotes
+
+- Exibe decisão explícita quando outro dispositivo alterou a sequência antes da geração.
+- Permite manter o estado online ou, por confirmação do usuário, aplicar a sequência local mesmo quando ela for menor.
+- Mantém trava por `revision` para impedir uma segunda sobrescrita concorrente silenciosa.
+- Reorganiza a tela de Lotes no fluxo configurar → conferir → gerar → resultado → baixar/limpar.
+- Dá destaque ao resultado efetivamente gerado e reduz o peso visual da conferência prévia.
+- Preserva o reinício correto da sequência em `00001`.
+
+## 4.6.7.1 DEV — Corrigir SQL da sequência de Lotes
+
+- Remove a chave estrangeira para `auth.users`, relação não exposta pelo SuperDB.
+- Mantém `user_id` como chave primária e as políticas RLS com `auth.uid()`.
+- Preserva a sincronização da sequência e o reinício correto em `00001`.
+
+## 4.6.7 DEV — Sequência de Lotes sincronizada
+
+- Cria `lot_sequence_state` para sincronizar o estado atual da sequência de Lotes separadamente de `user_data`.
+- Mantém `history_entries` como histórico dos lotes gerados, sem duplicar registros.
+- Permite aumentar ou reduzir manualmente a sequência; uma redução válida não é tratada como conflito.
+- Usa `revision` para impedir sobrescrita silenciosa quando dois dispositivos partem de estados diferentes.
+- Mantém funcionamento local quando offline e tenta consolidar o estado no próximo sincronismo.
+- Corrige a Limpeza seletiva para reiniciar a sequência em `00001` (estado interno `0`), em vez de `00004`.
+
+## 4.6.6 DEV — Modelos do Nome de arquivo
+
+- Sincroniza `fileModels` em grupo próprio (`file_models`) pela sincronização normal, sem Realtime.
+- Preserva criação, aplicação e remoção dos modelos salvos entre dispositivos.
+- Atualiza a lista de modelos na interface após receber dados remotos.
+- Mantém a detecção de conflitos por grupo e eleva o schema de sincronização para 10.
+
+## 4.6.5 DEV — Montador de arquivo e favicons
+
+- Sincroniza `fileBuilder` em grupo próprio (`file_builder`), incluindo blocos habilitados, ordem e separador.
+- Atualiza a interface do montador após receber dados remotos, mantendo a detecção de conflitos por grupo e sem Realtime.
+- Adiciona favicons 16, 32 e 48 px, `favicon.ico`, Apple Touch Icon 180 px e ícones PWA 192/512 px.
+- Atualiza `manifest.json` e `index.html` para usar a nova identidade visual.
+
+## 4.6.4.1 DEV — Corrigir falso conflito entre grupos
+- Corrige a detecção de conflitos para comparar alterações concorrentes por grupo de sincronização.
+- Uma preferência operacional alterada localmente não entra mais em conflito apenas porque outro grupo foi atualizado no backend.
+- Preserva o modal quando o mesmo grupo tiver alterações locais e remotas posteriores à última sincronização.
+- Mantém sem alterações o escopo de dados sincronizados da v4.6.4 DEV.
+
+## 4.6.4 DEV — Preferências operacionais sincronizadas
+- Adiciona o grupo `operational_preferences` à sincronização normal sem Realtime.
+- Sincroniza remoção de pontos do Nome de arquivo, cópia automática da Inscrição, valor e casas decimais da UVRM e ordenação da Central de Documentos.
+- Atualiza os controles visuais após aplicar dados remotos.
+- Corrige o atalho de tema do Dashboard para usar a chave canônica já sincronizada.
+- Mantém modelos, construtor de arquivo, sequência de lotes, campos persistidos e descrições UVRM fora desta etapa.
+
 ## 4.6.2.4 DEV
 - PROD deixa de depender do `.env` para a Anon Key pública.
 - DEV mantém compatibilidade com `VITE_SUPERDB_ANON_KEY` do homolog.

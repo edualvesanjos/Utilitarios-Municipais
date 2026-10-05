@@ -1,4 +1,4 @@
-const APP_VERSION = "4.6.3";
+const APP_VERSION = "4.6.8.1";
 window.APP_VERSION = APP_VERSION;
 
 /*
@@ -38,7 +38,7 @@ const APP_CONFIG = Object.freeze({
     debug: APP_ENVIRONMENT === "development"
 });
 
-/* v4.6.3 DEV — sincronização SuperDB sem Realtime; ambientes e sessões permanecem isolados.
+/* v4.6.3 PROD — sincronização SuperDB sem Realtime; ambientes e sessões permanecem isolados.
  * A troca DEV/PROD é controlada exclusivamente por APP_ENVIRONMENT.
  * Projeto/schema não podem mais ser sobrescritos por VITE_SUPERDB_PROJECT.
  */

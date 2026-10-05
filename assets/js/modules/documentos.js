@@ -1380,6 +1380,9 @@
     }
 
     function refreshFromStorage() {
+        const order = $("#documentOrder");
+        if (order) order.value = getSortOrder();
+
         const templates = allTemplates();
         const selected = templates.find((item) => item.id === selectedId);
 
