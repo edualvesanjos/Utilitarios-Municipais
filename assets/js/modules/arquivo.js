@@ -418,6 +418,11 @@ $("#limparModelosArquivo").addEventListener("click", () => {
     const field = document.getElementById(id);
 
     field.addEventListener("input", updateFilePreview);
+    if (["arquivoNome", "arquivoProcesso", "arquivoPrefixo"].includes(id)) {
+        field.addEventListener("dblclick", () => {
+            if (field.value) field.select();
+        });
+    }
     field.addEventListener("change", () => {
         if (id === "arquivoAnaliseProjeto") {
             toggleBlockFromOption("ap", field.checked);
