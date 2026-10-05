@@ -139,7 +139,7 @@ do upsert REST homologado no laboratório SuperDB v0.2.0.
 - Não utiliza Realtime e não exige alteração SQL.
 
 
-## v4.6.10 DEV — Recuperação de senha e melhoria de edição
+## v4.6.10.1 DEV — Correção da redefinição de senha
 
 - “Esqueci minha senha” envia recuperação pelo SuperDB e abre a tela de definição da nova senha no retorno do e-mail.
 - A URL enviada ao SuperDB é a raiz absoluta da publicação atual e precisa estar cadastrada em Autenticação → URLs de redirecionamento.
