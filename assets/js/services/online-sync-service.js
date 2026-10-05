@@ -1219,27 +1219,42 @@
         return new URL("./", window.location.href).href;
     }
 
-    async function superDbPasswordRequest(path, body) {
+    async function superDbPasswordRequest(path, body, { timeoutMs = 15000 } = {}) {
         const cfg = window.BACKEND_MIGRATION?.superdb || {};
         if (!cfg.authUrl || !cfg.project) throw new Error("Configuração SuperDB incompleta.");
-        const response = await fetch(`${cfg.authUrl}${path}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-SuperDB-Project": cfg.project
-            },
-            body: JSON.stringify(body)
-        });
-        let payload = {};
-        try { payload = await response.json(); } catch (_) {}
-        if (!response.ok) {
-            const code = payload?.error?.code || payload?.code || "";
-            const message = payload?.error?.message || payload?.message || "Não foi possível concluir a solicitação.";
-            const error = new Error(message);
-            error.code = code;
+        const controller = new AbortController();
+        const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
+        try {
+            const response = await fetch(`${cfg.authUrl}${path}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-SuperDB-Project": cfg.project
+                },
+                body: JSON.stringify(body),
+                signal: controller.signal
+            });
+            let payload = {};
+            try { payload = await response.json(); } catch (_) {}
+            if (!response.ok) {
+                const code = payload?.error?.code || payload?.code || "";
+                const message = payload?.error?.message || payload?.message || `Não foi possível concluir a solicitação (${response.status}).`;
+                const error = new Error(message);
+                error.code = code;
+                error.status = response.status;
+                throw error;
+            }
+            return payload;
+        } catch (error) {
+            if (error?.name === "AbortError") {
+                const timeoutError = new Error("O SuperDB não respondeu à atualização da senha. Tente novamente.");
+                timeoutError.code = "auth_timeout";
+                throw timeoutError;
+            }
             throw error;
+        } finally {
+            window.clearTimeout(timeoutId);
         }
-        return payload;
     }
 
     async function requestPasswordRecovery(email) {
@@ -1271,8 +1286,8 @@
                 <span class="eyebrow">Recuperação de acesso</span>
                 <h2 id="onlineNewPasswordTitle">Definir nova senha</h2>
                 <p class="help-text">Informe e confirme a nova senha da sua conta.</p>
-                <label>Nova senha<input id="onlineNewPassword" type="password" autocomplete="new-password" minlength="6" required></label>
-                <label>Confirmar nova senha<input id="onlineNewPasswordConfirm" type="password" autocomplete="new-password" minlength="6" required></label>
+                <label>Nova senha<input id="onlineNewPassword" type="password" autocomplete="new-password" minlength="8" required></label>
+                <label>Confirmar nova senha<input id="onlineNewPasswordConfirm" type="password" autocomplete="new-password" minlength="8" required></label>
                 <div class="actions"><button id="onlineSaveNewPassword" class="primary" type="button">Salvar nova senha</button></div>
                 <p id="onlineNewPasswordFeedback" class="feedback" aria-live="polite"></p>
             </div>`;
@@ -1282,7 +1297,7 @@
         const save = modal.querySelector("#onlineSaveNewPassword");
         const feedback = modal.querySelector("#onlineNewPasswordFeedback");
         save.addEventListener("click", async () => {
-            if (password.value.length < 6) { feedback.textContent = "A senha deve ter pelo menos 6 caracteres."; password.focus(); return; }
+            if (password.value.length < 8) { feedback.textContent = "A senha deve ter pelo menos 8 caracteres."; password.focus(); return; }
             if (password.value !== confirm.value) { feedback.textContent = "As senhas não conferem."; confirm.focus(); return; }
             save.disabled = true;
             feedback.textContent = "Atualizando senha...";

@@ -1,3 +1,10 @@
+## 4.6.10.1 DEV — Correção da redefinição de senha
+
+- Corrigido o fluxo de nova senha para não permanecer indefinidamente em “Atualizando senha...”.
+- Adicionado limite de espera de 15 segundos nas chamadas de recuperação, com mensagem explícita quando o SuperDB não responde.
+- Ajustada a validação da nova senha para o mínimo de 8 caracteres exigido pelo SuperDB.
+- Mantidos o fluxo de URL de retorno e a seleção rápida de campos introduzidos na 4.6.10.
+
 ## 4.6.10 DEV — Recuperação de senha e seleção rápida de campos
 
 - Implementa o fluxo completo “Esqueci minha senha” com a API de autenticação do SuperDB.
