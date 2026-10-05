@@ -499,6 +499,7 @@
 
     autoCopy.addEventListener("change", () => {
         localStorage.setItem(DOCUMENT_FISCAL_AUTO_COPY_KEY, String(autoCopy.checked));
+        window.OnlineSyncService?.notifyLocalGroupChange?.("operational_preferences");
         lastAuto = "";
 
         if (autoCopy.checked) {
@@ -508,6 +509,7 @@
 
     noMask?.addEventListener("change", () => {
         localStorage.setItem(DOCUMENT_FISCAL_NO_MASK_KEY, String(noMask.checked));
+        window.OnlineSyncService?.notifyLocalGroupChange?.("operational_preferences");
         lastAuto = "";
         update();
     });

@@ -56,6 +56,7 @@ function renderUvrmDescriptionSuggestions() {
         return option;
     }));
 }
+window.refreshUvrmDescriptionSuggestions = renderUvrmDescriptionSuggestions;
 
 function rememberUvrmDescription(value) {
     const description = normalizeUvrmDescription(value);
