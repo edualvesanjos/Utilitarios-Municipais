@@ -139,6 +139,13 @@ do upsert REST homologado no laboratório SuperDB v0.2.0.
 - Não utiliza Realtime e não exige alteração SQL.
 
 
+## v4.6.9.3 DEV — Valor de lançamento UVRM separado do formulário
+
+- O campo Valor do lançamento da UVRM deixa de integrar `formData`.
+- Valor unitário e casas decimais continuam persistentes como configurações.
+- Valores antigos de lançamento existentes em `formData` não são mais restaurados.
+- O histórico recente de descrições continua sincronizado normalmente.
+
 ## v4.6.9.2 DEV — Descrição UVRM separada do formulário
 
 - A descrição da UVRM deixa de integrar `formData`.
