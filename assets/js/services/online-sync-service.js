@@ -10,6 +10,8 @@
         operational_preferences: Object.freeze([
             `${APP_CONFIG.storagePrefix}fileRemovePoints`,
             `${APP_CONFIG.storagePrefix}registrationAutoCopy`,
+            `${APP_CONFIG.storagePrefix}documentoFiscalAutoCopy`,
+            `${APP_CONFIG.storagePrefix}documentoFiscalSemMascara`,
             `${APP_CONFIG.storagePrefix}uvrmValue`,
             `${APP_CONFIG.storagePrefix}uvrmDecimals`,
             `${APP_CONFIG.storagePrefix}documentSort`
@@ -45,7 +47,7 @@
     const DOCUMENTS_MIGRATION_KEY = `${APP_CONFIG.storagePrefix}online:documents426`;
     const DOCUMENTS_STRUCTURE_MIGRATION_KEY =
         `${APP_CONFIG.storagePrefix}online:documents4524`;
-    const SYNC_SCHEMA_VERSION = 11;
+    const SYNC_SCHEMA_VERSION = 12;
     const CONFLICT_TOLERANCE_MS = 2500;
 
     let client = null;
