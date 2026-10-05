@@ -4,6 +4,7 @@
 
     const SYNC_GROUPS = Object.freeze({
         preferences: Object.freeze([`${APP_CONFIG.storagePrefix}saveFields`]),
+        form_data: Object.freeze([`${APP_CONFIG.storagePrefix}formData`]),
         file_builder: Object.freeze([`${APP_CONFIG.storagePrefix}fileBuilder`]),
         file_models: Object.freeze([`${APP_CONFIG.storagePrefix}fileModels`]),
         operational_preferences: Object.freeze([
@@ -44,7 +45,7 @@
     const DOCUMENTS_MIGRATION_KEY = `${APP_CONFIG.storagePrefix}online:documents426`;
     const DOCUMENTS_STRUCTURE_MIGRATION_KEY =
         `${APP_CONFIG.storagePrefix}online:documents4524`;
-    const SYNC_SCHEMA_VERSION = 10;
+    const SYNC_SCHEMA_VERSION = 11;
     const CONFLICT_TOLERANCE_MS = 2500;
 
     let client = null;
@@ -156,21 +157,37 @@
         return content;
     }
 
+    function isSyncGroupEnabled(group) {
+        if (group === "form_data") {
+            return safeGet(`${APP_CONFIG.storagePrefix}saveFields`, "false") === "true";
+        }
+        return true;
+    }
+
     function collectLocalData() {
-        return Object.entries(SYNC_GROUPS).map(([data_type, keys]) => ({
-            data_type,
-            content: collectGroup(keys)
-        }));
+        return Object.entries(SYNC_GROUPS)
+            .filter(([data_type]) => isSyncGroupEnabled(data_type))
+            .map(([data_type, keys]) => ({
+                data_type,
+                content: collectGroup(keys)
+            }));
     }
 
     function localSnapshotObject() {
-        return Object.fromEntries(collectLocalData().map((item) => [item.data_type, item.content]));
+        return Object.fromEntries(
+            Object.entries(SYNC_GROUPS).map(([group, keys]) => [
+                group,
+                isSyncGroupEnabled(group) ? collectGroup(keys) : {}
+            ])
+        );
     }
 
     function remoteSnapshotObject(rows) {
         const result = Object.fromEntries(Object.keys(SYNC_GROUPS).map((group) => [group, {}]));
         rows.forEach((row) => {
-            if (SYNC_GROUPS[row.data_type]) result[row.data_type] = row.content || {};
+            if (SYNC_GROUPS[row.data_type] && isSyncGroupEnabled(row.data_type)) {
+                result[row.data_type] = row.content || {};
+            }
         });
         return result;
     }
@@ -305,6 +322,33 @@
             direction: "upload",
             groups: ["operational_preferences"],
             migration: "4.6.4-create"
+        });
+
+        return fetchRemoteRows();
+    }
+
+
+    function hasLocalFormData() {
+        return isSyncGroupEnabled("form_data")
+            && SYNC_GROUPS.form_data.some((key) => safeGet(key, null) !== null);
+    }
+
+    async function ensureFormDataGroup(rows) {
+        if (!session?.user || !hasLocalFormData()) return rows;
+        if (rows.some((row) => row.data_type === "form_data")) return rows;
+
+        await saveUserDataRows([{
+            user_id: session.user.id,
+            data_type: "form_data",
+            content: collectGroup(SYNC_GROUPS.form_data),
+            version: SYNC_SCHEMA_VERSION,
+            updated_at: nowIso()
+        }]);
+
+        await writeSyncLog("success", 1, {
+            direction: "upload",
+            groups: ["form_data"],
+            migration: "4.6.8-create"
         });
 
         return fetchRemoteRows();
@@ -643,8 +687,15 @@
     }
 
     async function applyRemoteRows(rows, { silent = false } = {}) {
-        rows.forEach((row) => {
-            if (SYNC_GROUPS[row.data_type]) applyGroup(row.content);
+        // Preferências primeiro: formData só pode ser aplicado quando
+        // "Salvar dados preenchidos" estiver habilitado.
+        const orderedRows = [...rows].sort((a, b) =>
+            (a.data_type === "preferences" ? -1 : 0) - (b.data_type === "preferences" ? -1 : 0)
+        );
+        orderedRows.forEach((row) => {
+            if (SYNC_GROUPS[row.data_type] && isSyncGroupEnabled(row.data_type)) {
+                applyGroup(row.content);
+            }
         });
         const syncedAt = nowIso();
         const remoteAt = latestRemoteTimestamp(rows);
@@ -677,6 +728,7 @@
             rows = await ensureOperationalPreferencesGroup(rows);
             rows = await ensureFileBuilderGroup(rows);
             rows = await ensureFileModelsGroup(rows);
+            rows = await ensureFormDataGroup(rows);
             if (!rows.length) {
                 syncInProgress = false;
                 return pushLocalData({ silent, force: true });
@@ -804,6 +856,7 @@
             rows = await ensureOperationalPreferencesGroup(rows);
             rows = await ensureFileBuilderGroup(rows);
             rows = await ensureFileModelsGroup(rows);
+            rows = await ensureFormDataGroup(rows);
             if (rows.length && snapshotsEqual(rows)) {
                 const remoteAt = latestRemoteTimestamp(rows);
                 const syncedAt = remoteAt ? new Date(remoteAt).toISOString() : nowIso();

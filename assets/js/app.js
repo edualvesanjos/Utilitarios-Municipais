@@ -161,6 +161,7 @@ function refreshPersistedApplicationData() {
         $("#uvrmCasas").value = storedDecimals;
     }
 
+    safeInvoke(restoreFormData);
     safeInvoke(() => window.refreshFileBuilderFromStorage?.());
     safeInvoke(renderFileModels);
     renderAllExistingHistories();

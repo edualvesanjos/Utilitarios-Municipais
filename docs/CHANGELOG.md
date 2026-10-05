@@ -1,3 +1,10 @@
+## 4.6.8 DEV — Campos preenchidos sincronizados
+
+- Sincroniza `formData` em grupo próprio (`form_data`) somente quando a opção de salvar dados preenchidos estiver habilitada.
+- Não envia nem aplica `formData` quando a persistência de campos estiver desabilitada.
+- Atualiza os campos da interface após receber dados remotos.
+- Mantém a detecção de conflitos por grupo e eleva o schema de sincronização para 11.
+
 ## 4.6.7.2 DEV — Concorrência e interface de Lotes
 
 - Exibe decisão explícita quando outro dispositivo alterou a sequência antes da geração.

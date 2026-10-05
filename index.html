@@ -1388,12 +1388,12 @@
                     </section>
 
                     <section class="settings-card">
-                        <h3>Novidades da 4.6.7.2 DEV</h3>
+                        <h3>Novidades da 4.6.8 DEV</h3>
                         <ul>
-                            <li><strong>Concorrência:</strong> conflito de sequência agora exige escolha explícita antes de substituir o estado online.</li>
-                            <li><strong>Lotes:</strong> reorganiza conferência, geração e resultado para destacar o lote efetivamente gerado.</li>
-                            <li><strong>Resultado:</strong> Baixar TXT e Limpar resultado ficam associados à área de resultado.</li>
-                            <li><strong>Reinício:</strong> mantém a próxima sequência começando corretamente em 00001.</li>
+                            <li><strong>Campos preenchidos:</strong> sincroniza os dados persistidos entre dispositivos.</li>
+                            <li><strong>Privacidade:</strong> o grupo <code>formData</code> só participa da sincronização quando salvar campos estiver habilitado.</li>
+                            <li><strong>Interface:</strong> campos recebidos online são restaurados automaticamente na tela.</li>
+                            <li><strong>Sincronização:</strong> mantém conflitos isolados por grupo e sem Realtime.</li>
                         </ul>
                     </section>
                 </div>
@@ -1401,6 +1401,19 @@
                 <section class="settings-card">
                     <h3>Histórico de versões</h3>
                     <div class="about-timeline" id="aboutVersionHistory">
+                        <article class="about-version-item">
+                            <button class="about-version-toggle" type="button" aria-expanded="false">
+                                <span class="about-version-heading">
+                                    <strong>4.6.8 DEV</strong>
+                                    <span>Campos preenchidos sincronizados</span>
+                                </span>
+                                <span class="about-version-chevron" aria-hidden="true">⌄</span>
+                            </button>
+                            <div class="about-version-details">
+                                <p>Sincroniza formData somente quando a persistência de campos estiver habilitada.</p>
+                            </div>
+                        </article>
+
                         <article class="about-version-item">
                             <button class="about-version-toggle" type="button" aria-expanded="false">
                                 <span class="about-version-heading">
