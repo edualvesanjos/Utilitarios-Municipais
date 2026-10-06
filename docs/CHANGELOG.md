@@ -1,18 +1,13 @@
-## 4.6.10.1 DEV — Correção da redefinição de senha
+## 4.6.11 DEV — Entrada obrigatória e isolamento por usuário
 
-- Corrigido o fluxo de nova senha para não permanecer indefinidamente em “Atualizando senha...”.
-- Adicionado limite de espera de 15 segundos nas chamadas de recuperação, com mensagem explícita quando o SuperDB não responde.
-- Ajustada a validação da nova senha para o mínimo de 8 caracteres exigido pelo SuperDB.
-- Mantidos o fluxo de URL de retorno e a seleção rápida de campos introduzidos na 4.6.10.
-
-## 4.6.10 DEV — Recuperação de senha e seleção rápida de campos
-
-- Implementa o fluxo completo “Esqueci minha senha” com a API de autenticação do SuperDB.
-- Envia uma URL absoluta de retorno e trata os erros de URL não cadastrada exibindo o endereço que deve ser autorizado no painel.
-- Ao abrir o link recebido por e-mail, exibe a tela para definir e confirmar a nova senha e consome o token de recuperação.
-- Padroniza a URL de confirmação de cadastro com a mesma URL de retorno da autenticação.
-- Adiciona seleção de todo o conteúdo por duplo clique nos campos Nome, Processo e Prefixo do gerador de nome de arquivo.
-- Não altera o banco de dados nem exige SQL novo.
+- Base retomada diretamente da v4.6.9.3 homologada; a linha 4.6.10.x não integra esta versão.
+- A primeira tela passa a exigir escolha entre login SuperDB e uso somente local.
+- Dados locais são separados por identidade; uma conta nova não herda dados de outro usuário do navegador.
+- O modo somente local possui armazenamento próprio e não participa da sincronização online.
+- Dados locais legados são preservados no espaço somente local na primeira migração.
+- Logout salva o espaço do usuário, limpa a área ativa e retorna à tela de entrada.
+- Durante a troca de identidade, a sincronização é suspensa para impedir envio de dados pertencentes a outro usuário.
+- Nenhuma alteração de banco de dados ou SQL é necessária.
 
 ## 4.6.9.3 DEV — Separar valor atual da UVRM do formulário
 
