@@ -1,6 +1,12 @@
 {
   "versions": [
     {
+      "version": "4.7.0 PROD",
+      "title": "Consolidação da versão de produção",
+      "contentHtml": "<ul><li>Consolida em produção as melhorias homologadas desde a v4.6.3 PROD.</li><li>Adiciona entrada obrigatória por conta SuperDB ou modo Somente local e isolamento dos dados locais por usuário.</li><li>Consolida a sincronização normal de preferências, modelos, sequência de lotes e histórico recente da UVRM, sem Realtime.</li><li>Desacopla o histórico de versões do index.html e reorganiza a documentação do projeto.</li></ul>",
+      "contentClass": "about-version-details"
+    },
+    {
       "version": "4.6.11.1 DEV",
       "title": "Bloqueio de sincronização antes da identidade",
       "contentHtml": "<ul><li>Impede sincronização e detecção de conflito antes da escolha explícita entre conta SuperDB e modo somente local.</li><li>Oculta a sessão persistida dos demais serviços até a conclusão da tela inicial.</li><li>Mantém o modo somente local totalmente fora da sincronização online.</li></ul>",

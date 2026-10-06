@@ -1,3 +1,14 @@
+## 4.7.0 PROD — Consolidação de produção
+
+- Fecha para produção o conjunto de versões DEV homologadas após a v4.6.3 PROD.
+- Consolida a sincronização normal sem Realtime, incluindo preferências operacionais, modelos do montador, sequência de Lotes e histórico recente de descrições da UVRM.
+- Adiciona entrada obrigatória por conta SuperDB ou modo Somente local.
+- Isola o armazenamento local por usuário autenticado e impede sincronização antes da identificação da identidade ativa.
+- Mantém o modo Somente local sem comunicação com o SuperDB.
+- Remove o histórico extenso de versões do `index.html` e passa a carregá-lo de `assets/data/version-history.json`.
+- Reorganiza o `README.md` e mantém este CHANGELOG como histórico técnico completo.
+- Nenhuma alteração adicional de banco de dados ou SQL é necessária para o fechamento desta versão.
+
 ## 4.6.12 DEV — Documentação e histórico desacoplado
 
 - Remove do `index.html` o conteúdo extenso do histórico de versões.
