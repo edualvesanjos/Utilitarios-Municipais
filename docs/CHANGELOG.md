@@ -1,3 +1,145 @@
+## 4.7.0 PROD — Consolidação de produção
+
+- Fecha para produção o conjunto de versões DEV homologadas após a v4.6.3 PROD.
+- Consolida a sincronização normal sem Realtime, incluindo preferências operacionais, modelos do montador, sequência de Lotes e histórico recente de descrições da UVRM.
+- Adiciona entrada obrigatória por conta SuperDB ou modo Somente local.
+- Isola o armazenamento local por usuário autenticado e impede sincronização antes da identificação da identidade ativa.
+- Mantém o modo Somente local sem comunicação com o SuperDB.
+- Remove o histórico extenso de versões do `index.html` e passa a carregá-lo de `assets/data/version-history.json`.
+- Reorganiza o `README.md` e mantém este CHANGELOG como histórico técnico completo.
+- Nenhuma alteração adicional de banco de dados ou SQL é necessária para o fechamento desta versão.
+
+## 4.6.12 DEV — Documentação e histórico desacoplado
+
+- Remove do `index.html` o conteúdo extenso do histórico de versões.
+- Move os dados do histórico para `assets/data/version-history.json` e passa a renderizá-los dinamicamente no Sobre.
+- Mantém as Novidades focadas somente na versão atual e preserva `docs/CHANGELOG.md` como histórico técnico completo.
+- Reorganiza o `README.md` para apresentar objetivo, recursos, uso, desenvolvimento, ajuda e referências de forma concisa.
+- Adota links relativos para a documentação interna do repositório.
+- Nenhuma alteração de banco de dados ou SQL é necessária.
+
+## 4.6.11.1 DEV — Bloquear sincronização antes da identidade
+
+- Impede sincronização e detecção de conflito antes da escolha explícita entre conta SuperDB e modo somente local.
+- A sessão persistida do SuperDB deixa de ficar disponível aos demais serviços enquanto a tela inicial ainda não foi concluída.
+- O modal de conflito só pode abrir quando a conta autenticada corresponde ao proprietário do espaço local ativo.
+- Mantém o modo somente local totalmente fora da sincronização online.
+- Nenhuma alteração de banco de dados ou SQL é necessária.
+
+## 4.6.11 DEV — Entrada obrigatória e isolamento por usuário
+
+- Base retomada diretamente da v4.6.9.3 homologada; a linha 4.6.10.x não integra esta versão.
+- A primeira tela passa a exigir escolha entre login SuperDB e uso somente local.
+- Dados locais são separados por identidade; uma conta nova não herda dados de outro usuário do navegador.
+- O modo somente local possui armazenamento próprio e não participa da sincronização online.
+- Dados locais legados são preservados no espaço somente local na primeira migração.
+- Logout salva o espaço do usuário, limpa a área ativa e retorna à tela de entrada.
+- Durante a troca de identidade, a sincronização é suspensa para impedir envio de dados pertencentes a outro usuário.
+- Nenhuma alteração de banco de dados ou SQL é necessária.
+
+## 4.6.9.3 DEV — Separar valor atual da UVRM do formulário
+
+- Remove `uvrmValorLancamento` dos campos persistidos em `formData`.
+- Mantém `uvrmValorUnitario` e `uvrmCasas` como configurações persistentes da UVRM.
+- Impede que um valor de lançamento antigo ainda presente em `formData` remoto seja restaurado no campo.
+- Preserva o histórico sincronizado de descrições e o seletor compatível entre navegadores.
+
+## 4.6.9.2 DEV — Separar descrição atual do histórico UVRM
+
+- Remove `uvrmDescricao` dos campos persistidos em `formData`.
+- Mantém a descrição recente sincronizada apenas no histórico próprio da UVRM.
+- Impede que uma descrição antiga ainda presente em `formData` remoto seja restaurada no campo.
+- Preserva o seletor próprio e a união + deduplicação do histórico entre dispositivos.
+
+## 4.6.9.1 DEV — Seletor de descrições UVRM compatível
+
+- Substitui o `datalist` nativo por um seletor próprio de descrições recentes.
+- Mantém o campo livre para digitação e permite abrir o histórico mesmo quando há uma descrição restaurada.
+- Uniformiza a seleção de descrições entre Firefox, Edge e Chrome.
+- Preserva a sincronização por união + deduplicação implementada na 4.6.9.
+
+## 4.6.9 DEV — Histórico recente de descrições da UVRM
+
+- Sincroniza `uvrmDescriptionHistory` em grupo próprio (`uvrm_description_history`) pela sincronização normal, sem Realtime.
+- Combina os históricos local e online por união, preservando descrições existentes nos dois dispositivos.
+- Remove duplicidades sem diferenciar maiúsculas/minúsculas e mantém o limite de 30 descrições recentes.
+- Alterações locais recentes têm prioridade de ordem; ao apenas receber dados, a ordem online é preservada.
+- O grupo usa mesclagem automática e não abre conflito de sobrescrita para listas concorrentes.
+- Eleva o schema de sincronização para 13 e o schema local para 14.
+
+## 4.6.8.3 DEV — Corrigir envio das preferências do CPF / CNPJ
+
+- Corrige a detecção da alteração de “Copiar automaticamente” e “Sem máscara” no mesmo navegador.
+- Notifica diretamente o serviço de sincronização quando essas opções são alteradas.
+- Marca `operational_preferences` como pendente imediatamente e agenda a sincronização automática.
+- Mantém o observador genérico do armazenamento como mecanismo complementar.
+
+## 4.6.8.2 DEV — Preferências do CPF / CNPJ sincronizadas
+
+- Persiste e sincroniza “Copiar automaticamente” e “Sem máscara” como preferências operacionais.
+- Restaura as duas opções após recarregar a aplicação ou receber dados remotos.
+- O botão “Limpar” passa a limpar somente os dados do módulo, preservando essas preferências.
+- Eleva o schema de sincronização para 12.
+
+## 4.6.8.1 DEV — Dados preenchidos opcionais e sincronizados
+
+- Adiciona em Configurações a opção visível “Salvar dados preenchidos”.
+- Sincroniza `formData` somente quando a opção estiver habilitada.
+- Ao desativar, remove os dados preenchidos locais e o grupo `form_data` armazenado online.
+- Impede que `formData` remoto seja aplicado quando a preferência estiver desabilitada.
+- Mantém preferências, históricos e demais grupos de sincronização independentes.
+
+## 4.6.7.2 DEV — Concorrência e interface de Lotes
+
+- Exibe decisão explícita quando outro dispositivo alterou a sequência antes da geração.
+- Permite manter o estado online ou, por confirmação do usuário, aplicar a sequência local mesmo quando ela for menor.
+- Mantém trava por `revision` para impedir uma segunda sobrescrita concorrente silenciosa.
+- Reorganiza a tela de Lotes no fluxo configurar → conferir → gerar → resultado → baixar/limpar.
+- Dá destaque ao resultado efetivamente gerado e reduz o peso visual da conferência prévia.
+- Preserva o reinício correto da sequência em `00001`.
+
+## 4.6.7.1 DEV — Corrigir SQL da sequência de Lotes
+
+- Remove a chave estrangeira para `auth.users`, relação não exposta pelo SuperDB.
+- Mantém `user_id` como chave primária e as políticas RLS com `auth.uid()`.
+- Preserva a sincronização da sequência e o reinício correto em `00001`.
+
+## 4.6.7 DEV — Sequência de Lotes sincronizada
+
+- Cria `lot_sequence_state` para sincronizar o estado atual da sequência de Lotes separadamente de `user_data`.
+- Mantém `history_entries` como histórico dos lotes gerados, sem duplicar registros.
+- Permite aumentar ou reduzir manualmente a sequência; uma redução válida não é tratada como conflito.
+- Usa `revision` para impedir sobrescrita silenciosa quando dois dispositivos partem de estados diferentes.
+- Mantém funcionamento local quando offline e tenta consolidar o estado no próximo sincronismo.
+- Corrige a Limpeza seletiva para reiniciar a sequência em `00001` (estado interno `0`), em vez de `00004`.
+
+## 4.6.6 DEV — Modelos do Nome de arquivo
+
+- Sincroniza `fileModels` em grupo próprio (`file_models`) pela sincronização normal, sem Realtime.
+- Preserva criação, aplicação e remoção dos modelos salvos entre dispositivos.
+- Atualiza a lista de modelos na interface após receber dados remotos.
+- Mantém a detecção de conflitos por grupo e eleva o schema de sincronização para 10.
+
+## 4.6.5 DEV — Montador de arquivo e favicons
+
+- Sincroniza `fileBuilder` em grupo próprio (`file_builder`), incluindo blocos habilitados, ordem e separador.
+- Atualiza a interface do montador após receber dados remotos, mantendo a detecção de conflitos por grupo e sem Realtime.
+- Adiciona favicons 16, 32 e 48 px, `favicon.ico`, Apple Touch Icon 180 px e ícones PWA 192/512 px.
+- Atualiza `manifest.json` e `index.html` para usar a nova identidade visual.
+
+## 4.6.4.1 DEV — Corrigir falso conflito entre grupos
+- Corrige a detecção de conflitos para comparar alterações concorrentes por grupo de sincronização.
+- Uma preferência operacional alterada localmente não entra mais em conflito apenas porque outro grupo foi atualizado no backend.
+- Preserva o modal quando o mesmo grupo tiver alterações locais e remotas posteriores à última sincronização.
+- Mantém sem alterações o escopo de dados sincronizados da v4.6.4 DEV.
+
+## 4.6.4 DEV — Preferências operacionais sincronizadas
+- Adiciona o grupo `operational_preferences` à sincronização normal sem Realtime.
+- Sincroniza remoção de pontos do Nome de arquivo, cópia automática da Inscrição, valor e casas decimais da UVRM e ordenação da Central de Documentos.
+- Atualiza os controles visuais após aplicar dados remotos.
+- Corrige o atalho de tema do Dashboard para usar a chave canônica já sincronizada.
+- Mantém modelos, construtor de arquivo, sequência de lotes, campos persistidos e descrições UVRM fora desta etapa.
+
 ## 4.6.2.4 DEV
 - PROD deixa de depender do `.env` para a Anon Key pública.
 - DEV mantém compatibilidade com `VITE_SUPERDB_ANON_KEY` do homolog.

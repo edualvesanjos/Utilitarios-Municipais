@@ -462,5 +462,29 @@ if (arquivoRemoverPontos) {
     });
 }
 
-// Permite atualizar o histórico após sincronização remota.
+// Permite atualizar o histórico e o montador após sincronização remota.
 window.renderFileHistory = renderFileHistory;
+
+function refreshFileBuilderFromStorage() {
+    fileBuilderState = sanitizeFileBuilderState(
+        getJson(FILE_BUILDER_KEY, defaultFileBuilder)
+    );
+
+    const separator = $("#arquivoSeparador");
+    if (separator && document.activeElement !== separator) {
+        separator.value = fileBuilderState.separator;
+    }
+
+    const ap = $("#arquivoAnaliseProjeto");
+    if (ap) ap.checked = fileBuilderState.enabled.includes("ap");
+
+    const dataHora = $("#arquivoDataHora");
+    if (dataHora) dataHora.checked = fileBuilderState.enabled.includes("datahora");
+
+    renderAvailableBlocks();
+    renderBlockOrder();
+    updateFilePreview();
+}
+
+window.refreshFileBuilderFromStorage = refreshFileBuilderFromStorage;
+

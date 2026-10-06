@@ -135,6 +135,35 @@ function initializeApplication() {
 function refreshPersistedApplicationData() {
     migrateCompatibleStorageKeys();
 
+    const saveFieldsToggle = $("#salvarCampos");
+    if (saveFieldsToggle) {
+        saveFieldsToggle.checked = shouldSaveFields();
+    }
+
+    const registrationAutoCopy = $("#inscricaoCopiaAutomatica");
+    if (registrationAutoCopy) {
+        registrationAutoCopy.checked =
+            localStorage.getItem(REGISTRATION_AUTO_COPY_KEY) === "true";
+    }
+
+    const fileRemovePoints = $("#arquivoRemoverPontos");
+    if (fileRemovePoints) {
+        fileRemovePoints.checked =
+            localStorage.getItem(FILE_REMOVE_POINTS_KEY) !== "false";
+    }
+
+    const documentFiscalAutoCopy = $("#documentoFiscalAutoCopy");
+    if (documentFiscalAutoCopy) {
+        documentFiscalAutoCopy.checked =
+            localStorage.getItem(DOCUMENT_FISCAL_AUTO_COPY_KEY) === "true";
+    }
+
+    const documentFiscalNoMask = $("#documentoFiscalSemMascara");
+    if (documentFiscalNoMask) {
+        documentFiscalNoMask.checked =
+            localStorage.getItem(DOCUMENT_FISCAL_NO_MASK_KEY) === "true";
+    }
+
     const storedUvrmValue = localStorage.getItem(UVRM_VALUE_KEY);
     if (storedUvrmValue !== null && document.activeElement !== $("#uvrmValorUnitario")) {
         const normalizedUvrmValue = String(storedUvrmValue).replace(".", ",");
@@ -149,6 +178,9 @@ function refreshPersistedApplicationData() {
         $("#uvrmCasas").value = storedDecimals;
     }
 
+    safeInvoke(restoreFormData);
+    safeInvoke(() => window.refreshFileBuilderFromStorage?.());
+    safeInvoke(renderFileModels);
     renderAllExistingHistories();
     safeInvoke(renderUvrmCurrentList);
     safeInvoke(updateSettingsSummary);

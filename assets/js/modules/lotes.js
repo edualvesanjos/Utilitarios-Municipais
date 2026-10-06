@@ -157,6 +157,33 @@ $("#gerarLotes").addEventListener("click", async () => {
     const finalSequence = initial + quantity - 1;
     const nextSequence = finalSequence + 1;
 
+    // v4.6.7: confirma o novo estado da sequência antes de concluir a geração.
+    // Reduções manuais são válidas; somente uma revisão remota concorrente bloqueia a operação.
+    let sequenceResult = await window.LotSequenceService?.commitSequence?.(finalSequence);
+    if (sequenceResult?.conflict) {
+        const remoteLast = Number(sequenceResult.remote?.last_sequence) || 0;
+        const remoteNext = String(remoteLast + 1).padStart(5, "0");
+        const localFirst = String(initial).padStart(5, "0");
+        const localLast = String(finalSequence).padStart(5, "0");
+        const useLocal = await confirmAction(
+            `Outro dispositivo alterou a sequência. A próxima sequência online é ${remoteNext}. ` +
+            `Você está tentando gerar ${localFirst}${quantity > 1 ? ` até ${localLast}` : ""}. ` +
+            "Deseja usar sua sequência mesmo assim?",
+            { title: "Conflito de sequência", confirmText: "Usar minha sequência" }
+        );
+        if (!useLocal) {
+            await window.LotSequenceService?.sync?.({ preferRemote: true });
+            showToast("Sequência online mantida. Nenhum lote foi gerado.");
+            return;
+        }
+        sequenceResult = await window.LotSequenceService?.forceCommitSequence?.(finalSequence);
+        if (sequenceResult?.conflict || sequenceResult?.offline) {
+            await window.LotSequenceService?.sync?.({ preferRemote: true });
+            showToast("A sequência mudou novamente. Sincronize e tente outra vez.");
+            return;
+        }
+    }
+
     $("#loteResultado").textContent = lots.join("\n");
     localStorage.setItem(LOT_SEQUENCE_KEY, String(finalSequence));
 
@@ -200,6 +227,12 @@ $("#reiniciarSequenciaLotes").addEventListener("click", async () => {
 
     // Zero is used only as the internal state before the first sequence.
     // The first lot generated after a reset is therefore 00001.
+    const resetResult = await window.LotSequenceService?.commitSequence?.(0);
+    if (resetResult?.conflict) {
+        showToast("A sequência foi alterada em outro dispositivo. Sincronize antes de reiniciar.");
+        await window.LotSequenceService?.sync?.({ preferRemote: true });
+        return;
+    }
     localStorage.setItem(LOT_SEQUENCE_KEY, "0");
     $("#loteSequenciaInicial").value = 1;
     $("#loteResultado").textContent = "—";

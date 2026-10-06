@@ -4,6 +4,19 @@
 
     const SYNC_GROUPS = Object.freeze({
         preferences: Object.freeze([`${APP_CONFIG.storagePrefix}saveFields`]),
+        form_data: Object.freeze([`${APP_CONFIG.storagePrefix}formData`]),
+        uvrm_description_history: Object.freeze([`${APP_CONFIG.storagePrefix}uvrmDescriptionHistory`]),
+        file_builder: Object.freeze([`${APP_CONFIG.storagePrefix}fileBuilder`]),
+        file_models: Object.freeze([`${APP_CONFIG.storagePrefix}fileModels`]),
+        operational_preferences: Object.freeze([
+            `${APP_CONFIG.storagePrefix}fileRemovePoints`,
+            `${APP_CONFIG.storagePrefix}registrationAutoCopy`,
+            `${APP_CONFIG.storagePrefix}documentoFiscalAutoCopy`,
+            `${APP_CONFIG.storagePrefix}documentoFiscalSemMascara`,
+            `${APP_CONFIG.storagePrefix}uvrmValue`,
+            `${APP_CONFIG.storagePrefix}uvrmDecimals`,
+            `${APP_CONFIG.storagePrefix}documentSort`
+        ]),
         favorites: Object.freeze([`${APP_CONFIG.storagePrefix}favorites`]),
         personalization: Object.freeze([
             `${APP_CONFIG.storagePrefix}ux31:prefs`,
@@ -25,6 +38,7 @@
     const LAST_SYNC_KEY = `${APP_CONFIG.storagePrefix}online:lastSync`;
     const LAST_ATTEMPT_KEY = `${APP_CONFIG.storagePrefix}online:lastAttempt`;
     const LAST_LOCAL_CHANGE_KEY = `${APP_CONFIG.storagePrefix}online:lastLocalChange`;
+    const LAST_LOCAL_GROUP_CHANGES_KEY = `${APP_CONFIG.storagePrefix}online:lastLocalGroupChanges`;
     const LAST_REMOTE_UPDATE_KEY = `${APP_CONFIG.storagePrefix}online:lastRemoteUpdate`;
     const AUTO_SYNC_KEY = `${APP_CONFIG.storagePrefix}online:autoSync`;
     const DEVICE_KEY = `${APP_CONFIG.storagePrefix}online:deviceId`;
@@ -34,7 +48,7 @@
     const DOCUMENTS_MIGRATION_KEY = `${APP_CONFIG.storagePrefix}online:documents426`;
     const DOCUMENTS_STRUCTURE_MIGRATION_KEY =
         `${APP_CONFIG.storagePrefix}online:documents4524`;
-    const SYNC_SCHEMA_VERSION = 7;
+    const SYNC_SCHEMA_VERSION = 13;
     const CONFLICT_TOLERANCE_MS = 2500;
 
     let client = null;
@@ -45,6 +59,7 @@
     let syncInProgress = false;
     let currentConflict = null;
     let watchedLocalSnapshot = "";
+    let watchedLocalGroups = {};
     let localWatchTimer = null;
 
     function notify(message, type = "success") {
@@ -145,27 +160,111 @@
         return content;
     }
 
+    function isSyncGroupEnabled(group) {
+        if (group === "form_data") {
+            return safeGet(`${APP_CONFIG.storagePrefix}saveFields`, "false") === "true";
+        }
+        return true;
+    }
+
     function collectLocalData() {
-        return Object.entries(SYNC_GROUPS).map(([data_type, keys]) => ({
-            data_type,
-            content: collectGroup(keys)
-        }));
+        return Object.entries(SYNC_GROUPS)
+            .filter(([data_type]) => isSyncGroupEnabled(data_type))
+            .map(([data_type, keys]) => ({
+                data_type,
+                content: collectGroup(keys)
+            }));
     }
 
     function localSnapshotObject() {
-        return Object.fromEntries(collectLocalData().map((item) => [item.data_type, item.content]));
+        return Object.fromEntries(
+            Object.entries(SYNC_GROUPS).map(([group, keys]) => [
+                group,
+                isSyncGroupEnabled(group) ? collectGroup(keys) : {}
+            ])
+        );
     }
 
     function remoteSnapshotObject(rows) {
         const result = Object.fromEntries(Object.keys(SYNC_GROUPS).map((group) => [group, {}]));
         rows.forEach((row) => {
-            if (SYNC_GROUPS[row.data_type]) result[row.data_type] = row.content || {};
+            if (SYNC_GROUPS[row.data_type] && isSyncGroupEnabled(row.data_type)) {
+                result[row.data_type] = row.content || {};
+            }
         });
         return result;
     }
 
     function snapshotsEqual(rows) {
         return stableStringify(localSnapshotObject()) === stableStringify(remoteSnapshotObject(rows));
+    }
+
+    const UVRM_DESCRIPTION_HISTORY_GROUP = "uvrm_description_history";
+    const UVRM_DESCRIPTION_HISTORY_KEY = `${APP_CONFIG.storagePrefix}uvrmDescriptionHistory`;
+    const UVRM_DESCRIPTION_HISTORY_LIMIT = 30;
+
+    function parseUvrmDescriptionHistory(raw) {
+        try {
+            const parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
+            return Array.isArray(parsed)
+                ? parsed.map((value) => String(value || "").trim().replace(/\s+/g, " ")).filter(Boolean)
+                : [];
+        } catch {
+            return [];
+        }
+    }
+
+    function mergeUvrmDescriptionLists(primary, secondary) {
+        const result = [];
+        const seen = new Set();
+        [...primary, ...secondary].forEach((description) => {
+            const value = String(description || "").trim().replace(/\s+/g, " ");
+            const key = value.toLocaleLowerCase("pt-BR");
+            if (!value || seen.has(key)) return;
+            seen.add(key);
+            result.push(value);
+        });
+        return result.slice(0, UVRM_DESCRIPTION_HISTORY_LIMIT);
+    }
+
+    async function mergeUvrmDescriptionHistory(rows) {
+        if (!session?.user) return rows;
+
+        const remoteRow = rows.find((row) => row.data_type === UVRM_DESCRIPTION_HISTORY_GROUP);
+        const localList = parseUvrmDescriptionHistory(safeGet(UVRM_DESCRIPTION_HISTORY_KEY, "[]"));
+        const remoteList = parseUvrmDescriptionHistory(remoteRow?.content?.[UVRM_DESCRIPTION_HISTORY_KEY] ?? "[]");
+        if (!localList.length && !remoteList.length) return rows;
+
+        const localChanged = Boolean(readLocalGroupChanges()[UVRM_DESCRIPTION_HISTORY_GROUP]);
+        const merged = localChanged
+            ? mergeUvrmDescriptionLists(localList, remoteList)
+            : mergeUvrmDescriptionLists(remoteList, localList);
+        const serialized = JSON.stringify(merged);
+        safeSet(UVRM_DESCRIPTION_HISTORY_KEY, serialized);
+
+        const remoteSerialized = JSON.stringify(remoteList);
+        if (!remoteRow || serialized !== remoteSerialized) {
+            const updatedAt = nowIso();
+            const saved = await saveUserDataRows([{
+                user_id: session.user.id,
+                data_type: UVRM_DESCRIPTION_HISTORY_GROUP,
+                content: { [UVRM_DESCRIPTION_HISTORY_KEY]: serialized },
+                version: SYNC_SCHEMA_VERSION,
+                updated_at: updatedAt
+            }]);
+            const savedRow = saved?.[0] || {
+                data_type: UVRM_DESCRIPTION_HISTORY_GROUP,
+                content: { [UVRM_DESCRIPTION_HISTORY_KEY]: serialized },
+                version: SYNC_SCHEMA_VERSION,
+                updated_at: updatedAt
+            };
+            rows = rows.filter((row) => row.data_type !== UVRM_DESCRIPTION_HISTORY_GROUP);
+            rows.push(savedRow);
+        } else if (remoteRow) {
+            remoteRow.content = { ...(remoteRow.content || {}), [UVRM_DESCRIPTION_HISTORY_KEY]: serialized };
+        }
+
+        return rows;
     }
 
     function documentTemplatesCount(content = collectGroup(SYNC_GROUPS.documents)) {
@@ -271,8 +370,147 @@
         return fetchRemoteRows();
     }
 
+    function hasLocalOperationalPreferences() {
+        return SYNC_GROUPS.operational_preferences.some(
+            (key) => safeGet(key, null) !== null
+        );
+    }
+
+    async function ensureOperationalPreferencesGroup(rows) {
+        if (!session?.user) return rows;
+        if (rows.some((row) => row.data_type === "operational_preferences")) return rows;
+        if (!hasLocalOperationalPreferences()) return rows;
+
+        await saveUserDataRows([{
+            user_id: session.user.id,
+            data_type: "operational_preferences",
+            content: collectGroup(SYNC_GROUPS.operational_preferences),
+            version: SYNC_SCHEMA_VERSION,
+            updated_at: nowIso()
+        }]);
+
+        await writeSyncLog("success", 1, {
+            direction: "upload",
+            groups: ["operational_preferences"],
+            migration: "4.6.4-create"
+        });
+
+        return fetchRemoteRows();
+    }
+
+
+    function hasLocalFormData() {
+        return isSyncGroupEnabled("form_data")
+            && SYNC_GROUPS.form_data.some((key) => safeGet(key, null) !== null);
+    }
+
+    async function ensureFormDataGroup(rows) {
+        if (!session?.user || !hasLocalFormData()) return rows;
+        if (rows.some((row) => row.data_type === "form_data")) return rows;
+
+        await saveUserDataRows([{
+            user_id: session.user.id,
+            data_type: "form_data",
+            content: collectGroup(SYNC_GROUPS.form_data),
+            version: SYNC_SCHEMA_VERSION,
+            updated_at: nowIso()
+        }]);
+
+        await writeSyncLog("success", 1, {
+            direction: "upload",
+            groups: ["form_data"],
+            migration: "4.6.8-create"
+        });
+
+        return fetchRemoteRows();
+    }
+
+    function hasLocalFileBuilder() {
+        return SYNC_GROUPS.file_builder.some(
+            (key) => safeGet(key, null) !== null
+        );
+    }
+
+    async function ensureFileBuilderGroup(rows) {
+        if (!session?.user) return rows;
+        if (rows.some((row) => row.data_type === "file_builder")) return rows;
+        if (!hasLocalFileBuilder()) return rows;
+
+        await saveUserDataRows([{
+            user_id: session.user.id,
+            data_type: "file_builder",
+            content: collectGroup(SYNC_GROUPS.file_builder),
+            version: SYNC_SCHEMA_VERSION,
+            updated_at: nowIso()
+        }]);
+
+        await writeSyncLog("success", 1, {
+            direction: "upload",
+            groups: ["file_builder"],
+            migration: "4.6.5-create"
+        });
+
+        return fetchRemoteRows();
+    }
+
+    function hasLocalFileModels() {
+        return SYNC_GROUPS.file_models.some(
+            (key) => safeGet(key, null) !== null
+        );
+    }
+
+    async function ensureFileModelsGroup(rows) {
+        if (!session?.user) return rows;
+        if (rows.some((row) => row.data_type === "file_models")) return rows;
+        if (!hasLocalFileModels()) return rows;
+
+        await saveUserDataRows([{
+            user_id: session.user.id,
+            data_type: "file_models",
+            content: collectGroup(SYNC_GROUPS.file_models),
+            version: SYNC_SCHEMA_VERSION,
+            updated_at: nowIso()
+        }]);
+
+        await writeSyncLog("success", 1, {
+            direction: "upload",
+            groups: ["file_models"],
+            migration: "4.6.6-create"
+        });
+
+        return fetchRemoteRows();
+    }
+
+    function readLocalGroupChanges() {
+        try {
+            const parsed = JSON.parse(safeGet(LAST_LOCAL_GROUP_CHANGES_KEY, "{}"));
+            return parsed && typeof parsed === "object" ? parsed : {};
+        } catch {
+            return {};
+        }
+    }
+
+    function markLocalGroupChanges(groups) {
+        if (!Array.isArray(groups) || !groups.length) return;
+        const changes = readLocalGroupChanges();
+        const changedAt = nowIso();
+        groups.forEach((group) => {
+            if (SYNC_GROUPS[group]) changes[group] = changedAt;
+        });
+        safeSet(LAST_LOCAL_GROUP_CHANGES_KEY, JSON.stringify(changes));
+    }
+
+    function clearLocalGroupChanges() {
+        safeRemove(LAST_LOCAL_GROUP_CHANGES_KEY);
+    }
+
+    function groupForStorageKey(key) {
+        return Object.entries(SYNC_GROUPS).find(([, keys]) => keys.includes(key))?.[0] || null;
+    }
+
     function resetWatchedSnapshot() {
-        watchedLocalSnapshot = stableStringify(localSnapshotObject());
+        watchedLocalGroups = localSnapshotObject();
+        watchedLocalSnapshot = stableStringify(watchedLocalGroups);
     }
 
     function startSelectiveLocalWatch() {
@@ -283,9 +521,15 @@
                 resetWatchedSnapshot();
                 return;
             }
-            const nextSnapshot = stableStringify(localSnapshotObject());
+            const nextGroups = localSnapshotObject();
+            const nextSnapshot = stableStringify(nextGroups);
             if (nextSnapshot === watchedLocalSnapshot) return;
+            const changedGroups = Object.keys(SYNC_GROUPS).filter(
+                (group) => stableStringify(nextGroups[group] || {}) !== stableStringify(watchedLocalGroups[group] || {})
+            );
+            watchedLocalGroups = nextGroups;
             watchedLocalSnapshot = nextSnapshot;
+            markLocalGroupChanges(changedGroups);
             scheduleAutoSync(true);
         }, 900);
     }
@@ -310,7 +554,8 @@
             "renderDashboardFavorites",
             "refreshUsageViews",
             "updateDashboardLastToolHighlight",
-            "refreshDocumentCentral"
+            "refreshDocumentCentral",
+            "refreshUvrmDescriptionSuggestions"
         ];
         refreshers.forEach((name) => {
             if (typeof window[name] === "function") {
@@ -390,6 +635,27 @@
         return data || [];
     }
 
+    async function deleteSyncedFormData() {
+        if (!client || !session?.user) return false;
+        if (!navigator.onLine) {
+            notify("Sem conexão. Conecte-se para remover os dados preenchidos online.", "warning");
+            return false;
+        }
+        const { error } = await client.from("user_data")
+            .delete()
+            .eq("user_id", session.user.id)
+            .eq("data_type", "form_data");
+        if (error) throw error;
+        safeRemove(`${APP_CONFIG.storagePrefix}formData`);
+        resetWatchedSnapshot();
+        await writeSyncLog("success", 1, {
+            direction: "delete",
+            groups: ["form_data"],
+            reason: "save-fields-disabled"
+        });
+        return true;
+    }
+
     async function writeSyncLog(status, syncedItems, details = {}) {
         if (!session?.user) return;
         if (window.BACKEND_MIGRATION?.stage === "user-data") return;
@@ -434,11 +700,26 @@
 
     function detectConflict(rows) {
         if (!hasPendingChanges() || !rows.length || snapshotsEqual(rows)) return false;
+
         const lastSync = parseDate(safeGet(LAST_SYNC_KEY, ""));
-        const localChanged = parseDate(safeGet(LAST_LOCAL_CHANGE_KEY, ""));
-        const remoteChanged = latestRemoteTimestamp(rows);
-        return localChanged > lastSync + CONFLICT_TOLERANCE_MS
-            && remoteChanged > lastSync + CONFLICT_TOLERANCE_MS;
+        const localGroupChanges = readLocalGroupChanges();
+        const localSnapshot = localSnapshotObject();
+        const remoteSnapshot = remoteSnapshotObject(rows);
+        const remoteRowsByGroup = Object.fromEntries(rows.map((row) => [row.data_type, row]));
+
+        // Um conflito só existe quando o MESMO grupo foi alterado localmente
+        // e também mudou no backend depois da última sincronização.
+        // Alterações em grupos independentes não devem abrir o modal.
+        return Object.keys(SYNC_GROUPS).some((group) => {
+            if (group === UVRM_DESCRIPTION_HISTORY_GROUP) return false;
+            if (stableStringify(localSnapshot[group] || {}) === stableStringify(remoteSnapshot[group] || {})) {
+                return false;
+            }
+            const localChanged = parseDate(localGroupChanges[group]);
+            const remoteChanged = parseDate(remoteRowsByGroup[group]?.updated_at);
+            return localChanged > lastSync + CONFLICT_TOLERANCE_MS
+                && remoteChanged > lastSync + CONFLICT_TOLERANCE_MS;
+        });
     }
 
     async function pushLocalData({ silent = false, force = false } = {}) {
@@ -479,6 +760,7 @@
             safeSet(LAST_REMOTE_UPDATE_KEY, syncedAt);
             resetWatchedSnapshot();
             setPending(false);
+            clearLocalGroupChanges();
             setConflict(false);
             setOnlineState({ status: "synced", at: syncedAt, direction: "upload" });
             await ensureProfile(session.user);
@@ -499,14 +781,25 @@
     }
 
     async function applyRemoteRows(rows, { silent = false } = {}) {
-        rows.forEach((row) => {
-            if (SYNC_GROUPS[row.data_type]) applyGroup(row.content);
+        // Preferências primeiro: formData só pode ser aplicado quando
+        // "Salvar dados preenchidos" estiver habilitado.
+        const orderedRows = [...rows].sort((a, b) =>
+            (a.data_type === "preferences" ? -1 : 0) - (b.data_type === "preferences" ? -1 : 0)
+        );
+        orderedRows.forEach((row) => {
+            if (SYNC_GROUPS[row.data_type] && isSyncGroupEnabled(row.data_type)) {
+                applyGroup(row.content);
+            }
         });
+        if (!isSyncGroupEnabled("form_data")) {
+            safeRemove(`${APP_CONFIG.storagePrefix}formData`);
+        }
         const syncedAt = nowIso();
         const remoteAt = latestRemoteTimestamp(rows);
         safeSet(LAST_SYNC_KEY, syncedAt);
         if (remoteAt) safeSet(LAST_REMOTE_UPDATE_KEY, new Date(remoteAt).toISOString());
         setPending(false);
+        clearLocalGroupChanges();
         setConflict(false);
         setOnlineState({ status: "synced", at: syncedAt, direction: "download" });
         refreshApplication();
@@ -529,6 +822,11 @@
         try {
             let rows = await fetchRemoteRows();
             rows = await ensureDocumentGroupStructure(rows);
+            rows = await ensureOperationalPreferencesGroup(rows);
+            rows = await ensureFileBuilderGroup(rows);
+            rows = await ensureFileModelsGroup(rows);
+            rows = await ensureFormDataGroup(rows);
+            rows = await mergeUvrmDescriptionHistory(rows);
             if (!rows.length) {
                 syncInProgress = false;
                 return pushLocalData({ silent, force: true });
@@ -633,6 +931,9 @@
     }
 
     async function synchronize({ silent = false, authRetry = false } = {}) {
+        if (!window.IdentityGateService?.canUseOnlineSync?.(session?.user?.id)) {
+            return false;
+        }
         if (!client || !session?.user) {
             if (!silent) notify("Faça login para sincronizar.", "warning");
             return false;
@@ -653,6 +954,11 @@
         try {
             let rows = await fetchRemoteRows();
             rows = await ensureDocumentGroupStructure(rows);
+            rows = await ensureOperationalPreferencesGroup(rows);
+            rows = await ensureFileBuilderGroup(rows);
+            rows = await ensureFileModelsGroup(rows);
+            rows = await ensureFormDataGroup(rows);
+            rows = await mergeUvrmDescriptionHistory(rows);
             if (rows.length && snapshotsEqual(rows)) {
                 const remoteAt = latestRemoteTimestamp(rows);
                 const syncedAt = remoteAt ? new Date(remoteAt).toISOString() : nowIso();
@@ -697,6 +1003,13 @@
         syncTimer = setTimeout(() => synchronize({ silent: true }), 1800);
     }
 
+    function notifyLocalGroupChange(group) {
+        if (!SYNC_GROUPS[group] || applyingRemote || !session?.user) return;
+        markLocalGroupChanges([group]);
+        resetWatchedSnapshot();
+        scheduleAutoSync(true);
+    }
+
     function formatDate(value) {
         if (!value) return "Nunca";
         const date = new Date(value);
@@ -723,6 +1036,7 @@
     }
 
     async function signOutAndRefreshUi() {
+        await window.IdentityGateService?.prepareSignOut?.();
         const authClient = client || window.BackendClientService?.getClient?.() || null;
         if (!authClient?.auth?.signOut) {
             notify("Não foi possível encerrar a sessão: cliente de autenticação indisponível.");
@@ -741,7 +1055,8 @@
             setOnlineState({ status: "local" });
             renderOnlineStatus();
             closeHeaderAccountMenu();
-            notify("Sessão encerrada. O armazenamento local permanece disponível.");
+            notify("Sessão encerrada.");
+            window.setTimeout(() => location.reload(), 150);
         } catch (error) {
             window.ErrorHandler?.report?.(error, "Logout do backend", { silent: true });
             notify(error?.message || "Não foi possível encerrar a sessão.");
@@ -898,6 +1213,7 @@
     }
 
     function openConflictModal() {
+        if (!window.IdentityGateService?.canUseOnlineSync?.(session?.user?.id)) return;
         createConflictModal();
         const modal = document.getElementById("onlineConflictModal");
         if (modal) modal.hidden = false;
@@ -1116,7 +1432,7 @@
                             }
 
                     if (event === "SIGNED_IN" && session?.user) {
-        
+                        if (window.IdentityGateService?.isIdentityTransition?.()) return;
                         try {
                             await ensureProfile(session.user);
 
@@ -1145,13 +1461,21 @@
             });
         }
 
-        if (session?.user && navigator.onLine) {
+        if (window.IdentityGateService?.isLocalMode?.() && session?.user) {
+            try { await client.auth.signOut(); } catch { }
+            session = null;
+            renderOnlineStatus();
+        }
+
+        if (session?.user && navigator.onLine && window.IdentityGateService?.isAccountMode?.()) {
             await ensureProfile(session.user);
             if (!authProfileStage) await synchronize({ silent: true });
         }
 
         window.addEventListener("storage", (event) => {
-            if (event.key && Object.values(SYNC_GROUPS).some((keys) => keys.includes(event.key))) {
+            const group = event.key ? groupForStorageKey(event.key) : null;
+            if (group) {
+                markLocalGroupChanges([group]);
                 resetWatchedSnapshot();
                 scheduleAutoSync(true);
             }
@@ -1195,19 +1519,21 @@
 
         window.OnlineSyncService = Object.freeze({
             sync: synchronize,
+            deleteSyncedFormData,
             upload: pushLocalData,
             restore: pullRemoteData,
             ensureFreshSession: ensureFreshBackendSession,
             refreshSession: refreshBackendSession,
             openLogin: openAuthModal,
             openConflict: openConflictModal,
-            getSession: () => session,
+            getSession: () => window.IdentityGateService?.canUseOnlineSync?.(session?.user?.id) ? session : null,
             getGroups: () => Object.keys(SYNC_GROUPS),
             hasPendingChanges,
-            hasConflict
+            hasConflict,
+            notifyLocalGroupChange
         });
 
-        if (session?.user) {               
+        if (session?.user && window.IdentityGateService?.canUseOnlineSync?.(session.user.id)) {
             window.dispatchEvent(
                 new CustomEvent("um:session-ready")
             );

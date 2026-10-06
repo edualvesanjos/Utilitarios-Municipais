@@ -1,11 +1,11 @@
-const APP_VERSION = "4.6.3";
+const APP_VERSION = "4.7.0";
 window.APP_VERSION = APP_VERSION;
 
 /*
  * Ambiente ativo da aplicação.
  *
  * Para testes:
- *   const APP_ENVIRONMENT = "production";
+ *   const APP_ENVIRONMENT = "development";
  *
  * Para publicação oficial:
  *   const APP_ENVIRONMENT = "production";
@@ -31,7 +31,7 @@ function getEnvironmentName(environment = APP_ENVIRONMENT) {
 const APP_CONFIG = Object.freeze({
     name: "Utilitários Municipais",
     version: APP_VERSION,
-    schemaVersion: 13,
+    schemaVersion: 14,
     storagePrefix: "utilitariosMunicipais:",
     environment: APP_ENVIRONMENT,
     environmentName: getEnvironmentName(),

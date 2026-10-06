@@ -639,3 +639,35 @@ body.compact-mode .dashboard-tool-card {
     gap: 0.45rem;
     flex-wrap: wrap;
 }
+
+
+/* v4.6.7.2 — fluxo visual do gerador de Lotes */
+.lot-preview-compact {
+    margin-top: 16px;
+    padding: 10px 12px;
+    border: 1px dashed #c8d5e2;
+    border-radius: 10px;
+    background: #f8fafc;
+}
+.lot-preview-compact > span {
+    display: block;
+    margin-bottom: 4px;
+    color: #6b7786;
+    font-size: .75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.lot-preview-compact > strong { font-size: 1rem; }
+.lot-generate-actions { margin-top: 14px; }
+.lot-result-box {
+    margin-top: 14px;
+    border-width: 2px;
+    background: #fff;
+}
+.lot-result-box > span { color: #334e68; }
+.lot-result-box pre {
+    min-height: 1.5em;
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+.lot-result-actions { margin-top: 10px; }

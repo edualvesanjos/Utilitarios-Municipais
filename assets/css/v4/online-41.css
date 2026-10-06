@@ -178,3 +178,11 @@
     box-shadow:0 1px 4px rgba(0,0,0,.18);
 }
 .app-environment-badge[data-environment="production"]{display:none!important}
+
+/* v4.6.11 — porta de entrada e isolamento por identidade */
+.identity-gate{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:24px;background:var(--bg,#eef3f8)}
+.identity-gate-card{width:min(430px,100%);padding:28px;border-radius:18px;background:var(--surface,#fff);box-shadow:0 24px 70px rgba(15,76,129,.18);border:1px solid rgba(15,76,129,.14)}
+.identity-gate-brand{display:flex;gap:12px;align-items:center;margin-bottom:24px}.identity-gate-brand>span{font-size:30px}.identity-gate-brand div{display:grid}.identity-gate-brand small{opacity:.7}
+.identity-gate-card h1{margin:0 0 8px}.identity-gate-card>p{margin-top:0}.identity-gate-card label{display:grid;gap:6px;margin:14px 0}.identity-gate-card input{width:100%;box-sizing:border-box}
+.identity-gate-card>button{width:100%;margin-top:10px}.identity-gate-divider{display:flex;align-items:center;gap:12px;margin:18px 0 8px;color:var(--muted,#667085)}.identity-gate-divider::before,.identity-gate-divider::after{content:"";height:1px;flex:1;background:rgba(127,127,127,.25)}
+.identity-gate .feedback{min-height:1.4em;margin:14px 0 0}
