@@ -1,153 +1,60 @@
-# Utilitários Municipais v4.6.0 DEV — Etapa 2
+# Utilitários Municipais
 
-Etapa de migração controlada para o SuperDB.
+Aplicação web que reúne ferramentas de apoio a rotinas administrativas municipais em uma única interface. O projeto funciona no navegador e combina armazenamento local com sincronização opcional por usuário no SuperDB.
 
-## Escopo desta etapa
+## Principais recursos
 
-- SuperDB passa a ser o backend ativo apenas na branch DEV.
-- Autenticação, restauração de sessão e `profiles` são habilitados no SuperDB.
-- `user_data`, `sync_log` e `history_entries` ainda não são sincronizados nesta etapa.
-- SuperDB é o backend operacional exclusivo da aplicação; o cliente e o SDK legados do Supabase não são mais carregados no runtime.
-- O `profiles` usa SELECT + INSERT/UPDATE porque o SDK `@superdb/client@0.2.2` não expõe `.upsert()`.
+- Montador de nomes de arquivo e modelos reutilizáveis.
+- Formatação e validação de inscrição imobiliária, CPF e CNPJ.
+- Geração e controle de sequência de lotes.
+- Cálculos de UVRM, percentuais e datas.
+- Central de documentos, biblioteca de ferramentas e histórico global.
+- Preferências e históricos sincronizáveis entre dispositivos.
+- Modo **Somente local**, sem comunicação com o SuperDB.
+- Isolamento dos dados locais por usuário autenticado.
 
-## Configuração
+## Como usar
 
-Copie `.env.example` para `.env` e informe a mesma Anon Key usada no laboratório `utilitariosmunicipais_teste`.
+Ao abrir a aplicação, escolha uma das formas de acesso:
 
-## Testes
+1. **Entrar com SuperDB** — autentica o usuário, ativa o espaço local exclusivo da conta e habilita a sincronização normal.
+2. **Usar somente local** — mantém os dados exclusivamente no navegador atual, sem sincronização online.
 
-1. Abrir o site e confirmar no console `Cliente SuperDB inicializado.`
-2. Entrar com a conta DEV já existente no SuperDB.
-3. Confirmar que o cabeçalho mostra a conta autenticada.
-4. Recarregar a página e confirmar restauração da sessão.
-5. Conferir no SuperDB que `profiles` recebeu exatamente 1 registro do usuário.
-6. Alterar o nome de exibição, sair/entrar e conferir a atualização do profile.
-7. Confirmar que `user_data`, `sync_log` e `history_entries` continuam vazias nesta etapa.
+A aplicação não deve sincronizar dados antes da identificação do usuário ou da escolha explícita do modo somente local.
 
+## Desenvolvimento
 
-## v4.6.0 DEV — Etapa 2 (correção)
+O projeto utiliza HTML, CSS e JavaScript, com Vite para o ambiente de desenvolvimento e build.
 
-- Corrige a persistência de **Como gostaria de ser chamado?** em `profiles.display_name`.
-- O evento `um:display-name-changed` agora chama `ensureProfile()` diretamente quando existe sessão autenticada.
-- A sincronização geral de `user_data`, `sync_log` e `history_entries` permanece fora do escopo desta etapa.
+```bash
+npm install
+npm run dev
+```
 
+Para gerar o build:
 
-## v4.6.0 DEV — Etapa 3
-- `user_data` ativo no SuperDB.
-- SELECT pelo SDK; upsert via REST homologado.
-- `sync_log` ainda não é gravado.
-- `history_entries` permanece para etapa posterior.
+```bash
+npm run build
+```
 
+As configurações sensíveis do ambiente devem ser fornecidas pelas variáveis previstas no projeto e não devem ser gravadas diretamente no repositório.
 
-### v4.6.0 DEV — Etapa 3 (correção)
-- Corrige a leitura de `user_data` no SuperDB.
-- O SDK `@superdb/client@0.2.2` não oferece o modificador `.in()` usado pelo fluxo legado do Supabase.
-- `fetchRemoteRows()` agora faz SELECT autenticado por `user_id` e filtra os `data_type` conhecidos na aplicação.
-- O REST upsert permanece como estratégia de gravação.
+## Fluxo de versões
 
+O desenvolvimento é realizado primeiro na branch `develop`. As versões DEV são testadas antes da promoção para homologação e, posteriormente, produção.
 
-### v4.6.0 DEV — Etapa 3 (correção 2)
+O histórico técnico completo das alterações está em [docs/CHANGELOG.md](docs/CHANGELOG.md). Documentos específicos de releases anteriores estão em [docs/releases](docs/releases).
 
-- Corrige `updated_at` no REST upsert de `user_data`.
-- Cada lote de sincronização passa a enviar explicitamente o timestamp de atualização.
-- `documents` também passa a enviar `updated_at`.
-- `Última sincronização` passa a registrar o instante real em que o upload foi concluído com sucesso.
-- `Última atualização remota` continua baseada no timestamp retornado pelo backend.
+## Estrutura relevante
 
+- `index.html` — estrutura principal da interface.
+- `assets/js/` — módulos, componentes e serviços JavaScript.
+- `assets/data/version-history.json` — dados exibidos em **Sobre → Histórico de versões**.
+- `docs/CHANGELOG.md` — histórico técnico completo.
+- `sql/` — scripts de banco de dados utilizados pelas versões que exigiram alterações de estrutura.
 
-### v4.6.0 DEV — Etapa 3 (correção 5)
-- Parte da Correção 2; Correções 3 e 4 descartadas.
-- Preserva a instância do cliente após erro 401 e adiciona diagnóstico DEV do ciclo de autenticação.
-- Permite nova tentativa sem reload após credenciais inválidas.
+## Ajuda e manutenção
 
+Para problemas ou melhorias, utilize os recursos de acompanhamento do próprio repositório GitHub e informe a versão do aplicativo, o navegador utilizado e os passos para reproduzir o comportamento.
 
-## v4.6.0.6 DEV — Etapa 3
-
-- Corrige atualização imediata da UI após logout no SuperDB.
-- Mantém armazenamento local após encerramento da sessão.
-- Mantém a migração DEV via Backend Adapter; produção/main continua fora desta etapa.
-
-
-## v4.6.0.7 DEV — Etapa 4
-
-- Ativa `sync_log` no SuperDB DEV.
-- Mantém `history_entries` fora da migração nesta etapa.
-
-
-## v4.6.0.8 DEV — Etapa 4
-
-- Adiciona renovação automática do JWT do SuperDB com `refreshSession()`.
-- Trata sessão persistida expirada e expiração durante a sincronização.
-- Preserva dados locais quando uma sessão não puder ser renovada.
-
-
-## v4.6.0.9 DEV — Etapa 4
-
-- Feedback explícito para sincronização manual sem alterações.
-- Campo Cor principal passa a refletir a preferência recuperada do backend.
-
-
-## v4.6.1 DEV — Etapa 5
-
-- Inicia `history_entries` no SuperDB DEV.
-- Escrita usa REST upsert idempotente por `user_id + client_id`.
-- Outbox, merge remoto e tombstones permanecem preservados.
-
-
-## v4.6.1.2 DEV — Etapa 5
-
-Diagnóstico seguro da estrutura retornada por `getDataPlaneToken()`, sem exposição do token.
-
-
-## v4.6.1.3 DEV — Etapa 5
-
-Corrige a obtenção do Data Plane token para `history_entries`, aceitando o retorno direto em string do SuperDB 0.2.2.
-
-
-
-## v4.6.1.4 DEV — Etapa 5
-
-O envio REST de `history_entries` passa a usar a mesma rota e os mesmos headers
-do upsert REST homologado no laboratório SuperDB v0.2.0.
-
-
-## v4.6.1.5 DEV — Compatibilidade de validação
-
-- Protege os listeners do `ValidationCenter` contra `Event.target` que não seja um `Element`.
-- Corrige o erro observado no Firefox sem alterar as regras de validação dos campos.
-
-
-## v4.6.1.6 DEV — Identidade funcional dos históricos
-
-- Estabiliza a identidade dos históricos na sincronização offline/online.
-- Evita recriação do mesmo CPF/CNPJ válido em eventos sucessivos.
-- Mantém logs de diagnóstico DEV durante a homologação.
-
-
-
-## v4.6.9.1 DEV — Seletor de descrições UVRM
-
-- Seletor próprio para descrições recentes, sem dependência de `datalist`.
-- Compatibilidade consistente entre Firefox, Edge e Chrome.
-- Descrição restaurada não impede abrir e escolher outras opções.
-
-## v4.6.9 DEV — Histórico recente de descrições UVRM
-
-- Sincroniza o histórico de descrições da UVRM em grupo próprio.
-- Faz união e deduplicação entre dispositivos, mantendo até 30 descrições.
-- Mantém `uvrmCurrentList` exclusivamente local.
-- Não utiliza Realtime e não exige alteração SQL.
-
-
-## v4.6.9.3 DEV — Valor de lançamento UVRM separado do formulário
-
-- O campo Valor do lançamento da UVRM deixa de integrar `formData`.
-- Valor unitário e casas decimais continuam persistentes como configurações.
-- Valores antigos de lançamento existentes em `formData` não são mais restaurados.
-- O histórico recente de descrições continua sincronizado normalmente.
-
-## v4.6.9.2 DEV — Descrição UVRM separada do formulário
-
-- A descrição da UVRM deixa de integrar `formData`.
-- O histórico recente continua sincronizado e disponível no seletor próprio.
-- Dados antigos de descrição existentes em `formData` não são mais restaurados.
+O projeto é mantido no próprio repositório e sua documentação deve acompanhar cada versão funcional ou corretiva.

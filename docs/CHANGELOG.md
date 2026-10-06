@@ -1,3 +1,12 @@
+## 4.6.12 DEV — Documentação e histórico desacoplado
+
+- Remove do `index.html` o conteúdo extenso do histórico de versões.
+- Move os dados do histórico para `assets/data/version-history.json` e passa a renderizá-los dinamicamente no Sobre.
+- Mantém as Novidades focadas somente na versão atual e preserva `docs/CHANGELOG.md` como histórico técnico completo.
+- Reorganiza o `README.md` para apresentar objetivo, recursos, uso, desenvolvimento, ajuda e referências de forma concisa.
+- Adota links relativos para a documentação interna do repositório.
+- Nenhuma alteração de banco de dados ou SQL é necessária.
+
 ## 4.6.11.1 DEV — Bloquear sincronização antes da identidade
 
 - Impede sincronização e detecção de conflito antes da escolha explícita entre conta SuperDB e modo somente local.

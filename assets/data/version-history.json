@@ -1,0 +1,460 @@
+{
+  "versions": [
+    {
+      "version": "4.6.11.1 DEV",
+      "title": "Bloqueio de sincronização antes da identidade",
+      "contentHtml": "<ul><li>Impede sincronização e detecção de conflito antes da escolha explícita entre conta SuperDB e modo somente local.</li><li>Oculta a sessão persistida dos demais serviços até a conclusão da tela inicial.</li><li>Mantém o modo somente local totalmente fora da sincronização online.</li></ul>",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.11 DEV",
+      "title": "Entrada obrigatória e isolamento por usuário",
+      "contentHtml": "<ul><li>Adiciona escolha inicial entre login SuperDB e uso somente local.</li><li>Separa os dados locais por identidade e impede que uma conta nova herde dados de outro usuário.</li><li>Preserva dados legados no espaço somente local e suspende a sincronização durante trocas de identidade.</li></ul>",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.9.3 DEV",
+      "title": "Valor de lançamento UVRM separado do formulário",
+      "contentHtml": "<ul><li>Remove o valor atual do lançamento UVRM de formData.</li><li>Mantém valor unitário e casas decimais como configurações persistentes.</li><li>Preserva o histórico sincronizado de descrições.</li></ul>",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.9.2 DEV",
+      "title": "Descrição UVRM separada do formulário",
+      "contentHtml": "\n<ul>\n<li>Remove a descrição atual da UVRM do formData e mantém somente o histórico sincronizado.</li>\n<li>Versão substituída pela 4.6.9.3 para aplicar o mesmo conceito ao valor do lançamento.</li>\n</ul>\n",
+      "contentClass": "about-version-content"
+    },
+    {
+      "version": "4.6.9.1 DEV",
+      "title": "Seletor compatível de descrições UVRM",
+      "contentHtml": "\n<ul>\n<li>Substitui o datalist por seletor próprio compatível entre navegadores.</li>\n<li>Versão substituída pela 4.6.9.2 para separar o histórico do valor atual do campo.</li>\n</ul>\n",
+      "contentClass": "about-version-content"
+    },
+    {
+      "version": "4.6.9 DEV",
+      "title": "Histórico recente de descrições da UVRM",
+      "contentHtml": "\n<ul>\n<li>Sincroniza descrições recentes da UVRM por união e deduplicação.</li>\n<li>Versão substituída pela 4.6.9.1 após incompatibilidade do seletor nativo entre navegadores.</li>\n</ul>\n",
+      "contentClass": "about-version-content"
+    },
+    {
+      "version": "4.6.8.3 DEV",
+      "title": "Correção da sincronização do CPF / CNPJ",
+      "contentHtml": "\n<p>Corrige o disparo da sincronização das preferências “Copiar automaticamente” e “Sem máscara”.</p>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.8.2 DEV",
+      "title": "Preferências do CPF / CNPJ sincronizadas",
+      "contentHtml": "\n<ul>\n<li>Adiciona “Copiar automaticamente” e “Sem máscara” às preferências operacionais sincronizadas.</li>\n<li>Preserva essas opções ao limpar os dados do módulo.</li>\n</ul>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.8.1 DEV",
+      "title": "Dados preenchidos opcionais e sincronizados",
+      "contentHtml": "\n<p>Adiciona controle visível para salvar e sincronizar campos persistentes e remove os dados armazenados quando a opção é desativada.</p>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.7.2 DEV",
+      "title": "Concorrência e interface de Lotes",
+      "contentHtml": "\n<p>Trata explicitamente conflitos de sequência entre dispositivos e reorganiza a área de geração e resultado.</p>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.7 DEV",
+      "title": "Sequência de Lotes sincronizada",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\"><section><h4>Resumo</h4><p>Sincroniza a sequência de Lotes em tabela própria, preserva alterações manuais para números menores, protege concorrência por revisão e corrige o reinício para 00001.</p></section></div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.6 DEV",
+      "title": "Modelos do Nome de arquivo sincronizados",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\"><section><h4>Resumo</h4><p>Sincroniza fileModels em grupo próprio, atualiza a lista após dados remotos e preserva a detecção de conflitos por grupo.</p></section></div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.5 DEV",
+      "title": "Montador de arquivo sincronizado e favicons",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\"><section><h4>Resumo</h4><p>Sincroniza o fileBuilder em grupo próprio, preservando conflitos por grupo, e incorpora a família de favicons do sistema.</p></section></div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.4.1 DEV",
+      "title": "Correção de falso conflito entre grupos",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\"><section><h4>Resumo</h4><p>A detecção de conflito passa a considerar concorrência no mesmo grupo, evitando que uma preferência operacional gere conflito por atualização independente de outro grupo.</p></section></div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.4 DEV",
+      "title": "Preferências operacionais sincronizadas",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\"><section><h4>Resumo</h4><p>Sincroniza cinco preferências operacionais em grupo próprio, sem Realtime, e corrige a chave de tema usada pelo atalho do Dashboard.</p></section></div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.2.1 DEV",
+      "title": "Serialização da renovação de sessão",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\"><section><h4>Resumo</h4><p>Evita renovações concorrentes da sessão SuperDB, protegendo o refresh token rotativo contra reutilização e revogação da sessão.</p></section></div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.2 DEV",
+      "title": "Checkpoint para teste prolongado do Realtime",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Resumo</h4>\n<p>Consolida a correção do indicador “Último backup” e preserva o Realtime sem alterações funcionais para reinício do teste prolongado.</p>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.1.21 DEV",
+      "title": "Atualização do último backup",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Backup</h4>\n<ul>\n<li>Atualiza imediatamente o horário do último backup após a exportação.</li>\n<li>Mantém os indicadores de Configurações e Dashboard consistentes na mesma sessão.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.1.20 DEV",
+      "title": "Recuperação autenticada do Realtime",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Autenticação e Realtime</h4>\n<ul>\n<li>Renova a sessão SuperDB quando a emissão do token Realtime retornar HTTP 401.</li>\n<li>Repete a emissão do token uma única vez após a renovação autenticada.</li>\n<li>Se o 401 persistir, aguarda 60 segundos antes de nova tentativa; demais falhas mantêm reconexão em 5 segundos.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.1.19 DEV",
+      "title": "Recuperação após renovação de sessão",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Autenticação e Realtime</h4>\n<ul>\n<li>Recupera o Realtime após uma renovação bem-sucedida da sessão quando o canal estiver desconectado.</li>\n<li>Atualiza a autenticação do canal quando ele já estiver SUBSCRIBED.</li>\n<li>Repete history_entries uma única vez após 401, depois de renovar a sessão.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.1.18 DEV",
+      "title": "Recuperação após falha temporária do SuperDB",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Resiliência do Realtime</h4>\n<ul>\n<li>Repete de forma controlada a reconexão quando a tentativa anterior falha ao obter novo token.</li>\n<li>Libera o bloqueio de reconexão antes de agendar a tentativa seguinte.</li>\n<li>Preserva o intervalo de 5 segundos e evita tentativas concorrentes.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.1.17 DEV",
+      "title": "Sincronização automática entre navegadores",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Realtime e sincronização</h4>\n<ul>\n<li>Valida o fluxo de alteração remota entre dois navegadores autenticados.</li>\n<li>Registra o resultado do processamento iniciado pelo Realtime.</li>\n<li>Preserva a detecção de conflitos exclusivamente no serviço de sincronização.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.1.16 DEV",
+      "title": "Reconexão explícita após novo login",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Autenticação e Realtime</h4>\n<ul>\n<li>Restabelece o Realtime diretamente após o login retornar uma sessão válida.</li>\n<li>Não depende exclusivamente do evento <code>SIGNED_IN</code> para o ciclo <code>logout → login</code>.</li>\n<li>Mantém a conexão antes das operações REST de perfil e sincronização.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.1.15 DEV",
+      "title": "Login Realtime independente da sincronização",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Autenticação e resiliência</h4>\n<ul>\n<li>Conecta o Realtime imediatamente após o evento <code>SIGNED_IN</code>.</li>\n<li>Não deixa falhas REST pós-login impedirem a conexão Realtime.</li>\n<li>Preserva as proteções de logout, renovação e reconexão já homologadas.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.1.14 DEV",
+      "title": "Estabilidade de logout e login do Realtime",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Autenticação e Realtime</h4>\n<ul>\n<li>Encerra explicitamente o Realtime no logout, sem depender apenas do evento do SDK.</li>\n<li>Limpa canal e timers associados à sessão encerrada.</li>\n<li>Evita recriar uma conexão já inscrita durante eventos redundantes de login.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.1.13 DEV",
+      "title": "Recuperação resiliente no retorno online",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Retorno da rede</h4>\n<ul>\n<li>Registra o evento <code>online</code> independentemente do estado momentâneo da sessão.</li>\n<li>Reavalia a sessão após 500 ms quando necessário antes de iniciar a recuperação.</li>\n<li>Mantém a reconexão protegida contra duplicidade e respeita logout/desconexões intencionais.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.1.12 DEV",
+      "title": "Recuperação do Realtime no retorno online",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Recuperação de rede</h4>\n<ul>\n<li>Registra quando uma assinatura ativa atravessa uma interrupção de rede.</li>\n<li>Verifica a recuperação no retorno online mesmo se o último estado conhecido ainda for <code>SUBSCRIBED</code>.</li>\n<li>Aguarda 5 segundos pela recuperação automática do SDK antes de recriar a conexão.</li>\n<li>Cancela a recuperação programada se o canal confirmar novamente <code>SUBSCRIBED</code>.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.1.11 DEV",
+      "title": "Renovação normal e reconexão do Realtime",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Estabilidade do Realtime</h4>\n<ul>\n<li>Restaura o intervalo normal de renovação preventiva do token após o teste controlado da versão anterior.</li>\n<li>Trata falhas e encerramentos do canal com agendamento controlado de reconexão.</li>\n<li>Verifica a necessidade de recuperação do Realtime quando o navegador volta a ficar online.</li>\n<li>Evita reconexões concorrentes e respeita desconexões intencionais, como logout.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.1.10 DEV",
+      "title": "Validação da renovação do token Realtime",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Renovação controlada</h4>\n<ul>\n<li>Reduz temporariamente o intervalo de renovação para 60 segundos para validar o ciclo completo sem aguardar 55 minutos.</li>\n<li>Mantém a atualização da autenticação por <code>setAuth(...)</code> sem recriar o canal Realtime.</li>\n<li>Registra no log DEV o modo de teste e o resultado da renovação.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.1.9 DEV",
+      "title": "Estabilidade do Realtime",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Etapa 1 — Estado da assinatura</h4>\n<ul>\n<li>Passa a acompanhar internamente o estado real da assinatura Realtime.</li>\n<li><code>isConnected()</code> retorna verdadeiro somente quando o canal está em <code>SUBSCRIBED</code>.</li>\n<li>A renovação de token e a reconexão automática permaneceram fora desta primeira etapa.</li>\n</ul>\n</section>\n<section>\n<h4>Etapa 2 — Renovação do token</h4>\n<ul>\n<li>Agenda a renovação preventiva conforme a validade informada pelo token Realtime.</li>\n<li>Valida a sessão SuperDB antes de emitir uma nova credencial Realtime.</li>\n<li>Atualiza o cliente ativo com <code>setAuth(...)</code>, sem recriar o canal em uma renovação normal.</li>\n<li>Remove o timer de renovação ao desconectar ou efetuar logout.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.1.8 DEV",
+      "title": "Consolidação do SuperDB e Realtime",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Backend</h4>\n<ul>\n<li>Consolida o SuperDB como backend operacional exclusivo da aplicação.</li>\n<li>Remove do runtime os componentes e configurações legados do Supabase.</li>\n<li>Adota terminologia neutra para dados e armazenamento online.</li>\n</ul>\n</section>\n<section>\n<h4>Realtime</h4>\n<ul>\n<li>Implementa a conexão Realtime para acompanhamento das alterações dos dados online.</li>\n<li>Consolida eventos do mesmo lote antes de solicitar a sincronização.</li>\n<li>Ajusta a inicialização para utilizar corretamente a sessão autenticada restaurada.</li>\n</ul>\n</section>\n<section>\n<h4>Sincronização</h4>\n<ul>\n<li>Preserva os mecanismos de sincronização automática e manual já homologados.</li>\n<li>Mantém o tratamento de conflitos entre dados locais e online.</li>\n<li>Valida a conexão automática do Realtime após a restauração da sessão.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.1.7 DEV",
+      "title": "Limpeza dos logs de diagnóstico",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Estabilização</h4>\n<ul>\n<li>Remove os logs temporários de diagnóstico dos históricos e da autenticação.</li>\n<li>Mantém os tratamentos de erro e os logs operacionais permanentes.</li>\n<li>Preserva o fluxo de autenticação e sincronização homologado.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.1.6 DEV",
+      "title": "Identidade funcional dos históricos",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Sincronização</h4>\n<ul>\n<li>Identidade determinística por módulo, ação e conteúdo funcional.</li>\n<li>Campos temporais/técnicos deixam de provocar duplicações funcionais.</li>\n<li>CPF/CNPJ não recria o mesmo documento válido em atualizações sucessivas.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.1.5 DEV",
+      "title": "Compatibilidade de validação no Firefox",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>ValidationCenter</h4>\n<ul>\n<li>Event.target é validado como Element antes do uso de matches() e classList.</li>\n<li>Corrigido o TypeError observado no Firefox durante eventos de validação.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.1.4 DEV",
+      "title": "Etapa 5 — REST homologado do SuperDB",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>history_entries</h4>\n<ul>\n<li>REST ajustado para api.superdb.com.br conforme laboratório v0.2.0.</li>\n<li>Profiles do projeto enviados em Accept-Profile e Content-Profile.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.1.3 DEV",
+      "title": "Etapa 5 — correção do Data Plane token",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>history_entries</h4>\n<ul>\n<li>Corrigida a leitura do token retornado diretamente como string pelo SuperDB 0.2.2.</li>\n<li>Mantido diagnóstico DEV para homologar o envio da outbox.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.1 DEV",
+      "title": "Etapa 5 — history_entries no SuperDB",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Migração</h4>\n<ul>\n<li>Ativada a escrita de históricos no SuperDB DEV.</li>\n<li>REST upsert preserva a idempotência por user_id + client_id.</li>\n<li>Primeira homologação deve ser feita com um único usuário/dispositivo.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.0.9 DEV",
+      "title": "Etapa 4 — ajustes finais de sincronização",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Ajustes</h4>\n<ul>\n<li>Feedback visual no Sincronizar agora quando não existem diferenças.</li>\n<li>Reidratação do campo Cor principal após recuperação remota.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.0.8 DEV",
+      "title": "Etapa 4 — renovação automática de JWT",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>SuperDB</h4>\n<ul>\n<li>Renovação preventiva da sessão persistida antes da sincronização.</li>\n<li>Uma única renovação e repetição quando o backend retornar JWT expirado.</li>\n<li>Se a renovação falhar, a interface solicita novo login sem apagar dados locais.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.0.7 DEV",
+      "title": "Etapa 4 — sync_log no SuperDB",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Migração</h4>\n<ul>\n<li>Ativada a gravação de sync_log no SuperDB DEV.</li>\n<li>Logs registram backend e etapa de migração nos detalhes.</li>\n<li>history_entries permanece fora desta etapa.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.6.0.6 DEV",
+      "title": "Etapa 3 — migração SuperDB e correção do logout",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Alterações</h4>\n<ul>\n<li>Atualização imediata da interface após encerrar a sessão.</li>\n<li>Preservação dos dados locais durante o logout.</li>\n<li>Continuidade da validação de user_data no SuperDB DEV.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.5.3.1",
+      "title": "Correção de autenticação e controles da conta",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Correções</h4>\n<ul>\n<li>Restaurado o funcionamento do ícone de logon/logoff.</li>\n<li>Corrigido login que permanecia indefinidamente em “Entrando...”.</li>\n<li>Restaurado o fluxo original de atualização do estado da conta.</li>\n</ul>\n</section>\n<section>\n<h4>Preservado</h4>\n<ul>\n<li>Sincronização da Central de Documentos.</li>\n<li>Mensagens aprimoradas de conflito e pendência.</li>\n<li>Supabase Realtime continua fora do escopo.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.5.3",
+      "title": "Robustez da sincronização e proteção dos dados",
+      "contentHtml": "<div class=\"about-version-detail-grid\">\n<section><h4>Implementações</h4><ul><li>Estados de sincronização mais explícitos.</li><li>Mensagens aprimoradas para pendência, offline e conflito.</li><li>Proteção visual contra resolução acidental de conflitos.</li></ul></section>\n<section><h4>Escopo</h4><ul><li>Mantida a sincronização da Central de Documentos.</li><li>Sem alteração de tabelas ou RLS.</li><li>Supabase Realtime permanece fora do escopo.</li></ul></section>\n</div>",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.5.2",
+      "title": "Central de Documentos — versão de produção consolidada",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section><h4>Implementações</h4><ul>\n<li>Gerenciamento de modelos, categorias e grupos.</li>\n<li>Duplicação, importação e exportação de modelos.</li>\n<li>Sincronização online de modelos, grupos e categorias.</li>\n</ul></section>\n<section><h4>Consolidação</h4><ul>\n<li>Incorpora as etapas DEV 4.5.2.1 a 4.5.2.4 validadas.</li>\n<li>Migração conservadora preserva dados existentes.</li>\n<li>Supabase Realtime permanece fora do escopo.</li>\n</ul></section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.5.2.4",
+      "title": "Sincronização efetiva da Central de Documentos",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Implementações</h4>\n<ul>\n<li>Modelos, grupos e categorias passam a ser sincronizados no grupo documents.</li>\n<li>Alterações da Central acionam diretamente a sincronização automática.</li>\n<li>Refresh centralizado após aplicação dos dados online.</li>\n</ul>\n</section>\n<section>\n<h4>Compatibilidade</h4>\n<ul>\n<li>Registros remotos antigos recebem as novas chaves sem sobrescrever templates remotos existentes.</li>\n<li>Nova migração local prepara dados criados nas versões 4.5.2.1–4.5.2.3.</li>\n<li>Sem novo schema de banco, sem alteração de RLS e sem Realtime.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.5.2.3",
+      "title": "Persistência e sincronização da Central de Documentos",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Implementações</h4>\n<ul>\n<li>Preparação de modelos, grupos e categorias para o fluxo de sincronização existente.</li>\n<li>Ponto único de atualização da Central após hidratação.</li>\n<li>Eventos internos para alterações dos dados da Central.</li>\n</ul>\n</section>\n<section>\n<h4>Aspectos técnicos</h4>\n<ul>\n<li>Compatibilidade com os dados locais das versões anteriores.</li>\n<li>Sem novo schema ou alteração de RLS.</li>\n<li>Realtime permanece fora do escopo.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.5.2.2",
+      "title": "Gerenciamento de categorias na Central de Documentos",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Implementações</h4>\n<ul>\n<li>Criação, renomeação e exclusão de categorias personalizadas.</li>\n<li>Filtros e editor passam a carregar categorias dinamicamente.</li>\n<li>Exportação e importação JSON incluem as categorias.</li>\n</ul>\n</section>\n<section>\n<h4>Correções e segurança</h4>\n<ul>\n<li>Excluir categoria não exclui modelos; eles passam para “Sem categoria”.</li>\n<li>Compatibilidade mantida com modelos e grupos existentes.</li>\n<li>Sem mudanças de schema, RLS, Realtime ou sincronização online.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.5.2.1",
+      "title": "Gerenciamento e portabilidade dos modelos de documentos",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Implementações</h4>\n<ul>\n<li>Duplicação de modelos com criação de cópia independente e editável.</li>\n<li>Exportação de modelos e grupos em arquivo JSON.</li>\n<li>Importação de pacotes JSON com validação de conteúdo.</li>\n</ul>\n</section>\n<section>\n<h4>Aspectos técnicos</h4>\n<ul>\n<li>Importações idênticas são ignoradas para evitar duplicação exata.</li>\n<li>Colisões de identificadores são resolvidas com novos IDs locais.</li>\n<li>Sem alterações de schema, RLS, Realtime ou sincronização.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.5.2",
+      "title": "Início da próxima etapa da Central de Documentos",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Implementações</h4>\n<ul>\n<li>Iniciada a versão 4.5.2 DEV sobre a base estável 4.5.1.3.</li>\n<li>Estrutura preparada para a próxima evolução funcional da Central de Documentos.</li>\n</ul>\n</section>\n<section>\n<h4>Aspectos técnicos</h4>\n<ul>\n<li>Ambiente alterado para desenvolvimento.</li>\n<li>Sem mudanças de schema, RLS, Realtime ou sincronização nesta abertura de versão.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.5.1.3",
+      "title": "Consolidação visual e alinhamento do painel principal",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Correções</h4>\n<ul>\n<li>O painel principal passa a utilizar <code>margin-top: 0px</code>.</li>\n<li>O alinhamento vertical com a sidebar foi consolidado com o valor validado visualmente.</li>\n</ul>\n</section>\n<section>\n<h4>Aspectos técnicos</h4>\n<ul>\n<li>Ajuste restrito à regra <code>.v45-sidebar ~ .tab-panel</code>.</li>\n<li>Sem mudanças em Supabase, RLS, Realtime ou arquitetura de sincronização.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.5.1.2",
+      "title": "Correção de alinhamento do painel principal",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Correções</h4>\n<ul>\n<li>O painel principal foi reposicionado para alinhar seu topo ao topo visual da sidebar.</li>\n<li>Removido o espaço vertical residual percebido após a retirada da barra superior de módulos.</li>\n</ul>\n</section>\n<section>\n<h4>Aspectos técnicos</h4>\n<ul>\n<li>Ajuste aplicado em <code>.v45-sidebar ~ .tab-panel</code>.</li>\n<li>Correção limitada ao layout, sem alterações funcionais ou de sincronização.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.5.1.1",
+      "title": "Limpeza de filtros e consolidação da navegação lateral",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Correções</h4>\n<ul>\n<li>“Limpar filtros” desmarca o modelo selecionado.</li>\n<li>A combobox retorna para “Selecione um modelo de documento...”.</li>\n<li>O painel Documento retorna ao aviso inicial de seleção.</li>\n</ul>\n</section>\n<section>\n<h4>Alterações</h4>\n<ul>\n<li>Removida a barra superior de módulos/abas abertas.</li>\n<li>A sidebar passa a ser a única navegação principal entre módulos.</li>\n<li>Conta e sincronização permanecem no cabeçalho superior.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.5.1",
+      "title": "Nova organização da Central de Documentos",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Implementações</h4>\n<ul>\n<li>Modelos e filtros movidos para o topo.</li>\n<li>Nova classificação por grupos.</li>\n<li>Gerenciamento de grupos com criação, renomeação e exclusão.</li>\n<li>Seleção de modelo por combobox larga.</li>\n</ul>\n</section>\n<section>\n<h4>Aspectos técnicos</h4>\n<ul>\n<li>Modelos antigos sem campo <code>group</code> são compatíveis.</li>\n<li>Sem alteração da arquitetura de sincronização.</li>\n<li>Sem mudanças em schema ou RLS.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.5.0.6",
+      "title": "Compactação vertical da sidebar",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Alterações</h4>\n<ul>\n<li>Redução controlada de alturas, margens e espaçamentos da navegação lateral.</li>\n<li>Compactação adicional automática em telas com menor altura útil.</li>\n</ul>\n</section>\n<section>\n<h4>Aspectos técnicos</h4>\n<ul>\n<li><code>overflow-y: auto</code> foi mantido como fallback.</li>\n<li>Nenhuma scrollbar foi ocultada artificialmente.</li>\n<li>Sem alterações em Supabase, schema, RLS ou sincronização.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.5.0.5",
+      "title": "Correção visual do Histórico de versões",
+      "contentHtml": "\n<div class=\"about-version-detail-grid\">\n<section>\n<h4>Correções</h4>\n<ul>\n<li>Eliminada a verticalização do número e do título da versão.</li>\n<li>Removida a interferência do layout legado de 70 px nos cartões interativos.</li>\n<li>Restabelecido o alinhamento horizontal do cabeçalho e da seta.</li>\n</ul>\n</section>\n<section>\n<h4>Aspectos técnicos</h4>\n<ul>\n<li>Correção restrita ao CSS da tela Sobre.</li>\n<li>Sem alterações em banco, RLS ou sincronização.</li>\n</ul>\n</section>\n</div>\n",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.5.0.4",
+      "title": "Histórico de versões interativo",
+      "contentHtml": "<div class=\"about-version-detail-grid\">\n<section><h4>Implementações</h4><ul><li>Versões clicáveis e expansíveis.</li><li>Apenas uma versão aberta por vez.</li><li>Navegação acessível por teclado.</li></ul></section>\n<section><h4>Aspectos técnicos</h4><ul><li>Sem alterações em banco, RLS ou sincronização.</li></ul></section>\n</div>",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.5.0.3",
+      "title": "Correções visuais da Etapa 2",
+      "contentHtml": "<div class=\"about-version-detail-grid\">\n<section><h4>Correções</h4><ul><li>Botão Recolher/Expandir redesenhado.</li><li>Conta retornou ao cabeçalho em formato compacto.</li></ul></section>\n<section><h4>Preservado</h4><ul><li>Indicador de sincronização integrado ao perfil.</li><li>Sidebar recolhível e menu móvel.</li></ul></section>\n</div>",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.5.0.2",
+      "title": "Evolução da sidebar e perfil",
+      "contentHtml": "<div class=\"about-version-detail-grid\">\n<section><h4>Implementações</h4><ul><li>Sidebar recolhível com persistência.</li><li>Drawer móvel com backdrop e fechamento por Escape.</li><li>Perfil com estados visuais de sincronização.</li></ul></section>\n</div>",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.5.0.1",
+      "title": "Correção de responsividade intermediária",
+      "contentHtml": "<div class=\"about-version-detail-grid\">\n<section><h4>Correções</h4><ul><li>Dashboard reorganizado para meia tela Full HD.</li><li>Prevenção de sobreposição e rolagem horizontal.</li></ul></section>\n</div>",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.5.0",
+      "title": "Nova navegação lateral",
+      "contentHtml": "<div class=\"about-version-detail-grid\">\n<section><h4>Implementações</h4><ul><li>Menu superior substituído por sidebar organizada por grupos.</li><li>Pesquisa e controles de aparência integrados à navegação.</li></ul></section>\n</div>",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.4.6.1",
+      "title": "Correção do layout de Documentos",
+      "contentHtml": "<div class=\"about-version-detail-grid\">\n<section><h4>Correções</h4><ul><li>Estado vazio deixou de ocupar espaço ao abrir um modelo.</li><li>Central de Documentos permaneceu com modelos editáveis e excluíveis.</li></ul></section>\n</div>",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.4.6",
+      "title": "Central de Documentos e preferências",
+      "contentHtml": "<div class=\"about-version-detail-grid\">\n<section><h4>Alterações</h4><ul><li>Central de Documentos reorganizada em Modelos e Documento.</li><li>Nome de exibição unificado entre preferências e interface.</li><li>README consolidado para refletir o estado atual.</li></ul></section>\n</div>",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.4.5",
+      "title": "Sincronização automática e refinamentos",
+      "contentHtml": "<div class=\"about-version-detail-grid\">\n<section><h4>Implementações</h4><ul><li>Sincronização automática ao iniciar, focar, retornar à aba e recuperar conexão.</li><li>Duplo clique seleciona todo o CPF/CNPJ.</li></ul></section>\n</div>",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.4.4",
+      "title": "Suporte a CNPJ alfanumérico",
+      "contentHtml": "<div class=\"about-version-detail-grid\">\n<section><h4>Implementações</h4><ul><li>Validação e máscara compatíveis com CNPJ alfanumérico.</li><li>CNPJ numérico tradicional preservado.</li></ul></section>\n</div>",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.4.3",
+      "title": "Gestão global dos históricos sincronizados",
+      "contentHtml": "<div class=\"about-version-detail-grid\">\n<section><h4>Implementações</h4><ul><li>Limpeza local diferenciada da exclusão sincronizada.</li><li>Tombstones utilizados para propagação das exclusões.</li></ul></section>\n</div>",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.4.2.2",
+      "title": "Correção das exclusões sincronizadas",
+      "contentHtml": "<div class=\"about-version-detail-grid\">\n<section><h4>Correções</h4><ul><li>Removidas colisões entre funções globais de exclusão.</li><li>Renderização local atualizada após merge remoto.</li></ul></section>\n</div>",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.4.2",
+      "title": "Exclusão sincronizada por registro",
+      "contentHtml": "<div class=\"about-version-detail-grid\">\n<section><h4>Implementações</h4><ul><li>Modelo de tombstones iniciado no histórico de CPF/CNPJ.</li></ul></section>\n</div>",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.4.1.4",
+      "title": "Padronização de históricos e UVRM",
+      "contentHtml": "<div class=\"about-version-detail-grid\">\n<section><h4>Correções</h4><ul><li>Valor padrão da UVRM preservado no formato 5,2151.</li><li>Botões locais de limpar histórico removidos dos módulos.</li></ul></section>\n</div>",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.4.1.3",
+      "title": "Histórico de Datas e ajustes",
+      "contentHtml": "<div class=\"about-version-detail-grid\">\n<section><h4>Alterações</h4><ul><li>Histórico local visível adicionado ao módulo Datas.</li><li>Valor padrão de UVRM ajustado para 5,2151.</li></ul></section>\n</div>",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.4.1.2",
+      "title": "Ordenação estável dos históricos",
+      "contentHtml": "<div class=\"about-version-detail-grid\">\n<section><h4>Correções</h4><ul><li>Ordenação estável aplicada aos históricos locais e sincronizados.</li><li>Correções definitivas no histórico CPF/CNPJ.</li></ul></section>\n</div>",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.4.1",
+      "title": "Confiabilidade da sincronização",
+      "contentHtml": "<div class=\"about-version-detail-grid\">\n<section><h4>Implementações</h4><ul><li>Fila de repetição e recuperação após perda de conexão.</li></ul></section>\n</div>",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.4.0",
+      "title": "Histórico global sincronizado",
+      "contentHtml": "<div class=\"about-version-detail-grid\">\n<section><h4>Implementações</h4><ul><li>Histórico global integrado ao fluxo de sincronização.</li></ul></section>\n</div>",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.3.6",
+      "title": "Novo módulo CPF/CNPJ",
+      "contentHtml": "<div class=\"about-version-detail-grid\">\n<section><h4>Implementações</h4><ul><li>Módulo independente para CPF e CNPJ, com normalização, máscara e histórico local.</li></ul></section>\n</div>",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.3.5",
+      "title": "Novo módulo Datas",
+      "contentHtml": "<div class=\"about-version-detail-grid\">\n<section><h4>Implementações</h4><ul><li>Contagem, soma e subtração de dias em módulo próprio.</li></ul></section>\n</div>",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.3.4",
+      "title": "Reorganização da documentação",
+      "contentHtml": "<div class=\"about-version-detail-grid\">\n<section><h4>Alterações</h4><ul><li>Documentação centralizada em docs/, releases em docs/releases/ e SQL em sql/.</li></ul></section>\n</div>",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.3.0",
+      "title": "Base dos históricos online",
+      "contentHtml": "<div class=\"about-version-detail-grid\">\n<section><h4>Implementações</h4><ul><li>Fundação da tabela history_entries, RLS e serviço de históricos.</li></ul></section>\n</div>",
+      "contentClass": "about-version-details"
+    }
+  ]
+}
