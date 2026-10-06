@@ -931,6 +931,9 @@
     }
 
     async function synchronize({ silent = false, authRetry = false } = {}) {
+        if (!window.IdentityGateService?.canUseOnlineSync?.(session?.user?.id)) {
+            return false;
+        }
         if (!client || !session?.user) {
             if (!silent) notify("Faça login para sincronizar.", "warning");
             return false;
@@ -1210,6 +1213,7 @@
     }
 
     function openConflictModal() {
+        if (!window.IdentityGateService?.canUseOnlineSync?.(session?.user?.id)) return;
         createConflictModal();
         const modal = document.getElementById("onlineConflictModal");
         if (modal) modal.hidden = false;
@@ -1522,14 +1526,14 @@
             refreshSession: refreshBackendSession,
             openLogin: openAuthModal,
             openConflict: openConflictModal,
-            getSession: () => session,
+            getSession: () => window.IdentityGateService?.canUseOnlineSync?.(session?.user?.id) ? session : null,
             getGroups: () => Object.keys(SYNC_GROUPS),
             hasPendingChanges,
             hasConflict,
             notifyLocalGroupChange
         });
 
-        if (session?.user) {               
+        if (session?.user && window.IdentityGateService?.canUseOnlineSync?.(session.user.id)) {
             window.dispatchEvent(
                 new CustomEvent("um:session-ready")
             );

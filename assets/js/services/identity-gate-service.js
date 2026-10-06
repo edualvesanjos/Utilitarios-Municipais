@@ -1,4 +1,4 @@
-/* Utilitários Municipais v4.6.11 DEV — isolamento local por identidade. */
+/* Utilitários Municipais v4.6.11.1 DEV — bloqueio de sincronização antes da identidade. */
 (function () {
     "use strict";
 
@@ -182,6 +182,12 @@
     function isAccountMode() { return localStorage.getItem(MODE_KEY) === "account"; }
     function isLocalMode() { return localStorage.getItem(MODE_KEY) === "local"; }
     function isIdentityTransition() { return sessionStorage.getItem(TRANSITION_KEY) === "true"; }
+    function isGatePassed() { return sessionStorage.getItem(SESSION_GATE_KEY) === "true"; }
+    function canUseOnlineSync(userId = null) {
+        if (!isGatePassed() || !isAccountMode() || isIdentityTransition()) return false;
+        const owner = localStorage.getItem(OWNER_KEY);
+        return Boolean(owner && (!userId || owner === userId));
+    }
 
     prepareBoot();
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", showGate, { once: true });
@@ -193,6 +199,6 @@
     window.addEventListener("pagehide", persistActiveSnapshot);
 
     window.IdentityGateService = Object.freeze({
-        persistActiveSnapshot, prepareSignOut, isAccountMode, isLocalMode, isIdentityTransition
+        persistActiveSnapshot, prepareSignOut, isAccountMode, isLocalMode, isIdentityTransition, isGatePassed, canUseOnlineSync
     });
 })();

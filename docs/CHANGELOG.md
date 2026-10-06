@@ -1,3 +1,11 @@
+## 4.6.11.1 DEV — Bloquear sincronização antes da identidade
+
+- Impede sincronização e detecção de conflito antes da escolha explícita entre conta SuperDB e modo somente local.
+- A sessão persistida do SuperDB deixa de ficar disponível aos demais serviços enquanto a tela inicial ainda não foi concluída.
+- O modal de conflito só pode abrir quando a conta autenticada corresponde ao proprietário do espaço local ativo.
+- Mantém o modo somente local totalmente fora da sincronização online.
+- Nenhuma alteração de banco de dados ou SQL é necessária.
+
 ## 4.6.11 DEV — Entrada obrigatória e isolamento por usuário
 
 - Base retomada diretamente da v4.6.9.3 homologada; a linha 4.6.10.x não integra esta versão.
