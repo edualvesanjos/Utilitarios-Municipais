@@ -1,3 +1,12 @@
+## 4.7.1.2 DEV — Recuperação de senha via API REST
+
+- Corrige a incompatibilidade do cliente SuperDB atual, que não expõe `resetPasswordForEmail`.
+- Solicita o e-mail por `POST /auth/v1/password/forgot`, com `X-SuperDB-Project` e `redirect_to` do ambiente.
+- Grava a nova senha por `POST /auth/v1/password/reset`, usando o token recebido no fragmento da URL.
+- Mantém timeout e mensagens de erro sem revelar se o e-mail possui conta.
+- Preserva o isolamento por usuário e o bloqueio da sincronização antes do login.
+- Não exige alteração de banco de dados ou SQL.
+
 ## 4.7.1.1 DEV — URL de recuperação por ambiente
 
 - Corrige a URL enviada ao SuperDB em `resetPasswordForEmail`.

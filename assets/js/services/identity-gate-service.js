@@ -1,4 +1,4 @@
-/* Utilitários Municipais v4.7.1.1 DEV — redirect de recuperação por ambiente. */
+/* Utilitários Municipais v4.7.1.2 DEV — recuperação de senha via API REST oficial do SuperDB. */
 (function () {
     "use strict";
 
@@ -113,6 +113,36 @@
         history.replaceState(null, "", `${location.pathname}${location.search}`);
     }
 
+    async function superDbPasswordRequest(path, body) {
+        const cfg = window.BACKEND_MIGRATION?.superdb || {};
+        if (!cfg.authUrl || !cfg.project) throw new Error("Configuração SuperDB incompleta.");
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 20000);
+        try {
+            const response = await fetch(`${cfg.authUrl}${path}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-SuperDB-Project": cfg.project
+                },
+                body: JSON.stringify(body),
+                signal: controller.signal
+            });
+            let payload = {};
+            try { payload = await response.json(); } catch { }
+            if (!response.ok) {
+                const message = payload?.message || payload?.error_description || payload?.error || `Falha na recuperação de senha (${response.status}).`;
+                throw new Error(message);
+            }
+            return payload;
+        } catch (error) {
+            if (error?.name === "AbortError") throw new Error("O SuperDB não respondeu à recuperação de senha. Tente novamente.");
+            throw error;
+        } finally {
+            clearTimeout(timeout);
+        }
+    }
+
     function showGate() {
         if (sessionStorage.getItem(SESSION_GATE_KEY) === "true" || document.getElementById("identityGate")) return;
         const resetToken = getPasswordResetToken();
@@ -148,10 +178,7 @@
                 save.disabled = true; cancel.disabled = true;
                 feedback.textContent = "Atualizando senha...";
                 try {
-                    const client = await waitForClient();
-                    if (typeof client?.auth?.resetPassword !== "function") throw new Error("O cliente SuperDB não oferece redefinição de senha nesta versão.");
-                    const { error } = await client.auth.resetPassword({ token: resetToken, password: newPassword });
-                    if (error) throw error;
+                    await superDbPasswordRequest("/auth/v1/password/reset", { token: resetToken, new_password: newPassword });
                     clearPasswordResetToken();
                     feedback.textContent = "Senha atualizada. Você já pode entrar com a nova senha.";
                     setTimeout(() => location.reload(), 900);
@@ -238,10 +265,7 @@
             login.disabled = true; local.disabled = true; forgot.disabled = true;
             feedback.textContent = "Enviando link de recuperação...";
             try {
-                const client = await waitForClient();
-                if (typeof client?.auth?.resetPasswordForEmail !== "function") throw new Error("Recuperação de senha indisponível no cliente SuperDB.");
-                const { error } = await client.auth.resetPasswordForEmail(userEmail, { redirectTo: getAuthRedirectUrl() });
-                if (error) throw error;
+                await superDbPasswordRequest("/auth/v1/password/forgot", { email: userEmail, redirect_to: getAuthRedirectUrl() });
                 feedback.textContent = "Se existir uma conta para esse e-mail, o link de recuperação foi enviado.";
             } catch (error) {
                 feedback.textContent = error?.message || "Não foi possível enviar o link de recuperação.";

@@ -1301,12 +1301,20 @@
         modal.querySelector("#onlineResetPassword").addEventListener("click", async () => {
             const email = modal.querySelector("#onlineEmail").value.trim();
             if (!email) { feedback.textContent = "Informe o e-mail."; return; }
-            if (typeof client.auth.resetPasswordForEmail !== "function") {
-                feedback.textContent = "Recuperação de senha será validada em etapa posterior da migração.";
-                return;
+            try {
+                const cfg = window.BACKEND_MIGRATION?.superdb || {};
+                const response = await fetch(`${cfg.authUrl}/auth/v1/password/forgot`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", "X-SuperDB-Project": cfg.project },
+                    body: JSON.stringify({ email, redirect_to: cfg.passwordResetRedirect || location.href.split("#")[0] })
+                });
+                let payload = {};
+                try { payload = await response.json(); } catch { }
+                if (!response.ok) throw new Error(payload?.message || payload?.error_description || payload?.error || `Falha na recuperação de senha (${response.status}).`);
+                feedback.textContent = "Se existir uma conta para esse e-mail, o link de recuperação foi enviado.";
+            } catch (error) {
+                feedback.textContent = error?.message || "Não foi possível enviar o e-mail de recuperação.";
             }
-            const { error } = await client.auth.resetPasswordForEmail(email, { redirectTo: window.BACKEND_MIGRATION?.superdb?.passwordResetRedirect || location.href.split("#")[0] });
-            feedback.textContent = error ? error.message : "E-mail de recuperação enviado.";
         });
     }
 

@@ -1,6 +1,11 @@
 {
   "versions": [
     {
+      "version": "4.7.1.2 DEV",
+      "title": "Recuperação de senha via API REST",
+      "contentHtml": "<ul><li>Substitui a dependência de métodos de recuperação ausentes no cliente SuperDB atual pelos endpoints REST oficiais.</li><li>Envia o e-mail por <code>/auth/v1/password/forgot</code> e grava a nova senha por <code>/auth/v1/password/reset</code>.</li><li>Preserva a URL de retorno por ambiente e o isolamento antes do login.</li></ul>"
+    },
+    {
       "version": "4.7.1.1 DEV",
       "title": "URL de recuperação definida por ambiente",
       "contentHtml": "<ul><li>Define a URL de retorno da recuperação de senha na configuração de cada ambiente.</li><li>DEV/Homolog usa <code>https://edualvesanjos.github.io/Utilitarios-Municipais-Homolog/</code>.</li><li>Evita enviar a URL temporária do StackBlitz ao SuperDB.</li><li>Mantém o fluxo de recuperação implementado na v4.7.1.</li></ul>",
