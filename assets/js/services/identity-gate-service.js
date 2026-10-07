@@ -1,4 +1,4 @@
-/* Utilitários Municipais v4.7.1 DEV — recuperação de senha na tela inicial. */
+/* Utilitários Municipais v4.7.1.1 DEV — redirect de recuperação por ambiente. */
 (function () {
     "use strict";
 
@@ -106,7 +106,7 @@
     }
 
     function getAuthRedirectUrl() {
-        return `${location.origin}${location.pathname}${location.search}`;
+        return window.BACKEND_MIGRATION?.superdb?.passwordResetRedirect || `${location.origin}${location.pathname}${location.search}`;
     }
 
     function clearPasswordResetToken() {

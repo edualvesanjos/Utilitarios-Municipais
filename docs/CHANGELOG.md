@@ -1,3 +1,11 @@
+## 4.7.1.1 DEV — URL de recuperação por ambiente
+
+- Corrige a URL enviada ao SuperDB em `resetPasswordForEmail`.
+- DEV/Homolog usa `https://edualvesanjos.github.io/Utilitarios-Municipais-Homolog/`.
+- A URL fica centralizada na configuração do ambiente, em vez de depender da URL temporária aberta no navegador.
+- Mantém o restante do fluxo de recuperação da v4.7.1 sem alterações.
+- Não exige alteração de banco de dados ou SQL.
+
 ## 4.7.1 DEV — Recuperação de senha SuperDB
 
 - Retoma a recuperação de senha sobre a base estável da v4.7.0 PROD.
