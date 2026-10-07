@@ -1,3 +1,12 @@
+## 4.7.2 PROD — Navegação local sem falso conflito
+
+- Publica em produção a correção homologada na v4.7.1.3 DEV.
+- `activeTab`, `lastToolTab` e `recentTools` permanecem locais ao navegador.
+- Trocar de módulo deixa de participar da detecção e do envio da sincronização online.
+- Mantém a recuperação de senha homologada na v4.7.1 PROD.
+- `APP_ENVIRONMENT` permanece configurado como `production`.
+- Nenhuma alteração de banco de dados ou SQL é necessária.
+
 ## 4.7.1.3 DEV
 
 - Corrige falso conflito ao trocar de módulo.

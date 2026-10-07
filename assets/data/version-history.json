@@ -1,6 +1,12 @@
 {
   "versions": [
     {
+      "version": "4.7.2 PROD",
+      "title": "Navegação local sem falso conflito",
+      "contentHtml": "<ul><li>Publica em produção a correção homologada na v4.7.1.3 DEV.</li><li>O estado de navegação permanece somente no navegador e não participa mais da sincronização online.</li><li>Trocar de módulo deixa de gerar falsos conflitos entre dispositivos.</li><li>Mantém a recuperação de senha e os demais grupos sincronizados da v4.7.1 PROD.</li></ul>",
+      "contentClass": "about-version-details"
+    },
+    {
       "version": "4.7.1.3 DEV",
       "title": "Navegação local sem falso conflito",
       "contentHtml": "<ul><li>Remove o estado de navegação da sincronização online.</li><li>Trocar de módulo deixa de marcar alterações pendentes ou abrir o modal de conflito.</li><li>Dados, preferências e demais grupos sincronizados permanecem inalterados.</li></ul>",
