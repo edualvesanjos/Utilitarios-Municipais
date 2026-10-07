@@ -1,4 +1,4 @@
-const APP_VERSION = "4.6.10.1";
+const APP_VERSION = "4.7.1";
 window.APP_VERSION = APP_VERSION;
 
 /*
@@ -8,7 +8,7 @@ window.APP_VERSION = APP_VERSION;
  *   const APP_ENVIRONMENT = "development";
  *
  * Para publicação oficial:
- *   const APP_ENVIRONMENT = "production";
+ *   const APP_ENVIRONMENT = "development";
  *
  * IMPORTANTE:
  * - Nunca inclua chaves privadas ou credenciais administrativas

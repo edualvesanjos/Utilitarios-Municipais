@@ -931,6 +931,9 @@
     }
 
     async function synchronize({ silent = false, authRetry = false } = {}) {
+        if (!window.IdentityGateService?.canUseOnlineSync?.(session?.user?.id)) {
+            return false;
+        }
         if (!client || !session?.user) {
             if (!silent) notify("Faça login para sincronizar.", "warning");
             return false;
@@ -1033,6 +1036,7 @@
     }
 
     async function signOutAndRefreshUi() {
+        await window.IdentityGateService?.prepareSignOut?.();
         const authClient = client || window.BackendClientService?.getClient?.() || null;
         if (!authClient?.auth?.signOut) {
             notify("Não foi possível encerrar a sessão: cliente de autenticação indisponível.");
@@ -1051,7 +1055,8 @@
             setOnlineState({ status: "local" });
             renderOnlineStatus();
             closeHeaderAccountMenu();
-            notify("Sessão encerrada. O armazenamento local permanece disponível.");
+            notify("Sessão encerrada.");
+            window.setTimeout(() => location.reload(), 150);
         } catch (error) {
             window.ErrorHandler?.report?.(error, "Logout do backend", { silent: true });
             notify(error?.message || "Não foi possível encerrar a sessão.");
@@ -1208,117 +1213,10 @@
     }
 
     function openConflictModal() {
+        if (!window.IdentityGateService?.canUseOnlineSync?.(session?.user?.id)) return;
         createConflictModal();
         const modal = document.getElementById("onlineConflictModal");
         if (modal) modal.hidden = false;
-    }
-
-    function getAuthRedirectUrl() {
-        // Mantém uma URL absoluta, sem query/hash, apontando para a raiz publicada
-        // do aplicativo. Em GitHub Pages isso preserva o subdiretório do projeto.
-        return new URL("./", window.location.href).href;
-    }
-
-    async function superDbPasswordRequest(path, body, { timeoutMs = 15000 } = {}) {
-        const cfg = window.BACKEND_MIGRATION?.superdb || {};
-        if (!cfg.authUrl || !cfg.project) throw new Error("Configuração SuperDB incompleta.");
-        const controller = new AbortController();
-        const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
-        try {
-            const response = await fetch(`${cfg.authUrl}${path}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-SuperDB-Project": cfg.project
-                },
-                body: JSON.stringify(body),
-                signal: controller.signal
-            });
-            let payload = {};
-            try { payload = await response.json(); } catch (_) {}
-            if (!response.ok) {
-                const code = payload?.error?.code || payload?.code || "";
-                const message = payload?.error?.message || payload?.message || `Não foi possível concluir a solicitação (${response.status}).`;
-                const error = new Error(message);
-                error.code = code;
-                error.status = response.status;
-                throw error;
-            }
-            return payload;
-        } catch (error) {
-            if (error?.name === "AbortError") {
-                const timeoutError = new Error("O SuperDB não respondeu à atualização da senha. Tente novamente.");
-                timeoutError.code = "auth_timeout";
-                throw timeoutError;
-            }
-            throw error;
-        } finally {
-            window.clearTimeout(timeoutId);
-        }
-    }
-
-    async function requestPasswordRecovery(email) {
-        const redirectTo = getAuthRedirectUrl();
-        await superDbPasswordRequest("/auth/v1/password/forgot", {
-            email,
-            redirect_to: redirectTo
-        });
-        return redirectTo;
-    }
-
-    function getPasswordRecoveryToken() {
-        const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
-        return hash.get("token") || "";
-    }
-
-    function clearPasswordRecoveryToken() {
-        const clean = `${window.location.pathname}${window.location.search}`;
-        window.history.replaceState({}, document.title, clean);
-    }
-
-    function createNewPasswordModal(token) {
-        if (!token || document.getElementById("onlineNewPasswordModal")) return;
-        const modal = document.createElement("div");
-        modal.id = "onlineNewPasswordModal";
-        modal.className = "online-modal";
-        modal.innerHTML = `
-            <div class="online-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="onlineNewPasswordTitle">
-                <span class="eyebrow">Recuperação de acesso</span>
-                <h2 id="onlineNewPasswordTitle">Definir nova senha</h2>
-                <p class="help-text">Informe e confirme a nova senha da sua conta.</p>
-                <label>Nova senha<input id="onlineNewPassword" type="password" autocomplete="new-password" minlength="8" required></label>
-                <label>Confirmar nova senha<input id="onlineNewPasswordConfirm" type="password" autocomplete="new-password" minlength="8" required></label>
-                <div class="actions"><button id="onlineSaveNewPassword" class="primary" type="button">Salvar nova senha</button></div>
-                <p id="onlineNewPasswordFeedback" class="feedback" aria-live="polite"></p>
-            </div>`;
-        document.body.appendChild(modal);
-        const password = modal.querySelector("#onlineNewPassword");
-        const confirm = modal.querySelector("#onlineNewPasswordConfirm");
-        const save = modal.querySelector("#onlineSaveNewPassword");
-        const feedback = modal.querySelector("#onlineNewPasswordFeedback");
-        save.addEventListener("click", async () => {
-            if (password.value.length < 8) { feedback.textContent = "A senha deve ter pelo menos 8 caracteres."; password.focus(); return; }
-            if (password.value !== confirm.value) { feedback.textContent = "As senhas não conferem."; confirm.focus(); return; }
-            save.disabled = true;
-            feedback.textContent = "Atualizando senha...";
-            try {
-                await superDbPasswordRequest("/auth/v1/password/reset", {
-                    token,
-                    new_password: password.value
-                });
-                feedback.textContent = "Senha atualizada. Você já pode entrar com a nova senha.";
-                clearPasswordRecoveryToken();
-                setTimeout(() => {
-                    modal.remove();
-                    openAuthModal();
-                }, 900);
-            } catch (error) {
-                feedback.textContent = error?.message || "Não foi possível atualizar a senha.";
-            } finally {
-                save.disabled = false;
-            }
-        });
-        password.focus();
     }
 
     function createAuthModal() {
@@ -1389,8 +1287,8 @@
         modal.querySelector("#onlineSignUp").addEventListener("click", async () => {
             const { email, password } = credentials();
             feedback.textContent = "Criando conta...";
-            const { data, error } = await client.auth.signUp({ email, password, options: { emailRedirectTo: getAuthRedirectUrl() } });
-            feedback.textContent = error ? error.message : (data?.session ? "Conta criada e login realizado." : "Conta criada. Confira seu e-mail para confirmar o cadastro.");
+            const { data, error } = await client.auth.signUp({ email, password, options: { emailRedirectTo: location.href.split("#")[0] } });
+            feedback.textContent = error ? error.message : (data?.session ? "Conta criada e login realizado." : "Conta criada. O cadastro por senha não confirma o e-mail no SuperDB; use a recuperação de senha para comprovar a titularidade do endereço.");
             if (!error && data?.session) {
                 session = data.session;
                 renderOnlineStatus();
@@ -1402,22 +1300,13 @@
         });
         modal.querySelector("#onlineResetPassword").addEventListener("click", async () => {
             const email = modal.querySelector("#onlineEmail").value.trim();
-            if (!email) { feedback.textContent = "Informe o e-mail."; emailInput.focus(); return; }
-            const button = modal.querySelector("#onlineResetPassword");
-            button.disabled = true;
-            feedback.textContent = "Enviando recuperação...";
-            try {
-                await requestPasswordRecovery(email);
-                feedback.textContent = "Se o e-mail estiver cadastrado, você receberá o link para definir uma nova senha.";
-            } catch (error) {
-                if (error?.code === "projeto_sem_url_de_retorno" || error?.code === "redirect_to_nao_cadastrado") {
-                    feedback.textContent = `URL de retorno não autorizada no SuperDB: ${getAuthRedirectUrl()}`;
-                } else {
-                    feedback.textContent = error?.message || "Não foi possível enviar a recuperação de senha.";
-                }
-            } finally {
-                button.disabled = false;
+            if (!email) { feedback.textContent = "Informe o e-mail."; return; }
+            if (typeof client.auth.resetPasswordForEmail !== "function") {
+                feedback.textContent = "Recuperação de senha será validada em etapa posterior da migração.";
+                return;
             }
+            const { error } = await client.auth.resetPasswordForEmail(email, { redirectTo: location.href.split("#")[0] });
+            feedback.textContent = error ? error.message : "E-mail de recuperação enviado.";
         });
     }
 
@@ -1475,8 +1364,6 @@
     async function initializeOnline() {
         addSettingsPanel();
         createAuthModal();
-        const passwordRecoveryToken = getPasswordRecoveryToken();
-        if (passwordRecoveryToken) createNewPasswordModal(passwordRecoveryToken);
         createConflictModal();
         setupHeaderAccountControls();
         client = window.BackendClientService?.getClient() || null;
@@ -1545,7 +1432,7 @@
                             }
 
                     if (event === "SIGNED_IN" && session?.user) {
-        
+                        if (window.IdentityGateService?.isIdentityTransition?.()) return;
                         try {
                             await ensureProfile(session.user);
 
@@ -1574,7 +1461,13 @@
             });
         }
 
-        if (session?.user && navigator.onLine) {
+        if (window.IdentityGateService?.isLocalMode?.() && session?.user) {
+            try { await client.auth.signOut(); } catch { }
+            session = null;
+            renderOnlineStatus();
+        }
+
+        if (session?.user && navigator.onLine && window.IdentityGateService?.isAccountMode?.()) {
             await ensureProfile(session.user);
             if (!authProfileStage) await synchronize({ silent: true });
         }
@@ -1633,14 +1526,14 @@
             refreshSession: refreshBackendSession,
             openLogin: openAuthModal,
             openConflict: openConflictModal,
-            getSession: () => session,
+            getSession: () => window.IdentityGateService?.canUseOnlineSync?.(session?.user?.id) ? session : null,
             getGroups: () => Object.keys(SYNC_GROUPS),
             hasPendingChanges,
             hasConflict,
             notifyLocalGroupChange
         });
 
-        if (session?.user) {               
+        if (session?.user && window.IdentityGateService?.canUseOnlineSync?.(session.user.id)) {
             window.dispatchEvent(
                 new CustomEvent("um:session-ready")
             );

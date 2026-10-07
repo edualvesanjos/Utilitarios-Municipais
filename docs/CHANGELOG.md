@@ -1,18 +1,51 @@
-## 4.6.10.1 DEV — Correção da redefinição de senha
+## 4.7.1 DEV — Recuperação de senha SuperDB
 
-- Corrigido o fluxo de nova senha para não permanecer indefinidamente em “Atualizando senha...”.
-- Adicionado limite de espera de 15 segundos nas chamadas de recuperação, com mensagem explícita quando o SuperDB não responde.
-- Ajustada a validação da nova senha para o mínimo de 8 caracteres exigido pelo SuperDB.
-- Mantidos o fluxo de URL de retorno e a seleção rápida de campos introduzidos na 4.6.10.
+- Retoma a recuperação de senha sobre a base estável da v4.7.0 PROD.
+- Adiciona “Esqueci minha senha” à tela inicial de identificação.
+- Solicita o e-mail de recuperação com `resetPasswordForEmail` e URL de retorno absoluta.
+- Processa o `#token` recebido no link e redefine a senha com `resetPassword`.
+- Exige senha nova com pelo menos 8 caracteres e confirmação idêntica.
+- Mantém o isolamento por usuário e bloqueia sincronização durante a recuperação.
+- Não exige alteração de banco de dados ou SQL.
 
-## 4.6.10 DEV — Recuperação de senha e seleção rápida de campos
+## 4.7.0 PROD — Consolidação de produção
 
-- Implementa o fluxo completo “Esqueci minha senha” com a API de autenticação do SuperDB.
-- Envia uma URL absoluta de retorno e trata os erros de URL não cadastrada exibindo o endereço que deve ser autorizado no painel.
-- Ao abrir o link recebido por e-mail, exibe a tela para definir e confirmar a nova senha e consome o token de recuperação.
-- Padroniza a URL de confirmação de cadastro com a mesma URL de retorno da autenticação.
-- Adiciona seleção de todo o conteúdo por duplo clique nos campos Nome, Processo e Prefixo do gerador de nome de arquivo.
-- Não altera o banco de dados nem exige SQL novo.
+- Fecha para produção o conjunto de versões DEV homologadas após a v4.6.3 PROD.
+- Consolida a sincronização normal sem Realtime, incluindo preferências operacionais, modelos do montador, sequência de Lotes e histórico recente de descrições da UVRM.
+- Adiciona entrada obrigatória por conta SuperDB ou modo Somente local.
+- Isola o armazenamento local por usuário autenticado e impede sincronização antes da identificação da identidade ativa.
+- Mantém o modo Somente local sem comunicação com o SuperDB.
+- Remove o histórico extenso de versões do `index.html` e passa a carregá-lo de `assets/data/version-history.json`.
+- Reorganiza o `README.md` e mantém este CHANGELOG como histórico técnico completo.
+- Nenhuma alteração adicional de banco de dados ou SQL é necessária para o fechamento desta versão.
+
+## 4.6.12 DEV — Documentação e histórico desacoplado
+
+- Remove do `index.html` o conteúdo extenso do histórico de versões.
+- Move os dados do histórico para `assets/data/version-history.json` e passa a renderizá-los dinamicamente no Sobre.
+- Mantém as Novidades focadas somente na versão atual e preserva `docs/CHANGELOG.md` como histórico técnico completo.
+- Reorganiza o `README.md` para apresentar objetivo, recursos, uso, desenvolvimento, ajuda e referências de forma concisa.
+- Adota links relativos para a documentação interna do repositório.
+- Nenhuma alteração de banco de dados ou SQL é necessária.
+
+## 4.6.11.1 DEV — Bloquear sincronização antes da identidade
+
+- Impede sincronização e detecção de conflito antes da escolha explícita entre conta SuperDB e modo somente local.
+- A sessão persistida do SuperDB deixa de ficar disponível aos demais serviços enquanto a tela inicial ainda não foi concluída.
+- O modal de conflito só pode abrir quando a conta autenticada corresponde ao proprietário do espaço local ativo.
+- Mantém o modo somente local totalmente fora da sincronização online.
+- Nenhuma alteração de banco de dados ou SQL é necessária.
+
+## 4.6.11 DEV — Entrada obrigatória e isolamento por usuário
+
+- Base retomada diretamente da v4.6.9.3 homologada; a linha 4.6.10.x não integra esta versão.
+- A primeira tela passa a exigir escolha entre login SuperDB e uso somente local.
+- Dados locais são separados por identidade; uma conta nova não herda dados de outro usuário do navegador.
+- O modo somente local possui armazenamento próprio e não participa da sincronização online.
+- Dados locais legados são preservados no espaço somente local na primeira migração.
+- Logout salva o espaço do usuário, limpa a área ativa e retorna à tela de entrada.
+- Durante a troca de identidade, a sincronização é suspensa para impedir envio de dados pertencentes a outro usuário.
+- Nenhuma alteração de banco de dados ou SQL é necessária.
 
 ## 4.6.9.3 DEV — Separar valor atual da UVRM do formulário
 
