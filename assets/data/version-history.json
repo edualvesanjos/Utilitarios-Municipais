@@ -1,6 +1,12 @@
 {
   "versions": [
     {
+      "version": "4.7.1.1 DEV",
+      "title": "URL de recuperação definida por ambiente",
+      "contentHtml": "<ul><li>Define a URL de retorno da recuperação de senha na configuração de cada ambiente.</li><li>DEV/Homolog usa <code>https://edualvesanjos.github.io/Utilitarios-Municipais-Homolog/</code>.</li><li>Evita enviar a URL temporária do StackBlitz ao SuperDB.</li><li>Mantém o fluxo de recuperação implementado na v4.7.1.</li></ul>",
+      "contentClass": "about-version-details"
+    },
+    {
       "version": "4.7.1 DEV",
       "title": "Recuperação de senha pelo fluxo oficial SuperDB",
       "contentHtml": "<ul><li>Adiciona ‘Esqueci minha senha’ à tela inicial de identificação.</li><li>Solicita o link de recuperação pelo método <code>resetPasswordForEmail</code> do SDK e usa a URL atual do aplicativo como retorno.</li><li>Ao retornar com <code>#token=…</code>, apresenta a tela de nova senha e conclui a redefinição com <code>resetPassword</code>.</li><li>Mantém a sincronização bloqueada até o login ou a escolha do modo somente local.</li></ul>",

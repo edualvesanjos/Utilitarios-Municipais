@@ -1305,7 +1305,7 @@
                 feedback.textContent = "Recuperação de senha será validada em etapa posterior da migração.";
                 return;
             }
-            const { error } = await client.auth.resetPasswordForEmail(email, { redirectTo: location.href.split("#")[0] });
+            const { error } = await client.auth.resetPasswordForEmail(email, { redirectTo: window.BACKEND_MIGRATION?.superdb?.passwordResetRedirect || location.href.split("#")[0] });
             feedback.textContent = error ? error.message : "E-mail de recuperação enviado.";
         });
     }
