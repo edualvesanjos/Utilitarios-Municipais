@@ -1,3 +1,39 @@
+## 4.7.1 PROD — Recuperação de senha
+
+- Publica em produção o fluxo homologado na v4.7.1.2 DEV.
+- Usa `POST /auth/v1/password/forgot` para solicitar o e-mail de recuperação.
+- Usa `POST /auth/v1/password/reset` para gravar a nova senha com o token recebido.
+- Define o retorno de produção como `https://edualvesanjos.github.io/Utilitarios-Municipais/`.
+- Mantém o isolamento por usuário e o bloqueio da sincronização antes do login.
+- Não exige alteração de banco de dados ou SQL.
+
+## 4.7.1.2 DEV — Recuperação de senha via API REST
+
+- Corrige a incompatibilidade do cliente SuperDB atual, que não expõe `resetPasswordForEmail`.
+- Solicita o e-mail por `POST /auth/v1/password/forgot`, com `X-SuperDB-Project` e `redirect_to` do ambiente.
+- Grava a nova senha por `POST /auth/v1/password/reset`, usando o token recebido no fragmento da URL.
+- Mantém timeout e mensagens de erro sem revelar se o e-mail possui conta.
+- Preserva o isolamento por usuário e o bloqueio da sincronização antes do login.
+- Não exige alteração de banco de dados ou SQL.
+
+## 4.7.1.1 DEV — URL de recuperação por ambiente
+
+- Corrige a URL enviada ao SuperDB em `resetPasswordForEmail`.
+- DEV/Homolog usa `https://edualvesanjos.github.io/Utilitarios-Municipais-Homolog/`.
+- A URL fica centralizada na configuração do ambiente, em vez de depender da URL temporária aberta no navegador.
+- Mantém o restante do fluxo de recuperação da v4.7.1 sem alterações.
+- Não exige alteração de banco de dados ou SQL.
+
+## 4.7.1 DEV — Recuperação de senha SuperDB
+
+- Retoma a recuperação de senha sobre a base estável da v4.7.0 PROD.
+- Adiciona “Esqueci minha senha” à tela inicial de identificação.
+- Solicita o e-mail de recuperação com `resetPasswordForEmail` e URL de retorno absoluta.
+- Processa o `#token` recebido no link e redefine a senha com `resetPassword`.
+- Exige senha nova com pelo menos 8 caracteres e confirmação idêntica.
+- Mantém o isolamento por usuário e bloqueia sincronização durante a recuperação.
+- Não exige alteração de banco de dados ou SQL.
+
 ## 4.7.0 PROD — Consolidação de produção
 
 - Fecha para produção o conjunto de versões DEV homologadas após a v4.6.3 PROD.

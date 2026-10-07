@@ -1288,7 +1288,7 @@
             const { email, password } = credentials();
             feedback.textContent = "Criando conta...";
             const { data, error } = await client.auth.signUp({ email, password, options: { emailRedirectTo: location.href.split("#")[0] } });
-            feedback.textContent = error ? error.message : (data?.session ? "Conta criada e login realizado." : "Conta criada. Confira seu e-mail para confirmar o cadastro.");
+            feedback.textContent = error ? error.message : (data?.session ? "Conta criada e login realizado." : "Conta criada. O cadastro por senha não confirma o e-mail no SuperDB; use a recuperação de senha para comprovar a titularidade do endereço.");
             if (!error && data?.session) {
                 session = data.session;
                 renderOnlineStatus();
@@ -1301,12 +1301,20 @@
         modal.querySelector("#onlineResetPassword").addEventListener("click", async () => {
             const email = modal.querySelector("#onlineEmail").value.trim();
             if (!email) { feedback.textContent = "Informe o e-mail."; return; }
-            if (typeof client.auth.resetPasswordForEmail !== "function") {
-                feedback.textContent = "Recuperação de senha será validada em etapa posterior da migração.";
-                return;
+            try {
+                const cfg = window.BACKEND_MIGRATION?.superdb || {};
+                const response = await fetch(`${cfg.authUrl}/auth/v1/password/forgot`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", "X-SuperDB-Project": cfg.project },
+                    body: JSON.stringify({ email, redirect_to: cfg.passwordResetRedirect || location.href.split("#")[0] })
+                });
+                let payload = {};
+                try { payload = await response.json(); } catch { }
+                if (!response.ok) throw new Error(payload?.message || payload?.error_description || payload?.error || `Falha na recuperação de senha (${response.status}).`);
+                feedback.textContent = "Se existir uma conta para esse e-mail, o link de recuperação foi enviado.";
+            } catch (error) {
+                feedback.textContent = error?.message || "Não foi possível enviar o e-mail de recuperação.";
             }
-            const { error } = await client.auth.resetPasswordForEmail(email, { redirectTo: location.href.split("#")[0] });
-            feedback.textContent = error ? error.message : "E-mail de recuperação enviado.";
         });
     }
 

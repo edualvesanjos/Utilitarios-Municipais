@@ -1,6 +1,29 @@
 {
   "versions": [
     {
+      "version": "4.7.1 PROD",
+      "title": "Recuperação de senha em produção",
+      "contentHtml": "<ul><li>Publica o fluxo de recuperação de senha homologado na v4.7.1.2 DEV.</li><li>Usa os endpoints REST oficiais do SuperDB para solicitar o e-mail e definir a nova senha.</li><li>Em produção, o retorno da recuperação usa <code>https://edualvesanjos.github.io/Utilitarios-Municipais/</code>.</li><li>Preserva o isolamento dos dados e mantém a sincronização bloqueada antes do login.</li></ul>",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.7.1.2 DEV",
+      "title": "Recuperação de senha via API REST",
+      "contentHtml": "<ul><li>Substitui a dependência de métodos de recuperação ausentes no cliente SuperDB atual pelos endpoints REST oficiais.</li><li>Envia o e-mail por <code>/auth/v1/password/forgot</code> e grava a nova senha por <code>/auth/v1/password/reset</code>.</li><li>Preserva a URL de retorno por ambiente e o isolamento antes do login.</li></ul>"
+    },
+    {
+      "version": "4.7.1.1 DEV",
+      "title": "URL de recuperação definida por ambiente",
+      "contentHtml": "<ul><li>Define a URL de retorno da recuperação de senha na configuração de cada ambiente.</li><li>DEV/Homolog usa <code>https://edualvesanjos.github.io/Utilitarios-Municipais-Homolog/</code>.</li><li>Evita enviar a URL temporária do StackBlitz ao SuperDB.</li><li>Mantém o fluxo de recuperação implementado na v4.7.1.</li></ul>",
+      "contentClass": "about-version-details"
+    },
+    {
+      "version": "4.7.1 DEV",
+      "title": "Recuperação de senha pelo fluxo oficial SuperDB",
+      "contentHtml": "<ul><li>Adiciona ‘Esqueci minha senha’ à tela inicial de identificação.</li><li>Solicita o link de recuperação pelo método <code>resetPasswordForEmail</code> do SDK e usa a URL atual do aplicativo como retorno.</li><li>Ao retornar com <code>#token=…</code>, apresenta a tela de nova senha e conclui a redefinição com <code>resetPassword</code>.</li><li>Mantém a sincronização bloqueada até o login ou a escolha do modo somente local.</li></ul>",
+      "contentClass": "about-version-details"
+    },
+    {
       "version": "4.7.0 PROD",
       "title": "Consolidação da versão de produção",
       "contentHtml": "<ul><li>Consolida em produção as melhorias homologadas desde a v4.6.3 PROD.</li><li>Adiciona entrada obrigatória por conta SuperDB ou modo Somente local e isolamento dos dados locais por usuário.</li><li>Consolida a sincronização normal de preferências, modelos, sequência de lotes e histórico recente da UVRM, sem Realtime.</li><li>Desacopla o histórico de versões do index.html e reorganiza a documentação do projeto.</li></ul>",
