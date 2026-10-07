@@ -3,6 +3,8 @@
     "use strict";
 
     const SYNC_GROUPS = Object.freeze({
+        // Navegação (activeTab, lastToolTab e recentTools) é estado local de interface.
+        // Não sincronizar: trocar de módulo não é alteração de dados e não pode gerar conflito.
         preferences: Object.freeze([`${APP_CONFIG.storagePrefix}saveFields`]),
         form_data: Object.freeze([`${APP_CONFIG.storagePrefix}formData`]),
         uvrm_description_history: Object.freeze([`${APP_CONFIG.storagePrefix}uvrmDescriptionHistory`]),
@@ -21,11 +23,6 @@
         personalization: Object.freeze([
             `${APP_CONFIG.storagePrefix}ux31:prefs`,
             `${APP_CONFIG.storagePrefix}compactMode`
-        ]),
-        navigation: Object.freeze([
-            `${APP_CONFIG.storagePrefix}activeTab`,
-            `${APP_CONFIG.storagePrefix}lastToolTab`,
-            `${APP_CONFIG.storagePrefix}recentTools`
         ]),
         documents: Object.freeze([
             `${APP_CONFIG.storagePrefix}documentTemplates`,
