@@ -1,3 +1,10 @@
+## 4.7.1.3 DEV
+
+- Corrige falso conflito ao trocar de módulo.
+- `activeTab`, `lastToolTab` e `recentTools` passam a permanecer locais ao navegador.
+- A navegação deixa de participar da detecção e do envio da sincronização online.
+- Nenhuma alteração de banco de dados é necessária.
+
 ## 4.7.1 PROD — Recuperação de senha
 
 - Publica em produção o fluxo homologado na v4.7.1.2 DEV.
