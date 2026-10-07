@@ -1,6 +1,12 @@
 {
   "versions": [
     {
+      "version": "4.7.1 PROD",
+      "title": "Recuperação de senha em produção",
+      "contentHtml": "<ul><li>Publica o fluxo de recuperação de senha homologado na v4.7.1.2 DEV.</li><li>Usa os endpoints REST oficiais do SuperDB para solicitar o e-mail e definir a nova senha.</li><li>Em produção, o retorno da recuperação usa <code>https://edualvesanjos.github.io/Utilitarios-Municipais/</code>.</li><li>Preserva o isolamento dos dados e mantém a sincronização bloqueada antes do login.</li></ul>",
+      "contentClass": "about-version-details"
+    },
+    {
       "version": "4.7.1.2 DEV",
       "title": "Recuperação de senha via API REST",
       "contentHtml": "<ul><li>Substitui a dependência de métodos de recuperação ausentes no cliente SuperDB atual pelos endpoints REST oficiais.</li><li>Envia o e-mail por <code>/auth/v1/password/forgot</code> e grava a nova senha por <code>/auth/v1/password/reset</code>.</li><li>Preserva a URL de retorno por ambiente e o isolamento antes do login.</li></ul>"
