@@ -1288,7 +1288,7 @@
             const { email, password } = credentials();
             feedback.textContent = "Criando conta...";
             const { data, error } = await client.auth.signUp({ email, password, options: { emailRedirectTo: location.href.split("#")[0] } });
-            feedback.textContent = error ? error.message : (data?.session ? "Conta criada e login realizado." : "Conta criada. Confira seu e-mail para confirmar o cadastro.");
+            feedback.textContent = error ? error.message : (data?.session ? "Conta criada e login realizado." : "Conta criada. O cadastro por senha não confirma o e-mail no SuperDB; use a recuperação de senha para comprovar a titularidade do endereço.");
             if (!error && data?.session) {
                 session = data.session;
                 renderOnlineStatus();

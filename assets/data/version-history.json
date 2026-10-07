@@ -1,6 +1,12 @@
 {
   "versions": [
     {
+      "version": "4.7.1 DEV",
+      "title": "Recuperação de senha pelo fluxo oficial SuperDB",
+      "contentHtml": "<ul><li>Adiciona ‘Esqueci minha senha’ à tela inicial de identificação.</li><li>Solicita o link de recuperação pelo método <code>resetPasswordForEmail</code> do SDK e usa a URL atual do aplicativo como retorno.</li><li>Ao retornar com <code>#token=…</code>, apresenta a tela de nova senha e conclui a redefinição com <code>resetPassword</code>.</li><li>Mantém a sincronização bloqueada até o login ou a escolha do modo somente local.</li></ul>",
+      "contentClass": "about-version-details"
+    },
+    {
       "version": "4.7.0 PROD",
       "title": "Consolidação da versão de produção",
       "contentHtml": "<ul><li>Consolida em produção as melhorias homologadas desde a v4.6.3 PROD.</li><li>Adiciona entrada obrigatória por conta SuperDB ou modo Somente local e isolamento dos dados locais por usuário.</li><li>Consolida a sincronização normal de preferências, modelos, sequência de lotes e histórico recente da UVRM, sem Realtime.</li><li>Desacopla o histórico de versões do index.html e reorganiza a documentação do projeto.</li></ul>",

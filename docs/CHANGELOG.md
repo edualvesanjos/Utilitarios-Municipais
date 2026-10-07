@@ -1,3 +1,13 @@
+## 4.7.1 DEV — Recuperação de senha SuperDB
+
+- Retoma a recuperação de senha sobre a base estável da v4.7.0 PROD.
+- Adiciona “Esqueci minha senha” à tela inicial de identificação.
+- Solicita o e-mail de recuperação com `resetPasswordForEmail` e URL de retorno absoluta.
+- Processa o `#token` recebido no link e redefine a senha com `resetPassword`.
+- Exige senha nova com pelo menos 8 caracteres e confirmação idêntica.
+- Mantém o isolamento por usuário e bloqueia sincronização durante a recuperação.
+- Não exige alteração de banco de dados ou SQL.
+
 ## 4.7.0 PROD — Consolidação de produção
 
 - Fecha para produção o conjunto de versões DEV homologadas após a v4.6.3 PROD.

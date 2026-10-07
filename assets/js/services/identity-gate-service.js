@@ -1,4 +1,4 @@
-/* Utilitários Municipais v4.6.11.1 DEV — bloqueio de sincronização antes da identidade. */
+/* Utilitários Municipais v4.7.1 DEV — recuperação de senha na tela inicial. */
 (function () {
     "use strict";
 
@@ -98,11 +98,76 @@
         });
     }
 
+    function getPasswordResetToken() {
+        const hash = String(location.hash || "").replace(/^#/, "");
+        if (!hash) return "";
+        const params = new URLSearchParams(hash);
+        return params.get("token") || "";
+    }
+
+    function getAuthRedirectUrl() {
+        return `${location.origin}${location.pathname}${location.search}`;
+    }
+
+    function clearPasswordResetToken() {
+        history.replaceState(null, "", `${location.pathname}${location.search}`);
+    }
+
     function showGate() {
         if (sessionStorage.getItem(SESSION_GATE_KEY) === "true" || document.getElementById("identityGate")) return;
+        const resetToken = getPasswordResetToken();
         const gate = document.createElement("div");
         gate.id = "identityGate";
         gate.className = "identity-gate";
+
+        if (resetToken) {
+            gate.innerHTML = `
+                <section class="identity-gate-card" role="dialog" aria-modal="true" aria-labelledby="identityGateTitle">
+                    <div class="identity-gate-brand"><span aria-hidden="true">🏛</span><div><strong>Utilitários Municipais</strong><small>v${APP_CONFIG.version} DEV</small></div></div>
+                    <h1 id="identityGateTitle">Definir nova senha</h1>
+                    <p>Informe uma nova senha para concluir a recuperação da sua conta.</p>
+                    <label>Nova senha<input id="identityGateNewPassword" type="password" autocomplete="new-password" minlength="8"></label>
+                    <label>Confirmar nova senha<input id="identityGateConfirmPassword" type="password" autocomplete="new-password" minlength="8"></label>
+                    <button id="identityGateSavePassword" class="primary" type="button">Atualizar senha</button>
+                    <button id="identityGateCancelReset" class="secondary" type="button">Voltar ao login</button>
+                    <p class="help-text">A senha deve ter pelo menos 8 caracteres.</p>
+                    <p id="identityGateFeedback" class="feedback" aria-live="polite"></p>
+                </section>`;
+            document.body.appendChild(gate);
+
+            const feedback = gate.querySelector("#identityGateFeedback");
+            const password = gate.querySelector("#identityGateNewPassword");
+            const confirm = gate.querySelector("#identityGateConfirmPassword");
+            const save = gate.querySelector("#identityGateSavePassword");
+            const cancel = gate.querySelector("#identityGateCancelReset");
+
+            async function updatePassword() {
+                const newPassword = password.value;
+                if (newPassword.length < 8) { feedback.textContent = "Use uma senha com pelo menos 8 caracteres."; return; }
+                if (newPassword !== confirm.value) { feedback.textContent = "As senhas informadas não são iguais."; return; }
+                save.disabled = true; cancel.disabled = true;
+                feedback.textContent = "Atualizando senha...";
+                try {
+                    const client = await waitForClient();
+                    if (typeof client?.auth?.resetPassword !== "function") throw new Error("O cliente SuperDB não oferece redefinição de senha nesta versão.");
+                    const { error } = await client.auth.resetPassword({ token: resetToken, password: newPassword });
+                    if (error) throw error;
+                    clearPasswordResetToken();
+                    feedback.textContent = "Senha atualizada. Você já pode entrar com a nova senha.";
+                    setTimeout(() => location.reload(), 900);
+                } catch (error) {
+                    feedback.textContent = error?.message || "Não foi possível atualizar a senha. Solicite um novo link e tente novamente.";
+                    save.disabled = false; cancel.disabled = false;
+                }
+            }
+
+            save.addEventListener("click", updatePassword);
+            confirm.addEventListener("keydown", (event) => { if (event.key === "Enter") updatePassword(); });
+            cancel.addEventListener("click", () => { clearPasswordResetToken(); location.reload(); });
+            setTimeout(() => password.focus(), 0);
+            return;
+        }
+
         gate.innerHTML = `
             <section class="identity-gate-card" role="dialog" aria-modal="true" aria-labelledby="identityGateTitle">
                 <div class="identity-gate-brand"><span aria-hidden="true">🏛</span><div><strong>Utilitários Municipais</strong><small>v${APP_CONFIG.version} DEV</small></div></div>
@@ -111,6 +176,7 @@
                 <label>E-mail<input id="identityGateEmail" type="email" autocomplete="email"></label>
                 <label>Senha<input id="identityGatePassword" type="password" autocomplete="current-password"></label>
                 <button id="identityGateLogin" class="primary" type="button">Entrar</button>
+                <button id="identityGateForgotPassword" class="text-button" type="button">Esqueci minha senha</button>
                 <div class="identity-gate-divider"><span>ou</span></div>
                 <button id="identityGateLocal" class="secondary" type="button">Usar somente local</button>
                 <p class="help-text">No modo local, os dados ficam somente neste navegador e nunca são sincronizados com o SuperDB.</p>
@@ -122,10 +188,11 @@
         const email = gate.querySelector("#identityGateEmail");
         const password = gate.querySelector("#identityGatePassword");
         const login = gate.querySelector("#identityGateLogin");
+        const forgot = gate.querySelector("#identityGateForgotPassword");
         const local = gate.querySelector("#identityGateLocal");
 
         async function chooseLocal() {
-            local.disabled = true; login.disabled = true;
+            local.disabled = true; login.disabled = true; forgot.disabled = true;
             feedback.textContent = "Preparando modo local...";
             try {
                 const client = await waitForClient(3000).catch(() => null);
@@ -142,7 +209,7 @@
             const userEmail = email.value.trim();
             const userPassword = password.value;
             if (!userEmail || !userPassword) { feedback.textContent = "Informe o e-mail e a senha."; return; }
-            login.disabled = true; local.disabled = true;
+            login.disabled = true; local.disabled = true; forgot.disabled = true;
             feedback.textContent = "Entrando...";
             sessionStorage.setItem(TRANSITION_KEY, "true");
             try {
@@ -161,11 +228,30 @@
                 sessionStorage.removeItem(TRANSITION_KEY);
                 feedback.textContent = error?.message || "Não foi possível entrar.";
                 password.value = ""; password.focus();
-                login.disabled = false; local.disabled = false;
+                login.disabled = false; local.disabled = false; forgot.disabled = false;
+            }
+        }
+
+        async function requestPasswordReset() {
+            const userEmail = email.value.trim();
+            if (!userEmail) { feedback.textContent = "Informe o e-mail para receber o link de recuperação."; email.focus(); return; }
+            login.disabled = true; local.disabled = true; forgot.disabled = true;
+            feedback.textContent = "Enviando link de recuperação...";
+            try {
+                const client = await waitForClient();
+                if (typeof client?.auth?.resetPasswordForEmail !== "function") throw new Error("Recuperação de senha indisponível no cliente SuperDB.");
+                const { error } = await client.auth.resetPasswordForEmail(userEmail, { redirectTo: getAuthRedirectUrl() });
+                if (error) throw error;
+                feedback.textContent = "Se existir uma conta para esse e-mail, o link de recuperação foi enviado.";
+            } catch (error) {
+                feedback.textContent = error?.message || "Não foi possível enviar o link de recuperação.";
+            } finally {
+                login.disabled = false; local.disabled = false; forgot.disabled = false;
             }
         }
 
         login.addEventListener("click", chooseAccount);
+        forgot.addEventListener("click", requestPasswordReset);
         local.addEventListener("click", chooseLocal);
         password.addEventListener("keydown", (event) => { if (event.key === "Enter") chooseAccount(); });
         setTimeout(() => email.focus(), 0);
