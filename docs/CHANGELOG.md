@@ -1,3 +1,16 @@
+## 4.7.4 PROD — Identidade visual U Moderno
+
+- Publica as melhorias visuais homologadas na v4.7.3 DEV.
+- Novo favicon U Moderno, Apple Touch e ícones PWA.
+- Ícones internos em azul e verde, com suporte aos temas existentes.
+- Mantém as funcionalidades da v4.7.2 PROD; nenhuma migração SQL.
+
+## 4.7.3 DEV — Identidade visual U Moderno
+
+- Novo favicon U Moderno (ICO, PNG, Apple Touch e PWA).
+- Ícones internos harmonizados em azul e verde; SVGs locais e temas claro/escuro/contraste.
+- Sem alterações no banco, autenticação ou sincronização.
+
 ## 4.7.2 PROD — Navegação local sem falso conflito
 
 - Publica em produção a correção homologada na v4.7.1.3 DEV.

@@ -1,0 +1,24 @@
+/* 4.7.3 DEV — U Moderno: paleta azul/verde, SVG locais e contraste por tema. */
+:root { --um-icon-blue:#1473d2; --um-icon-green:#119b74; }
+.tool-icon-visual svg { stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; }
+.dashboard-tool-icon { width:48px; height:48px; border-radius:14px; }
+.tool-icon-visual[data-icon="home"] {color:#1473d2;background:#e6f1ff}
+.tool-icon-visual[data-icon="documents"] {color:#0d85b9;background:#e2f5fc}
+.tool-icon-visual[data-icon="file"] {color:#2868c5;background:#e6edff}
+.tool-icon-visual[data-icon="building"] {color:#089a85;background:#ddf8ef}
+.tool-icon-visual[data-icon="idcard"] {color:#245cc3;background:#e7edff}
+.tool-icon-visual[data-icon="grid"] {color:#119b74;background:#e1f7ec}
+.tool-icon-visual[data-icon="coins"] {color:#0b72bf;background:#e3f1ff}
+.tool-icon-visual[data-icon="percent"] {color:#158f70;background:#e0f5eb}
+.tool-icon-visual[data-icon="calendar"] {color:#087fb3;background:#e0f4fc}
+.tool-icon-visual[data-icon="library"] {color:#1473d2;background:#e6f1ff}
+.tool-icon-visual[data-icon="history"] {color:#089a85;background:#ddf8ef}
+.tool-icon-visual[data-icon="settings"] {color:#2868c5;background:#e6edff}
+.tool-icon-visual[data-icon="info"] {color:#0d85b9;background:#e2f5fc}
+.tool-icon-visual[data-icon="tools"] {color:#119b74;background:#e1f7ec}
+.tool-icon-visual[data-icon="search"] {color:#1473d2;background:#e6f1ff}
+/* Navegação discreta: sem blocos coloridos concorrendo com o Dashboard. */
+.v45-sidebar .menu-tool-icon { background:transparent!important; color:var(--primary-color,#1473d2)!important; }
+body[data-theme="dark"] .tool-icon-visual[data-icon] { background:rgba(63,160,219,.15);color:#83c7ff; }
+body[data-theme="dark"] .tool-icon-visual[data-icon="building"],body[data-theme="dark"] .tool-icon-visual[data-icon="grid"],body[data-theme="dark"] .tool-icon-visual[data-icon="percent"],body[data-theme="dark"] .tool-icon-visual[data-icon="history"] {color:#75dbb7;}
+body[data-theme="contrast"] .tool-icon-visual[data-icon] {color:#ffdf00!important;background:#000!important;}
