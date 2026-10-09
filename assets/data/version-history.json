@@ -1,6 +1,12 @@
 {
   "versions": [
     {
+      "version": "4.7.4 PROD",
+      "title": "Nova identidade visual U Moderno em produção",
+      "contentHtml": "<ul><li>Publica a identidade visual U Moderno homologada na v4.7.3 DEV.</li><li>Atualiza favicon, Apple Touch e ícones PWA, além dos ícones internos azul e verde.</li><li>Preserva autenticação, recuperação de senha, sincronização e navegação local.</li></ul>",
+      "contentClass": "about-version-details"
+    },
+    {
       "version": "4.7.3 DEV",
       "title": "Nova identidade visual U Moderno",
       "contentHtml": "<ul><li>Atualiza favicon, ícones Apple Touch e PWA para a marca U Moderno em azul, branco e verde.</li><li>Padroniza os ícones SVG internos com paleta azul/verde, mantendo a navegação e os temas.</li><li>Não modifica autenticação, sincronização ou dados.</li></ul>",
