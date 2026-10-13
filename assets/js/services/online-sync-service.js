@@ -1083,6 +1083,11 @@
         });
     }
 
+    window.addEventListener("history-sync-state", () => {
+        const last = window.HistoryService?.getSyncState?.()?.lastSuccessAt || "";
+        document.querySelectorAll("[data-online-history-last-sync]").forEach((el) => { el.textContent = formatDate(last); });
+    });
+
     function renderOnlineStatus() {
 
         const email = session?.user?.email || "";
@@ -1091,6 +1096,8 @@
         const lastAttempt = safeGet(LAST_ATTEMPT_KEY, "");
         document.querySelectorAll("[data-online-user]").forEach((el) => { el.textContent = email || "Não conectado"; });
         document.querySelectorAll("[data-online-last-sync]").forEach((el) => { el.textContent = formatDate(lastSync); });
+        const historySyncAt = window.HistoryService?.getSyncState?.()?.lastSuccessAt || "";
+        document.querySelectorAll("[data-online-history-last-sync]").forEach((el) => { el.textContent = formatDate(historySyncAt); });
         document.querySelectorAll("[data-online-last-attempt]").forEach((el) => { el.textContent = formatDate(lastAttempt); });
         document.querySelectorAll("[data-online-pending]").forEach((el) => { el.textContent = hasPendingChanges() ? `${Object.keys(SYNC_GROUPS).length} grupos` : "Nenhuma"; });
         document.querySelectorAll("[data-online-authenticated]").forEach((el) => { el.hidden = !session?.user; });
@@ -1337,7 +1344,8 @@
             <p id="onlineStatusDetail" class="online-status-detail">Dados armazenados neste navegador.</p>
             <div class="online-account-summary">
                 <div><span>Conta</span><strong data-online-user>Não conectado</strong></div>
-                <div><span>Última sincronização</span><strong data-online-last-sync>Nunca</strong></div>
+                <div><span>Última sincronização das configurações</span><strong data-online-last-sync>Nunca</strong></div>
+                <div><span>Última sincronização dos históricos</span><strong data-online-history-last-sync>Nunca</strong></div>
                 <div><span>Última tentativa</span><strong data-online-last-attempt>Nunca</strong></div>
                 <div><span>Pendências</span><strong data-online-pending>Nenhuma</strong></div>
             </div>
@@ -1349,7 +1357,7 @@
                 <button id="onlineSignOut" class="danger-outline" type="button" data-online-authenticated hidden>Sair</button>
             </div>
             <label class="checkbox-row"><input id="onlineAutoSync" type="checkbox">Sincronizar automaticamente quando houver alterações</label>
-            <p class="help-text">Sincronizados: preferências, nome de exibição, aparência, favoritos, última ferramenta, continuidade do Dashboard e modelos, grupos e categorias da Central de Documentos. Históricos dos módulos, estatísticas e valores da UVRM permanecem somente neste navegador.</p>`;
+            <p class="help-text">Sincronizados: preferências, nome de exibição, aparência, favoritos, última ferramenta, continuidade do Dashboard e modelos, grupos e categorias da Central de Documentos. Os históricos dos módulos têm sincronização própria, com horário independente das configurações.</p>`;
         root.prepend(panel);
         panel.querySelector("#onlineOpenAuth").addEventListener("click", openAuthModal);
         panel.querySelector("#onlineSyncNow").addEventListener("click", () => synchronize());

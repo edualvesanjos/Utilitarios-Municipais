@@ -1,6 +1,12 @@
 {
   "versions": [
     {
+      "version": "4.7.4.1 DEV",
+      "title": "Indicadores separados de sincronização",
+      "contentHtml": "<ul><li>Distingue a última sincronização das configurações da última sincronização dos históricos.</li><li>O painel de configurações mostra ambos os horários, e o Histórico Global identifica seu indicador.</li><li>Não modifica envio, armazenamento, resolução de conflitos nem banco de dados.</li></ul>",
+      "contentClass": "about-version-details"
+    },
+    {
       "version": "4.7.4 PROD",
       "title": "Nova identidade visual U Moderno em produção",
       "contentHtml": "<ul><li>Publica a identidade visual U Moderno homologada na v4.7.3 DEV.</li><li>Atualiza favicon, Apple Touch e ícones PWA, além dos ícones internos azul e verde.</li><li>Preserva autenticação, recuperação de senha, sincronização e navegação local.</li></ul>",
