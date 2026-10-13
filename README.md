@@ -59,6 +59,6 @@ Para problemas ou melhorias, utilize os recursos de acompanhamento do próprio r
 
 O projeto é mantido no próprio repositório e sua documentação deve acompanhar cada versão funcional ou corretiva.
 
-## v4.7.4.3 DEV
+## v4.7.5 DEV
 
 Melhoria visual nos indicadores de sincronização: configurações e históricos são apresentados separadamente. Não altera o mecanismo de sincronização nem exige SQL.
