@@ -1,6 +1,12 @@
 {
   "versions": [
     {
+      "version": "4.7.4.3 DEV",
+      "title": "Tela inicial e Histórico Global mais enxutos",
+      "contentHtml": "<ul><li>Remove informações redundantes de Configurações, preservando-as no Sobre.</li><li>Reorganiza filtros, ações de exportação e indicadores do Histórico Global.</li><li>Consolida o início em Minhas ferramentas e Atividade recente, preservando favoritos e históricos.</li><li>Sem alterações de banco ou sincronização.</li></ul>",
+      "contentClass": "about-version-details"
+    },
+    {
       "version": "4.7.4.2 DEV",
       "title": "Indicadores separados de sincronização",
       "contentHtml": "<ul><li>Distingue a última sincronização das configurações da última sincronização dos históricos.</li><li>O painel de configurações mostra ambos os horários, e o Histórico Global identifica seu indicador.</li><li>Não modifica envio, armazenamento, resolução de conflitos nem banco de dados.</li></ul>",

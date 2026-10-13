@@ -1,3 +1,11 @@
+## 4.7.4.3 DEV — Simplificação das telas
+
+- Remove o cartão Informações do aplicativo das Configurações; dados permanecem no Sobre.
+- Reorganiza o Histórico Global: filtros, indicadores e exportação CSV/JSON em menu.
+- Simplifica o início: Minhas ferramentas e Atividade recente com até cinco registros reais.
+- Mantém os favoritos salvos e permite expandir o catálogo por Ver todas.
+- Sem alterações no banco de dados ou na sincronização.
+
 ## 4.7.4.2 DEV — Indicadores de sincronização
 
 - Identifica separadamente o horário de sincronização das configurações e dos históricos.

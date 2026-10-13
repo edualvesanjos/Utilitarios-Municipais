@@ -107,7 +107,7 @@ function collectDashboardRecentItems() {
             const rightTime = Date.parse(right.timestamp) || 0;
             return rightTime - leftTime || left.index - right.index;
         })
-        .slice(0, 6);
+        .slice(0, 5);
 }
 
 function renderDashboardRecentItems() {
@@ -203,7 +203,7 @@ function dashboardToolCardMarkup(tool, compact=false){
     return `<div class="dashboard-tool-wrapper${compact?" is-compact":""}" data-tool-id="${tool.id}"><button class="dashboard-tool-card" type="button" data-open-tab="${tool.id}">${toolIconMarkup(tool.icon,"dashboard-tool-icon")}<span class="dashboard-tool-content"><strong>${tool.name}</strong><small>${tool.description}</small></span><span class="dashboard-tool-action">Abrir</span></button><button class="favorite-toggle${isFavorite(tool.id)?" active":""}" type="button" data-favorite-tool="${tool.id}" aria-label="${isFavorite(tool.id)?"Remover":"Adicionar"} ${tool.name} ${isFavorite(tool.id)?"dos":"aos"} favoritos" title="Favorito">★</button></div>`;
 }
 function enhanceDashboardToolCards(){document.querySelectorAll("#dashboardAllTools > .dashboard-tool-card").forEach(card=>{const id=card.dataset.openTab,tool=TOOL_CATALOG.find(t=>t.id===id);if(!tool)return;const wrapper=document.createElement("div");wrapper.className="dashboard-tool-wrapper";wrapper.dataset.toolId=id;card.parentNode.insertBefore(wrapper,card);wrapper.appendChild(card);const favorite=document.createElement("button");favorite.type="button";favorite.className=`favorite-toggle${isFavorite(id)?" active":""}`;favorite.dataset.favoriteTool=id;favorite.textContent="★";favorite.title="Favorito";wrapper.appendChild(favorite);});}
-function renderDashboardFavorites(){const section=$("#dashboardFavoritesSection"),container=$("#dashboardFavoriteTools");if(!section||!container)return;const favorites=getFavorites().map(id=>TOOL_CATALOG.find(t=>t.id===id)).filter(Boolean);section.hidden=!favorites.length;container.innerHTML=favorites.map(t=>dashboardToolCardMarkup(t,true)).join("");document.querySelectorAll("[data-favorite-tool]").forEach(button=>button.classList.toggle("active",isFavorite(button.dataset.favoriteTool)));}
+function renderDashboardFavorites(){const section=$("#dashboardFavoritesSection"),container=$("#dashboardFavoriteTools");if(!section||!container)return;const favorites=getFavorites().map(id=>TOOL_CATALOG.find(t=>t.id===id)).filter(Boolean);section.hidden=false;const expanded=section.classList.contains("tools-expanded");container.innerHTML=(expanded?favorites:favorites.slice(0,6)).map(t=>dashboardToolCardMarkup(t,true)).join("");document.querySelectorAll("[data-favorite-tool]").forEach(button=>button.classList.toggle("active",isFavorite(button.dataset.favoriteTool)));}
 function normalizeSearchText(value){return String(value||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();}
 function searchDashboardTools(query){const terms=normalizeSearchText(query).split(/\s+/).filter(Boolean);if(!terms.length)return [];return TOOL_CATALOG.filter(tool=>{const haystack=normalizeSearchText([tool.name,tool.description,...tool.keywords].join(" "));return terms.every(term=>haystack.includes(term));});}
 function renderDashboardSearch(){const input=$("#dashboardToolSearch"),results=$("#dashboardSearchResults");if(!input||!results)return;const found=searchDashboardTools(input.value);if(!input.value.trim()){results.innerHTML="";results.hidden=true;return;}results.hidden=false;results.innerHTML=found.length?found.map((tool,index)=>`<button type="button" class="dashboard-search-result${index===0?" is-first":""}" data-open-tab="${tool.id}"><span><strong>${tool.name}</strong><small>${tool.description}</small></span><em>Abrir</em></button>`).join(""):'<p class="empty-state">Nenhuma ferramenta encontrada.</p>';}
@@ -217,6 +217,17 @@ function renderDashboardSmartTools(){
     if(recentContainer){const ids=getJson(RECENT_TOOLS_KEY,[]);const tools=(Array.isArray(ids)?ids:[]).map(id=>TOOL_CATALOG.find(t=>t.id===id)).filter(Boolean);recentContainer.innerHTML=tools.length?tools.map(t=>`<button type="button" data-open-tab="${t.id}">${toolIconMarkup(t.icon,"smart-tool-icon")}<strong>${t.name}</strong></button>`).join(""):'<p class="empty-state">Nenhuma ferramenta utilizada.</p>';}
     if(mostContainer){const tools=getUsageSummary().rows.filter(r=>r.accesses+r.actions>0).sort((a,b)=>(b.accesses+b.actions)-(a.accesses+a.actions)).slice(0,4);mostContainer.innerHTML=tools.length?tools.map(t=>`<button type="button" data-open-tab="${t.id}">${toolIconMarkup(t.icon,"smart-tool-icon")}<strong>${t.name}</strong><small>${t.accesses+t.actions} interações</small></button>`).join(""):'<p class="empty-state">As ferramentas mais utilizadas aparecerão aqui.</p>';}
 }
-const originalCollectDashboardRecentItems=collectDashboardRecentItems;
-collectDashboardRecentItems=function(){const log=getJson(ACTIVITY_LOG_KEY,[]);if(Array.isArray(log)&&log.length)return log.slice(0,12).map(item=>({module:item.tool,tab:item.toolId,text:`${item.label} • ${formatDateTime(item.timestamp)}`,timestamp:item.timestamp}));return originalCollectDashboardRecentItems();};
+
 renderDashboardSmartTools();
+
+// v4.7.4.3: catálogo completo sob demanda; favoritos permanecem intactos.
+const showAllToolsButton = document.getElementById("v32ShowAllTools");
+showAllToolsButton?.addEventListener("click", () => {
+    const section = document.getElementById("dashboardFavoritesSection");
+    const catalog = document.getElementById("dashboardAllTools");
+    if (!section || !catalog) return;
+    const expanded = section.classList.toggle("tools-expanded");
+    catalog.hidden = !expanded;
+    showAllToolsButton.textContent = expanded ? "Mostrar menos" : "Ver todas";
+    renderDashboardFavorites();
+});
