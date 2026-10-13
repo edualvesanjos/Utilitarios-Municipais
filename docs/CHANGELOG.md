@@ -1,4 +1,4 @@
-## 4.7.4.1 DEV — Indicadores de sincronização
+## 4.7.4.2 DEV — Indicadores de sincronização
 
 - Identifica separadamente o horário de sincronização das configurações e dos históricos.
 - Atualiza o indicador dos históricos ao receber o evento de sincronização.
