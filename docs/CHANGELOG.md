@@ -1,3 +1,28 @@
+## 4.7.5 PROD — Melhorias de interface homologadas
+
+- Publica as melhorias aprovadas na v4.7.4.3 DEV.
+- Simplifica a tela inicial: Minhas ferramentas e Atividade recente.
+- Reorganiza o Histórico Global, filtros, indicadores e exportações.
+- Remove Informações do aplicativo de Configurações (mantidas em Sobre).
+- Preserva indicadores independentes de sincronização e a estrutura docs/releases/.
+- Sem alterações no banco de dados ou nas rotinas de sincronização.
+
+## 4.7.4.3 DEV — Simplificação das telas
+
+- Remove o cartão Informações do aplicativo das Configurações; dados permanecem no Sobre.
+- Reorganiza o Histórico Global: filtros, indicadores e exportação CSV/JSON em menu.
+- Simplifica o início: Minhas ferramentas e Atividade recente com até cinco registros reais.
+- Mantém os favoritos salvos e permite expandir o catálogo por Ver todas.
+- Sem alterações no banco de dados ou na sincronização.
+
+## 4.7.4.2 DEV — Indicadores de sincronização
+
+- Identifica separadamente o horário de sincronização das configurações e dos históricos.
+- Atualiza o indicador dos históricos ao receber o evento de sincronização.
+- Esclarece que os históricos usam fluxo independente.
+- Nenhuma alteração no envio, no banco ou nas políticas de sincronização.
+- Ambiente DEV: `utilitariosmunicipais_teste`.
+
 ## 4.7.4 PROD — Identidade visual U Moderno
 
 - Publica as melhorias visuais homologadas na v4.7.3 DEV.

@@ -29,6 +29,7 @@
 <link href="assets/css/v4/online-41.css" rel="stylesheet"/>
 <link href="assets/css/v4/sidebar-45.css" rel="stylesheet"/>
 <link href="assets/css/v4/icons-473.css" rel="stylesheet"/>
+<link href="assets/css/v4/layout-4743.css" rel="stylesheet"/>
 </head>
 <body>
 <header class="app-header app-header-v32">
@@ -186,19 +187,17 @@
 <div aria-hidden="true" class="v32-welcome-art"><span>▥</span><span>▦</span><span>⌨</span></div>
 </section>
 <section class="v32-section card" id="dashboardFavoritesSection">
-<div class="section-heading"><div><h3>Acesso rápido</h3><p class="mini-description">Favoritos e ferramentas disponíveis.</p></div><button class="text-button" id="v32ShowAllTools" type="button">Ver todas</button></div>
+<div class="section-heading"><div><h3>Minhas ferramentas</h3><p class="mini-description">Seus favoritos em um só lugar.</p></div><button class="text-button" id="v32ShowAllTools" type="button">Ver todas</button></div>
 <div class="dashboard-tools dashboard-favorite-tools" id="dashboardFavoriteTools"></div>
-<div aria-label="Ferramentas disponíveis" class="dashboard-tools v32-all-tools" id="dashboardAllTools"></div>
+<div aria-label="Ferramentas disponíveis" class="dashboard-tools v32-all-tools" id="dashboardAllTools" hidden></div>
 </section>
-<section class="v32-section card">
-<div class="section-heading"><div><h3>Continuar de onde parou</h3><p class="mini-description">Ferramentas utilizadas recentemente.</p></div></div>
-<div class="dashboard-smart-tools v32-recent-tools" id="dashboardRecentTools"></div>
-<div class="dashboard-smart-tools" hidden="" id="dashboardMostUsedTools"></div>
-</section>
-<section class="v32-section card dashboard-recent-card">
-<div class="section-heading"><div><h3>Atividades recentes</h3><p class="mini-description">Últimos cálculos e ações armazenados neste navegador.</p></div><button class="text-button" id="dashboardRefresh" type="button">Atualizar</button></div>
+<section class="v32-section card dashboard-recent-card" id="dashboardActivitySection">
+<div class="section-heading"><div><h3>Atividade recente</h3><p class="mini-description">Últimos registros gerados pelas ferramentas.</p></div><button class="text-button" data-open-tab="historico-global" type="button">Ver histórico</button></div>
 <ul class="dashboard-recent-list" id="dashboardRecentList"></ul>
+<button id="dashboardRefresh" type="button" hidden>Atualizar</button>
 </section>
+<div class="dashboard-smart-tools v32-recent-tools" id="dashboardRecentTools" hidden></div>
+<div class="dashboard-smart-tools" id="dashboardMostUsedTools" hidden></div>
 <div class="dashboard-summary-grid v32-hidden-data" hidden="">
 <span id="dashboardFileModels">0</span><span id="dashboardFileHistory">0</span><span id="dashboardRegistrationHistory">0</span><span id="dashboardLotHistory">0</span><span id="dashboardUvrmHistory">0</span><span id="dashboardPercentageHistory">0</span><span id="dashboardNextLotSequence">1</span><span id="dashboardUvrmValue">R$ 0,00</span><span id="dashboardLastBackup">Nenhum</span>
 </div>
@@ -976,7 +975,7 @@
 </section>
 </section>
 <aside class="generator-sidebar">
-<section class="sidebar-card"><h3>Informações do aplicativo</h3><div class="format-examples"><div><span>Versão</span><code data-app-version=""></code></div><div><span>Armazenamento</span><code>Local do navegador</code></div><div><span>Formato do backup</span><code>JSON</code></div></div></section>
+
 <section class="sidebar-card"><h3>Último backup</h3><p class="help-text" id="ultimoBackupInfo">Nenhum backup registrado.</p></section>
 </aside>
 </section></div>
@@ -1191,9 +1190,9 @@
 </section>
 <section class="tab-panel productivity-panel" id="historico-global">
 <div class="card">
-<div class="section-heading main-heading"><div><span class="eyebrow">Produtividade</span><h2>Histórico global</h2><p class="section-description">Consulte e sincronize em um único lugar os registros produzidos pelos módulos, mantendo funcionamento local quando estiver offline.</p></div><div class="actions"><button class="primary-button" id="globalHistorySync" type="button">Sincronizar histórico</button><button class="secondary-button" id="globalHistoryExportCsv" type="button">Exportar CSV</button><button class="secondary-button" id="globalHistoryExportJson" type="button">Exportar JSON</button></div></div>
+<div class="section-heading main-heading"><div><span class="eyebrow">Produtividade</span><h2>Histórico global</h2><p class="section-description">Consulte e sincronize em um único lugar os registros produzidos pelos módulos, mantendo funcionamento local quando estiver offline.</p></div><div class="actions history-header-actions"><button class="primary-button" id="globalHistorySync" type="button">Sincronizar histórico</button><div class="history-export-group"><button class="secondary-button" id="historyExportToggle" type="button" aria-expanded="false" aria-controls="historyExportOptions">Exportar ▾</button><div id="historyExportOptions" class="history-export-options" hidden><button class="secondary-button" id="globalHistoryExportCsv" type="button">Exportar CSV</button><button class="secondary-button" id="globalHistoryExportJson" type="button">Exportar JSON</button></div></div></div></div>
 <div class="productivity-toolbar"><label class="productivity-search"><span>Pesquisar</span><input id="globalHistorySearch" placeholder="Conteúdo do registro" type="search"/></label><label><span>Módulo</span><select id="globalHistoryModule"><option value="todos">Todos os módulos</option></select></label><label><span>Período</span><select id="globalHistoryPeriod"><option value="todos">Todo o período</option><option selected="" value="hoje">Hoje</option><option value="7">Últimos 7 dias</option><option value="30">Últimos 30 dias</option></select></label></div>
-<div class="library-summary"><div><span>Registros encontrados</span><strong id="globalHistoryCount">0</strong></div><div><span>Módulos com dados</span><strong id="globalHistoryModuleCount">0</strong></div><div><span>Pendentes</span><strong id="globalHistoryPending">0</strong></div><div><span>Última sincronização</span><strong id="globalHistoryLastSync">Nunca</strong></div><div><span>Último registro</span><strong id="globalHistoryLast">Nenhum</strong></div></div>
+<div class="library-summary"><div><span>Registros encontrados</span><strong id="globalHistoryCount">0</strong></div><div><span>Módulos com dados</span><strong id="globalHistoryModuleCount">0</strong></div><div><span>Pendentes</span><strong id="globalHistoryPending">0</strong></div><div><span>Última sincronização dos históricos</span><strong id="globalHistoryLastSync">Nunca</strong></div><div><span>Último registro</span><strong id="globalHistoryLast">Nenhum</strong></div></div>
 <p aria-live="polite" class="help-text" id="globalHistorySyncStatus"></p><div class="global-history-list" id="globalHistoryList"></div>
 <div class="tab-footer-navigation"><button class="back-home-button" data-open-tab="inicio" type="button"><span aria-hidden="true">←</span>Voltar para a Página Inicial</button></div>
 </div>
